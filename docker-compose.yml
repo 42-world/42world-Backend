@@ -1,0 +1,18 @@
+version: '3.0'
+services:
+  postgres:
+    image: postgres:9.6.22-alpine
+    ports:
+      - '2345:5432'
+    environment:
+      - POSTGRES_DB=ft_world
+      - POSTGRES_USER=ft_world
+      - POSTGRES_PASSWORD=ft_world
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    healthcheck:
+      test: 'pg_isready -h localhost -p 5432 -q -U ft_world'
+      interval: 3s
+      timeout: 1s
+      retries: 10
+    volumes:
+      - './postgresql:/docker-entrypoint-initdb.d/'
