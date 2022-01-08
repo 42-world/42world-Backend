@@ -23,7 +23,7 @@ export class Comment {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_article_id')
+  @Index('ix_comment_article_id')
   @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
   article!: Article;
 
@@ -31,7 +31,7 @@ export class Comment {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_writer_id')
+  @Index('ix_comment_writer_id')
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer!: User;
 

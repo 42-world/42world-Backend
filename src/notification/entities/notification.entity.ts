@@ -41,7 +41,7 @@ export class Notification {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_user_id')
+  @Index('ix_notification_user_id')
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user!: User;
 

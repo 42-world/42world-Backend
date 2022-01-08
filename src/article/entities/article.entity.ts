@@ -1,5 +1,6 @@
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
+import { Category } from '@category/entities/category.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -17,7 +18,7 @@ export class Article {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index('ix_title_id')
+  @Index('ix_article_title')
   @Column({ type: 'varchar', length: 255, nullable: true })
   title!: string;
 
@@ -31,15 +32,15 @@ export class Article {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_category_id')
+  @Index('ix_article_category_id')
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category!: User;
+  category!: Category;
 
   @ManyToOne(() => User, (user) => user.article, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_writer_id')
+  @Index('ix_article_writer_id')
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer!: User;
 
