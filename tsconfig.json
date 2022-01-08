@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+  "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -10,6 +10,15 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@root/*": ["./src/*"],
+      "@user/*": ["./src/user/*"],
+      "@article/*": ["./src/article/*"],
+      "@comment/*": ["./src/comment/*"],
+      "@category/*": ["./src/category/*"],
+      "@notification/*": ["./src/notification/*"],
+      "@authenticate/*": ["./src/authenticate/*"],
+      },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
