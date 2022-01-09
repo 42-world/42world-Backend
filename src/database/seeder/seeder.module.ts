@@ -1,6 +1,6 @@
 import { Module, Logger } from '@nestjs/common';
 
-import { UserSeederModule } from './user/user.module';
+import { UserSeederModule } from './user/user-seeder.module';
 import { DatabaseModule } from '@database/database.module';
 import { Seeder } from './seeder';
 
