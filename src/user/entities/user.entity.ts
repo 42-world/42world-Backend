@@ -67,6 +67,9 @@ export class User {
   })
   notification?: Notification[];
 
-  @OneToOne(() => Authenticate, (authenticate) => authenticate.user)
-  authenticate!: Authenticate;
+  @OneToOne(() => Authenticate, (authenticate) => authenticate.user, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  authenticate?: Authenticate;
 }

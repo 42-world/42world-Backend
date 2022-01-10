@@ -1,6 +1,5 @@
-import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from './database/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommentModule } from './comment/comment.module';
@@ -12,16 +11,7 @@ import { AuthenticateModule } from './authenticate/authenticate.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 2345,
-      username: 'ft_world',
-      password: 'ft_world',
-      database: 'ft_world',
-      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      synchronize: true,
-    }),
+    DatabaseModule,
     CommentModule,
     UserModule,
     ArticleModule,
