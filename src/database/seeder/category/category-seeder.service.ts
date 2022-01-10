@@ -9,10 +9,10 @@ import { categories } from './data';
 export class CategorySeederService {
   constructor(
     @InjectRepository(Category)
-    private readonly userRepository: Repository<Category>,
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   create() {
-    return this.userRepository.save(categories);
+    return this.categoryRepository.save(categories);
   }
 }
