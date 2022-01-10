@@ -1,6 +1,3 @@
-import { User } from '@user/entities/user.entity';
-import { Comment } from '@comment/entities/comment.entity';
-import { Category } from '@category/entities/category.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -12,6 +9,10 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
+
+import { User } from '@user/entities/user.entity';
+import { Comment } from '@comment/entities/comment.entity';
+import { Category } from '@category/entities/category.entity';
 
 @Entity('article')
 export class Article {
@@ -32,7 +33,7 @@ export class Article {
   @Index('ix_article_category_id')
   category_id!: number;
 
-  @ManyToOne(() => User, (user) => user.article, {
+  @ManyToOne(() => Category, (category) => category.article, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
