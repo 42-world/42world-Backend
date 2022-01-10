@@ -1,10 +1,18 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Category } from '@category/entities/category.entity';
 
-export const categories: Category[] = [
+export class SeederDataCategory extends PartialType(Category) {
+  id: number;
+  name: string;
+}
+
+export const categories: SeederDataCategory[] = [
   {
     id: 1,
     name: '자유게시판',
-    created_at: new Date(),
-    updated_at: new Date(),
+  },
+  {
+    id: 2,
+    name: '자유게시판2',
   },
 ];
