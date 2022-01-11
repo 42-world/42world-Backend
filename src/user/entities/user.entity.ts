@@ -31,14 +31,14 @@ export class User {
   @Column({ nullable: false, default: false })
   is_authenticated!: boolean;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  refresh_token?: string;
+  @Column({ nullable: false })
+  refresh_token?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  picture!: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  picture?: string;
 
   @Column({ nullable: false, default: true })
   is_active!: boolean;

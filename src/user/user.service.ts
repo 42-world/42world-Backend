@@ -1,11 +1,30 @@
+import { User } from './entities/user.entity';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(github: any) {
+    console.log('one more time!!!!!!!!');
+    const user = await this.userRepository.findOne({ oauth_token: github.id });
+    console.log('user == ', user);
+    if (!user) {
+      const newUser = {
+        nickname: github.nickname,
+        oauth_token: github.id,
+        refresh_token: new Date(),
+      };
+      await this.userRepository.save(newUser);
+      console.log('saved!!!!');
+    }
   }
 
   findAll() {

@@ -9,6 +9,7 @@ import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthenticateModule } from './authenticate/authenticate.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthenticateModule } from './authenticate/authenticate.module';
     CategoryModule,
     NotificationModule,
     AuthenticateModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
