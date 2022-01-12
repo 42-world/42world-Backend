@@ -19,7 +19,7 @@ export class Article {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index('ix_article_title')
+  @Index('ix_title')
   @Column({ type: 'varchar', length: 255, nullable: true })
   title!: string;
 
@@ -30,7 +30,7 @@ export class Article {
   view_count!: number;
 
   @Column({ nullable: false })
-  @Index('ix_article_category_id')
+  @Index('ix_category_id')
   category_id!: number;
 
   @ManyToOne(() => Category, (category) => category.article, {
@@ -40,7 +40,7 @@ export class Article {
   category?: Category;
 
   @Column({ nullable: false })
-  @Index('ix_article_writer_id')
+  @Index('ix_writer_id')
   writer_id!: number;
 
   @ManyToOne(() => User, (user) => user.article, {

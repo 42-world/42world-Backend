@@ -19,21 +19,27 @@ export class Comment {
   @Column({ type: 'text', nullable: false })
   content!: string;
 
+  @Column({ nullable: false })
+  @Index('ix_article_id')
+  article_id!: number;
+
   @ManyToOne(() => Article, (article) => article.comment, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_comment_article_id')
   @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
-  article!: Article;
+  article?: Article;
+
+  @Column({ nullable: false })
+  @Index('ix_writer_id')
+  writer_id!: number;
 
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_comment_writer_id')
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
-  writer!: User;
+  writer?: User;
 
   @CreateDateColumn()
   created_at!: Date;
