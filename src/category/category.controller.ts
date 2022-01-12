@@ -15,17 +15,17 @@ import { Category } from './entities/category.entity';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post('/')
+  @Post()
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
     return this.categoryService.create(createCategoryDto);
   }
 
-  @Get('/')
+  @Get()
   findAll(): Promise<Category[]> {
     return this.categoryService.findAll();
   }
 
-  @Put('/:id/name')
+  @Put(':id/name')
   updateName(
     @Param('id') id: number,
     @Body('name') name: string,
@@ -33,7 +33,7 @@ export class CategoryController {
     return this.categoryService.updateName(id, name);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.categoryService.remove(id);
   }

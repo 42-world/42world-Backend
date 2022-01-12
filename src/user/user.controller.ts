@@ -16,22 +16,22 @@ import { User } from './entities/user.entity';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/')
+  @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.create(createUserDto);
   }
 
-  @Get('/')
+  @Get()
   findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
-  @Get('/:id')
+  @Get(':id')
   findOne(@Param('id') id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
-  @Put('/:id')
+  @Put(':id')
   update(
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -39,7 +39,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }

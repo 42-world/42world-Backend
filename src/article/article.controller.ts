@@ -26,22 +26,22 @@ export class ArticleController {
    * 존재하지 않는 writer나 category 를 넣어도 잘 들어가네요
    * validate 를 해야할거같아요
    */
-  @Post('/')
+  @Post()
   create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
     return this.articleService.create(createArticleDto);
   }
 
-  @Get('/')
+  @Get()
   findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
     return this.articleService.findAll(findAllArticle);
   }
 
-  @Get('/:id')
-  findOen(@Param('id') id: number): Promise<Article> {
+  @Get(':id')
+  findOne(@Param('id') id: number): Promise<Article> {
     return this.articleService.findOne(id);
   }
 
-  @Put('/:id')
+  @Put(':id')
   update(
     @Param('id') id: number,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -49,7 +49,7 @@ export class ArticleController {
     return this.articleService.update(id, updateArticleDto);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.articleService.remove(id);
   }
