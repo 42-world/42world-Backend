@@ -15,4 +15,12 @@ export class ArticleRepository extends Repository<Article> {
 
     return query.getMany();
   }
+
+  async findById(id: number) {
+    return this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('article.id = :id', { id })
+      .getOne();
+  }
 }
