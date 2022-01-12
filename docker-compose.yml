@@ -2,6 +2,7 @@ version: '3.0'
 services:
   db:
     image: mysql:5.7
+    platform: linux/x86_64
     ports:
       - '2345:3306'
     environment:
