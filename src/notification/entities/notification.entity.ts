@@ -37,13 +37,16 @@ export class Notification {
   @Column({ default: false })
   is_read!: boolean;
 
+  @Column({ nullable: false })
+  @Index('ix_user_id')
+  user_id!: number;
+
   @ManyToOne(() => User, (user) => user.notification, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @Index('ix_notification_user_id')
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user!: User;
+  user?: User;
 
   @CreateDateColumn()
   created_at!: Date;
