@@ -1,7 +1,7 @@
 import { ConnectionOptions } from 'typeorm';
 
 const config: ConnectionOptions = {
-  type: 'postgres',
+  type: 'mysql',
   host: 'localhost',
   port: 2345,
   username: 'ft_world',
