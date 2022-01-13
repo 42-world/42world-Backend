@@ -12,10 +12,7 @@ export class CategoryService {
   ) {}
 
   create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const { name } = createCategoryDto;
-    const category = this.categoryRepository.create({ name });
-
-    return this.categoryRepository.save(category);
+    return this.categoryRepository.save(createCategoryDto);
   }
 
   findAll(): Promise<Category[]> {

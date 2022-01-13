@@ -10,9 +10,7 @@ export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const article = this.articleRepository.create(createArticleDto);
-
-    return this.articleRepository.save(article);
+    return this.articleRepository.save(createArticleDto);
   }
 
   findAll(options?: FindAllArticleDto): Promise<Article[]> {
