@@ -13,6 +13,7 @@ import {
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Category } from '@category/entities/category.entity';
+import { Reaction } from '@root/reaction/entities/reaction.entity';
 
 @Entity('article')
 export class Article {
@@ -63,4 +64,10 @@ export class Article {
     nullable: true,
   })
   comment?: Comment[];
+
+  @OneToMany(() => Reaction, (reaction) => reaction.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  reaction?: Reaction[];
 }
