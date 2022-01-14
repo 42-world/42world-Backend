@@ -9,6 +9,8 @@ import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthenticateModule } from './authenticate/authenticate.module';
 import { ConfigModule } from './config/config.module';
+import { LikeModule } from './like/like.module';
+import { BestModule } from './best/best.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ConfigModule } from './config/config.module';
     NotificationModule,
     AuthenticateModule,
     ConfigModule.register({ folder: './config' }),
+    LikeModule,
+    BestModule,
   ],
   controllers: [AppController],
   providers: [AppService],
