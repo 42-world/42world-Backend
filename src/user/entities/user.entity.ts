@@ -40,8 +40,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false })
   picture!: string;
 
-  @Column({ nullable: false, default: true })
-  is_active!: boolean;
+  @Column({ nullable: true })
+  deleted_at?: Date;
 
   @CreateDateColumn()
   created_at!: Date;

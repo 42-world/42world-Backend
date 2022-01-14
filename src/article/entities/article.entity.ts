@@ -49,6 +49,9 @@ export class Article {
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer?: User;
 
+  @Column({ nullable: true })
+  deleted_at?: Date;
+
   @CreateDateColumn()
   created_at!: Date;
 

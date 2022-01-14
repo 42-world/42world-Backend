@@ -1,24 +1,21 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { User, UserRole } from '@user/entities/user.entity';
 
-export const users: User[] = [
+export class SeederDataUser extends PartialType(User) {
+  id: number;
+  nickname: string;
+  picture: string;
+}
+
+export const users: SeederDataUser[] = [
   {
     id: 1,
     nickname: 'first user',
-    is_authenticated: true,
-    role: UserRole.CADET,
     picture: '',
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
   },
   {
     id: 2,
     nickname: 'second user',
-    is_authenticated: true,
-    role: UserRole.CADET,
     picture: '',
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
   },
 ];
