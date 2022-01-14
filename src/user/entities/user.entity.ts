@@ -37,8 +37,8 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  picture!: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  picture?: string;
 
   @Column({ nullable: true })
   deleted_at?: Date;
