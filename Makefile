@@ -1,5 +1,5 @@
 db :
-	docker compose --env-file src/config/.env.db up -d
+	docker compose --env-file config/db.env up -d
 
 db-down :
 	docker compose down
