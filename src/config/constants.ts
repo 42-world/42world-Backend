@@ -1,0 +1,4 @@
+export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
+export const KAKAO_CLIENT_ID = 'KAKAO_CLIENT_ID';
+export const KAKAO_CLIENT_SECRET = 'KAKAO_CLIENT_SECRET';
+export const JWT_SECRET = 'JWT_SECRET';
