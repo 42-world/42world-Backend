@@ -18,6 +18,7 @@
       "@category/*": ["./src/category/*"],
       "@notification/*": ["./src/notification/*"],
       "@auth/*": ["./src/auth/*"],
+      "@authenticate/*": ["./src/authenticate/*"],
       "@database/*": ["./src/database/*"]
     },
     "incremental": true,

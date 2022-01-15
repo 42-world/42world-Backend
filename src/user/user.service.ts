@@ -10,10 +10,6 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async create(profile: githubProfile): Promise<User> {
-    console.log('github CREATE =======================');
-    console.log(profile);
-    console.log('profile_id', profile.id);
-
     const user = await this.userRepository.findOne({ oauth_token: profile.id });
 
     if (user) {

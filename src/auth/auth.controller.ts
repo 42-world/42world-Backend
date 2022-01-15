@@ -20,8 +20,8 @@ export class AuthController {
 
   @Get('callback')
   @UseGuards(GithubAuthGuard)
-  async githubCallback(@Req() github) {
-    const user = await this.userService.create(github.profile);
+  async githubCallback(@Req() req) {
+    const user = await this.userService.create(req.user);
     return this.authService.getJWT({
       userId: user.id,
       userRole: user.role,

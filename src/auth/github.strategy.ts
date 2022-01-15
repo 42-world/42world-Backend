@@ -18,12 +18,10 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    console.log('profile: ', profile);
-    console.log('id ==', profile.id);
-    const user = {
+    const githubProfile = {
       id: profile.id,
       nickname: profile.username,
     };
-    done(null, user);
+    done(null, githubProfile);
   }
 }
