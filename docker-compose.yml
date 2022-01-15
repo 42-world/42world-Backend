@@ -27,6 +27,8 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - '${API_EXTERNAL_PORT:-8888}:8888'
+    environment:
+      - NODE_ENV=${NODE_ENV:-'alpha'}
     depends_on:
       db:
         condition: 'service_healthy'
