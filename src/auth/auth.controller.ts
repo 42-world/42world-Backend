@@ -1,7 +1,8 @@
-import { UserService } from './../user/user.service';
+import { UserService } from '@user/user.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { AuthService } from './auth.service';
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
 
 @Controller('auth/github')
 export class AuthController {
@@ -14,18 +15,16 @@ export class AuthController {
   @UseGuards(GithubAuthGuard)
   githubLogin() {
     console.log('send to login page');
-    return '임채욱 바보';
+    return 'haha';
   }
 
   @Get('callback')
   @UseGuards(GithubAuthGuard)
-  async githubCallback(@Req() req) {
-    console.log('req.user: ', req.user);
-
-    // 여기서 서비스를 불러서
-    // 거기서 db에 profile.id를 github_id로 저장
-    await this.userService.create(req.user);
-    // 그리고 거기서 access token과 refresh token을 만든다
-    return 'babo';
+  async githubCallback(@Req() github) {
+    const user = await this.userService.create(github.profile);
+    return this.authService.getJWT({
+      userId: user.id,
+      userRole: user.role,
+    } as JWTPayload);
   }
 }

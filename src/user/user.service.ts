@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { getNextMonth } from '@root/utils';
+import { githubProfile } from '@root/auth/interfaces/github-profile.interface';
 
 @Injectable()
 export class UserService {
@@ -12,19 +13,21 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(github: any) {
-    console.log('one more time!!!!!!!!');
-    const user = await this.userRepository.findOne({ oauth_token: github.id });
-    console.log('user == ', user);
-    if (!user) {
-      const newUser = {
-        nickname: github.nickname,
-        oauth_token: github.id,
-        refresh_token: getNextMonth(),
-      };
-      await this.userRepository.save(newUser);
-      console.log('saved!!!!');
+  async create(profile: githubProfile): Promise<User> {
+    const user = await this.userRepository.findOne({ oauth_token: profile.id });
+
+    if (user) {
+      user.refresh_token = getNextMonth();
+      return this.userRepository.save(user);
     }
+
+    const newUser = {
+      nickname: profile.nickname,
+      oauth_token: profile.id,
+      refresh_token: getNextMonth(),
+    };
+
+    return this.userRepository.save(newUser);
   }
 
   findAll() {

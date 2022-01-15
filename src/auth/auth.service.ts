@@ -1,3 +1,5 @@
+import { AccessToken } from './interfaces/access-token.interface';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -5,15 +7,9 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async validateUser(username: any): Promise<any> {
-    console.log('haha');
-    return 'result';
-  }
-
-  async login(user: any) {
-    const payload = { username: user.name, sub: user.userId };
+  getJWT(payload: JWTPayload): AccessToken {
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }
