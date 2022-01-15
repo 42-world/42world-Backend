@@ -1,4 +1,5 @@
 import { Module, Logger } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { DatabaseModule } from '@database/database.module';
 import { Seeder } from './seeder';
@@ -8,7 +9,11 @@ import { ArticleSeederModule } from './article/article-seeder.module';
 
 @Module({
   imports: [
-    DatabaseModule,
+    ConfigModule.forRoot({
+      envFilePath: ['config/dev.env', 'config/alpha.env', 'config/prod.env'],
+      isGlobal: true,
+    }),
+    DatabaseModule.register(),
     UserSeederModule,
     CategorySeederModule,
     ArticleSeederModule,
