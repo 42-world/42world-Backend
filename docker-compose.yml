@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     platform: linux/x86_64
     ports:
-      - '2345:3306'
+      - '${MYSQL_EXTERNAL_PORT:-2345}:3306'
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -15,8 +15,18 @@ services:
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: 'mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD'
-      interval: 3s
+      interval: 5s
       timeout: 1s
       retries: 10
+      start_period: 10s
     volumes:
       - ./db:/var/lib/mysql
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - '${API_EXTERNAL_PORT:-8888}:8888'
+    depends_on:
+      db:
+        condition: 'service_healthy'
