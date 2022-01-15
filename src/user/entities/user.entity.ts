@@ -31,7 +31,7 @@ export class User {
   @Column({ nullable: false, default: false })
   is_authenticated!: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   refresh_token?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })

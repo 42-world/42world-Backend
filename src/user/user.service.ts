@@ -1,9 +1,9 @@
 import { User } from './entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
+import { getNextMonth } from '@root/utils';
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,7 @@ export class UserService {
       const newUser = {
         nickname: github.nickname,
         oauth_token: github.id,
-        refresh_token: new Date(),
+        refresh_token: getNextMonth(),
       };
       await this.userRepository.save(newUser);
       console.log('saved!!!!');

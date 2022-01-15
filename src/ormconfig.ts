@@ -9,7 +9,7 @@ const config: ConnectionOptions = {
   database: 'ft_world',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
-  synchronize: false,
+  synchronize: true,
   migrationsRun: false,
   logging: true,
 
