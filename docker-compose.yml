@@ -6,10 +6,10 @@ services:
     ports:
       - '2345:3306'
     environment:
-      - MYSQL_DATABASE=ft_world
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_USER=ft_world
-      - MYSQL_PASSWORD=ft_world
       - MYSQL_INITDB_ARGS=--encoding=UTF-8
       - TZ=Asia/Seoul
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci

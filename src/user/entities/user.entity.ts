@@ -11,6 +11,8 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { Best } from '@root/best/entities/best.entity';
+import { Reaction } from '@root/reaction/entities/reaction.entity';
 
 export enum UserRole {
   CADET = 'CADET',
@@ -22,7 +24,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
   nickname!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -40,8 +42,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   picture?: string;
 
-  @Column({ nullable: false, default: true })
-  is_active!: boolean;
+  @Column({ nullable: true })
+  deleted_at?: Date;
 
   @CreateDateColumn()
   created_at!: Date;
@@ -72,4 +74,16 @@ export class User {
     nullable: true,
   })
   authenticate?: Authenticate;
+
+  @OneToMany(() => Reaction, (reaction) => reaction.user, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  reaction?: Reaction[];
+
+  @OneToMany(() => Best, (best) => best.user, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  best?: Best[];
 }
