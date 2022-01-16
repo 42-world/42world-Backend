@@ -20,9 +20,7 @@ import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService, //private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   findAll(): Promise<User[]> {
