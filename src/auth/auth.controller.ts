@@ -31,7 +31,6 @@ export class AuthController {
     const jwt = this.authService.getJWT({
       userId: user.id,
       userRole: user.role,
-      refreshToken: user.refresh_token,
     } as JWTPayload);
     response.cookie(ACCESS_TOKEN, jwt);
   }
