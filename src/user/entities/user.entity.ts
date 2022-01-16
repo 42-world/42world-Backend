@@ -33,8 +33,8 @@ export class User {
   @Column({ nullable: false, default: false })
   is_authenticated!: boolean;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  refresh_token?: string;
+  @Column({ nullable: true })
+  refresh_token?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;

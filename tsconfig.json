@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-  "module": "commonjs",
+    "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -17,9 +17,10 @@
       "@comment/*": ["./src/comment/*"],
       "@category/*": ["./src/category/*"],
       "@notification/*": ["./src/notification/*"],
+      "@auth/*": ["./src/auth/*"],
       "@authenticate/*": ["./src/authenticate/*"],
-      "@database/*": ["./src/database/*"],
-      },
+      "@database/*": ["./src/database/*"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,

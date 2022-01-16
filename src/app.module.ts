@@ -8,6 +8,7 @@ import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthenticateModule } from './authenticate/authenticate.module';
+import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
@@ -21,6 +22,7 @@ import { ReactionModule } from './reaction/reaction.module';
     CategoryModule,
     NotificationModule,
     AuthenticateModule,
+    AuthModule,
     ConfigModule.register({ folder: './config' }),
     BestModule,
     ReactionModule,
