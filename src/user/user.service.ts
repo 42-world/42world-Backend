@@ -40,6 +40,10 @@ export class UserService {
     return user;
   }
 
+  isExistById(id: number): Promise<boolean> {
+    return this.userRepository.isExistById(id);
+  }
+
   async findOne(id: number): Promise<User> {
     return this.userRepository.findOne(id);
   }
