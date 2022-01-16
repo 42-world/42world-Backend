@@ -34,7 +34,7 @@ export class User {
   is_authenticated!: boolean;
 
   @Column({ nullable: true })
-  refresh_token?: Date;
+  last_login?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
