@@ -10,10 +10,10 @@ db-down:
 
 api:
 	yarn build
-	docker-compose up --build -d api
+	docker-compose up --build --no-deps -d api
 
 api-up:
-	docker-compose up --build -d api
+	docker-compose up --build --no-deps -d api
 
 api-down:
 	docker-compose down api
