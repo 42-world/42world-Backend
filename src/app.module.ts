@@ -13,15 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
-
-const getEnvPath = () => {
-  if (process.env.NODE_ENV === 'test') return 'config/test.env';
-  if (process.env.NODE_ENV === 'dev') return 'config/dev.env';
-  if (process.env.NODE_ENV === 'alpha') return 'config/alpha.env';
-  if (process.env.NODE_ENV === 'prod') return 'config/prod.env';
-  return 'config/dev.env';
-};
-
+import { getEnvPath } from './utils';
 @Module({
   imports: [
     ConfigModule.forRoot({
