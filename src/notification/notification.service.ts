@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
+  constructor(
+    @InjectRepository(Notification)
+    private readonly notificationRepository: Repository<Notification>,
+  ) {}
+
+  create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
+    return this.notificationRepository.save(createNotificationDto);
   }
 
-  findAll() {
-    return `This action returns all notification`;
+  getByUserId(user_id: number): Promise<Notification[]> {
+    return this.notificationRepository.find({ where: { user_id } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
-  }
-
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  async updateIsReadByUserId(user_id: number): Promise<void> {
+    const notifications = await this.notificationRepository.find({
+      where: { user_id, is_read: false },
+    });
+    notifications.forEach((notification) => (notification.is_read = true));
+    this.notificationRepository.save(notifications);
   }
 }
