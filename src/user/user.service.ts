@@ -30,7 +30,7 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async getOne(id: number): Promise<User> {
     const user = await this.userRepository.findOneOrFail(id);
 
     if (!user) {
@@ -40,14 +40,22 @@ export class UserService {
     return user;
   }
 
+  async findOne(id: number): Promise<User> {
+    return this.userRepository.findOne(id);
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
+    const user = await this.userRepository.findOne(id);
     const new_user = {
       ...user,
       ...updateUserDto,
     };
 
     return this.userRepository.save(new_user);
+  }
+
+  async refreshToken(user: User, updateTime: Date): Promise<User> {
+    return this.userRepository.save({ ...user, refresh_token: updateTime });
   }
 
   async remove(id: number): Promise<void> {

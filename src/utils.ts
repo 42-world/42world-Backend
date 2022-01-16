@@ -8,3 +8,8 @@ export const getNextMonth = () => {
   const now = new Date();
   return new Date(now.setMonth(now.getMonth() + 1));
 };
+
+export const isExpired = (exp: Date): boolean => {
+  const now = new Date();
+  return now >= exp;
+};

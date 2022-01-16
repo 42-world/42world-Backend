@@ -1,25 +1,27 @@
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserService } from '@user/user.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { AuthService } from './auth.service';
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { Response } from 'express';
+import { ACCESS_TOKEN } from './constants/access-token';
 
-@Controller('auth/github')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
 
-  @Get()
+  @Get('github')
   @UseGuards(GithubAuthGuard)
   githubLogin() {
     console.log('send to login page');
-    return 'haha';
+    return;
   }
 
-  @Get('callback')
+  @Get('github/callback')
   @UseGuards(GithubAuthGuard)
   async githubCallback(
     @Req() req,
@@ -29,7 +31,14 @@ export class AuthController {
     const jwt = this.authService.getJWT({
       userId: user.id,
       userRole: user.role,
+      refreshToken: user.refresh_token,
     } as JWTPayload);
-    response.cookie('access_token', jwt);
+    response.cookie(ACCESS_TOKEN, jwt);
+  }
+
+  @Get('signout')
+  @UseGuards(JwtAuthGuard)
+  async signout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie(ACCESS_TOKEN);
   }
 }
