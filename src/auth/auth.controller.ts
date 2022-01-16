@@ -27,7 +27,7 @@ export class AuthController {
     @Req() req,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = await this.userService.create(req.user);
+    const user = await this.userService.githubLogin(req.user);
     const jwt = this.authService.getJWT({
       userId: user.id,
       userRole: user.role,
