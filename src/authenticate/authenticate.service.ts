@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateAuthenticateDto } from './dto/create-authenticate.dto';
 import { UpdateAuthenticateDto } from './dto/update-authenticate.dto';
+import { Authenticate } from './entities/authenticate.entity';
 
 @Injectable()
 export class AuthenticateService {
-  create(createAuthenticateDto: CreateAuthenticateDto) {
-    return 'This action adds a new authenticate';
+  constructor(
+    @InjectRepository(Authenticate)
+    private readonly authenticateRepository: Repository<Authenticate>,
+  ) {}
+
+  create(createAuthenticateDto: CreateAuthenticateDto): Promise<Authenticate> {
+    return this.authenticateRepository.save(createAuthenticateDto);
   }
 
-  findAll() {
-    return `This action returns all authenticate`;
+  getByIntraId(intra_id: string): Promise<Authenticate> {
+    return this.authenticateRepository.findOne({ where: { intra_id } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} authenticate`;
-  }
+  async removeByUserId(user_id: number): Promise<void> {
+    const result = await this.authenticateRepository.delete({ user_id });
 
-  update(id: number, updateAuthenticateDto: UpdateAuthenticateDto) {
-    return `This action updates a #${id} authenticate`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} authenticate`;
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Can't find Authenticate with user id ${user_id}`,
+      );
+    }
   }
 }

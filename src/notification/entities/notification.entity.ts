@@ -26,15 +26,12 @@ export class Notification {
     enum: NotificationType,
     default: NotificationType.FROM_ADMIN,
   })
-  type?: string;
+  type!: string;
 
-  @Column({ type: 'text', nullable: true })
-  content?: string;
+  @Column({ type: 'text', nullable: false })
+  content!: string;
 
-  @Column({ nullable: true })
-  time?: Date;
-
-  @Column({ default: false })
+  @Column({ nullable: false, default: false })
   is_read!: boolean;
 
   @Column({ nullable: false })
