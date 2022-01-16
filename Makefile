@@ -2,6 +2,9 @@ all:
 	yarn build
 	docker-compose --env-file config/compose.env up --build -d
 
+dev: db
+	yarn start:dev
+
 db:
 	docker-compose --env-file config/compose.env up --build -d db
 
