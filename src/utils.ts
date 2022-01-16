@@ -13,3 +13,11 @@ export const isExpired = (exp: Date): boolean => {
   const now = new Date();
   return now >= exp;
 };
+
+export const getEnvPath = () => {
+  if (process.env.NODE_ENV === 'test') return 'config/test.env';
+  if (process.env.NODE_ENV === 'dev') return 'config/dev.env';
+  if (process.env.NODE_ENV === 'alpha') return 'config/alpha.env';
+  if (process.env.NODE_ENV === 'prod') return 'config/prod.env';
+  return 'config/dev.env';
+};
