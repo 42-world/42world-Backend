@@ -58,10 +58,6 @@ export class UserService {
     return this.userRepository.save(new_user);
   }
 
-  async refreshToken(user: User, updateTime: Date): Promise<User> {
-    return this.userRepository.save({ ...user, refresh_token: updateTime });
-  }
-
   async remove(id: number): Promise<void> {
     const result = await this.userRepository.delete({ id });
 
