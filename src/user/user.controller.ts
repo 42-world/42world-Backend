@@ -1,4 +1,14 @@
-import { Controller, Get, Put, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,11 +24,12 @@ export class UserController {
   }
 
   @Get(':id')
-  getOneById(@Param('id') id: number): Promise<User> {
+  getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.getOne(id);
   }
 
   @Put('profile')
+  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   update(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
