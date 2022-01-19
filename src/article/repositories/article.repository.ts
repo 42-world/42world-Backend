@@ -10,8 +10,8 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category');
 
-    if (options.categoryName)
-      query.andWhere('category.name = :name', { name: options.categoryName });
+    if (options.categoryId)
+      query.andWhere('category.id = :id', { id: options.categoryId });
 
     return query.getMany();
   }

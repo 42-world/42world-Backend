@@ -1,3 +1,3 @@
 export class FindAllArticleDto {
-  readonly categoryName?: string;
+  readonly categoryId?: number;
 }
