@@ -30,10 +30,6 @@ export class UserService {
     return this.userRepository.findOneOrFail(id);
   }
 
-  isExistById(id: number): Promise<boolean> {
-    return this.userRepository.isExistById(id);
-  }
-
   async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
     const newUser: User = {
       ...user,

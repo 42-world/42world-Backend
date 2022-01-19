@@ -18,7 +18,7 @@ export class UserController {
     return this.userService.getOne(id);
   }
 
-  @Put()
+  @Put('profile')
   update(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
