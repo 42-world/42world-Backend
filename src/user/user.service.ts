@@ -26,10 +26,6 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  getAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
   async getOne(id: number): Promise<User> {
     const user = await this.userRepository.findOneOrFail(id);
 
@@ -43,21 +39,15 @@ export class UserService {
     return this.userRepository.isExistById(id);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.getOne(id);
-    const newUser = {
+  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    const newUser: User = {
       ...user,
       ...updateUserDto,
     };
-
     return this.userRepository.save(newUser);
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.userRepository.delete({ id });
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    }
+    await this.userRepository.delete({ id });
   }
 }

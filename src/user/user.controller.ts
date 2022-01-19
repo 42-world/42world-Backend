@@ -1,20 +1,14 @@
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
-import { GithubAuthGuard } from './../auth/github-auth.guard';
-import { AuthService } from './../auth/auth.service';
 import {
   Controller,
   Get,
-  Post,
   Put,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
-  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { GetUser } from '@root/auth/auth.decorator';
@@ -25,8 +19,8 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  getOne(@GetUser('id') id: number): Promise<User> {
-    return this.userService.getOne(id);
+  getOne(@GetUser() user: User): User {
+    return user;
   }
 
   @Get(':id')
@@ -38,10 +32,10 @@ export class UserController {
   @Put()
   @UseGuards(JwtAuthGuard)
   update(
-    @GetUser('id') id: number,
+    @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(user, updateUserDto);
   }
 
   @Delete()
