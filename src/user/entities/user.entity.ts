@@ -11,6 +11,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
 import { Reaction } from '@root/reaction/entities/reaction.entity';
 
@@ -21,33 +22,43 @@ export enum UserRole {
 
 @Entity('user')
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ApiProperty()
   @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
   nickname!: string;
 
+  @ApiProperty()
   @Column({ type: 'varchar', length: 255, nullable: false })
   oauth_token!: string;
 
+  @ApiProperty()
   @Column({ nullable: false, default: false })
   is_authenticated!: boolean;
 
+  @ApiProperty()
   @Column({ nullable: true })
   last_login?: Date;
 
+  @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
 
+  @ApiProperty()
   @Column({ nullable: false, default: 0 })
   character!: number;
 
+  @ApiProperty()
   @Column({ nullable: true })
   deleted_at?: Date;
 
+  @ApiProperty()
   @CreateDateColumn()
   created_at!: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
   updated_at!: Date;
 

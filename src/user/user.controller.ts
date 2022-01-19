@@ -9,16 +9,30 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
 import { GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
+@ApiCookieAuth()
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOperation({ summary: '내 정보 가져오기' })
+  @ApiResponse({
+    status: 200,
+    type: User,
+  })
   getOne(@GetUser() user: User): User {
     return user;
   }
