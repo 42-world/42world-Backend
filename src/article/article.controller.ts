@@ -7,6 +7,9 @@ import {
   Query,
   Body,
   Param,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -25,6 +28,7 @@ export class ArticleController {
   ) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   create(
     @GetUser('id') writer_id: number,
     @Body() createArticleDto: CreateArticleDto,
@@ -33,23 +37,25 @@ export class ArticleController {
   }
 
   @Get()
+  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
     return this.articleService.findAll(findAllArticle);
   }
 
   @Get(':id')
-  getOne(@Param('id') id: number): Promise<Article> {
+  getOne(@Param('id', ParseIntPipe) id: number): Promise<Article> {
     return this.articleService.getOne(id);
   }
 
   @Get(':id/comments')
-  getComments(@Param('id') id: number): Promise<Comment[]> {
+  getComments(@Param('id', ParseIntPipe) id: number): Promise<Comment[]> {
     return this.commentService.getByArticleId(id);
   }
 
   @Put(':id')
+  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writer_id: number,
     @Body() updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
@@ -58,7 +64,7 @@ export class ArticleController {
 
   @Delete(':id')
   remove(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writer_id: number,
   ): Promise<void> {
     return this.articleService.remove(id, writer_id);
