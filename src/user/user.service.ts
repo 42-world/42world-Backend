@@ -1,7 +1,7 @@
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { getNextMonth } from '@root/utils';
-import { githubProfile } from '@root/auth/interfaces/github-profile.interface';
+import { GithubProfile } from '@root/auth/interfaces/github-profile.interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
 
@@ -9,7 +9,7 @@ import { UserRepository } from './repositories/user.repository';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async githubLogin(profile: githubProfile): Promise<User> {
+  async githubLogin(profile: GithubProfile): Promise<User> {
     const user = await this.userRepository.findOne({ oauth_token: profile.id });
 
     if (user) {

@@ -2,6 +2,7 @@ import { Strategy, VerifyCallback } from 'passport-github2';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { GithubProfile } from './interfaces/github-profile.interface';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy) {
@@ -18,7 +19,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const githubProfile: githubProfile = {
+    const githubProfile: GithubProfile = {
       id: profile.id,
       nickname: profile.username,
     };
