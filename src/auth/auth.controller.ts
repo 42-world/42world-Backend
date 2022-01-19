@@ -6,6 +6,8 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { Response } from 'express';
 import { ACCESS_TOKEN } from './constants/access-token';
+import { GithubProfile } from './interfaces/github-profile.interface';
+import { GetGithubProfile } from './auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -24,10 +26,10 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
   async githubCallback(
-    @Req() req,
+    @GetGithubProfile() githubProfile: GithubProfile,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = await this.userService.githubLogin(req.user);
+    const user = await this.userService.githubLogin(githubProfile);
     const jwt = this.authService.getJWT({
       userId: user.id,
       userRole: user.role,
