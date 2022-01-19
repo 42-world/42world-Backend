@@ -9,11 +9,14 @@ import { Article } from './entities/article.entity';
 export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  create(createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articleRepository.save(createArticleDto);
+  create(
+    writer_id: number,
+    createArticleDto: CreateArticleDto,
+  ): Promise<Article> {
+    return this.articleRepository.save({ ...createArticleDto, writer_id });
   }
 
-  getAll(options?: FindAllArticleDto): Promise<Article[]> {
+  findAll(options?: FindAllArticleDto): Promise<Article[]> {
     return this.articleRepository.findAll(options);
   }
 
@@ -27,19 +30,23 @@ export class ArticleService {
    */
   async update(
     id: number,
+    writer_id: number,
     updateArticleDto: UpdateArticleDto,
-  ): Promise<Article> {
-    const article = await this.articleRepository.findOne(id);
+  ): Promise<void> {
+    const article = await this.articleRepository.findOneOrFail({
+      id,
+      writer_id,
+    });
     const new_article = {
       ...article,
       ...updateArticleDto,
     };
 
-    return this.articleRepository.save(new_article);
+    this.articleRepository.save(new_article);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.articleRepository.delete({ id });
+  async remove(id: number, writer_id: number): Promise<void> {
+    const result = await this.articleRepository.delete({ id, writer_id });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Article with id ${id}`);
