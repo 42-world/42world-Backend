@@ -1,12 +1,12 @@
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { UserService } from '@user/user.service';
-import { GithubAuthGuard } from './github-auth.guard';
-import { AuthService } from './auth.service';
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ACCESS_TOKEN } from './constants/access-token';
+import { UserService } from '@user/user.service';
+import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { GithubAuthGuard } from './github-auth.guard';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { GithubProfile } from './interfaces/github-profile.interface';
+import { ACCESS_TOKEN } from './constants/access-token';
 import { GetGithubProfile, Public } from './auth.decorator';
 
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
   @Get('github')
   @Public()
   @UseGuards(GithubAuthGuard)
-  githubLogin() {
+  githubLogin(): void {
     console.log('send to login page');
     return;
   }
@@ -30,7 +30,7 @@ export class AuthController {
   async githubCallback(
     @GetGithubProfile() githubProfile: GithubProfile,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<void> {
     const user = await this.userService.githubLogin(githubProfile);
     const jwt = this.authService.getJWT({
       userId: user.id,
@@ -41,7 +41,7 @@ export class AuthController {
 
   @Get('signout')
   @UseGuards(JwtAuthGuard)
-  async signout(@Res({ passthrough: true }) response: Response) {
+  signout(@Res({ passthrough: true }) response: Response): void {
     response.clearCookie(ACCESS_TOKEN);
   }
 }

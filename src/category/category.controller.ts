@@ -23,8 +23,8 @@ export class CategoryController {
   }
 
   @Get()
-  findAll(): Promise<Category[]> {
-    return this.categoryService.findAll();
+  getAll(): Promise<Category[]> {
+    return this.categoryService.getAll();
   }
 
   @Put(':id/name')

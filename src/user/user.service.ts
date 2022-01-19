@@ -1,9 +1,9 @@
-import { User } from './entities/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
-import { GithubProfile } from '@root/auth/interfaces/github-profile.interface';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -26,13 +26,8 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async getOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneOrFail(id);
-
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    }
-    return user;
+  getOne(id: number): Promise<User> {
+    return this.userRepository.findOneOrFail(id);
   }
 
   isExistById(id: number): Promise<boolean> {

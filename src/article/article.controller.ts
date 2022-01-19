@@ -24,13 +24,13 @@ export class ArticleController {
   }
 
   @Get()
-  findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
-    return this.articleService.findAll(findAllArticle);
+  getAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
+    return this.articleService.getAll(findAllArticle);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Article> {
-    return this.articleService.findOne(id);
+  getOne(@Param('id') id: number): Promise<Article> {
+    return this.articleService.getOne(id);
   }
 
   @Put(':id')

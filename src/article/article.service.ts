@@ -13,18 +13,12 @@ export class ArticleService {
     return this.articleRepository.save(createArticleDto);
   }
 
-  findAll(options?: FindAllArticleDto): Promise<Article[]> {
+  getAll(options?: FindAllArticleDto): Promise<Article[]> {
     return this.articleRepository.findAll(options);
   }
 
-  async findOne(id: number): Promise<Article> {
-    const article = await this.articleRepository.findById(id);
-
-    if (!article) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
-
-    return article;
+  getOne(id: number): Promise<Article> {
+    return this.articleRepository.getOneOrFail(id);
   }
 
   /**
