@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { GetUser } from '@root/auth/auth.decorator';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -9,6 +19,7 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   create(
     @GetUser('id') writer_id: number,
     @Body() createCommentDto: CreateCommentDto,
@@ -18,7 +29,7 @@ export class CommentController {
 
   @Put(':id')
   updateContent(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writer_id: number,
     @Body('content') content: string,
   ): Promise<Comment> {
@@ -27,8 +38,8 @@ export class CommentController {
 
   @Delete(':id')
   remove(
+    @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writer_id: number,
-    @Param('id') id: number,
   ): Promise<void> {
     return this.commentService.remove(id, writer_id);
   }
