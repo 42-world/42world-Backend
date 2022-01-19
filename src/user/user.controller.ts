@@ -18,19 +18,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   getOne(@GetUser() user: User): User {
     return user;
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   getOneById(@Param('id') id: number): Promise<User> {
     return this.userService.getOne(id);
   }
 
   @Put()
-  @UseGuards(JwtAuthGuard)
   update(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
@@ -39,7 +36,6 @@ export class UserController {
   }
 
   @Delete()
-  @UseGuards(JwtAuthGuard)
   remove(@GetUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }

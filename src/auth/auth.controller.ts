@@ -7,7 +7,7 @@ import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { Response } from 'express';
 import { ACCESS_TOKEN } from './constants/access-token';
 import { GithubProfile } from './interfaces/github-profile.interface';
-import { GetGithubProfile } from './auth.decorator';
+import { GetGithubProfile, Public } from './auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +17,7 @@ export class AuthController {
   ) {}
 
   @Get('github')
+  @Public()
   @UseGuards(GithubAuthGuard)
   githubLogin() {
     console.log('send to login page');
@@ -24,6 +25,7 @@ export class AuthController {
   }
 
   @Get('github/callback')
+  @Public()
   @UseGuards(GithubAuthGuard)
   async githubCallback(
     @GetGithubProfile() githubProfile: GithubProfile,

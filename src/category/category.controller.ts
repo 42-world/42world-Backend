@@ -7,6 +7,7 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
+import { Admin } from '@root/auth/auth.decorator';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entities/category.entity';
@@ -16,6 +17,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @Admin()
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
     return this.categoryService.create(createCategoryDto);
   }
@@ -26,6 +28,7 @@ export class CategoryController {
   }
 
   @Put(':id/name')
+  @Admin()
   updateName(
     @Param('id') id: number,
     @Body('name') name: string,
@@ -34,6 +37,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @Admin()
   remove(@Param('id') id: number): Promise<void> {
     return this.categoryService.remove(id);
   }
