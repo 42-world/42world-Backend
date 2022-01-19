@@ -27,8 +27,8 @@ export class User {
   @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
   nickname!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  oauth_token?: string;
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  oauth_token!: string;
 
   @Column({ nullable: false, default: false })
   is_authenticated!: boolean;

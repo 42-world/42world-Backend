@@ -4,6 +4,7 @@ import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@root/auth/interfaces/github-profile.interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,7 @@ export class UserService {
       return this.userRepository.save(user);
     }
 
-    const newUser = {
+    const newUser: CreateUserDto = {
       nickname: profile.nickname,
       oauth_token: profile.id,
       last_login: getNextMonth(),

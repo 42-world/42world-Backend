@@ -1,4 +1,4 @@
 export class UpdateUserDto {
   readonly nickname?: string;
-  readonly picture?: string;
+  readonly character?: number;
 }
