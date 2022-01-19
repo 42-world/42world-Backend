@@ -17,31 +17,36 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { GetUser } from '@root/auth/auth.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll(): Promise<User[]> {
-    return this.userService.getAll();
-  }
-
-  @Get(':id')
-  getOne(@Param('id') id: number): Promise<User> {
+  @UseGuards(JwtAuthGuard)
+  getOne(@GetUser('id') id: number): Promise<User> {
     return this.userService.getOne(id);
   }
 
-  @Put(':id')
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  getOneById(@Param('id') id: number): Promise<User> {
+    return this.userService.getOne(id);
+  }
+
+  @Put()
+  @UseGuards(JwtAuthGuard)
   update(
-    @Param('id') id: number,
+    @GetUser('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  @Delete()
+  @UseGuards(JwtAuthGuard)
+  remove(@GetUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }
 }

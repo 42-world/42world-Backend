@@ -3,8 +3,9 @@ import { User } from '@root/user/entities/user.entity';
 import { GithubProfile } from './interfaces/github-profile.interface';
 
 export const GetUser = createParamDecorator(
-  (data, ctx: ExecutionContext): User => {
+  (data: 'id' | null, ctx: ExecutionContext): User => {
     const req = ctx.switchToHttp().getRequest();
+    if (data) return req.user[data];
     return req.user;
   },
 );
