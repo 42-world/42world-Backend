@@ -23,13 +23,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  getAll(): Promise<User[]> {
+    return this.userService.getAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<User> {
-    return this.userService.findOne(id);
+  getOne(@Param('id') id: number): Promise<User> {
+    return this.userService.getOne(id);
   }
 
   @Put(':id')

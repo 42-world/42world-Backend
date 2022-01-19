@@ -26,7 +26,7 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  findAll(): Promise<User[]> {
+  getAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
@@ -36,7 +36,6 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`Can't find User with id ${id}`);
     }
-
     return user;
   }
 
@@ -44,18 +43,14 @@ export class UserService {
     return this.userRepository.isExistById(id);
   }
 
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne(id);
-  }
-
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.getOne(id);
-    const new_user = {
+    const newUser = {
       ...user,
       ...updateUserDto,
     };
 
-    return this.userRepository.save(new_user);
+    return this.userRepository.save(newUser);
   }
 
   async remove(id: number): Promise<void> {
