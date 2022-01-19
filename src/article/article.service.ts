@@ -24,10 +24,14 @@ export class ArticleService {
     return this.articleRepository.getOneOrFail(id);
   }
 
-  /**
-   * 응답값에 category_id 가 자꾸 문자열로 응답 되는데 왜그럴까요...
-   * 그리고 join 을 하지 않아서, findOne 이랑 응답 스키마가 달라요..
-   */
+  async existOrFail(id: number): Promise<void> {
+    const isExist = await this.articleRepository.isExistById(id);
+
+    if (!isExist) {
+      throw new NotFoundException(`Can't find Article with id ${id}`);
+    }
+  }
+
   async update(
     id: number,
     writer_id: number,
