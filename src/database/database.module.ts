@@ -14,7 +14,7 @@ export class DatabaseModule {
 
       synchronize: true,
       migrationsRun: false,
-      logging: true,
+      logging: process.env.NODE_ENV === 'dev',
 
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {
