@@ -1,6 +1,8 @@
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import configEmail from './mail/mail';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommentModule } from './comment/comment.module';
@@ -14,12 +16,35 @@ import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
+import { MailModule } from './mail/mail.module';
+import * as path from 'path';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: getEnvPath(),
       isGlobal: true,
       cache: true,
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configEmail],
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          ...config.get('email'),
+          template: {
+            dir: path.join(__dirname, '/mail/templates/'),
+            adapter: new EjsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        };
+      },
     }),
     DatabaseModule.register(),
     CommentModule,
@@ -31,6 +56,7 @@ import { getEnvPath } from './utils';
     AuthModule,
     BestModule,
     ReactionModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
