@@ -1,4 +1,5 @@
 import { Article } from '@article/entities/article.entity';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,15 +11,19 @@ import {
 
 @Entity('category')
 export class Category {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ApiProperty()
   @Column({ type: 'varchar', length: 40, nullable: false })
   name!: string;
 
+  @ApiProperty()
   @CreateDateColumn()
   created_at!: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
   updated_at!: Date;
 
