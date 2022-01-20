@@ -10,11 +10,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiOperation,
-  ApiResponse,
   ApiTags,
   ApiCookieAuth,
+  ApiUnauthorizedResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
@@ -22,6 +22,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @ApiCookieAuth()
+@ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('user')
 @Controller('user')
 export class UserController {
@@ -29,20 +30,21 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: '내 정보 가져오기' })
-  @ApiResponse({
-    status: 200,
-    type: User,
-  })
+  @ApiOkResponse({ description: '내 정보', type: User })
   getOne(@GetUser() user: User): User {
     return user;
   }
 
   @Get(':id')
+  @ApiOperation({ summary: '특정 유저 정보 가져오기' })
+  @ApiOkResponse({ description: '유저 정보', type: User })
   getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.getOne(id);
   }
 
   @Put('profile')
+  @ApiOperation({ summary: '유저 프로필 변경' })
+  @ApiOkResponse({ description: '변경된 정보', type: User })
   @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   update(
     @GetUser() user: User,
@@ -52,6 +54,8 @@ export class UserController {
   }
 
   @Delete()
+  @ApiOperation({ summary: '유저 삭제' })
+  @ApiOkResponse({ description: '유저 삭제 성공' })
   remove(@GetUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }

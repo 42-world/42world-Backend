@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ACCESS_TOKEN } from './auth/constants/access-token';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,11 +12,10 @@ async function bootstrap() {
   const port = configService.get('PORT');
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
-    .addTag('cats')
-    .addCookieAuth('optional-session-id')
+    .setTitle('42World API')
+    .setDescription('42World API')
+    .setVersion('0.1')
+    .addCookieAuth(ACCESS_TOKEN)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

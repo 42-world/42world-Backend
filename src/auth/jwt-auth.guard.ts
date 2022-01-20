@@ -1,8 +1,8 @@
 import { AuthGuard } from '@nestjs/passport';
 import {
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { User, UserRole } from '@root/user/entities/user.entity';
@@ -46,7 +46,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       ) ?? UserRole.CADET;
 
     if (!(u.role === role)) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
     return user;
   }
