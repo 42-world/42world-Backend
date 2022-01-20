@@ -23,7 +23,7 @@ import { User } from './entities/user.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
-@ApiTags('user')
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

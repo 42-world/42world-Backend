@@ -46,7 +46,10 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    minimum: 0,
+    maximum: 5,
+  })
   @Column({ nullable: false, default: 0 })
   character!: number;
 
