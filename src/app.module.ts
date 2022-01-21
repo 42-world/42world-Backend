@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-
 import { AppController } from './app.controller';
 import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
@@ -15,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ormconfig } from './database/ormconfig';
 
 @Module({
   imports: [
@@ -22,6 +22,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       envFilePath: getEnvPath(),
       isGlobal: true,
       cache: true,
+      load: [ormconfig],
     }),
     DatabaseModule.register(),
     CommentModule,

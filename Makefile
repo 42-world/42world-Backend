@@ -1,34 +1,49 @@
-all:
-	yarn build
-	docker-compose --env-file config/compose.env up --build -d
+COMPOSE = sudo docker-compose
+COMPOSE_ENV = ${COMPOSE} --env-file config/$(1).env
 
 dev: db
-	yarn start:dev
+	sudo yarn start:dev
 
-db:
-	docker-compose --env-file config/compose.env up --build -d db
+alpha:
+	export NODE_ENV=alpha && $(call COMPOSE_ENV,alpha) up --build -d
+
+prod:
+	export NODE_ENV=prod && $(call COMPOSE_ENV,alpha) up --build -d
+
+db-dev:
+	$(call COMPOSE_ENV,dev) up --build -d db
+
+db-alpha:
+	$(call COMPOSE_ENV,alpha) up --build -d db
+
+db-prod:
+	$(call COMPOSE_ENV,prod) up --build -d db
+
+db: db-dev
 
 db-down:
-	docker-compose down db
+	${COMPOSE} down db
+
+api-dev:
+	$(call COMPOSE_ENV,dev) up --build --no-deps -d api
+
+api-alpha:
+	$(call COMPOSE_ENV,alpha) up --build --no-deps -d api
+
+api-prod:
+	$(call COMPOSE_ENV,prod) up --build --no-deps -d api
 
 api:
-	yarn build
-	docker-compose up --build --no-deps -d api
-
-api-up:
-	docker-compose up --build --no-deps -d api
-
-api-down:
-	docker-compose down api
+	api-dev
 
 db-init:
-	yarn typeorm:run
-	yarn seed
+	sudo yarn typeorm:run
+	sudo yarn seed
 
 clean:
-	docker-compose down
+	${COMPOSE} down
 
 clean-all: clean
-	rm -rf db dist
+	sudo rm -rf db dist
 
 .PHONY: db
