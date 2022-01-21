@@ -20,7 +20,6 @@ export class CommentService {
     writerId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    // await this.articleService.existOrFail(createCommentDto.articleId);
     const article = await this.articleService.getOne(
       createCommentDto.articleId,
     );
@@ -28,7 +27,7 @@ export class CommentService {
       ...createCommentDto,
       writerId,
     });
-    await this.notificationService.createNewComment(article, comment); // await 해야할까요?
+    this.notificationService.createNewComment(article, comment);
     return comment;
   }
 
