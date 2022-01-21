@@ -40,8 +40,8 @@ export class CategoryController {
   @Get()
   @ApiOperation({ summary: '카테고리 종류 가져오기' })
   @ApiOkResponse({ description: '카테고리 종류', type: [Category] })
-  getAll(): Promise<Category[]> {
-    return this.categoryService.getAll();
+  findAll(): Promise<Category[]> {
+    return this.categoryService.findAll();
   }
 
   @Put(':id/name')

@@ -15,7 +15,7 @@ export class CategoryService {
     return this.categoryRepository.save(createCategoryDto);
   }
 
-  getAll(): Promise<Category[]> {
+  findAll(): Promise<Category[]> {
     return this.categoryRepository.find();
   }
 

@@ -9,7 +9,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
     super({
       clientID: '1c53f03549f1ebbfcfdf',
       clientSecret: '208f820e890183e23c2ed3b0fe572d73cbc59014',
-      callbackURL: 'http://localhost:8080', // frontend url
+      callbackURL: 'http://localhost:3000/auth/github/callback', // frontend url
     });
   }
   async validate(
