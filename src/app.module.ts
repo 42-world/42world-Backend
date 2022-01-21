@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
@@ -16,6 +15,7 @@ import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,7 +36,6 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
   ],
   controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

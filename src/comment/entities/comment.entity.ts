@@ -40,7 +40,7 @@ export class Comment {
   writerId!: number;
 
   //TODO: join user table
-  // @ApiProperty()
+  @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,
     nullable: false,

@@ -51,7 +51,7 @@ export class Article {
   @Index('ix_writer_id')
   writerId!: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.article, {
     createForeignKeyConstraints: false,
   })
