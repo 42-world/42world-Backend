@@ -6,8 +6,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -45,7 +43,6 @@ export class UserController {
   @Put('profile')
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: User })
-  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
   update(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,

@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -29,7 +30,7 @@ export class CategoryController {
 
   @Post()
   @Admin()
-  @ApiOperation({ summary: '카테고리 생성하기' })
+  @ApiOperation({ summary: '카테고리 생성하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리', type: Category })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
@@ -45,11 +46,11 @@ export class CategoryController {
 
   @Put(':id/name')
   @Admin()
-  @ApiOperation({ summary: '카테고리 이름 수정하기' })
+  @ApiOperation({ summary: '카테고리 이름 수정하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리', type: Category })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   updateName(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
   ): Promise<Category> {
     return this.categoryService.updateName(id, name);
@@ -57,10 +58,10 @@ export class CategoryController {
 
   @Delete(':id')
   @Admin()
-  @ApiOperation({ summary: '카테고리 삭제하기' })
+  @ApiOperation({ summary: '카테고리 삭제하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리 삭제 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.categoryService.remove(id);
   }
 }

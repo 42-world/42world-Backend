@@ -5,6 +5,7 @@ import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-except
 import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ACCESS_TOKEN } from './auth/constants/access-token';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,13 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
+      forbidNonWhitelisted: true, // DTO에 정의되지 않은 값이 넘어오면 request 자체를 막습니다.
+      transform: true,
+    }),
+  );
   app.use(cookieParser());
   await app.listen(port || 3000);
 }
