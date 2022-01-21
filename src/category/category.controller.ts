@@ -24,7 +24,7 @@ import { Category } from './entities/category.entity';
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Category')
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

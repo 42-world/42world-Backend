@@ -24,7 +24,7 @@ import { Notification } from '@root/notification/entities/notification.entity';
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('User')
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,

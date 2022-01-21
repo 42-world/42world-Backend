@@ -23,7 +23,7 @@ import { Comment } from './entities/comment.entity';
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Comment')
-@Controller('comment')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
