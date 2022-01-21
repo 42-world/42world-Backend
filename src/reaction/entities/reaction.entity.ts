@@ -18,7 +18,7 @@ export class Reaction {
 
   @Column({ nullable: false })
   @Index('ix_user_id')
-  user_id!: number;
+  userId!: number;
 
   @ManyToOne(() => User, (user) => user.reaction, {
     createForeignKeyConstraints: false,
@@ -29,7 +29,7 @@ export class Reaction {
 
   @Column({ nullable: false })
   @Index('ix_article_id')
-  article_id!: number;
+  articleId!: number;
 
   @ManyToOne(() => Article, (article) => article.reaction, {
     createForeignKeyConstraints: false,
@@ -39,8 +39,8 @@ export class Reaction {
   article?: Article;
 
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

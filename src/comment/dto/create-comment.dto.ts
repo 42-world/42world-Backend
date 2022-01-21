@@ -1,5 +1,14 @@
+import { IsString, IsInt, IsNotEmpty, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateCommentDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ example: '댓글 입니다.' })
   readonly content!: string;
-  readonly article_id!: number;
-  readonly writer_id!: number;
+
+  @IsInt()
+  @Min(0)
+  @ApiProperty({ example: 1 })
+  readonly articleId!: number;
 }
