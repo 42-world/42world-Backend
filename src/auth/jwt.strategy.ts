@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: JWTPayload): Promise<User> {
     try {
-      return this.userService.getOne(payload.userId);
+      return await this.userService.getOne(payload.userId);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw new UnauthorizedException();
