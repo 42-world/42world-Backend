@@ -14,12 +14,14 @@ import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
+import { ormconfig } from './database/ormconfig';
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: getEnvPath(),
       isGlobal: true,
       cache: true,
+      load: [ormconfig],
     }),
     DatabaseModule.register(),
     CommentModule,
