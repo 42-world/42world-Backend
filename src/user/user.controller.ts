@@ -38,7 +38,7 @@ export class UserController {
     return user;
   }
 
-  @Get('profile/:id')
+  @Get(':id')
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
   @ApiOkResponse({ description: '유저 정보', type: User })
   getOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
@@ -59,7 +59,7 @@ export class UserController {
     return this.notificationService.updateIsReadByUserId(id);
   }
 
-  @Put('profile')
+  @Put()
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: User })
   update(
