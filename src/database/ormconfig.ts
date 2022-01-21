@@ -1,5 +1,5 @@
 import { ConnectionOptions } from 'typeorm';
-
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 export interface IOrmconfig {
   ormconfig: ConnectionOptions;
 }
@@ -13,6 +13,7 @@ export const ormconfig = (): IOrmconfig => ({
     password: process.env.DB_USER_PASSWORD ?? 'ft_world',
     database: process.env.DB_NAME ?? 'ft_world',
     entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+    namingStrategy: new SnakeNamingStrategy(),
 
     synchronize: true,
     migrationsRun: false,
