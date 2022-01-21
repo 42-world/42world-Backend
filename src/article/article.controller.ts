@@ -28,7 +28,7 @@ import {
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Article')
-@Controller('article')
+@Controller('articles')
 export class ArticleController {
   constructor(
     private readonly articleService: ArticleService,
