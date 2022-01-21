@@ -28,7 +28,7 @@ export class NotificationService {
 
   async updateIsReadByUserId(userId: number): Promise<void> {
     const notifications = await this.notificationRepository.find({
-      where: { userId, is_read: false },
+      where: { userId, isRead: false },
     });
     notifications.forEach((notification) => (notification.isRead = true));
     this.notificationRepository.save(notifications);
