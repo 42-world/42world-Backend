@@ -49,6 +49,8 @@ export class CommentController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: '댓글 삭제' })
+  @ApiOkResponse({ description: '댓글 삭제 완료' })
   remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writer_id: number,

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 
 import {
@@ -18,9 +19,13 @@ export enum NotificationType {
 
 @Entity('notification')
 export class Notification {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ApiProperty({
+    enum: NotificationType,
+  })
   @Column({
     type: 'enum',
     enum: NotificationType,
@@ -28,12 +33,15 @@ export class Notification {
   })
   type!: string;
 
+  @ApiProperty()
   @Column({ type: 'text', nullable: false })
   content!: string;
 
+  @ApiProperty()
   @Column({ nullable: false, default: false })
   is_read!: boolean;
 
+  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_user_id')
   user_id!: number;
@@ -45,9 +53,11 @@ export class Notification {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: User;
 
+  @ApiProperty()
   @CreateDateColumn()
   created_at!: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
   updated_at!: Date;
 }

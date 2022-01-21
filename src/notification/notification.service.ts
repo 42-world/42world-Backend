@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Article } from '@root/article/entities/article.entity';
+import { Comment } from '@root/comment/entities/comment.entity';
 import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { Notification } from './entities/notification.entity';
+import { Notification, NotificationType } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
@@ -11,8 +13,13 @@ export class NotificationService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
-  create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
-    return this.notificationRepository.save(createNotificationDto);
+  createNewComment(article: Article, comment: Comment): Promise<Notification> {
+    const notification: CreateNotificationDto = {
+      type: NotificationType.NEW_COMMENT,
+      content: comment.content,
+      user_id: article.writer_id,
+    };
+    return this.notificationRepository.save(notification);
   }
 
   getByUserId(user_id: number): Promise<Notification[]> {
