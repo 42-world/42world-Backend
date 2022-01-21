@@ -1,4 +1,4 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '@user/user.service';
 import { AuthService } from './auth.service';
@@ -38,7 +38,7 @@ export class AuthController {
     return;
   }
 
-  @Get('github/callback')
+  @Post('github/callback')
   @Public()
   @UseGuards(GithubAuthGuard)
   @ApiOperation({
@@ -61,7 +61,7 @@ export class AuthController {
     response.cookie(ACCESS_TOKEN, jwt);
   }
 
-  @Get('signout')
+  @Delete('signout')
   @ApiCookieAuth()
   @ApiOperation({ summary: '로그아웃' })
   @ApiOkResponse({ description: '로그아웃 성공' })
