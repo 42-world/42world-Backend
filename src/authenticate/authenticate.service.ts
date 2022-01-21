@@ -16,16 +16,16 @@ export class AuthenticateService {
     return this.authenticateRepository.save(createAuthenticateDto);
   }
 
-  getByIntraId(intra_id: string): Promise<Authenticate> {
-    return this.authenticateRepository.findOne({ where: { intra_id } });
+  getByIntraId(intraId: string): Promise<Authenticate> {
+    return this.authenticateRepository.findOne({ where: { intraId } });
   }
 
-  async removeByUserId(user_id: number): Promise<void> {
-    const result = await this.authenticateRepository.delete({ user_id });
+  async removeByUserId(userId: number): Promise<void> {
+    const result = await this.authenticateRepository.delete({ userId });
 
     if (result.affected === 0) {
       throw new NotFoundException(
-        `Can't find Authenticate with user id ${user_id}`,
+        `Can't find Authenticate with user id ${userId}`,
       );
     }
   }

@@ -1,4 +1,4 @@
-export interface githubProfile {
+export interface GithubProfile {
   id: string;
   nickname: string;
 }

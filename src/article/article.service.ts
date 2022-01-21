@@ -9,43 +9,51 @@ import { Article } from './entities/article.entity';
 export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  create(createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articleRepository.save(createArticleDto);
+  create(
+    writerId: number,
+    createArticleDto: CreateArticleDto,
+  ): Promise<Article> {
+    return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
   findAll(options?: FindAllArticleDto): Promise<Article[]> {
     return this.articleRepository.findAll(options);
   }
 
-  async findOne(id: number): Promise<Article> {
-    const article = await this.articleRepository.findById(id);
-
-    if (!article) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
-
-    return article;
+  getOne(id: number): Promise<Article> {
+    return this.articleRepository.getOneOrFail(id);
   }
 
-  /**
-   * 응답값에 category_id 가 자꾸 문자열로 응답 되는데 왜그럴까요...
-   * 그리고 join 을 하지 않아서, findOne 이랑 응답 스키마가 달라요..
-   */
+  async existOrFail(id: number): Promise<void> {
+    const isExist = await this.articleRepository.isExistById(id);
+
+    if (!isExist) {
+      throw new NotFoundException(`Can't find Article with id ${id}`);
+    }
+  }
+
   async update(
     id: number,
+    writerId: number,
     updateArticleDto: UpdateArticleDto,
-  ): Promise<Article> {
-    const article = await this.articleRepository.findOne(id);
-    const new_article = {
+  ): Promise<void> {
+    const article = await this.articleRepository.findOneOrFail({
+      id,
+      writerId,
+    });
+    const newArticle = {
       ...article,
       ...updateArticleDto,
     };
 
-    return this.articleRepository.save(new_article);
+    this.articleRepository.save(newArticle);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.articleRepository.delete({ id });
+  async remove(id: number, writerId: number): Promise<void> {
+    const result = await this.articleRepository.delete({
+      id,
+      writerId,
+    });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Article with id ${id}`);

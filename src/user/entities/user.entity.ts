@@ -11,6 +11,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
 import { Reaction } from '@root/reaction/entities/reaction.entity';
 
@@ -21,35 +22,48 @@ export enum UserRole {
 
 @Entity('user')
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ApiProperty()
   @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
   nickname!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  oauth_token?: string;
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  oauthToken!: string;
 
+  @ApiProperty()
   @Column({ nullable: false, default: false })
-  is_authenticated!: boolean;
+  isAuthenticated!: boolean;
 
+  @ApiProperty()
   @Column({ nullable: true })
-  last_login?: Date;
+  lastLogin?: Date;
 
+  @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  picture?: string;
+  @ApiProperty({
+    minimum: 0,
+    maximum: 5,
+  })
+  @Column({ nullable: false, default: 0 })
+  character!: number;
 
+  @ApiProperty()
   @Column({ nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
+  @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => Article, (article) => article.writer, {
     createForeignKeyConstraints: false,
