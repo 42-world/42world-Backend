@@ -17,41 +17,44 @@ export class CommentService {
   ) {}
 
   async create(
-    writer_id: number,
+    writerId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    // await this.articleService.existOrFail(createCommentDto.article_id);
+    // await this.articleService.existOrFail(createCommentDto.articleId);
     const article = await this.articleService.getOne(
-      createCommentDto.article_id,
+      createCommentDto.articleId,
     );
     const comment = await this.commentRepository.save({
       ...createCommentDto,
-      writer_id,
+      writerId,
     });
     await this.notificationService.createNewComment(article, comment); // await 해야할까요?
     return comment;
   }
 
-  getByArticleId(article_id: number): Promise<Comment[]> {
-    return this.commentRepository.find({ where: { article_id } });
+  getByArticleId(articleId: number): Promise<Comment[]> {
+    return this.commentRepository.find({ where: { article_id: articleId } });
   }
 
   async updateContent(
     id: number,
-    writer_id: number,
+    writerId: number,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment> {
     const comment = await this.commentRepository.findOneOrFail({
       id,
-      writer_id,
+      writerId,
     });
 
     comment.content = updateCommentDto.content;
     return this.commentRepository.save(comment);
   }
 
-  async remove(id: number, writer_id: number): Promise<void> {
-    const result = await this.commentRepository.delete({ id, writer_id });
+  async remove(id: number, writerId: number): Promise<void> {
+    const result = await this.commentRepository.delete({
+      id,
+      writerId,
+    });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Comment with id ${id}`);

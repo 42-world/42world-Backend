@@ -21,11 +21,11 @@ export class Category {
 
   @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => Article, (article) => article.category, {
     createForeignKeyConstraints: false,

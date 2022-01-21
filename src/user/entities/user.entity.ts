@@ -32,15 +32,15 @@ export class User {
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 255, nullable: false })
-  oauth_token!: string;
+  oauthToken!: string;
 
   @ApiProperty()
   @Column({ nullable: false, default: false })
-  is_authenticated!: boolean;
+  isAuthenticated!: boolean;
 
   @ApiProperty()
   @Column({ nullable: true })
-  last_login?: Date;
+  lastLogin?: Date;
 
   @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
@@ -55,15 +55,15 @@ export class User {
 
   @ApiProperty()
   @Column({ nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
   @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => Article, (article) => article.writer, {
     createForeignKeyConstraints: false,

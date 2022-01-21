@@ -17,20 +17,20 @@ export class NotificationService {
     const notification: CreateNotificationDto = {
       type: NotificationType.NEW_COMMENT,
       content: comment.content,
-      user_id: article.writer_id,
+      userId: article.writerId,
     };
     return this.notificationRepository.save(notification);
   }
 
-  getByUserId(user_id: number): Promise<Notification[]> {
-    return this.notificationRepository.find({ where: { user_id } });
+  getByUserId(userId: number): Promise<Notification[]> {
+    return this.notificationRepository.find({ where: { userId } });
   }
 
-  async updateIsReadByUserId(user_id: number): Promise<void> {
+  async updateIsReadByUserId(userId: number): Promise<void> {
     const notifications = await this.notificationRepository.find({
-      where: { user_id, is_read: false },
+      where: { userId, is_read: false },
     });
-    notifications.forEach((notification) => (notification.is_read = true));
+    notifications.forEach((notification) => (notification.isRead = true));
     this.notificationRepository.save(notifications);
   }
 }

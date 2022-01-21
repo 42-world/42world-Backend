@@ -25,7 +25,7 @@ export class Comment {
   @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
-  article_id!: number;
+  articleId!: number;
 
   @ManyToOne(() => Article, (article) => article.comment, {
     createForeignKeyConstraints: false,
@@ -37,7 +37,7 @@ export class Comment {
   @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_writer_id')
-  writer_id!: number;
+  writerId!: number;
 
   //TODO: join user table
   // @ApiProperty()
@@ -50,13 +50,13 @@ export class Comment {
 
   @ApiProperty()
   @Column({ nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
   @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

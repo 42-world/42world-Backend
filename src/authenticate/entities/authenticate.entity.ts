@@ -18,11 +18,11 @@ export class Authenticate {
 
   @Index('ix_intra_id')
   @Column({ type: 'varchar', length: 40, nullable: false })
-  intra_id?: string;
+  intraId?: string;
 
   @Column({ nullable: false })
   @Index('ix_user_id')
-  user_id!: number;
+  userId!: number;
 
   @OneToOne(() => User, (user) => user.authenticate, {
     createForeignKeyConstraints: false,
@@ -32,8 +32,8 @@ export class Authenticate {
   user?: User;
 
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

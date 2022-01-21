@@ -31,10 +31,10 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 생성' })
   @ApiOkResponse({ description: '생성된 댓글', type: Comment })
   create(
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
     @Body() createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    return this.commentService.create(writer_id, createCommentDto);
+    return this.commentService.create(writerId, createCommentDto);
   }
 
   @Put(':id')
@@ -42,10 +42,10 @@ export class CommentController {
   @ApiOkResponse({ description: '수정된 댓글', type: Comment })
   updateContent(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ): Promise<Comment> {
-    return this.commentService.updateContent(id, writer_id, updateCommentDto);
+    return this.commentService.updateContent(id, writerId, updateCommentDto);
   }
 
   @Delete(':id')
@@ -53,8 +53,8 @@ export class CommentController {
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
   ): Promise<void> {
-    return this.commentService.remove(id, writer_id);
+    return this.commentService.remove(id, writerId);
   }
 }

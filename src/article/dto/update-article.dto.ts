@@ -18,5 +18,5 @@ export class UpdateArticleDto {
   @Min(0)
   @IsOptional()
   @ApiPropertyOptional({ example: 2 })
-  readonly category_id?: number;
+  readonly categoryId?: number;
 }

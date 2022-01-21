@@ -39,12 +39,12 @@ export class Notification {
 
   @ApiProperty()
   @Column({ nullable: false, default: false })
-  is_read!: boolean;
+  isRead!: boolean;
 
   @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_user_id')
-  user_id!: number;
+  userId!: number;
 
   @ManyToOne(() => User, (user) => user.notification, {
     createForeignKeyConstraints: false,
@@ -55,9 +55,9 @@ export class Notification {
 
   @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

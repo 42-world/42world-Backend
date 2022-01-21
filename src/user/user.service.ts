@@ -10,17 +10,17 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async githubLogin(profile: GithubProfile): Promise<User> {
-    const user = await this.userRepository.findOne({ oauth_token: profile.id });
+    const user = await this.userRepository.findOne({ oauthToken: profile.id });
 
     if (user) {
-      user.last_login = getNextMonth();
+      user.lastLogin = getNextMonth();
       return this.userRepository.save(user);
     }
 
     const newUser = {
       nickname: profile.nickname,
-      oauth_token: profile.id,
-      last_login: getNextMonth(),
+      oauthToken: profile.id,
+      lastLogin: getNextMonth(),
     };
 
     return this.userRepository.save(newUser);

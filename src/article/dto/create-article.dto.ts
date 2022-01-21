@@ -15,5 +15,5 @@ export class CreateArticleDto {
   @IsInt()
   @Min(0)
   @ApiProperty({ example: 1 })
-  readonly category_id!: number;
+  readonly categoryId!: number;
 }

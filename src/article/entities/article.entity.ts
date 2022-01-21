@@ -37,7 +37,7 @@ export class Article {
   @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_category_id')
-  category_id!: number;
+  categoryId!: number;
 
   @ApiProperty()
   @ManyToOne(() => Category, (category) => category.article, {
@@ -49,7 +49,7 @@ export class Article {
   @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_writer_id')
-  writer_id!: number;
+  writerId!: number;
 
   @ApiProperty()
   @ManyToOne(() => User, (user) => user.article, {
@@ -60,15 +60,15 @@ export class Article {
 
   @ApiProperty()
   @Column({ nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
   @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => Comment, (comment) => comment.article, {
     createForeignKeyConstraints: false,

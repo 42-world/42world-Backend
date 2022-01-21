@@ -39,10 +39,10 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiOkResponse({ description: '업로드된 게시글', type: Article })
   create(
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
     @Body() createArticleDto: CreateArticleDto,
   ): Promise<Article> {
-    return this.articleService.create(writer_id, createArticleDto);
+    return this.articleService.create(writerId, createArticleDto);
   }
 
   @Get()
@@ -71,10 +71,10 @@ export class ArticleController {
   @ApiOkResponse({ description: '게시글 수정 완료' })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
     @Body() updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
-    return this.articleService.update(id, writer_id, updateArticleDto);
+    return this.articleService.update(id, writerId, updateArticleDto);
   }
 
   @Delete(':id')
@@ -82,8 +82,8 @@ export class ArticleController {
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writer_id: number,
+    @GetUser('id') writerId: number,
   ): Promise<void> {
-    return this.articleService.remove(id, writer_id);
+    return this.articleService.remove(id, writerId);
   }
 }

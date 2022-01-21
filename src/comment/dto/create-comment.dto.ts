@@ -10,5 +10,5 @@ export class CreateCommentDto {
   @IsInt()
   @Min(0)
   @ApiProperty({ example: 1 })
-  readonly article_id!: number;
+  readonly articleId!: number;
 }

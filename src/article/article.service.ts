@@ -10,10 +10,10 @@ export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   create(
-    writer_id: number,
+    writerId: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
-    return this.articleRepository.save({ ...createArticleDto, writer_id });
+    return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
   findAll(options?: FindAllArticleDto): Promise<Article[]> {
@@ -34,23 +34,26 @@ export class ArticleService {
 
   async update(
     id: number,
-    writer_id: number,
+    writerId: number,
     updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
     const article = await this.articleRepository.findOneOrFail({
       id,
-      writer_id,
+      writerId,
     });
-    const new_article = {
+    const newArticle = {
       ...article,
       ...updateArticleDto,
     };
 
-    this.articleRepository.save(new_article);
+    this.articleRepository.save(newArticle);
   }
 
-  async remove(id: number, writer_id: number): Promise<void> {
-    const result = await this.articleRepository.delete({ id, writer_id });
+  async remove(id: number, writerId: number): Promise<void> {
+    const result = await this.articleRepository.delete({
+      id,
+      writerId,
+    });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Article with id ${id}`);
