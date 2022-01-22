@@ -1,4 +1,11 @@
-import { IsString, IsInt, Min, Max, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+  IsBoolean,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateUserDto {
@@ -13,4 +20,9 @@ export class UpdateUserDto {
   @IsOptional()
   @ApiPropertyOptional({ example: 0 })
   readonly character?: number;
+}
+
+export class UpdateAuthDto {
+  @IsBoolean()
+  readonly isAuthenticated: boolean;
 }

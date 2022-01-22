@@ -1,7 +1,11 @@
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import configEmail from './config/mail.config';
 import { CacheModule, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import * as redisStore from 'cache-manager-ioredis';
+import * as path from 'path';
 
 import { AppController } from './app.controller';
 import { CommentModule } from './comment/comment.module';
@@ -9,7 +13,7 @@ import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
-import { AuthenticateModule } from './authenticate/authenticate.module';
+import { FtAuthModule } from './ft-auth/ft-auth.module';
 import { AuthModule } from './auth/auth.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
@@ -24,20 +28,37 @@ import { ormconfig } from './database/ormconfig';
       envFilePath: getEnvPath(),
       isGlobal: true,
       cache: true,
-      load: [ormconfig],
+      load: [ormconfig, configEmail],
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          ...config.get('email'),
+          template: {
+            dir: path.join(__dirname, '/ft-auth/templates/'),
+            adapter: new EjsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        };
+      },
     }),
     DatabaseModule.register(),
     CacheModule.register({
       store: redisStore,
       host: process.env.REDIS_HOST ?? 'localhost',
       port: process.env.REDIS_PORT ?? 6379,
+      isGlobal: true,
     }),
     CommentModule,
     UserModule,
     ArticleModule,
     CategoryModule,
     NotificationModule,
-    AuthenticateModule,
+    FtAuthModule,
     AuthModule,
     BestModule,
     ReactionModule,
