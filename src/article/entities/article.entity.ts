@@ -33,7 +33,7 @@ export class Article {
 
   @ApiProperty()
   @Column({ default: 0 })
-  view_count!: number;
+  viewCount!: number;
 
   @ApiProperty()
   @Column({ nullable: false })
@@ -58,6 +58,14 @@ export class Article {
   })
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer?: User;
+
+  @ApiProperty()
+  @Column({ default: 0 })
+  commentCount!: number;
+
+  @ApiProperty()
+  @Column({ default: 0 })
+  likeCount!: number;
 
   @ApiProperty()
   @CreateDateColumn()

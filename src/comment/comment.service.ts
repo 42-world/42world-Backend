@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
@@ -28,11 +28,16 @@ export class CommentService {
       writerId,
     });
     this.notificationService.createNewComment(article, comment);
+    this.articleService.increaseCommentCount(article);
     return comment;
   }
 
   getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.find({ where: { article_id: articleId } });
+    return this.commentRepository.find({ where: { articleId } });
+  }
+
+  getOne(id: number, options?: FindOneOptions): Promise<Comment> {
+    return this.commentRepository.findOneOrFail(id, options);
   }
 
   async updateContent(
@@ -58,5 +63,9 @@ export class CommentService {
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Comment with id ${id}`);
     }
+
+    const comment = await this.getOne(id, { withDeleted: true });
+    const article = await this.articleService.getOne(comment.articleId);
+    this.articleService.decreaseCommentCountById(article);
   }
 }

@@ -1,15 +1,11 @@
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryRepository } from './repositories/category.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-  ) {}
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     return this.categoryRepository.save(createCategoryDto);
@@ -17,6 +13,10 @@ export class CategoryService {
 
   findAll(): Promise<Category[]> {
     return this.categoryRepository.find();
+  }
+
+  existOrFail(id: number): Promise<void> {
+    return this.categoryRepository.existOrFail(id);
   }
 
   async updateName(id: number, name: string): Promise<Category> {
