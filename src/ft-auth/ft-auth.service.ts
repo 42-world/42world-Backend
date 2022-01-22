@@ -42,6 +42,9 @@ export class FtAuthService {
 
   async signin(intraId: string, userId: number) {
     const user = await this.userService.getOne(userId);
+    if (user.deletedAt) {
+      throw new ForbiddenException('탈퇴한 사용자입니다');
+    }
     if (user.isAuthenticated) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
