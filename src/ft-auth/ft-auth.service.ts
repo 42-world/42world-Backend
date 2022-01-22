@@ -70,10 +70,6 @@ export class FtAuthService {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
 
-    if (!ftAuth.userId) {
-      throw new ForbiddenException('유효하지 않은 code 입니다.');
-    }
-
     const user = await this.userService.getOne(ftAuth.userId);
 
     await this.userService.updateAuthenticate(user, { isAuthenticated: true });
