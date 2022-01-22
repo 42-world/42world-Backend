@@ -9,6 +9,6 @@ import { NotificationModule } from '@root/notification/notification.module';
   imports: [NotificationModule, TypeOrmModule.forFeature([UserRepository])],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService],
+  exports: [UserService, TypeOrmModule.forFeature([UserRepository])],
 })
 export class UserModule {}

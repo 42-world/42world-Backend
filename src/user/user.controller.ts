@@ -66,7 +66,7 @@ export class UserController {
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.userService.update(user, updateUserDto);
+    return this.userService.updateProfile(user, updateUserDto);
   }
 
   @Delete()

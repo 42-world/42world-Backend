@@ -30,12 +30,16 @@ export class UserService {
     return this.userRepository.findOneOrFail(id);
   }
 
-  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateProfile(user: User, updateUserDto: UpdateUserDto): Promise<User> {
     const newUser: User = {
       ...user,
       ...updateUserDto,
     };
     return this.userRepository.save(newUser);
+  }
+
+  async update(user: User): Promise<User> {
+    return this.userRepository.save(user);
   }
 
   async remove(id: number): Promise<void> {
