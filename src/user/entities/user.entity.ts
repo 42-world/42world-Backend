@@ -11,6 +11,7 @@ import {
   OneToMany,
   OneToOne,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
@@ -65,6 +66,7 @@ export class User {
 
   @ApiProperty()
   @DeleteDateColumn()
+  @Index('ix_deleted_at')
   deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.writer, {

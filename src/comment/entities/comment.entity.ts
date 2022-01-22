@@ -59,5 +59,6 @@ export class Comment {
 
   @ApiProperty()
   @DeleteDateColumn()
+  @Index('ix_deleted_at')
   deletedAt?: Date;
 }

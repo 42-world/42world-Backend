@@ -77,6 +77,7 @@ export class Article {
 
   @ApiProperty()
   @DeleteDateColumn()
+  @Index('ix_deleted_at')
   deletedAt?: Date;
 
   @OneToMany(() => Comment, (comment) => comment.article, {

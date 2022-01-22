@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity('category')
@@ -30,6 +31,7 @@ export class Category {
 
   @ApiProperty()
   @DeleteDateColumn()
+  @Index('ix_deleted_at')
   deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.category, {
