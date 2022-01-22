@@ -27,7 +27,7 @@ export class CategoryService {
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.categoryRepository.delete({ id });
+    const result = await this.categoryRepository.softDelete({ id });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Category with id ${id}`);

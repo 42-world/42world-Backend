@@ -50,7 +50,7 @@ export class CommentService {
   }
 
   async remove(id: number, writerId: number): Promise<void> {
-    const result = await this.commentRepository.delete({
+    const result = await this.commentRepository.softDelete({
       id,
       writerId,
     });

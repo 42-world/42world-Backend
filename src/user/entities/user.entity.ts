@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
+  DeleteDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
@@ -55,16 +56,16 @@ export class User {
   character!: number;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.writer, {
     createForeignKeyConstraints: false,
