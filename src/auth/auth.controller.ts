@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '@user/user.service';
 import { AuthService } from './auth.service';
@@ -38,7 +46,7 @@ export class AuthController {
     return;
   }
 
-  @Post('github/callback')
+  @Get('github/callback')
   @Public()
   @UseGuards(GithubAuthGuard)
   @ApiOperation({
