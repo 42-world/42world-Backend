@@ -29,12 +29,8 @@ export class ArticleService {
     return this.articleRepository.findOneOrFail(id);
   }
 
-  async getOneDetail(id: number): Promise<Article> {
-    const article = await this.articleRepository.getOneDetailOrFail(id);
-
-    article.viewCount += 1;
-    this.articleRepository.save(article);
-    return article;
+  getOneDetail(id: number): Promise<Article> {
+    return this.articleRepository.getOneDetailOrFail(id);
   }
 
   async update(
@@ -67,12 +63,17 @@ export class ArticleService {
     }
   }
 
-  async increaseCommentCount(article: Article): Promise<void> {
+  increaseViewCount(article: Article): void {
+    article.viewCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  increaseCommentCount(article: Article): void {
     article.commentCount += 1;
     this.articleRepository.save(article);
   }
 
-  async decreaseCommentCountById(article: Article): Promise<void> {
+  decreaseCommentCountById(article: Article): void {
     article.commentCount -= 1;
     this.articleRepository.save(article);
   }

@@ -55,8 +55,10 @@ export class ArticleController {
   @Get(':id')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({ description: '게시글 상세', type: Article })
-  getOne(@Param('id', ParseIntPipe) id: number): Promise<Article> {
-    return this.articleService.getOneDetail(id);
+  async getOne(@Param('id', ParseIntPipe) id: number): Promise<Article> {
+    const article = await this.articleService.getOneDetail(id);
+    this.articleService.increaseViewCount(article);
+    return article;
   }
 
   @Get(':id/comments')
