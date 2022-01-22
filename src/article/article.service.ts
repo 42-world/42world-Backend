@@ -59,4 +59,14 @@ export class ArticleService {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
   }
+
+  async increaseCommentCount(article: Article): Promise<void> {
+    article.commentCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  async decreaseCommentCountById(article: Article): Promise<void> {
+    article.commentCount -= 1;
+    this.articleRepository.save(article);
+  }
 }

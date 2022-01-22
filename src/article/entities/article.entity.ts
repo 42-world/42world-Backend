@@ -59,6 +59,14 @@ export class Article {
   writer?: User;
 
   @ApiProperty()
+  @Column({ default: 0 })
+  commentCount!: number;
+
+  @ApiProperty()
+  @Column({ default: 0 })
+  likeCount!: number;
+
+  @ApiProperty()
   @Column({ nullable: true })
   deletedAt?: Date;
 
