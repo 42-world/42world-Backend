@@ -10,6 +10,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity('comment')
@@ -49,14 +50,14 @@ export class Comment {
   writer?: User;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
