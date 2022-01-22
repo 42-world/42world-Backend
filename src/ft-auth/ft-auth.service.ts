@@ -42,9 +42,19 @@ export class FtAuthService {
     return true;
   }
 
+  getCadet(intraId: string) {
+    return this.ftAuthRepository.findOneOrFail({ intraId });
+  }
+
   async signin(intraId: string, user: User) {
     if (user.isAuthenticated) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
+    }
+
+    try {
+      await this.getCadet(intraId);
+    } catch (e) {
+      throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
     const email = getEmail(intraId);
