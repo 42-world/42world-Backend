@@ -1,10 +1,15 @@
 import { UserService } from '@user/user.service';
 import { jwtConstants } from './constant';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ACCESS_TOKEN } from './constants/access-token';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { User } from '@root/user/entities/user.entity';
 
 const getAccessToken = (request: any): string => {
   return request.cookies[ACCESS_TOKEN];
@@ -20,11 +25,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JWTPayload) {
-    const user = await this.userService.findOne(payload.userId);
-    if (!user) {
-      throw new UnauthorizedException();
+  async validate(payload: JWTPayload): Promise<User> {
+    try {
+      return await this.userService.getOne(payload.userId);
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw new UnauthorizedException();
+      }
     }
-    return user;
   }
 }

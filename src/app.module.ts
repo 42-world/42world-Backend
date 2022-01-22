@@ -1,10 +1,13 @@
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import configEmail from './mail/mail';
+import { CacheModule, Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import * as redisStore from 'cache-manager-ioredis';
+import * as path from 'path';
+
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
@@ -17,7 +20,8 @@ import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
 import { MailModule } from './mail/mail.module';
-import * as path from 'path';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ormconfig } from './database/ormconfig';
 
 @Module({
   imports: [
@@ -25,10 +29,7 @@ import * as path from 'path';
       envFilePath: getEnvPath(),
       isGlobal: true,
       cache: true,
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configEmail],
+      load: [ormconfig, configEmail],
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -47,6 +48,11 @@ import * as path from 'path';
       },
     }),
     DatabaseModule.register(),
+    CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST ?? 'localhost',
+      port: process.env.REDIS_PORT ?? 6379,
+    }),
     CommentModule,
     UserModule,
     ArticleModule,
@@ -59,6 +65,11 @@ import * as path from 'path';
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -17,7 +17,7 @@ export class Best {
 
   @Column({ nullable: false })
   @Index('ix_user_id')
-  user_id!: number;
+  userId!: number;
 
   @ManyToOne(() => User, (user) => user.best, {
     createForeignKeyConstraints: false,
@@ -27,8 +27,8 @@ export class Best {
   user?: User;
 
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

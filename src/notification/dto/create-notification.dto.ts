@@ -3,5 +3,5 @@ import { NotificationType } from '../entities/notification.entity';
 export class CreateNotificationDto {
   readonly type!: NotificationType;
   readonly content!: string;
-  readonly user_id!: number;
+  readonly userId!: number;
 }

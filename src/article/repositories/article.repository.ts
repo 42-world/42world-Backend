@@ -5,22 +5,29 @@ import { FindAllArticleDto } from '@article/dto/find-all-article.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options?: FindAllArticleDto) {
+  async findAll(options?: FindAllArticleDto): Promise<Article[]> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category');
 
-    if (options.categoryName)
-      query.andWhere('category.name = :name', { name: options.categoryName });
+    if (options.categoryId)
+      query.andWhere('category.id = :id', { id: options.categoryId });
 
     return query.getMany();
   }
 
-  async findById(id: number) {
+  async getOneOrFail(id: number): Promise<Article> {
     return this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.id = :id', { id })
-      .getOne();
+      .getOneOrFail();
+  }
+
+  async isExistById(id: number): Promise<boolean> {
+    const exist_query = await this.query(`SELECT EXISTS
+		(SELECT * FROM article WHERE id=${id})`);
+    const is_exist = Object.values(exist_query[0])[0];
+    return is_exist == 1 ? true : false;
   }
 }

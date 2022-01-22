@@ -1,4 +1,3 @@
-import { UserService } from './../user/user.service';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConstants } from './constant';
 import { GithubStrategy } from './github.strategy';

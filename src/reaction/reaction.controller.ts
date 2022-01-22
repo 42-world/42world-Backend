@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ReactionService } from './reaction.service';
 import { CreateReactionDto } from './dto/create-reaction.dto';
 import { UpdateReactionDto } from './dto/update-reaction.dto';
@@ -23,7 +31,10 @@ export class ReactionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReactionDto: UpdateReactionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateReactionDto: UpdateReactionDto,
+  ) {
     return this.reactionService.update(+id, updateReactionDto);
   }
 

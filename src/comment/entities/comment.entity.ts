@@ -1,4 +1,5 @@
 import { Article } from '@article/entities/article.entity';
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 import {
   Entity,
@@ -13,15 +14,18 @@ import {
 
 @Entity('comment')
 export class Comment {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ApiProperty()
   @Column({ type: 'text', nullable: false })
   content!: string;
 
+  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
-  article_id!: number;
+  articleId!: number;
 
   @ManyToOne(() => Article, (article) => article.comment, {
     createForeignKeyConstraints: false,
@@ -30,10 +34,13 @@ export class Comment {
   @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
   article?: Article;
 
+  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_writer_id')
-  writer_id!: number;
+  writerId!: number;
 
+  //TODO: join user table
+  @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,
     nullable: false,
@@ -41,12 +48,15 @@ export class Comment {
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer?: User;
 
+  @ApiProperty()
   @Column({ nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
+  @ApiProperty()
   @CreateDateColumn()
-  created_at!: Date;
+  createdAt!: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

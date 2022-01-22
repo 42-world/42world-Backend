@@ -1,68 +1,44 @@
-import { User } from './entities/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
-import { githubProfile } from '@root/auth/interfaces/github-profile.interface';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async githubLogin(profile: githubProfile): Promise<User> {
-    const user = await this.userRepository.findOne({ oauth_token: profile.id });
+  async githubLogin(profile: GithubProfile): Promise<User> {
+    const user = await this.userRepository.findOne({ oauthToken: profile.id });
 
     if (user) {
-      user.last_login = getNextMonth();
+      user.lastLogin = getNextMonth();
       return this.userRepository.save(user);
     }
 
     const newUser = {
       nickname: profile.nickname,
-      oauth_token: profile.id,
-      last_login: getNextMonth(),
+      oauthToken: profile.id,
+      lastLogin: getNextMonth(),
     };
 
     return this.userRepository.save(newUser);
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  getOne(id: number): Promise<User> {
+    return this.userRepository.findOneOrFail(id);
   }
 
-  async getOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneOrFail(id);
-
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    }
-
-    return user;
-  }
-
-  isExistById(id: number): Promise<boolean> {
-    return this.userRepository.isExistById(id);
-  }
-
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne(id);
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.getOne(id);
-    const new_user = {
+  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    const newUser: User = {
       ...user,
       ...updateUserDto,
     };
-
-    return this.userRepository.save(new_user);
+    return this.userRepository.save(newUser);
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.userRepository.delete({ id });
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    }
+    await this.userRepository.delete({ id });
   }
 }
