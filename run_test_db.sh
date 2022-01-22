@@ -7,4 +7,5 @@ docker run -d --rm --name ft_world-mysql-test \
 -e MYSQL_ALLOW_EMPTY_PASSWORD=true \
 -e MYSQL_INITDB_ARGS=--encoding=UTF-8 \
 -e TZ=Asia/Seoul \
--p 3308:3306 mysql:5.7
+-p 3308:3306 mysql:5.7 \
+mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
