@@ -12,30 +12,7 @@ import { FtAuth } from './entities/ft-auth.entity';
 import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
-import * as bcrypt from 'bcryptjs';
-
-const TITLE = '[42WORLD] 이메일 인증을 완료하세요';
-const EMAIL = 'student.42seoul.kr';
-const TIME2LIVE = 86400;
-const getNickname = (email: string) => email.split('@')[0];
-const getEmail = (nickname: string) => `${nickname}@${EMAIL}`;
-const getSaltNum = (now: number) => {
-  let sum = 0;
-  while (now > 0) {
-    sum += now % 10;
-    now = Math.floor(now / 42);
-    console.log(now);
-  }
-  return sum;
-};
-
-const getCode = async (nickname: string) => {
-  const now = new Date().getMilliseconds();
-  const salt_rounds = getSaltNum(now);
-  const salt = await bcrypt.genSalt(salt_rounds);
-  const code = encodeURIComponent(bcrypt.hashSync(nickname, salt));
-  return code;
-};
+import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
 
 @Injectable()
 export class FtAuthService {
