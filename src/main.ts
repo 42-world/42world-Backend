@@ -23,7 +23,6 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.enableCors();
-  app.use(csurf());
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -33,6 +32,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
+  app.use(csurf());
   await app.listen(port || 3000);
 }
 bootstrap();
