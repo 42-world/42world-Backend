@@ -7,7 +7,7 @@ import { Category } from '../entities/category.entity';
 export class CategoryRepository extends Repository<Category> {
   async existOrFail(id: number): Promise<void> {
     const exist_query = await this.query(`SELECT EXISTS
-		(SELECT * FROM category WHERE id=${id})`);
+		(SELECT * FROM category WHERE id=${id} AND deleted_at IS NULL)`);
     const is_exist = Object.values(exist_query[0])[0];
     if (!is_exist) {
       throw new NotFoundException(`Can't find Category with id ${id}`);
