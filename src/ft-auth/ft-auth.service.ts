@@ -13,6 +13,7 @@ import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
+import { User } from '@root/user/entities/user.entity';
 
 @Injectable()
 export class FtAuthService {
@@ -40,8 +41,7 @@ export class FtAuthService {
     return true;
   }
 
-  async signin(intraId: string, userId: number) {
-    const user = await this.userService.getOne(userId);
+  async signin(intraId: string, user: User) {
     if (user.deletedAt) {
       throw new ForbiddenException('탈퇴한 사용자입니다');
     }
@@ -50,7 +50,7 @@ export class FtAuthService {
     }
     const email = getEmail(intraId);
     const code = await getCode(intraId);
-    await this.cacheManager.set<number>(code, userId, { ttl: TIME2LIVE });
+    await this.cacheManager.set<number>(code, user.id, { ttl: TIME2LIVE });
     await this._send([email], `${TITLE}`, 'signin.ejs', {
       nickname: intraId,
       code: code,
