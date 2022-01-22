@@ -1,7 +1,7 @@
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import configEmail from './mail/mail';
+import configEmail from './config/mail.config';
 import { CacheModule, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import * as redisStore from 'cache-manager-ioredis';
@@ -19,7 +19,6 @@ import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
-import { MailModule } from './mail/mail.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
 
@@ -38,7 +37,7 @@ import { ormconfig } from './database/ormconfig';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/mail/templates/'),
+            dir: path.join(__dirname, '/ft-auth/templates/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,
@@ -52,6 +51,7 @@ import { ormconfig } from './database/ormconfig';
       store: redisStore,
       host: process.env.REDIS_HOST ?? 'localhost',
       port: process.env.REDIS_PORT ?? 6379,
+      isGlobal: true,
     }),
     CommentModule,
     UserModule,
@@ -62,7 +62,6 @@ import { ormconfig } from './database/ormconfig';
     AuthModule,
     BestModule,
     ReactionModule,
-    MailModule,
   ],
   controllers: [AppController],
   providers: [
