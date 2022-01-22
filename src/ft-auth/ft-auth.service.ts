@@ -43,10 +43,6 @@ export class FtAuthService {
   }
 
   async signin(intraId: string, user: User) {
-    if (user.deletedAt) {
-      throw new ForbiddenException('탈퇴한 사용자입니다');
-    }
-
     if (user.isAuthenticated) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
@@ -62,6 +58,7 @@ export class FtAuthService {
       nickname: intraId,
       code: code,
       endpoint: `${process.env.EMAIL_ENDPOINT}`,
+      github: user.nickname,
     });
   }
 
