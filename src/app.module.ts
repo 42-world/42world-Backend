@@ -13,7 +13,7 @@ import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
-import { AuthenticateModule } from './authenticate/authenticate.module';
+import { FtAuthModule } from './ft-auth/ft-auth.module';
 import { AuthModule } from './auth/auth.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
@@ -58,7 +58,7 @@ import { ormconfig } from './database/ormconfig';
     ArticleModule,
     CategoryModule,
     NotificationModule,
-    AuthenticateModule,
+    FtAuthModule,
     AuthModule,
     BestModule,
     ReactionModule,

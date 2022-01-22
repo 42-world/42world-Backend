@@ -18,7 +18,7 @@
       "@category/*": ["./src/category/*"],
       "@notification/*": ["./src/notification/*"],
       "@auth/*": ["./src/auth/*"],
-      "@authenticate/*": ["./src/authenticate/*"],
+      "@ft-auth/*": ["src/ft-auth/*"],
       "@database/*": ["./src/database/*"]
     },
     "incremental": true,

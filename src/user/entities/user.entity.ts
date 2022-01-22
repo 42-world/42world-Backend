@@ -1,4 +1,4 @@
-import { Authenticate } from '@authenticate/entities/authenticate.entity';
+import { FtAuth } from './../../ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -83,11 +83,11 @@ export class User {
   })
   notification?: Notification[];
 
-  @OneToOne(() => Authenticate, (authenticate) => authenticate.user, {
+  @OneToOne(() => FtAuth, (ftAuth) => ftAuth.user, {
     createForeignKeyConstraints: false,
     nullable: true,
   })
-  authenticate?: Authenticate;
+  ftAuth?: FtAuth;
 
   @OneToMany(() => Reaction, (reaction) => reaction.user, {
     createForeignKeyConstraints: false,

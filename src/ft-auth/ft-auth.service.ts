@@ -1,22 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateAuthenticateDto } from './dto/create-authenticate.dto';
+import { CreateFtAuthDto } from './dto/create-ft-auth.dto';
 import { UpdateAuthenticateDto } from './dto/update-authenticate.dto';
-import { Authenticate } from './entities/authenticate.entity';
+import { FtAuth } from './entities/ft-auth.entity';
 
 @Injectable()
-export class AuthenticateService {
+export class FtAuthService {
   constructor(
-    @InjectRepository(Authenticate)
-    private readonly authenticateRepository: Repository<Authenticate>,
+    @InjectRepository(FtAuth)
+    private readonly authenticateRepository: Repository<FtAuth>,
   ) {}
 
-  create(createAuthenticateDto: CreateAuthenticateDto): Promise<Authenticate> {
-    return this.authenticateRepository.save(createAuthenticateDto);
+  create(CreateFtAuthDto: CreateFtAuthDto): Promise<FtAuth> {
+    return this.authenticateRepository.save(CreateFtAuthDto);
   }
 
-  getByIntraId(intraId: string): Promise<Authenticate> {
+  getByIntraId(intraId: string): Promise<FtAuth> {
     return this.authenticateRepository.findOne({ where: { intraId } });
   }
 

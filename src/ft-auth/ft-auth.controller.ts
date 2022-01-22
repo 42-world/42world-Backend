@@ -1,23 +1,15 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { AuthenticateService } from './authenticate.service';
-import { CreateAuthenticateDto } from './dto/create-authenticate.dto';
+import { Controller } from '@nestjs/common';
+import { FtAuthService } from './ft-auth.service';
+import { CreateFtAuthDto } from './dto/create-ft-auth.dto';
 import { UpdateAuthenticateDto } from './dto/update-authenticate.dto';
 
 @Controller('authenticate')
-export class AuthenticateController {
-  constructor(private readonly authenticateService: AuthenticateService) {}
+export class FtAuthController {
+  constructor(private readonly ftAuthService: FtAuthService) {}
 
   // @Post()
-  // create(@Body() createAuthenticateDto: CreateAuthenticateDto) {
-  //   return this.authenticateService.create(createAuthenticateDto);
+  // create(@Body() CreateFtAuthDto: CreateFtAuthDto) {
+  //   return this.authenticateService.create(CreateFtAuthDto);
   // }
 
   // @Get()
