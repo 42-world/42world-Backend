@@ -64,8 +64,7 @@ export class FtAuthService {
     if (!user) {
       throw new BadRequestException();
     }
-    user.isAuthenticated = true;
-    await this.userService.update(user);
+    await this.userService.updateAuthenticate(user, { isAuthenticated: true });
     this.cacheManager.del(code);
   }
 }
