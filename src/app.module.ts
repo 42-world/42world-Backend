@@ -1,5 +1,8 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import * as redisStore from 'cache-manager-ioredis';
+
 import { AppController } from './app.controller';
 import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
@@ -12,7 +15,6 @@ import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
-import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
 
@@ -25,6 +27,11 @@ import { ormconfig } from './database/ormconfig';
       load: [ormconfig],
     }),
     DatabaseModule.register(),
+    CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST ?? 'localhost',
+      port: process.env.REDIS_PORT ?? 6379,
+    }),
     CommentModule,
     UserModule,
     ArticleModule,
