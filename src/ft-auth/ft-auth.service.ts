@@ -42,8 +42,8 @@ export class FtAuthService {
 
   async signin(intraId: string, userId: number) {
     const user = await this.userService.getOne(userId);
-    if (!user.isAuthenticated) {
-      throw new ForbiddenException();
+    if (user.isAuthenticated) {
+      throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
     const email = getEmail(intraId);
     const code = await getCode(intraId);
@@ -58,11 +58,11 @@ export class FtAuthService {
   async getAuth(code: string) {
     const userId = await this.cacheManager.get<number>(code);
     if (!userId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('유효하지 않은 code 입니다.');
     }
     const user = await this.userService.getOne(userId);
-    if (!user) {
-      throw new BadRequestException();
+    if (!user || user.deletedAt) {
+      throw new BadRequestException('존재하지 않는 사용자입니다.');
     }
     await this.userService.updateAuthenticate(user, { isAuthenticated: true });
     this.cacheManager.del(code);
