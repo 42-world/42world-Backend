@@ -1,9 +1,10 @@
 import { UserService } from '@user/user.service';
 import {
+  BadRequestException,
   CACHE_MANAGER,
+  ForbiddenException,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -63,19 +64,29 @@ export class FtAuthService {
   }
 
   async signin(nickname: string, userId: number) {
+    const user = await this.userService.getOne(userId);
+    if (!user.isAuthenticated) {
+      throw new ForbiddenException();
+    }
     const email = getEmail(nickname);
     const code = await getCode(nickname);
     await this.cacheManager.set<number>(code, userId, { ttl: TIME2LIVE });
     await this._send([email], `${TITLE}`, 'signin.ejs', {
       nickname: nickname,
       code: code,
-      endpoint: `http://localhost:8888/ft-auth/babo`,
+      endpoint: `${process.env.EMAIL_ENDPOINT}`,
     });
   }
 
   async getAuth(code: string) {
     const userId = await this.cacheManager.get<number>(code);
+    if (!userId) {
+      throw new ForbiddenException();
+    }
     const user = await this.userService.getOne(userId);
+    if (!user) {
+      throw new BadRequestException();
+    }
     user.isAuthenticated = true;
     await this.userService.update(user);
     this.cacheManager.del(code);
