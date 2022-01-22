@@ -7,8 +7,8 @@ export class FtAuthController {
   constructor(private readonly ftAuthService: FtAuthService) {}
 
   @Post()
-  sendMail(@GetUser('id') userId: number, @Body('nickname') nickname: string) {
-    this.ftAuthService.signin(nickname, userId);
+  sendMail(@GetUser('id') userId: number, @Body('intraId') intraId: string) {
+    this.ftAuthService.signin(intraId, userId);
   }
 
   @Get()

@@ -40,16 +40,16 @@ export class FtAuthService {
     return true;
   }
 
-  async signin(nickname: string, userId: number) {
+  async signin(intraId: string, userId: number) {
     const user = await this.userService.getOne(userId);
     if (!user.isAuthenticated) {
       throw new ForbiddenException();
     }
-    const email = getEmail(nickname);
-    const code = await getCode(nickname);
+    const email = getEmail(intraId);
+    const code = await getCode(intraId);
     await this.cacheManager.set<number>(code, userId, { ttl: TIME2LIVE });
     await this._send([email], `${TITLE}`, 'signin.ejs', {
-      nickname: nickname,
+      nickname: intraId,
       code: code,
       endpoint: `${process.env.EMAIL_ENDPOINT}`,
     });
