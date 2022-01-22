@@ -16,7 +16,7 @@ export class ArticleRepository extends Repository<Article> {
     return query.getMany();
   }
 
-  async getOneOrFail(id: number): Promise<Article> {
+  async getOneDetailOrFail(id: number): Promise<Article> {
     return this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')

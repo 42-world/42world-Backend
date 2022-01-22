@@ -21,19 +21,11 @@ export class ArticleService {
   }
 
   getOne(id: number): Promise<Article> {
-    return this.articleRepository.getOneOrFail(id);
+    return this.articleRepository.findOneOrFail(id);
   }
 
-  async existOrFail(id: number): Promise<void> {
-    const isExist = await this.articleRepository.isExistById(id);
-
-    if (!isExist) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
-  }
-
-  async getDetail(id: number): Promise<Article> {
-    const article = await this.getOne(id);
+  async getOneDetail(id: number): Promise<Article> {
+    const article = await this.articleRepository.getOneDetailOrFail(id);
 
     article.viewCount += 1;
     this.articleRepository.save(article);
