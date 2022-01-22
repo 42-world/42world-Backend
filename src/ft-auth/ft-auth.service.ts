@@ -14,6 +14,7 @@ import { Cache } from 'cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
 import { User } from '@root/user/entities/user.entity';
+import { FtAuthRedisValue } from './interfaces/ft-auth.interface';
 
 @Injectable()
 export class FtAuthService {
@@ -45,12 +46,18 @@ export class FtAuthService {
     if (user.deletedAt) {
       throw new ForbiddenException('탈퇴한 사용자입니다');
     }
+
     if (user.isAuthenticated) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
+
     const email = getEmail(intraId);
     const code = await getCode(intraId);
-    await this.cacheManager.set<number>(code, user.id, { ttl: TIME2LIVE });
+    const value = { userId: user.id, intraId };
+
+    await this.cacheManager.set<FtAuthRedisValue>(code, value, {
+      ttl: TIME2LIVE,
+    });
     await this._send([email], `${TITLE}`, 'signin.ejs', {
       nickname: intraId,
       code: code,
@@ -59,15 +66,28 @@ export class FtAuthService {
   }
 
   async getAuth(code: string) {
-    const userId = await this.cacheManager.get<number>(code);
-    if (!userId) {
+    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(
+      decodeURIComponent(code),
+    );
+    if (!ftAuth) {
+      throw new ForbiddenException('존재하지 않는 토큰입니다.');
+    }
+
+    if (!ftAuth.userId) {
       throw new ForbiddenException('유효하지 않은 code 입니다.');
     }
-    const user = await this.userService.getOne(userId);
+
+    const user = await this.userService.getOne(ftAuth.userId);
+
     if (!user || user.deletedAt) {
       throw new BadRequestException('존재하지 않는 사용자입니다.');
     }
+
     await this.userService.updateAuthenticate(user, { isAuthenticated: true });
+    await this.ftAuthRepository.save({
+      userId: user.id,
+      intraId: ftAuth.intraId,
+    });
     this.cacheManager.del(code);
   }
 }

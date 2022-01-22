@@ -21,6 +21,7 @@ export const getCode = async (nickname: string) => {
   const now = new Date().getMilliseconds();
   const salt_rounds = getSaltNum(now);
   const salt = await bcrypt.genSalt(salt_rounds);
-  const code = encodeURIComponent(bcrypt.hashSync(nickname, salt));
+  /* prettier-ignore */
+  const code = encodeURIComponent(bcrypt.hashSync(nickname, salt)).split('.')[1];
   return code;
 };
