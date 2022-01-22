@@ -6,8 +6,8 @@ import { GetUser } from '@root/auth/auth.decorator';
 export class FtAuthController {
   constructor(private readonly ftAuthService: FtAuthService) {}
 
-  @Get()
-  sendMail(@GetUser('id') userId: number, @Query('nickname') nickname: string) {
+  @Post()
+  sendMail(@GetUser('id') userId: number, @Body('nickname') nickname: string) {
     this.ftAuthService.signin(nickname, userId);
   }
 
