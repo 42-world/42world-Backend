@@ -8,6 +8,7 @@ import {
   OneToMany,
   JoinColumn,
   Index,
+  DeleteDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
@@ -59,16 +60,16 @@ export class Article {
   writer?: User;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(() => Comment, (comment) => comment.article, {
     createForeignKeyConstraints: false,
