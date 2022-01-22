@@ -76,10 +76,6 @@ export class FtAuthService {
 
     const user = await this.userService.getOne(ftAuth.userId);
 
-    if (!user || user.deletedAt) {
-      throw new BadRequestException('존재하지 않는 사용자입니다.');
-    }
-
     await this.userService.updateAuthenticate(user, { isAuthenticated: true });
     await this.ftAuthRepository.save({
       userId: user.id,
