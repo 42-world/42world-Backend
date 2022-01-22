@@ -6,6 +6,7 @@ import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ACCESS_TOKEN } from './auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
+import * as csurf from 'csurf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  app.enableCors();
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -30,6 +32,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
+  app.use(csurf());
   await app.listen(port || 3000);
 }
 bootstrap();

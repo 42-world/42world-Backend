@@ -7,6 +7,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity('category')
@@ -26,6 +27,10 @@ export class Category {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.category, {
     createForeignKeyConstraints: false,

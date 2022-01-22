@@ -55,8 +55,6 @@ export class CommentService {
   }
 
   async remove(id: number, writerId: number): Promise<void> {
-    const comment = await this.getOne(id);
-    const article = await this.articleService.getOne(comment.articleId);
     const result = await this.commentRepository.softDelete({
       id,
       writerId,
@@ -66,6 +64,8 @@ export class CommentService {
       throw new NotFoundException(`Can't find Comment with id ${id}`);
     }
 
+    const comment = await this.getOne(id, { withDeleted: true });
+    const article = await this.articleService.getOne(comment.articleId);
     this.articleService.decreaseCommentCountById(article);
   }
 }

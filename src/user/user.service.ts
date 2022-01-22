@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateAuthDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class UserService {
     return this.userRepository.findOneOrFail(id);
   }
 
-  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateProfile(user: User, updateUserDto: UpdateUserDto): Promise<User> {
     const newUser: User = {
       ...user,
       ...updateUserDto,
@@ -38,7 +38,18 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
+  async updateAuthenticate(
+    user: User,
+    updateAuthDto: UpdateAuthDto,
+  ): Promise<User> {
+    return this.userRepository.save({ ...user, ...updateAuthDto });
+  }
+
+  async update(user: User): Promise<User> {
+    return this.userRepository.save(user);
+  }
+
   async remove(id: number): Promise<void> {
-    await this.userRepository.delete({ id });
+    await this.userRepository.softDelete({ id });
   }
 }

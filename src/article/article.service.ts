@@ -53,7 +53,7 @@ export class ArticleService {
   }
 
   async remove(id: number, writerId: number): Promise<void> {
-    const result = await this.articleRepository.delete({
+    const result = await this.articleRepository.softDelete({
       id,
       writerId,
     });
