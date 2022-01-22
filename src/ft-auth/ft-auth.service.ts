@@ -66,6 +66,7 @@ export class FtAuthService {
     const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(
       decodeURIComponent(code),
     );
+
     if (!ftAuth) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
