@@ -18,6 +18,7 @@ import { Reaction } from '@root/reaction/entities/reaction.entity';
 export enum UserRole {
   CADET = 'CADET',
   ADMIN = 'ADMIN',
+  NOVICE = 'NOVICE',
 }
 
 @Entity('user')
@@ -42,8 +43,8 @@ export class User {
   @Column({ nullable: true })
   lastLogin?: Date;
 
-  @ApiProperty({ example: UserRole.CADET })
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  @ApiProperty({ example: UserRole.NOVICE })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.NOVICE })
   role!: string;
 
   @ApiProperty({
