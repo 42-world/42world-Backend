@@ -26,7 +26,7 @@ export class ArticleRepository extends Repository<Article> {
 
   async isExistById(id: number): Promise<boolean> {
     const exist_query = await this.query(`SELECT EXISTS
-		(SELECT * FROM article WHERE id=${id} deleted_at IS NULL)`);
+		(SELECT * FROM article WHERE id=${id} AND deleted_at IS NULL)`);
     const is_exist = Object.values(exist_query[0])[0];
     return is_exist == 1 ? true : false;
   }
