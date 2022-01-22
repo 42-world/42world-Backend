@@ -6,11 +6,22 @@ import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ACCESS_TOKEN } from './auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
+
+  morgan.token('body', (req) => JSON.stringify(req.body));
+  app.use(
+    morgan(
+      ':method :url :status :response-time ms - :res[content-length] :body',
+    ),
+  );
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')

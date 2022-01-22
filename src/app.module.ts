@@ -2,6 +2,11 @@ import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import * as redisStore from 'cache-manager-ioredis';
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
 
 import { AppController } from './app.controller';
 import { CommentModule } from './comment/comment.module';
@@ -31,6 +36,19 @@ import { ormconfig } from './database/ormconfig';
       store: redisStore,
       host: process.env.REDIS_HOST ?? 'localhost',
       port: process.env.REDIS_PORT ?? 6379,
+    }),
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: 'silly',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike('42world', {
+              prettyPrint: true,
+            }),
+          ),
+        }),
+      ],
     }),
     CommentModule,
     UserModule,
