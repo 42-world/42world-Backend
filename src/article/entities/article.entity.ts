@@ -32,7 +32,7 @@ export class Article {
 
   @ApiProperty()
   @Column({ default: 0 })
-  view_count!: number;
+  viewCount!: number;
 
   @ApiProperty()
   @Column({ nullable: false })

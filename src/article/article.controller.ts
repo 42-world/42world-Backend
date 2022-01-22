@@ -56,7 +56,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({ description: '게시글 상세', type: Article })
   getOne(@Param('id', ParseIntPipe) id: number): Promise<Article> {
-    return this.articleService.getOne(id);
+    return this.articleService.getDetail(id);
   }
 
   @Get(':id/comments')

@@ -32,6 +32,14 @@ export class ArticleService {
     }
   }
 
+  async getDetail(id: number): Promise<Article> {
+    const article = await this.getOne(id);
+
+    article.viewCount += 1;
+    this.articleRepository.save(article);
+    return article;
+  }
+
   async update(
     id: number,
     writerId: number,
