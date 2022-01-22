@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcryptjs';
 
-const title = '[42WORLD] 이메일 인증을 완료하세요';
+const TITLE = '[42WORLD] 이메일 인증을 완료하세요';
+const EMAIL = 'student.42seoul.kr';
 const getNickname = (email: string) => email.split('@')[0];
+const getEmail = (nickname: string) => `${nickname}@${EMAIL}`;
 const getSaltNum = (now: number) => {
   let sum = 0;
   while (now > 0) {
@@ -43,10 +45,11 @@ export class MailService {
     return true;
   }
 
-  async signin(to: string) {
-    await this._send([to], `${title}`, 'signin.ejs', {
-      nickname: getNickname(to),
-      code: await getCode(getNickname(to)),
+  async signin(nickname: string) {
+    const email = getEmail(nickname);
+    await this._send([email], `${TITLE}`, 'signin.ejs', {
+      nickname: nickname,
+      code: await getCode(nickname),
     });
   }
 }
