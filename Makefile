@@ -1,7 +1,7 @@
 COMPOSE = sudo docker-compose
 COMPOSE_ENV = ${COMPOSE} --env-file config/$(1).env
 
-dev: db
+dev: db redis
 	sudo yarn start:dev
 
 alpha:
@@ -24,6 +24,23 @@ db: db-dev
 db-down:
 	${COMPOSE} down db
 
+redis: redis-dev
+
+redis-down:
+	${COMPOSE} down redis
+
+redis-dev:
+	$(call COMPOSE_ENV,dev) up --build -d redis
+
+redis-alpha:
+	$(call COMPOSE_ENV,alpha) up --build -d redis
+
+redis-prod:
+	$(call COMPOSE_ENV,prod) up --build -d redis
+
+api:
+	api-dev
+
 api-dev:
 	$(call COMPOSE_ENV,dev) up --build --no-deps -d api
 
@@ -32,9 +49,6 @@ api-alpha:
 
 api-prod:
 	$(call COMPOSE_ENV,prod) up --build --no-deps -d api
-
-api:
-	api-dev
 
 db-init:
 	sudo yarn typeorm:run
