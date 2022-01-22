@@ -1,3 +1,4 @@
+import { getConnection } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -21,5 +22,10 @@ describe('AppController (e2e)', () => {
       .get('/')
       .expect(200)
       .expect('Hello World!');
+  });
+
+  afterAll(async () => {
+    await getConnection().dropDatabase();
+    await app.close();
   });
 });
