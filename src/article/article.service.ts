@@ -4,15 +4,20 @@ import { FindAllArticleDto } from './dto/find-all-article.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
+import { CategoryService } from '@root/category/category.service';
 
 @Injectable()
 export class ArticleService {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(
+    private readonly articleRepository: ArticleRepository,
+    private readonly categoryService: CategoryService,
+  ) {}
 
-  create(
+  async create(
     writerId: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
+    await this.categoryService.existOrFail(createArticleDto.categoryId);
     return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
@@ -37,6 +42,8 @@ export class ArticleService {
     writerId: number,
     updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
+    if (updateArticleDto.categoryId)
+      await this.categoryService.existOrFail(updateArticleDto.categoryId);
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,
