@@ -15,6 +15,7 @@
     "^@category/(.*)$": "<rootDir>/../src/category/$1",
     "^@comment/(.*)$": "<rootDir>/../src/comment/$1",
     "^@authenticate/(.*)$": "<rootDir>/../src/authenticate/$1",
-    "^@notification/(.*)$": "<rootDir>/../src/notification/$1"
+    "^@notification/(.*)$": "<rootDir>/../src/notification/$1",
+    "^@database/(.*)$": "<rootDir>/../src/database/$1"
   }
 }
