@@ -3,20 +3,15 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
-import { APP_GUARD } from '@nestjs/core';
 
-import { JwtAuthGuard } from '@auth/jwt-auth.guard';
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { EntityNotFoundExceptionFilter } from '@root/filters/entity-not-found-exception.filter';
-import { ConfigModule } from '@nestjs/config';
-import { getEnvPath } from '@root/utils';
-import { ormconfig } from '@database/ormconfig';
-import { DatabaseModule } from '@database/database.module';
 import { UserRepository } from '@user/repositories/user.repository';
 import { User, UserRole } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
+import { TestBaseModule } from './test.base.module';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -26,23 +21,7 @@ describe('UserController (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          envFilePath: getEnvPath(),
-          isGlobal: true,
-          cache: true,
-          load: [ormconfig],
-        }),
-        DatabaseModule.register(),
-        AuthModule,
-        UserModule,
-      ],
-      providers: [
-        {
-          provide: APP_GUARD,
-          useClass: JwtAuthGuard,
-        },
-      ],
+      imports: [TestBaseModule, AuthModule, UserModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
