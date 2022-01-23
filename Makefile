@@ -54,9 +54,6 @@ db-init:
 	sudo yarn typeorm:run
 	sudo yarn seed
 
-test-db:
-	${COMPOSE} -f docker-compose-test.yml -d
-
 clean:
 	${COMPOSE} down
 
