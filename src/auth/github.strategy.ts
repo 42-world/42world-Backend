@@ -7,9 +7,9 @@ import { GithubProfile } from './interfaces/github-profile.interface';
 export class GithubStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      clientID: '1c53f03549f1ebbfcfdf',
-      clientSecret: '208f820e890183e23c2ed3b0fe572d73cbc59014',
-      callbackURL: 'http://localhost:3000/auth/github/callback', // frontend url
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: process.env.GITHUB_CALLBACK_URL, // frontend url
     });
   }
   async validate(
