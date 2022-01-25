@@ -12,7 +12,7 @@ import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
-import { User } from '@root/user/entities/user.entity';
+import { User, UserRole } from '@root/user/entities/user.entity';
 import { FtAuthRedisValue } from './interfaces/ft-auth.interface';
 
 @Injectable()
@@ -81,7 +81,10 @@ export class FtAuthService {
 
     const user = await this.userService.getOne(ftAuth.userId);
 
-    await this.userService.updateAuthenticate(user, { isAuthenticated: true });
+    await this.userService.updateAuthenticate(user, {
+      isAuthenticated: true,
+      role: UserRole.CADET,
+    });
     await this.ftAuthRepository.save({
       userId: user.id,
       intraId: ftAuth.intraId,

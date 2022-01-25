@@ -5,8 +5,10 @@ import {
   Max,
   IsOptional,
   IsBoolean,
+  IsNotEmpty,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { UserRole } from '../entities/user.entity';
 
 export class UpdateUserDto {
   @IsString()
@@ -24,5 +26,10 @@ export class UpdateUserDto {
 
 export class UpdateAuthDto {
   @IsBoolean()
+  @IsNotEmpty()
   readonly isAuthenticated: boolean;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly role: UserRole;
 }
