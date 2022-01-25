@@ -1,30 +1,32 @@
-import { User } from '@user/entities/user.entity';
+import { Article } from '@root/article/entities/article.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
   Index,
+  OneToOne,
+  Unique,
 } from 'typeorm';
 
 @Entity('best')
+// @Unique(['article_id'])
 export class Best {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: false })
-  @Index('ix_user_id')
-  userId!: number;
+  @Column({ nullable: false, unique: true })
+  @Index('ix_article_id')
+  articleId!: number;
 
-  @ManyToOne(() => User, (user) => user.best, {
+  @OneToOne(() => Article, (article) => article.best, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article?: Article;
 
   @CreateDateColumn()
   createdAt!: Date;

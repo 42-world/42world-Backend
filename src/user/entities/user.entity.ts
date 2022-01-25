@@ -1,4 +1,4 @@
-import { FtAuth } from './../../ft-auth/entities/ft-auth.entity';
+import { FtAuth } from '@ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -14,7 +14,6 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Best } from '@root/best/entities/best.entity';
 import { Reaction } from '@root/reaction/entities/reaction.entity';
 
 export enum UserRole {
@@ -98,10 +97,4 @@ export class User {
     nullable: true,
   })
   reaction?: Reaction[];
-
-  @OneToMany(() => Best, (best) => best.user, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  best?: Best[];
 }
