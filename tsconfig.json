@@ -19,7 +19,8 @@
       "@notification/*": ["./src/notification/*"],
       "@auth/*": ["./src/auth/*"],
       "@ft-auth/*": ["src/ft-auth/*"],
-      "@database/*": ["./src/database/*"]
+      "@database/*": ["./src/database/*"],
+      "@test/*": ["./test/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

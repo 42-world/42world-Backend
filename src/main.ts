@@ -32,7 +32,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  app.use(csurf());
+  app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
 }
 bootstrap();
