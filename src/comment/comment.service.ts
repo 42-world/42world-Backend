@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
-import { FindOneOptions, Repository } from 'typeorm';
+import { CommentRepository } from './repositories/comment.repository';
+import { FindOneOptions } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
@@ -10,8 +10,7 @@ import { Comment } from './entities/comment.entity';
 @Injectable()
 export class CommentService {
   constructor(
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
+    private readonly commentRepository: CommentRepository,
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -32,8 +31,8 @@ export class CommentService {
     return comment;
   }
 
-  getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.find({ where: { articleId } });
+  findAllByArticleId(articleId: number): Promise<Comment[]> {
+    return this.commentRepository.findAllByArticleId(articleId);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
