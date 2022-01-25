@@ -21,7 +21,7 @@ export class NotificationController {
   @ApiOperation({ summary: '알람 가져오기 ' })
   @ApiOkResponse({ description: '알람들', type: [Notification] })
   findAll(@GetUser('id') id: number): Promise<Notification[]> {
-    return this.notificationService.getByUserId(id);
+    return this.notificationService.findByUserId(id);
   }
 
   @Patch('/readall')
