@@ -8,11 +8,9 @@ import {
   JoinColumn,
   Index,
   OneToOne,
-  Unique,
 } from 'typeorm';
 
 @Entity('best')
-// @Unique(['article_id'])
 export class Best {
   @PrimaryGeneratedColumn()
   id!: number;
