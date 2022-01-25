@@ -8,6 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import {
+  ApiConflictResponse,
   ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
@@ -28,9 +29,10 @@ export class BestController {
   constructor(private readonly bestService: BestService) {}
 
   @Post()
-  // @Admin()
+  @Admin()
   @ApiOperation({ summary: '인기글 추가하기' })
   @ApiOkResponse({ description: '인기글에 추가 성공', type: Best })
+  @ApiConflictResponse({ description: '이미 인기글에 추가된 글입니다.' })
   create(@Body() createBestDto: CreateBestDto): Promise<Best> {
     return this.bestService.create(createBestDto);
   }
@@ -43,6 +45,7 @@ export class BestController {
   }
 
   @Delete(':id')
+  @Admin()
   @ApiOperation({ summary: '인기글에서 내리기' })
   @ApiOkResponse({ description: '인기글 내리기 성공' })
   remove(@Param('id') id: number): Promise<void> {
