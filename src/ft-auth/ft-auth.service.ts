@@ -1,6 +1,5 @@
 import { UserService } from '@user/user.service';
 import {
-  BadRequestException,
   CACHE_MANAGER,
   ForbiddenException,
   Inject,
@@ -42,8 +41,8 @@ export class FtAuthService {
     return true;
   }
 
-  getCadet(intraId: string) {
-    return this.ftAuthRepository.findOneOrFail({ intraId });
+  getCadet(intraId: string): Promise<FtAuth> {
+    return this.ftAuthRepository.findOne({ intraId });
   }
 
   async signin(intraId: string, user: User) {
@@ -51,9 +50,8 @@ export class FtAuthService {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
-    try {
-      await this.getCadet(intraId);
-    } catch (e) {
+    const cadet = await this.getCadet(intraId);
+    if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
