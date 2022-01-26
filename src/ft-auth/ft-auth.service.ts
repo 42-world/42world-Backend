@@ -43,7 +43,7 @@ export class FtAuthService {
   }
 
   getCadet(intraId: string) {
-    return this.ftAuthRepository.findOneOrFail({ intraId });
+    return this.ftAuthRepository.findOne({ intraId });
   }
 
   async signin(intraId: string, user: User) {
@@ -51,16 +51,15 @@ export class FtAuthService {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
-    try {
-      await this.getCadet(intraId);
-    } catch (e) {
-      throw new ForbiddenException('이미 가입된 카뎃입니다.');
+    const cadet = await this.getCadet(intraId);
+
+    if (cadet) {
+      throw new ForbiddenException('이미 가입된 사용자입니다');
     }
 
     const email = getEmail(intraId);
     const code = await getCode(intraId);
     const value = { userId: user.id, intraId };
-
     await this.cacheManager.set<FtAuthRedisValue>(code, value, {
       ttl: TIME2LIVE,
     });
@@ -73,9 +72,7 @@ export class FtAuthService {
   }
 
   async getAuth(code: string) {
-    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(
-      decodeURIComponent(code),
-    );
+    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(code);
 
     if (!ftAuth) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
