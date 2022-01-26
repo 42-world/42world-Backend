@@ -14,7 +14,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Category } from '@category/entities/category.entity';
-import { Reaction } from '@root/reaction/entities/reaction.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 @Entity('article')
 export class Article {
@@ -86,9 +86,13 @@ export class Article {
   })
   comment?: Comment[];
 
-  @OneToMany(() => Reaction, (reaction) => reaction.article, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  reaction?: Reaction[];
+  @OneToMany(
+    () => ReactionArticle,
+    (reactionArticle) => reactionArticle.article,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionArticle?: ReactionArticle[];
 }
