@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ArticleService } from '@root/article/article.service';
+import { CommentService } from '@root/comment/comment.service';
 import { DeleteResult, Repository } from 'typeorm';
 import {
   ReactionArticle,
@@ -18,6 +20,10 @@ export class ReactionService {
 
     @InjectRepository(ReactionComment)
     private readonly reactionCommentRepository: Repository<ReactionComment>,
+
+    private readonly articleService: ArticleService,
+
+    private readonly commnetService: CommentService,
   ) {}
 
   async articleCreateOrDelete(
@@ -30,10 +36,13 @@ export class ReactionService {
       articleId,
       type,
     });
+    const article = await this.articleService.getOne(articleId);
 
     if (reactionArticle) {
+      await this.articleService.decreaseLikeCount(article);
       return this.reactionArticleRepository.delete({ id: reactionArticle.id });
     } else {
+      await this.articleService.increaseLikeCount(article);
       return this.reactionArticleRepository.save({ userId, articleId, type });
     }
   }
@@ -48,10 +57,13 @@ export class ReactionService {
       commentId,
       type,
     });
+    const comment = await this.commnetService.getOne(commentId);
 
     if (reactionArticle) {
+      await this.commnetService.decreaseLikeCount(comment);
       return this.reactionCommentRepository.delete({ id: reactionArticle.id });
     } else {
+      await this.commnetService.increaseLikeCount(comment);
       return this.reactionCommentRepository.save({ userId, commentId, type });
     }
   }
