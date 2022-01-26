@@ -26,6 +26,10 @@ export class Comment {
   content!: string;
 
   @ApiProperty()
+  @Column({ default: 0 })
+  likeCount!: number;
+
+  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
   articleId!: number;

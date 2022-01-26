@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
@@ -67,5 +71,18 @@ export class CommentService {
     const comment = await this.getOne(id, { withDeleted: true });
     const article = await this.articleService.getOne(comment.articleId);
     this.articleService.decreaseCommentCountById(article);
+  }
+
+  increaseLikeCount(comment: Comment): void {
+    comment.likeCount += 1;
+    this.commentRepository.save(comment);
+  }
+
+  decreaseLikeCount(comment: Comment): void {
+    if (comment.likeCount < 1) {
+      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+    }
+    comment.likeCount -= 1;
+    this.commentRepository.save(comment);
   }
 }

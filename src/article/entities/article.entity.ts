@@ -86,6 +86,7 @@ export class Article {
   })
   comment?: Comment[];
 
+  @ApiProperty({ type: () => ReactionArticle })
   @OneToMany(
     () => ReactionArticle,
     (reactionArticle) => reactionArticle.article,
