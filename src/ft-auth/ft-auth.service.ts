@@ -1,6 +1,5 @@
 import { UserService } from '@user/user.service';
 import {
-  BadRequestException,
   CACHE_MANAGER,
   ForbiddenException,
   Inject,
@@ -13,7 +12,7 @@ import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
-import { User } from '@root/user/entities/user.entity';
+import { User, UserRole } from '@root/user/entities/user.entity';
 import { FtAuthRedisValue } from './interfaces/ft-auth.interface';
 
 @Injectable()
@@ -42,7 +41,7 @@ export class FtAuthService {
     return true;
   }
 
-  getCadet(intraId: string) {
+  getCadet(intraId: string): Promise<FtAuth> {
     return this.ftAuthRepository.findOne({ intraId });
   }
 
@@ -52,9 +51,9 @@ export class FtAuthService {
     }
 
     const cadet = await this.getCadet(intraId);
-
+    
     if (cadet) {
-      throw new ForbiddenException('이미 가입된 사용자입니다');
+      throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
     const email = getEmail(intraId);
@@ -80,7 +79,10 @@ export class FtAuthService {
 
     const user = await this.userService.getOne(ftAuth.userId);
 
-    await this.userService.updateAuthenticate(user, { isAuthenticated: true });
+    await this.userService.updateAuthenticate(user, {
+      isAuthenticated: true,
+      role: UserRole.CADET,
+    });
     await this.ftAuthRepository.save({
       userId: user.id,
       intraId: ftAuth.intraId,

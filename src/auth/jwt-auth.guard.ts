@@ -45,8 +45,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         context.getHandler(),
       ) ?? UserRole.CADET;
 
-    if (u.role !== role) {
-      throw new ForbiddenException();
+    if (u.role !== UserRole.ADMIN && u.role !== role) {
+      throw new ForbiddenException('접근 권한 없음');
     }
     return user;
   }
