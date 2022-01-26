@@ -1,45 +1,24 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Param, ParseIntPipe } from '@nestjs/common';
+import { GetUser } from '@root/auth/auth.decorator';
 import { ReactionService } from './reaction.service';
-import { CreateReactionDto } from './dto/create-reaction.dto';
-import { UpdateReactionDto } from './dto/update-reaction.dto';
 
-@Controller('reaction')
+@Controller('reactions')
 export class ReactionController {
   constructor(private readonly reactionService: ReactionService) {}
 
-  @Post()
-  create(@Body() createReactionDto: CreateReactionDto) {
-    return this.reactionService.create(createReactionDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.reactionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reactionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateReactionDto: UpdateReactionDto,
+  @Post('articles/:id')
+  async reactionArticleCreateOrDelete(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) articleId: number,
   ) {
-    return this.reactionService.update(+id, updateReactionDto);
+    return this.reactionService.articleCreateOrDelete(userId, articleId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reactionService.remove(+id);
+  @Post('comments/:id')
+  async reactionCommentCreateOrDelete(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.reactionService.commentCreateOrDelete(userId, commentId);
   }
 }
