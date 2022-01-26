@@ -72,8 +72,10 @@ export class ArticleController {
     const comments = await this.commentService.getByArticleId(id);
 
     return comments.map((comment) =>
-      comment.writerId === userId ? { ...comment, isLike: true } : comment,
-    ) as DetailCommentDto[];
+      comment.writerId === userId
+        ? ({ ...comment, isMe: true } as DetailCommentDto)
+        : comment,
+    );
   }
 
   @Put(':id')
