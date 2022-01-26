@@ -51,6 +51,7 @@ export class FtAuthService {
     }
 
     const cadet = await this.getCadet(intraId);
+    
     if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
@@ -58,7 +59,6 @@ export class FtAuthService {
     const email = getEmail(intraId);
     const code = await getCode(intraId);
     const value = { userId: user.id, intraId };
-
     await this.cacheManager.set<FtAuthRedisValue>(code, value, {
       ttl: TIME2LIVE,
     });
@@ -71,9 +71,7 @@ export class FtAuthService {
   }
 
   async getAuth(code: string) {
-    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(
-      decodeURIComponent(code),
-    );
+    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(code);
 
     if (!ftAuth) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
