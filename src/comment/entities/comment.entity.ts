@@ -1,5 +1,6 @@
 import { Article } from '@article/entities/article.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 import { User } from '@user/entities/user.entity';
 import {
   Entity,
@@ -11,6 +12,7 @@ import {
   JoinColumn,
   Index,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('comment')
@@ -60,4 +62,14 @@ export class Comment {
   @DeleteDateColumn()
   @Index('ix_deleted_at')
   deletedAt?: Date;
+
+  @OneToMany(
+    () => ReactionComment,
+    (reactionComment) => reactionComment.comment,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionComment?: ReactionComment[];
 }
