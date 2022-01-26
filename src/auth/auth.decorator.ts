@@ -23,4 +23,6 @@ export const Admin = () => SetMetadata(ROLE_KEY, UserRole.ADMIN);
 
 export const Cadet = () => SetMetadata(ROLE_KEY, UserRole.CADET);
 
+export const Novice = () => SetMetadata(ROLE_KEY, UserRole.NOVICE);
+
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
