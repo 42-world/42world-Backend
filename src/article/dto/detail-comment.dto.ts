@@ -6,5 +6,5 @@ export class DetailCommentDto extends Comment {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({ example: 'true' })
-  isLike?: boolean;
+  isMe?: boolean;
 }

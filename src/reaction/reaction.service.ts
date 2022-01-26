@@ -67,4 +67,16 @@ export class ReactionService {
       return this.reactionCommentRepository.save({ userId, commentId, type });
     }
   }
+
+  findOneArticle(
+    userId: number,
+    articleId: number,
+    type: ReactionArticleType = ReactionArticleType.LIKE,
+  ): Promise<ReactionArticle> {
+    return this.reactionArticleRepository.findOne({
+      userId,
+      articleId,
+      type,
+    });
+  }
 }
