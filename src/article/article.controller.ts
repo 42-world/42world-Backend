@@ -24,6 +24,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { DetailCommentDto } from './dto/detail-comment.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -63,9 +64,16 @@ export class ArticleController {
 
   @Get(':id/comments')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiOkResponse({ description: '게시글 댓글들', type: [Comment] })
-  getComments(@Param('id', ParseIntPipe) id: number): Promise<Comment[]> {
-    return this.commentService.getByArticleId(id);
+  @ApiOkResponse({ description: '게시글 댓글들', type: [DetailCommentDto] })
+  async getComments(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Comment[]> {
+    const comments = await this.commentService.getByArticleId(id);
+
+    return comments.map((comment) =>
+      comment.writerId === userId ? { ...comment, isLike: true } : comment,
+    ) as DetailCommentDto[];
   }
 
   @Put(':id')
