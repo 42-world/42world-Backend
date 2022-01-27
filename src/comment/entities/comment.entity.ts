@@ -40,7 +40,6 @@ export class Comment {
   @Index('ix_writer_id')
   writerId!: number;
 
-  //TODO: join user table
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,

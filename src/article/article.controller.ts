@@ -65,7 +65,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiOkResponse({ description: '게시글 댓글들', type: [Comment] })
   getComments(@Param('id', ParseIntPipe) id: number): Promise<Comment[]> {
-    return this.commentService.getByArticleId(id);
+    return this.commentService.findAllByArticleId(id);
   }
 
   @Put(':id')
