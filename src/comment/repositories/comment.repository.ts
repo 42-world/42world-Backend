@@ -7,8 +7,8 @@ export class CommentRepository extends Repository<Comment> {
   async findAllByArticleId(articleId: number): Promise<Comment[]> {
     return this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
-      .leftJoinAndSelect('comment.reactionComment', 'reactionComment')
       .andWhere('comment.articleId = :id', { id: articleId })
+      .orderBy('comment.created_at')
       .getMany();
   }
 

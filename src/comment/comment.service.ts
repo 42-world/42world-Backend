@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -15,6 +17,7 @@ import { CommentRepository } from '@comment/repositories/comment.repository';
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository,
+    @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
   ) {}

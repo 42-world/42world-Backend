@@ -14,11 +14,16 @@ export class ReactionController {
     return this.reactionService.articleCreateOrDelete(userId, articleId);
   }
 
-  @Post('comments/:id')
+  @Post('articles/:articleId/comments/:commentId')
   async reactionCommentCreateOrDelete(
     @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) commentId: number,
+    @Param('articleId', ParseIntPipe) articleId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
   ) {
-    return this.reactionService.commentCreateOrDelete(userId, commentId);
+    return this.reactionService.commentCreateOrDelete(
+      userId,
+      articleId,
+      commentId,
+    );
   }
 }

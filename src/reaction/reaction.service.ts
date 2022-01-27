@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { CommentService } from '@root/comment/comment.service';
@@ -21,8 +21,10 @@ export class ReactionService {
     @InjectRepository(ReactionComment)
     private readonly reactionCommentRepository: Repository<ReactionComment>,
 
+    @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
 
+    @Inject(forwardRef(() => CommentService))
     private readonly commnetService: CommentService,
   ) {}
 
@@ -49,6 +51,7 @@ export class ReactionService {
 
   async commentCreateOrDelete(
     userId: number,
+    articleId: number,
     commentId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
   ): Promise<ReactionComment | DeleteResult> {
@@ -64,7 +67,12 @@ export class ReactionService {
       return this.reactionCommentRepository.delete({ id: reactionArticle.id });
     } else {
       await this.commnetService.increaseLikeCount(comment);
-      return this.reactionCommentRepository.save({ userId, commentId, type });
+      return this.reactionCommentRepository.save({
+        userId,
+        articleId,
+        commentId,
+        type,
+      });
     }
   }
 
@@ -74,6 +82,18 @@ export class ReactionService {
     type: ReactionArticleType = ReactionArticleType.LIKE,
   ): Promise<ReactionArticle> {
     return this.reactionArticleRepository.findOne({
+      userId,
+      articleId,
+      type,
+    });
+  }
+
+  findAllCommentByArticleId(
+    userId: number,
+    articleId: number,
+    type: ReactionCommentType = ReactionCommentType.LIKE,
+  ): Promise<ReactionComment[]> {
+    return this.reactionCommentRepository.find({
       userId,
       articleId,
       type,

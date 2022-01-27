@@ -8,6 +8,8 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -25,6 +27,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DetailCommentDto } from './dto/detail-comment.dto';
+import { ReactionService } from '@root/reaction/reaction.service';
+import { articleCommentsHelper } from './helper/article.helper';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -32,8 +36,14 @@ import { DetailCommentDto } from './dto/detail-comment.dto';
 @Controller('articles')
 export class ArticleController {
   constructor(
+    @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
+
+    @Inject(forwardRef(() => CommentService))
     private readonly commentService: CommentService,
+
+    @Inject(forwardRef(() => ReactionService))
+    private readonly reactionService: ReactionService,
   ) {}
 
   @Post()
@@ -67,15 +77,13 @@ export class ArticleController {
   @ApiOkResponse({ description: '게시글 댓글들', type: [DetailCommentDto] })
   async getComments(
     @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) articleId: number,
   ): Promise<Comment[]> {
-    const comments = await this.commentService.findAllByArticleId(id);
+    const comments = await this.commentService.findAllByArticleId(articleId);
+    const reactionComments =
+      await this.reactionService.findAllCommentByArticleId(userId, articleId);
 
-    return comments.map((comment) =>
-      comment.writerId === userId
-        ? ({ ...comment, isMe: true } as DetailCommentDto)
-        : comment,
-    );
+    return articleCommentsHelper(comments, reactionComments);
   }
 
   @Put(':id')

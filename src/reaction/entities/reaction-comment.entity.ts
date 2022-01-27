@@ -11,6 +11,7 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Article } from '@root/article/entities/article.entity';
 
 export enum ReactionCommentType {
   LIKE = 'LIKE',
@@ -42,6 +43,11 @@ export class ReactionComment {
   commentId!: number;
 
   @ApiProperty()
+  @Column({ nullable: false })
+  @Index('ix_article_id')
+  articleId!: number;
+
+  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
@@ -62,4 +68,11 @@ export class ReactionComment {
   })
   @JoinColumn({ name: 'comment_id', referencedColumnName: 'id' })
   comment?: Comment;
+
+  @ManyToOne(() => Article, (article) => article.reactionComment, {
+    createForeignKeyConstraints: false,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article?: Article;
 }

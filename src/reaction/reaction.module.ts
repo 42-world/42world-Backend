@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ReactionService } from './reaction.service';
 import { ReactionController } from './reaction.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,10 +10,11 @@ import { CommentModule } from '@root/comment/comment.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ReactionArticle, ReactionComment]),
-    ArticleModule,
-    CommentModule,
+    forwardRef(() => ArticleModule),
+    forwardRef(() => CommentModule),
   ],
   controllers: [ReactionController],
   providers: [ReactionService],
+  exports: [ReactionService],
 })
 export class ReactionModule {}
