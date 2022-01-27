@@ -16,11 +16,11 @@ export class CommentRepository extends Repository<Comment> {
       (SELECT * FROM comment WHERE id=${id} AND deleted_at IS NULL)`);
     const is_exist = Object.values(exist_query[0])[0];
     if (!is_exist) {
-      throw new NotFoundException(`Can't find Category with id ${id}`);
+      throw new NotFoundException(`Can't find Comments with id ${id}`);
     }
   }
 
-  getByArticleId(articleId: number): Promise<Comment[]> {
+  findByArticleId(articleId: number): Promise<Comment[]> {
     return this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.reactionComment', 'reactionComment')
       .andWhere('comment.articleId = :id', { id: articleId })

@@ -40,8 +40,8 @@ export class CommentService {
   }
 
   // TODO: reaction이랑 Join하기
-  getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.getByArticleId(articleId);
+  findByArticleId(articleId: number): Promise<Comment[]> {
+    return this.commentRepository.findByArticleId(articleId);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
