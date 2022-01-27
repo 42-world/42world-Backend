@@ -15,4 +15,12 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
       (SELECT * FROM reaction_article WHERE user_id=${userId} AND article_id=${articleId} AND type='${type}')`);
     return Object.values(exist_query[0])[0] === '1';
   }
+
+  async findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
+    return this.createQueryBuilder('reactionArticle')
+      .leftJoinAndSelect('reactionArticle.article', 'article')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('reactionArticle.userId = :id', { id: userId })
+      .getMany();
+  }
 }

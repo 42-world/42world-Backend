@@ -95,4 +95,8 @@ export class ReactionService {
       type,
     });
   }
+
+  findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
+    return this.reactionArticleRepository.findAllArticleByUserId(userId);
+  }
 }
