@@ -29,6 +29,7 @@ import {
 import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
+import { DetailArticleDto } from './dto/detail-article.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -65,11 +66,16 @@ export class ArticleController {
 
   @Get(':id')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
-  @ApiOkResponse({ description: '게시글 상세', type: Article })
-  async getOne(@Param('id', ParseIntPipe) id: number): Promise<Article> {
-    const article = await this.articleService.getOneDetail(id);
+  @ApiOkResponse({ description: '게시글 상세', type: DetailArticleDto })
+  async getOne(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) articleId: number,
+  ): Promise<DetailArticleDto> {
+    const article = await this.articleService.getOneDetail(articleId);
+    const isLike = await this.reactionService.isExistArticle(userId, articleId);
+
     this.articleService.increaseViewCount(article);
-    return article;
+    return { ...article, isLike };
   }
 
   @Get(':id/comments')

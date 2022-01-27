@@ -1,0 +1,18 @@
+import { EntityRepository, Repository } from 'typeorm';
+import {
+  ReactionArticle,
+  ReactionArticleType,
+} from '../entities/reaction-article.entity';
+
+@EntityRepository(ReactionArticle)
+export class ReactionArticleRepository extends Repository<ReactionArticle> {
+  async isExist(
+    userId: number,
+    articleId: number,
+    type: ReactionArticleType,
+  ): Promise<boolean> {
+    const exist_query = await this.query(`SELECT EXISTS
+      (SELECT * FROM reaction_article WHERE user_id=${userId} AND article_id=${articleId} AND type='${type}')`);
+    return Object.values(exist_query[0])[0] === '1';
+  }
+}

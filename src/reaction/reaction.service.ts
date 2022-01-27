@@ -11,12 +11,12 @@ import {
   ReactionComment,
   ReactionCommentType,
 } from './entities/reaction-comment.entity';
+import { ReactionArticleRepository } from './repositories/reaction-article.repository';
 
 @Injectable()
 export class ReactionService {
   constructor(
-    @InjectRepository(ReactionArticle)
-    private readonly reactionArticleRepository: Repository<ReactionArticle>,
+    private readonly reactionArticleRepository: ReactionArticleRepository,
 
     @InjectRepository(ReactionComment)
     private readonly reactionCommentRepository: Repository<ReactionComment>,
@@ -76,16 +76,12 @@ export class ReactionService {
     }
   }
 
-  findOneArticle(
+  isExistArticle(
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<ReactionArticle> {
-    return this.reactionArticleRepository.findOne({
-      userId,
-      articleId,
-      type,
-    });
+  ): Promise<boolean> {
+    return this.reactionArticleRepository.isExist(userId, articleId, type);
   }
 
   findAllCommentByArticleId(
