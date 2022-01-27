@@ -36,8 +36,8 @@ export class CommentService {
     return comment;
   }
 
-  getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.getByArticleId(articleId);
+  findByArticleId(articleId: number): Promise<Comment[]> {
+    return this.commentRepository.findByArticleId(articleId);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
