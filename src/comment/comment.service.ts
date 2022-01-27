@@ -10,12 +10,12 @@ import { FindOneOptions, Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { CommentRepository } from '@comment/repositories/comment.repository';
 
 @Injectable()
 export class CommentService {
   constructor(
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
+    private readonly commentRepository: CommentRepository,
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -36,9 +36,8 @@ export class CommentService {
     return comment;
   }
 
-  // TODO: reaction이랑 Join하기
   getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.find({ where: { articleId } });
+    return this.commentRepository.getByArticleId(articleId);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {

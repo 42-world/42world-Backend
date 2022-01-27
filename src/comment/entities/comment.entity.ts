@@ -68,6 +68,7 @@ export class Comment {
   @Index('ix_deleted_at')
   deletedAt?: Date;
 
+  @ApiProperty({ type: () => ReactionComment })
   @OneToMany(
     () => ReactionComment,
     (reactionComment) => reactionComment.comment,
