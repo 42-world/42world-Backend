@@ -39,11 +39,6 @@ export class CommentService {
     return this.commentRepository.findAllByArticleId(articleId);
   }
 
-  // TODO: reaction이랑 Join하기
-  findByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.findByArticleId(articleId);
-  }
-
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
     return this.commentRepository.findOneOrFail(id, options);
   }

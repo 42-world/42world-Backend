@@ -9,8 +9,8 @@ import { CommentRepository } from '@comment/repositories/comment.repository';
 @Module({
   imports: [
     NotificationModule,
-    TypeOrmModule.forFeature([CommentRepository]),
     forwardRef(() => ArticleModule),
+    TypeOrmModule.forFeature([CommentRepository]),
   ],
   controllers: [CommentController],
   providers: [CommentService],

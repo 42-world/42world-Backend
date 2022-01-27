@@ -64,9 +64,18 @@ export class ArticleController {
 
   @Get(':id/comments')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiOkResponse({ description: '게시글 댓글들', type: [Comment] })
-  getComments(@Param('id', ParseIntPipe) id: number): Promise<Comment[]> {
-    return this.commentService.findAllByArticleId(id);
+  @ApiOkResponse({ description: '게시글 댓글들', type: [DetailCommentDto] })
+  async getComments(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Comment[]> {
+    const comments = await this.commentService.findAllByArticleId(id);
+
+    return comments.map((comment) =>
+      comment.writerId === userId
+        ? ({ ...comment, isMe: true } as DetailCommentDto)
+        : comment,
+    );
   }
 
   @Put(':id')

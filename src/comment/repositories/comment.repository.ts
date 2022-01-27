@@ -1,5 +1,5 @@
-import { EntityRepository, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
 
 @EntityRepository(Comment)
@@ -7,7 +7,8 @@ export class CommentRepository extends Repository<Comment> {
   async findAllByArticleId(articleId: number): Promise<Comment[]> {
     return this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
-      .andWhere('comment.article_id = :id', { id: articleId })
+      .leftJoinAndSelect('comment.reactionComment', 'reactionComment')
+      .andWhere('comment.articleId = :id', { id: articleId })
       .getMany();
   }
 
@@ -18,12 +19,5 @@ export class CommentRepository extends Repository<Comment> {
     if (!is_exist) {
       throw new NotFoundException(`Can't find Comments with id ${id}`);
     }
-  }
-
-  findByArticleId(articleId: number): Promise<Comment[]> {
-    return this.createQueryBuilder('comment')
-      .leftJoinAndSelect('comment.reactionComment', 'reactionComment')
-      .andWhere('comment.articleId = :id', { id: articleId })
-      .getMany();
   }
 }
