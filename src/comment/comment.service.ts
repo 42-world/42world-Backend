@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
-import { CommentRepository } from './repositories/comment.repository';
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { CommentRepository } from '@comment/repositories/comment.repository';
 
 @Injectable()
 export class CommentService {
@@ -41,7 +41,7 @@ export class CommentService {
 
   // TODO: reaction이랑 Join하기
   getByArticleId(articleId: number): Promise<Comment[]> {
-    return this.commentRepository.find({ where: { articleId } });
+    return this.commentRepository.getByArticleId(articleId);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
