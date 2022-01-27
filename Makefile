@@ -8,7 +8,7 @@ alpha:
 	export NODE_ENV=alpha && $(call COMPOSE_ENV,alpha) up --build -d
 
 prod:
-	export NODE_ENV=prod && $(call COMPOSE_ENV,alpha) up --build -d
+	export NODE_ENV=prod && $(call COMPOSE_ENV,prod) up --build -d
 
 db-dev:
 	$(call COMPOSE_ENV,dev) up --build -d db

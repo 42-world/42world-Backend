@@ -16,18 +16,11 @@ export class ArticleRepository extends Repository<Article> {
     return query.getMany();
   }
 
-  async getOneOrFail(id: number): Promise<Article> {
+  async getOneDetailOrFail(id: number): Promise<Article> {
     return this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.id = :id', { id })
       .getOneOrFail();
-  }
-
-  async isExistById(id: number): Promise<boolean> {
-    const exist_query = await this.query(`SELECT EXISTS
-		(SELECT * FROM article WHERE id=${id})`);
-    const is_exist = Object.values(exist_query[0])[0];
-    return is_exist == 1 ? true : false;
   }
 }

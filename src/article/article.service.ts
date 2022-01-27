@@ -4,15 +4,20 @@ import { FindAllArticleDto } from './dto/find-all-article.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
+import { CategoryService } from '@root/category/category.service';
 
 @Injectable()
 export class ArticleService {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(
+    private readonly articleRepository: ArticleRepository,
+    private readonly categoryService: CategoryService,
+  ) {}
 
-  create(
+  async create(
     writerId: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
+    await this.categoryService.existOrFail(createArticleDto.categoryId);
     return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
@@ -21,15 +26,11 @@ export class ArticleService {
   }
 
   getOne(id: number): Promise<Article> {
-    return this.articleRepository.getOneOrFail(id);
+    return this.articleRepository.findOneOrFail(id);
   }
 
-  async existOrFail(id: number): Promise<void> {
-    const isExist = await this.articleRepository.isExistById(id);
-
-    if (!isExist) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
+  getOneDetail(id: number): Promise<Article> {
+    return this.articleRepository.getOneDetailOrFail(id);
   }
 
   async update(
@@ -37,6 +38,8 @@ export class ArticleService {
     writerId: number,
     updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
+    if (updateArticleDto.categoryId)
+      await this.categoryService.existOrFail(updateArticleDto.categoryId);
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,
@@ -50,7 +53,7 @@ export class ArticleService {
   }
 
   async remove(id: number, writerId: number): Promise<void> {
-    const result = await this.articleRepository.delete({
+    const result = await this.articleRepository.softDelete({
       id,
       writerId,
     });
@@ -58,5 +61,20 @@ export class ArticleService {
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
+  }
+
+  increaseViewCount(article: Article): void {
+    article.viewCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  increaseCommentCount(article: Article): void {
+    article.commentCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  decreaseCommentCountById(article: Article): void {
+    article.commentCount -= 1;
+    this.articleRepository.save(article);
   }
 }

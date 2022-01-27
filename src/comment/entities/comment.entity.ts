@@ -10,6 +10,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity('comment')
@@ -39,7 +40,6 @@ export class Comment {
   @Index('ix_writer_id')
   writerId!: number;
 
-  //TODO: join user table
   @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,
@@ -49,14 +49,15 @@ export class Comment {
   writer?: User;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  @Index('ix_deleted_at')
+  deletedAt?: Date;
 }

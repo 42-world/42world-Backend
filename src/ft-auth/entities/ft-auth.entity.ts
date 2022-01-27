@@ -11,8 +11,8 @@ import {
   Index,
 } from 'typeorm';
 
-@Entity('authenticate')
-export class Authenticate {
+@Entity('ft_auth')
+export class FtAuth {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -24,7 +24,7 @@ export class Authenticate {
   @Index('ix_user_id')
   userId!: number;
 
-  @OneToOne(() => User, (user) => user.authenticate, {
+  @OneToOne(() => User, (user) => user.ftAuth, {
     createForeignKeyConstraints: false,
     nullable: false,
   })

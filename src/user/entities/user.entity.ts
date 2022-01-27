@@ -1,4 +1,4 @@
-import { Authenticate } from '@authenticate/entities/authenticate.entity';
+import { FtAuth } from './../../ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -10,6 +10,8 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
@@ -18,6 +20,7 @@ import { Reaction } from '@root/reaction/entities/reaction.entity';
 export enum UserRole {
   CADET = 'CADET',
   ADMIN = 'ADMIN',
+  NOVICE = 'NOVICE',
 }
 
 @Entity('user')
@@ -42,8 +45,8 @@ export class User {
   @Column({ nullable: true })
   lastLogin?: Date;
 
-  @ApiProperty({ example: UserRole.CADET })
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  @ApiProperty({ example: UserRole.NOVICE })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.NOVICE })
   role!: string;
 
   @ApiProperty({
@@ -54,16 +57,17 @@ export class User {
   character!: number;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn()
+  @Index('ix_deleted_at')
+  deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.writer, {
     createForeignKeyConstraints: false,
@@ -83,11 +87,11 @@ export class User {
   })
   notification?: Notification[];
 
-  @OneToOne(() => Authenticate, (authenticate) => authenticate.user, {
+  @OneToOne(() => FtAuth, (ftAuth) => ftAuth.user, {
     createForeignKeyConstraints: false,
     nullable: true,
   })
-  authenticate?: Authenticate;
+  ftAuth?: FtAuth;
 
   @OneToMany(() => Reaction, (reaction) => reaction.user, {
     createForeignKeyConstraints: false,
