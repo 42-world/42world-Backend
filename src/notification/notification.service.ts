@@ -22,7 +22,7 @@ export class NotificationService {
     return this.notificationRepository.save(notification);
   }
 
-  getByUserId(userId: number): Promise<Notification[]> {
+  findByUserId(userId: number): Promise<Notification[]> {
     return this.notificationRepository.find({ where: { userId } });
   }
 
