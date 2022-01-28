@@ -65,6 +65,7 @@ export class UserController {
   }
 
   @Get('me/like-articles')
+  @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
   @ApiOkResponse({
     description: '유저가 좋아요 누른 게시글 목록',
     type: [ReactionArticle],
