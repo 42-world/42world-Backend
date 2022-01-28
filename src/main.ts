@@ -6,12 +6,23 @@ import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ACCESS_TOKEN } from './auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
-import * as csurf from 'csurf';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import * as morgan from 'morgan';
+// import * as csurf from 'csurf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
+
+  morgan.token('body', (req) => JSON.stringify(req.body));
+  app.use(
+    morgan(
+      ':method :url :status :response-time ms - :res[content-length] :body',
+    ),
+  );
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
@@ -22,7 +33,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://www.42world.kr'],
+    credentials: true,
+  });
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,7 +46,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  app.use(csurf({ cookie: true }));
+  // app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
 }
 bootstrap();

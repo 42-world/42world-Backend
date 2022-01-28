@@ -1,6 +1,5 @@
 import { UserService } from '@user/user.service';
 import {
-  BadRequestException,
   CACHE_MANAGER,
   ForbiddenException,
   Inject,
@@ -13,7 +12,7 @@ import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE, TIME2LIVE } from './ft-auth.utils';
-import { User } from '@root/user/entities/user.entity';
+import { User, UserRole } from '@root/user/entities/user.entity';
 import { FtAuthRedisValue } from './interfaces/ft-auth.interface';
 
 @Injectable()
@@ -42,8 +41,8 @@ export class FtAuthService {
     return true;
   }
 
-  getCadet(intraId: string) {
-    return this.ftAuthRepository.findOneOrFail({ intraId });
+  getCadet(intraId: string): Promise<FtAuth> {
+    return this.ftAuthRepository.findOne({ intraId });
   }
 
   async signin(intraId: string, user: User) {
@@ -51,16 +50,15 @@ export class FtAuthService {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
-    try {
-      await this.getCadet(intraId);
-    } catch (e) {
+    const cadet = await this.getCadet(intraId);
+
+    if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
     const email = getEmail(intraId);
     const code = await getCode(intraId);
     const value = { userId: user.id, intraId };
-
     await this.cacheManager.set<FtAuthRedisValue>(code, value, {
       ttl: TIME2LIVE,
     });
@@ -73,9 +71,7 @@ export class FtAuthService {
   }
 
   async getAuth(code: string) {
-    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(
-      decodeURIComponent(code),
-    );
+    const ftAuth = await this.cacheManager.get<FtAuthRedisValue>(code);
 
     if (!ftAuth) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
@@ -83,7 +79,10 @@ export class FtAuthService {
 
     const user = await this.userService.getOne(ftAuth.userId);
 
-    await this.userService.updateAuthenticate(user, { isAuthenticated: true });
+    await this.userService.updateAuthenticate(user, {
+      isAuthenticated: true,
+      role: UserRole.CADET,
+    });
     await this.ftAuthRepository.save({
       userId: user.id,
       intraId: ftAuth.intraId,
