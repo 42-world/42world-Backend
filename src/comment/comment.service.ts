@@ -1,16 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
-import { CommentRepository } from './repositories/comment.repository';
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { CommentRepository } from '@comment/repositories/comment.repository';
 
 @Injectable()
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository,
+    @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -66,5 +73,18 @@ export class CommentService {
     const comment = await this.getOne(id, { withDeleted: true });
     const article = await this.articleService.getOne(comment.articleId);
     this.articleService.decreaseCommentCountById(article);
+  }
+
+  increaseLikeCount(comment: Comment): void {
+    comment.likeCount += 1;
+    this.commentRepository.save(comment);
+  }
+
+  decreaseLikeCount(comment: Comment): void {
+    if (comment.likeCount < 1) {
+      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+    }
+    comment.likeCount -= 1;
+    this.commentRepository.save(comment);
   }
 }
