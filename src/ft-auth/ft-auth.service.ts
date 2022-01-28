@@ -77,6 +77,12 @@ export class FtAuthService {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
 
+    const cadet = await this.getCadet(ftAuth.intraId);
+
+    if (cadet) {
+      throw new ForbiddenException('이미 가입된 카뎃입니다.');
+    }
+
     const user = await this.userService.getOne(ftAuth.userId);
 
     await this.userService.updateAuthenticate(user, {
