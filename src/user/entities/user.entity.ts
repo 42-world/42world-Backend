@@ -1,4 +1,4 @@
-import { FtAuth } from './../../ft-auth/entities/ft-auth.entity';
+import { FtAuth } from '@ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -94,6 +94,7 @@ export class User {
     createForeignKeyConstraints: false,
     nullable: true,
   })
+
   reactionArticle?: ReactionArticle[];
 
   @OneToMany(() => ReactionComment, (reactionComment) => reactionComment.user, {

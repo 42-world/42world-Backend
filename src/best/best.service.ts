@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBestDto } from './dto/create-best.dto';
-import { UpdateBestDto } from './dto/update-best.dto';
+import { FindAllBestDto } from './dto/find-all-best.dto';
+import { Best } from './entities/best.entity';
+import { BestRepository } from './repositories/best.repository';
 
 @Injectable()
 export class BestService {
-  create(createBestDto: CreateBestDto) {
-    return 'This action adds a new best';
+  constructor(private readonly bestRepository: BestRepository) {}
+
+  async create(createBestDto: CreateBestDto): Promise<Best> {
+    try {
+      return await this.bestRepository.save(createBestDto);
+    } catch (error) {
+      throw new ConflictException();
+    }
   }
 
-  findAll() {
-    return `This action returns all best`;
+  findAll(findAllBestDto: FindAllBestDto): Promise<Best[]> {
+    return this.bestRepository.findAll(findAllBestDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} best`;
-  }
+  async remove(id: number) {
+    const result = await this.bestRepository.delete({ id });
 
-  update(id: number, updateBestDto: UpdateBestDto) {
-    return `This action updates a #${id} best`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} best`;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Can't find Best with id ${id}`);
+    }
   }
 }

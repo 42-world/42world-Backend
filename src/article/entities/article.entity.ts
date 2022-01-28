@@ -9,11 +9,13 @@ import {
   JoinColumn,
   Index,
   DeleteDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Category } from '@category/entities/category.entity';
+import { Best } from '@root/best/entities/best.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 
@@ -108,4 +110,11 @@ export class Article {
     },
   )
   reactionComment?: ReactionComment[];
+
+  @ApiProperty()
+  @OneToOne(() => Best, (best) => best.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  best?: Best;
 }
