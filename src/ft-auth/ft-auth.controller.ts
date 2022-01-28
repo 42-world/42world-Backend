@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Query } from '@nestjs/common';
+import { Body, Controller, Post, Get, Query, Redirect } from '@nestjs/common';
 import { FtAuthService } from './ft-auth.service';
 import { GetUser, Novice, Public } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
@@ -31,6 +31,7 @@ export class FtAuthController {
   }
 
   @Get()
+  @Redirect(process.env.FRONT_URL || 'localhost:3000', 301)
   @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
   @ApiOkResponse({ description: '42인증 완료' })
