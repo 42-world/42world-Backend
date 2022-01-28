@@ -51,7 +51,7 @@ export class FtAuthService {
     }
 
     const cadet = await this.getCadet(intraId);
-    
+
     if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
