@@ -26,6 +26,7 @@ import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { ormconfig } from './database/ormconfig';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    AppService,
   ],
 })
 export class AppModule {}

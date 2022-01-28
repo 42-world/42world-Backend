@@ -58,8 +58,8 @@ export class ArticleController {
   }
 
   @Get()
-  @ApiOperation({ summary: '게시글 검색' })
-  @ApiOkResponse({ description: '게시글 들', type: [Article] })
+  @ApiOperation({ summary: '게시글 목록' })
+  @ApiOkResponse({ description: '게시글들', type: [Article] })
   findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
     return this.articleService.findAll(findAllArticle);
   }

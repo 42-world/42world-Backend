@@ -8,7 +8,8 @@ export class ArticleRepository extends Repository<Article> {
   async findAll(options?: FindAllArticleDto): Promise<Article[]> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
-      .leftJoinAndSelect('article.category', 'category');
+      .leftJoinAndSelect('article.category', 'category')
+      .orderBy('article.created_at', 'DESC');
 
     if (options.categoryId)
       query.andWhere('category.id = :id', { id: options.categoryId });

@@ -1,3 +1,7 @@
+export const MINUTE = 60;
+export const HOUR = 60 * MINUTE;
+export const TIME2LIVE = 30 * MINUTE;
+
 export function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);

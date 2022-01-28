@@ -8,22 +8,25 @@ import {
 import { Public } from '@auth/auth.decorator';
 import axios from 'axios';
 import { Cache } from 'cache-manager';
+import { HOUR } from './utils';
+import { AppService, GetFtCheckinDto } from './app.service';
 
 const FT_CHECKIN_API = 'FT_CHECKIN_API';
 const FT_CHECKIN_CACHE_TTL = 100;
 
-class GetFtCheckinDto {
-  @ApiProperty({ example: 42 })
-  gaepo: number;
+const MAX_CHECKIN_API = 'MAX_CHECKIN_API';
+const MAX_CHECKIN_CACHE_TTL = HOUR * 6;
 
-  @ApiProperty({ example: 0 })
-  seocho: number;
+class FtCheckData {
+  @ApiProperty()
+  now: GetFtCheckinDto;
+  @ApiProperty()
+  max: GetFtCheckinDto;
 }
-
 @ApiTags('Hello')
 @Controller()
 export class AppController {
-  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   @Public()
@@ -38,23 +41,26 @@ export class AppController {
   @ApiOperation({ summary: '42checkin api' })
   @ApiOkResponse({
     description: '42체크인 user using api 결과',
-    type: GetFtCheckinDto,
+    type: FtCheckData,
   })
-  async getFtCheckin(): Promise<GetFtCheckinDto> {
-    const ftCheckinData = await this.cacheManager.get<GetFtCheckinDto>(
+  async getFtCheckin(): Promise<FtCheckData> {
+    const checkinData = await this.appService.fetchData(
       FT_CHECKIN_API,
+      FT_CHECKIN_CACHE_TTL,
+      'https://api.checkin.42seoul.io/user/using',
     );
 
-    if (!ftCheckinData) {
-      const { data } = await axios.get(
-        'https://api.checkin.42seoul.io/user/using',
-      );
-      await this.cacheManager.set(FT_CHECKIN_API, data, {
-        ttl: FT_CHECKIN_CACHE_TTL,
-      });
+    const checkinInfo = await this.appService.fetchData(
+      MAX_CHECKIN_API,
+      MAX_CHECKIN_CACHE_TTL,
+      'https://api.checkin.42seoul.io/config',
+    );
 
-      return data;
-    }
-    return ftCheckinData;
+    const data = {
+      now: checkinData,
+      max: checkinInfo,
+    };
+
+    return data;
   }
 }
