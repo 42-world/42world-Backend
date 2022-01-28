@@ -20,6 +20,7 @@ export class ArticleRepository extends Repository<Article> {
     return this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
+      .leftJoinAndSelect('article.reactionArticle', 'reactionArticle')
       .andWhere('article.id = :id', { id })
       .getOneOrFail();
   }

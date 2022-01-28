@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ArticleRepository } from './repositories/article.repository';
 import { FindAllArticleDto } from './dto/find-all-article.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -75,6 +79,19 @@ export class ArticleService {
 
   decreaseCommentCountById(article: Article): void {
     article.commentCount -= 1;
+    this.articleRepository.save(article);
+  }
+
+  increaseLikeCount(article: Article): void {
+    article.likeCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  decreaseLikeCount(article: Article): void {
+    if (article.likeCount < 1) {
+      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+    }
+    article.likeCount -= 1;
     this.articleRepository.save(article);
   }
 

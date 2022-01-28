@@ -15,7 +15,8 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Best } from '@root/best/entities/best.entity';
-import { Reaction } from '@root/reaction/entities/reaction.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 
 export enum UserRole {
   CADET = 'CADET',
@@ -93,11 +94,17 @@ export class User {
   })
   ftAuth?: FtAuth;
 
-  @OneToMany(() => Reaction, (reaction) => reaction.user, {
+  @OneToMany(() => ReactionArticle, (reactionArticle) => reactionArticle.user, {
     createForeignKeyConstraints: false,
     nullable: true,
   })
-  reaction?: Reaction[];
+  reactionArticle?: ReactionArticle[];
+
+  @OneToMany(() => ReactionComment, (reactionComment) => reactionComment.user, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  reactionComment?: ReactionComment[];
 
   @OneToMany(() => Best, (best) => best.user, {
     createForeignKeyConstraints: false,
