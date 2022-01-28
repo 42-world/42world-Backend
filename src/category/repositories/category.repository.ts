@@ -9,7 +9,7 @@ export class CategoryRepository extends Repository<Category> {
     const exist_query = await this.query(`SELECT EXISTS
 		(SELECT * FROM category WHERE id=${id} AND deleted_at IS NULL)`);
     const is_exist = Object.values(exist_query[0])[0];
-    if (!is_exist) {
+    if (is_exist === '0') {
       throw new NotFoundException(`Can't find Category with id ${id}`);
     }
   }
