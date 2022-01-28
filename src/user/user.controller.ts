@@ -17,10 +17,11 @@ import {
 import { GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { AuthUserDto } from './dto/auth-user.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -36,8 +37,11 @@ export class UserController {
   @Get('me')
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: User })
-  getOne(@GetUser() user: User): User {
-    return user;
+  getOne(@GetUser() user: User): AuthUserDto {
+    return {
+      ...user,
+      isAuthenticated: user.role !== UserRole.NOVICE,
+    };
   }
 
   @Get(':id')

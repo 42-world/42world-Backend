@@ -24,11 +24,7 @@ export class UpdateUserDto {
   readonly character?: number;
 }
 
-export class UpdateAuthDto {
-  @IsBoolean()
-  @IsNotEmpty()
-  readonly isAuthenticated: boolean;
-
+export class UpdateRoleDto {
   @IsString()
   @IsNotEmpty()
   readonly role: UserRole;

@@ -46,7 +46,7 @@ export class FtAuthService {
   }
 
   async signin(intraId: string, user: User) {
-    if (user.isAuthenticated) {
+    if (user.role !== UserRole.NOVICE) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
@@ -86,7 +86,6 @@ export class FtAuthService {
     const user = await this.userService.getOne(ftAuth.userId);
 
     await this.userService.updateAuthenticate(user, {
-      isAuthenticated: true,
       role: UserRole.CADET,
     });
     await this.ftAuthRepository.save({

@@ -39,10 +39,6 @@ export class User {
   oauthToken!: string;
 
   @ApiProperty()
-  @Column({ nullable: false, default: false })
-  isAuthenticated!: boolean;
-
-  @ApiProperty()
   @Column({ nullable: true })
   lastLogin?: Date;
 
