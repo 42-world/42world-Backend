@@ -21,6 +21,10 @@ import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { ArticleService } from '@article/article.service';
+import { CommentService } from '@comment/comment.service';
+import { Article } from '@article/entities/article.entity';
+import { Comment } from '@comment/entities/comment.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -31,6 +35,8 @@ export class UserController {
     private readonly userService: UserService,
     private readonly notificationService: NotificationService,
     private readonly reactionService: ReactionService,
+    private readonly articleService: ArticleService,
+    private readonly commentService: CommentService,
   ) {}
 
   @Get('me')
@@ -74,5 +80,19 @@ export class UserController {
     @GetUser('id') userId: number,
   ): Promise<ReactionArticle[]> {
     return this.reactionService.findAllArticleByUserId(userId);
+  }
+
+  @Get('me/articles')
+  @ApiOperation({ summary: '내가 작성한 글' })
+  @ApiOkResponse({ description: '내가 작성한 글 목록', type: [Article] })
+  findAllMyArticle(@GetUser('id') id: number): Promise<Article[]> {
+    return this.articleService.findAllMyArticle(id);
+  }
+
+  @Get('me/comments')
+  @ApiOperation({ summary: '내가 작성한 댓글' })
+  @ApiOkResponse({ description: '내가 작성한 댓글 목록', type: [Comment] })
+  findAllMyComment(@GetUser('id') id: number): Promise<Comment[]> {
+    return this.commentService.findAllMyComment(id);
   }
 }

@@ -20,4 +20,12 @@ export class CommentRepository extends Repository<Comment> {
       throw new NotFoundException(`Can't find Comments with id ${id}`);
     }
   }
+
+  async findAllMyComment(userId: number): Promise<Comment[]> {
+    return this.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.article', 'article')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('comment.writerId = :id', { id: userId })
+      .getMany();
+  }
 }

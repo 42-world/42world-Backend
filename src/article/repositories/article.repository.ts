@@ -24,4 +24,11 @@ export class ArticleRepository extends Repository<Article> {
       .andWhere('article.id = :id', { id })
       .getOneOrFail();
   }
+
+  async findAllMyArticle(userId: number): Promise<Article[]> {
+    return this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('article.writerId = :id', { id: userId })
+      .getMany();
+  }
 }
