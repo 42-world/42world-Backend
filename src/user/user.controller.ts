@@ -19,6 +19,7 @@ import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
+import { ArticleService } from '@article/article.service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -28,6 +29,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly notificationService: NotificationService,
+    private readonly articleService: ArticleService,
   ) {}
 
   @Get()
@@ -59,5 +61,12 @@ export class UserController {
   @ApiOkResponse({ description: '유저 삭제 성공' })
   remove(@GetUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
+  }
+
+  @Get('me/articles')
+  @ApiOperation({ summary: '내가 작성한 글' })
+  @ApiOkResponse({ description: '내가 작성한 글 목록' })
+  findAllMyArticle(@GetUser('id') id: number) {
+    return this.articleService.findAllMyArticle(id);
   }
 }
