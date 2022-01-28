@@ -32,7 +32,7 @@ export class ReactionService {
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<ReactionArticle | DeleteResult> {
+  ): Promise<void> {
     const reactionArticle = await this.reactionArticleRepository.findOne({
       userId,
       articleId,
@@ -41,11 +41,11 @@ export class ReactionService {
     const article = await this.articleService.getOne(articleId);
 
     if (reactionArticle) {
-      await this.articleService.decreaseLikeCount(article);
-      return this.reactionArticleRepository.delete({ id: reactionArticle.id });
+      this.articleService.decreaseLikeCount(article);
+      this.reactionArticleRepository.delete({ id: reactionArticle.id });
     } else {
-      await this.articleService.increaseLikeCount(article);
-      return this.reactionArticleRepository.save({ userId, articleId, type });
+      this.articleService.increaseLikeCount(article);
+      this.reactionArticleRepository.save({ userId, articleId, type });
     }
   }
 
@@ -54,7 +54,7 @@ export class ReactionService {
     articleId: number,
     commentId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
-  ): Promise<ReactionComment | DeleteResult> {
+  ): Promise<void> {
     const reactionArticle = await this.reactionCommentRepository.findOne({
       userId,
       commentId,
@@ -63,11 +63,11 @@ export class ReactionService {
     const comment = await this.commentService.getOne(commentId);
 
     if (reactionArticle) {
-      await this.commentService.decreaseLikeCount(comment);
-      return this.reactionCommentRepository.delete({ id: reactionArticle.id });
+      this.commentService.decreaseLikeCount(comment);
+      this.reactionCommentRepository.delete({ id: reactionArticle.id });
     } else {
-      await this.commentService.increaseLikeCount(comment);
-      return this.reactionCommentRepository.save({
+      this.commentService.increaseLikeCount(comment);
+      this.reactionCommentRepository.save({
         userId,
         articleId,
         commentId,
