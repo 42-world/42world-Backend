@@ -38,7 +38,8 @@ export class CommentService {
     return comment;
   }
 
-  findAllByArticleId(articleId: number): Promise<Comment[]> {
+  async findAllByArticleId(articleId: number): Promise<Comment[]> {
+    await this.articleService.existOrFail(articleId);
     return this.commentRepository.findAllByArticleId(articleId);
   }
 

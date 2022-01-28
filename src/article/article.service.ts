@@ -29,6 +29,10 @@ export class ArticleService {
     return this.articleRepository.findAll(options);
   }
 
+  existOrFail(id: number): Promise<void> {
+    return this.articleRepository.existOrFail(id);
+  }
+
   getOne(id: number): Promise<Article> {
     return this.articleRepository.findOneOrFail(id);
   }
