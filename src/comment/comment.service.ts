@@ -67,4 +67,8 @@ export class CommentService {
     const article = await this.articleService.getOne(comment.articleId);
     this.articleService.decreaseCommentCountById(article);
   }
+
+  async findAllMyComment(userId: number): Promise<Comment[]> {
+    return this.commentRepository.findAllMyComment(userId);
+  }
 }

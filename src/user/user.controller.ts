@@ -20,6 +20,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ArticleService } from '@article/article.service';
+import { CommentService } from '@comment/comment.service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -30,6 +31,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly notificationService: NotificationService,
     private readonly articleService: ArticleService,
+    private readonly commentService: CommentService,
   ) {}
 
   @Get()
@@ -68,5 +70,12 @@ export class UserController {
   @ApiOkResponse({ description: '내가 작성한 글 목록' })
   findAllMyArticle(@GetUser('id') id: number) {
     return this.articleService.findAllMyArticle(id);
+  }
+
+  @Get('me/comments')
+  @ApiOperation({ summary: '내가 작성한 댓글' })
+  @ApiOkResponse({ description: '내가 작성한 댓글 목록' })
+  findAllMyComment(@GetUser('id') id: number) {
+    return this.commentService.findAllMyComment(id);
   }
 }
