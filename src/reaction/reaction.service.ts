@@ -76,7 +76,7 @@ export class ReactionService {
     }
   }
 
-  isExistArticle(
+  isMyReactionArticle(
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,

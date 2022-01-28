@@ -72,7 +72,10 @@ export class ArticleController {
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<DetailArticleDto> {
     const article = await this.articleService.getOneDetail(articleId);
-    const isLike = await this.reactionService.isExistArticle(userId, articleId);
+    const isLike = await this.reactionService.isMyReactionArticle(
+      userId,
+      articleId,
+    );
 
     this.articleService.increaseViewCount(article);
     return { ...article, isLike };
