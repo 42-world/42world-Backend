@@ -5,6 +5,7 @@ COPY ./config ./config
 COPY ./src ./src
 COPY ./test ./test
 
+COPY nest-cli.json .
 COPY tsconfig.build.json .
 COPY tsconfig.json .
 COPY package.json .
