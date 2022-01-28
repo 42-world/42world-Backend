@@ -20,7 +20,7 @@ export class FtAuth {
   @Column({ type: 'varchar', length: 40, nullable: false })
   intraId?: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   @Index('ix_user_id')
   userId!: number;
 

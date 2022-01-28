@@ -4,7 +4,6 @@ import {
   Min,
   Max,
   IsOptional,
-  IsBoolean,
   IsNotEmpty,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -24,11 +23,7 @@ export class UpdateUserDto {
   readonly character?: number;
 }
 
-export class UpdateAuthDto {
-  @IsBoolean()
-  @IsNotEmpty()
-  readonly isAuthenticated: boolean;
-
+export class UpdateRoleDto {
   @IsString()
   @IsNotEmpty()
   readonly role: UserRole;
