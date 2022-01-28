@@ -25,7 +25,7 @@ export class ReactionService {
     private readonly articleService: ArticleService,
 
     @Inject(forwardRef(() => CommentService))
-    private readonly commnetService: CommentService,
+    private readonly commentService: CommentService,
   ) {}
 
   async articleCreateOrDelete(
@@ -60,13 +60,13 @@ export class ReactionService {
       commentId,
       type,
     });
-    const comment = await this.commnetService.getOne(commentId);
+    const comment = await this.commentService.getOne(commentId);
 
     if (reactionArticle) {
-      await this.commnetService.decreaseLikeCount(comment);
+      await this.commentService.decreaseLikeCount(comment);
       return this.reactionCommentRepository.delete({ id: reactionArticle.id });
     } else {
-      await this.commnetService.increaseLikeCount(comment);
+      await this.commentService.increaseLikeCount(comment);
       return this.reactionCommentRepository.save({
         userId,
         articleId,
@@ -84,7 +84,7 @@ export class ReactionService {
     return this.reactionArticleRepository.isExist(userId, articleId, type);
   }
 
-  findAllCommentByArticleId(
+  findAllMyReactionComment(
     userId: number,
     articleId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,

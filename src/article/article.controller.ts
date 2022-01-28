@@ -87,7 +87,7 @@ export class ArticleController {
   ): Promise<Comment[]> {
     const comments = await this.commentService.findAllByArticleId(articleId);
     const reactionComments =
-      await this.reactionService.findAllCommentByArticleId(userId, articleId);
+      await this.reactionService.findAllMyReactionComment(userId, articleId);
 
     return articleCommentsHelper(comments, reactionComments);
   }
