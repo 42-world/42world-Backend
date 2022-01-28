@@ -14,7 +14,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Category } from '@category/entities/category.entity';
-import { Reaction } from '@root/reaction/entities/reaction.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 
 @Entity('article')
 export class Article {
@@ -24,12 +25,12 @@ export class Article {
 
   @ApiProperty()
   @Index('ix_title')
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 42, nullable: true })
   title!: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  content?: string;
+  @Column({ type: 'text', nullable: false })
+  content!: string;
 
   @ApiProperty()
   @Column({ default: 0 })
@@ -86,9 +87,25 @@ export class Article {
   })
   comment?: Comment[];
 
-  @OneToMany(() => Reaction, (reaction) => reaction.article, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  reaction?: Reaction[];
+  @ApiProperty({ type: () => ReactionArticle })
+  @OneToMany(
+    () => ReactionArticle,
+    (reactionArticle) => reactionArticle.article,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionArticle?: ReactionArticle[];
+
+  @ApiProperty({ type: () => ReactionComment })
+  @OneToMany(
+    () => ReactionComment,
+    (reactionComment) => reactionComment.article,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionComment?: ReactionComment[];
 }

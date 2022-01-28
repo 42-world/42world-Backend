@@ -5,6 +5,11 @@ import configEmail from './config/mail.config';
 import { CacheModule, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import * as redisStore from 'cache-manager-ioredis';
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
 import * as path from 'path';
 
 import { AppController } from './app.controller';
@@ -52,6 +57,19 @@ import { ormconfig } from './database/ormconfig';
       host: process.env.REDIS_HOST ?? 'localhost',
       port: process.env.REDIS_PORT ?? 6379,
       isGlobal: true,
+    }),
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: 'silly',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike('42world', {
+              prettyPrint: true,
+            }),
+          ),
+        }),
+      ],
     }),
     CommentModule,
     UserModule,
