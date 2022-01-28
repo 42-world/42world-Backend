@@ -28,8 +28,8 @@ export class Article {
   title!: string;
 
   @ApiProperty()
-  @Column({ type: 'text', nullable: true })
-  content?: string;
+  @Column({ type: 'text', nullable: false })
+  content!: string;
 
   @ApiProperty()
   @Column({ default: 0 })
