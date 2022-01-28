@@ -98,4 +98,8 @@ export class ArticleService {
     article.likeCount -= 1;
     this.articleRepository.save(article);
   }
+
+  findAllMyArticle(userId: number): Promise<Article[]> {
+    return this.articleRepository.findAllMyArticle(userId);
+  }
 }

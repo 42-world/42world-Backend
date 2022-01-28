@@ -46,7 +46,7 @@ export class FtAuthService {
   }
 
   async signin(intraId: string, user: User) {
-    if (user.isAuthenticated) {
+    if (user.role !== UserRole.NOVICE) {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
@@ -77,10 +77,15 @@ export class FtAuthService {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
 
+    const cadet = await this.getCadet(ftAuth.intraId);
+
+    if (cadet) {
+      throw new ForbiddenException('이미 가입된 카뎃입니다.');
+    }
+
     const user = await this.userService.getOne(ftAuth.userId);
 
     await this.userService.updateAuthenticate(user, {
-      isAuthenticated: true,
       role: UserRole.CADET,
     });
     await this.ftAuthRepository.save({

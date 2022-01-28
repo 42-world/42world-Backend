@@ -88,4 +88,8 @@ export class CommentService {
     comment.likeCount -= 1;
     this.commentRepository.save(comment);
   }
+
+  async findAllMyComment(userId: number): Promise<Comment[]> {
+    return this.commentRepository.findAllMyComment(userId);
+  }
 }
