@@ -12,6 +12,10 @@ import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { User } from '@root/user/entities/user.entity';
 
 const getAccessToken = (request: any): string => {
+  if (process.env.NODE_ENV !== 'prod' && request.headers.authorization) {
+    return request.headers.authorization;
+  }
+
   return request.cookies[ACCESS_TOKEN];
 };
 
