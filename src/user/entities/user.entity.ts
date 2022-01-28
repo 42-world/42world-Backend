@@ -94,7 +94,6 @@ export class User {
     createForeignKeyConstraints: false,
     nullable: true,
   })
-
   reactionArticle?: ReactionArticle[];
 
   @OneToMany(() => ReactionComment, (reactionComment) => reactionComment.user, {
@@ -102,10 +101,4 @@ export class User {
     nullable: true,
   })
   reactionComment?: ReactionComment[];
-
-  @OneToMany(() => Best, (best) => best.user, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  best?: Best[];
 }

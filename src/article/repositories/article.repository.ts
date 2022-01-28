@@ -34,6 +34,7 @@ export class ArticleRepository extends Repository<Article> {
     if (is_exist === '0') {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
+  }
 
   async findAllMyArticle(userId: number): Promise<Article[]> {
     return this.createQueryBuilder('article')
