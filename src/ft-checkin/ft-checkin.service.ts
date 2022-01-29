@@ -5,9 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-
 import axios from 'axios';
 import { ApiProperty } from '@nestjs/swagger';
+
+const GAEPO = 'gaepo';
+const SECHO = 'secho';
 
 export class GetFtCheckinDto {
   @ApiProperty({ example: 42 })
@@ -18,7 +20,7 @@ export class GetFtCheckinDto {
 }
 
 @Injectable()
-export class AppService {
+export class FtCheckinService {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
 
   async fetchData(
@@ -34,8 +36,8 @@ export class AppService {
       try {
         const { data } = await axios.get(endpoint);
         const realData = {
-          seocho: data['seocho'],
-          gaepo: data['gaepo'],
+          seocho: data[SECHO],
+          gaepo: data[GAEPO],
         };
 
         await this.cacheManager.set(cacheKey, realData, {
