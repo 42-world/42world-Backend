@@ -82,17 +82,17 @@ export class CommentService {
     this.articleService.decreaseCommentCountById(article);
   }
 
-  increaseLikeCount(comment: Comment): void {
+  increaseLikeCount(comment: Comment): Promise<Comment> {
     comment.likeCount += 1;
-    this.commentRepository.save(comment);
+    return this.commentRepository.save(comment);
   }
 
-  decreaseLikeCount(comment: Comment): void {
+  decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount < 1) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     comment.likeCount -= 1;
-    this.commentRepository.save(comment);
+    return this.commentRepository.save(comment);
   }
 
   async findAllMyComment(userId: number): Promise<Comment[]> {

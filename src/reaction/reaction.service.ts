@@ -1,9 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
-import { Article } from '@root/article/entities/article.entity';
+import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { CommentService } from '@root/comment/comment.service';
 import { Repository } from 'typeorm';
+import { LikeCommentDto } from './dto/like-article.dto';
 import {
   ReactionArticle,
   ReactionArticleType,
@@ -33,7 +34,7 @@ export class ReactionService {
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<Article> {
+  ): Promise<DetailArticleDto> {
     const reactionArticle = await this.reactionArticleRepository.findOne({
       userId,
       articleId,
@@ -43,10 +44,20 @@ export class ReactionService {
 
     if (reactionArticle) {
       this.reactionArticleRepository.delete({ id: reactionArticle.id });
-      return this.articleService.decreaseLikeCount(article);
+      const res = await this.articleService.decreaseLikeCount(article);
+      const response = {
+        ...res,
+        isLike: false,
+      };
+      return response;
     } else {
       this.reactionArticleRepository.save({ userId, articleId, type });
-      return this.articleService.increaseLikeCount(article);
+      const res = await this.articleService.increaseLikeCount(article);
+      const response = {
+        ...res,
+        isLike: true,
+      };
+      return response;
     }
   }
 
@@ -55,7 +66,7 @@ export class ReactionService {
     articleId: number,
     commentId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
-  ): Promise<void> {
+  ): Promise<LikeCommentDto> {
     const reactionArticle = await this.reactionCommentRepository.findOne({
       userId,
       commentId,
@@ -64,16 +75,26 @@ export class ReactionService {
     const comment = await this.commentService.getOne(commentId);
 
     if (reactionArticle) {
-      this.commentService.decreaseLikeCount(comment);
       this.reactionCommentRepository.delete({ id: reactionArticle.id });
+      const res = await this.commentService.decreaseLikeCount(comment);
+      const response = {
+        ...res,
+        isLike: false,
+      };
+      return response;
     } else {
-      this.commentService.increaseLikeCount(comment);
       this.reactionCommentRepository.save({
         userId,
         articleId,
         commentId,
         type,
       });
+      const res = await this.commentService.increaseLikeCount(comment);
+      const response = {
+        ...res,
+        isLike: true,
+      };
+      return response;
     }
   }
 
