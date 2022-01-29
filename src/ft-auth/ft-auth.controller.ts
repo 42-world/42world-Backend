@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Query, Redirect } from '@nestjs/common';
+import { Body, Controller, Post, Get, Query, Render } from '@nestjs/common';
 import { FtAuthService } from './ft-auth.service';
 import { GetUser, Novice, Public } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
@@ -31,12 +31,29 @@ export class FtAuthController {
   }
 
   @Get()
-  @Redirect(process.env.FRONT_URL || 'localhost:3000', 301)
+  @Render('results.ejs')
   @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
   @ApiOkResponse({ description: '42인증 완료' })
   @ApiForbiddenResponse({ description: '42인증 메일 코드 만료됨' })
   async getAuthCode(@Query('code') code: string) {
-    await this.ftAuthService.getAuth(code);
+    try {
+      await this.ftAuthService.getAuth(code);
+
+      return {
+        title: 'Hello World!',
+        message: '인증에 성공했습니다! 🥳',
+        button: 'Welcome, Cadet!',
+        endpoint: process.env.FRONT_URL,
+      };
+    } catch (e) {
+      console.error(e);
+      return {
+        title: 'Oops! There is an error ...',
+        message: '인증에 실패했습니다 😭',
+        button: 'Retry',
+        endpoint: process.env.FRONT_URL,
+      };
+    }
   }
 }
