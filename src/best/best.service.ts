@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ArticleService } from '@root/article/article.service';
+import { Article } from '@root/article/entities/article.entity';
 import { QueryFailedError } from 'typeorm';
 import { CreateBestDto } from './dto/create-best.dto';
 import { FindAllBestDto } from './dto/find-all-best.dto';
@@ -7,7 +9,10 @@ import { BestRepository } from './repositories/best.repository';
 
 @Injectable()
 export class BestService {
-  constructor(private readonly bestRepository: BestRepository) {}
+  constructor(
+    private readonly bestRepository: BestRepository,
+    private readonly articleService: ArticleService,
+  ) {}
 
   async createOrNot(createBestDto: CreateBestDto): Promise<Best | void> {
     try {
@@ -17,8 +22,8 @@ export class BestService {
     }
   }
 
-  findAll(findAllBestDto: FindAllBestDto): Promise<Best[]> {
-    return this.bestRepository.findAll(findAllBestDto);
+  findAll(findAllBestDto: FindAllBestDto): Promise<Article[]> {
+    return this.articleService.findAllBest(findAllBestDto);
   }
 
   async remove(id: number) {

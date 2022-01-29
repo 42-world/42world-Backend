@@ -17,6 +17,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Article } from '@root/article/entities/article.entity';
 import { Admin } from '@root/auth/auth.decorator';
 import { BestService } from './best.service';
 import { CreateBestDto } from './dto/create-best.dto';
@@ -46,8 +47,8 @@ export class BestController {
 
   @Get()
   @ApiOperation({ summary: '인기글 가져오기' })
-  @ApiOkResponse({ description: '인기글 목록', type: [Best] })
-  findAll(@Query() findAllBestDto: FindAllBestDto): Promise<Best[]> {
+  @ApiOkResponse({ description: '인기글 목록', type: [Article] })
+  findAll(@Query() findAllBestDto: FindAllBestDto): Promise<Article[]> {
     return this.bestService.findAll(findAllBestDto);
   }
 
