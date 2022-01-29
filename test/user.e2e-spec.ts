@@ -12,6 +12,7 @@ import { User, UserRole } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
+import { UpdateUserDto } from '@user/dto/update-user.dto';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -89,6 +90,24 @@ describe('UserController (e2e)', () => {
     expect(response.body.id).toEqual(2);
   });
 
+  it('유저 프로필 변경', async () => {
+    const updateData = {
+      nickname: 'rockpell',
+      character: 2,
+    } as UpdateUserDto;
+
+    const response = await request(app)
+      .put('/users')
+      .send(updateData)
+      .set('Cookie', `access_token=${JWT}`);
+
+    expect(response.status).toEqual(200);
+
+    const updatedUser = await userRepository.findOne(1);
+    expect(updatedUser.nickname).toEqual('rockpell');
+    expect(updatedUser.character).toEqual(2);
+  });
+
   it('유저 삭제하기', async () => {
     const response = await request(app)
       .delete('/users')
@@ -97,6 +116,7 @@ describe('UserController (e2e)', () => {
     expect(response.status).toEqual(200);
 
     const deletedUser = await userRepository.findOne(1, { withDeleted: true });
+
     expect(deletedUser.deletedAt).toBeTruthy();
   });
 });
