@@ -9,6 +9,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
+import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 
 @Injectable()
@@ -28,6 +29,10 @@ export class ArticleService {
 
   findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
     return this.articleRepository.findAll(options);
+  }
+
+  findAllBest(options: FindAllBestDto): Promise<Article[]> {
+    return this.articleRepository.findAllBest(options);
   }
 
   existOrFail(id: number): Promise<void> {

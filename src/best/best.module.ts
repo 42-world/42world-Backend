@@ -3,9 +3,10 @@ import { BestService } from './best.service';
 import { BestController } from './best.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BestRepository } from './repositories/best.repository';
+import { ArticleModule } from '@root/article/article.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BestRepository])],
+  imports: [ArticleModule, TypeOrmModule.forFeature([BestRepository])],
   controllers: [BestController],
   providers: [BestService],
 })

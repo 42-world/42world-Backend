@@ -3,6 +3,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Article } from '@article/entities/article.entity';
 import { FindAllArticleDto } from '@article/dto/find-all-article.dto';
 import { NotFoundException } from '@nestjs/common';
+import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { PageMetaDto } from '@root/pagination/page-meta.dto';
 
@@ -27,6 +28,20 @@ export class ArticleRepository extends Repository<Article> {
     });
 
     return new PageDto(entities, pageMetaDto);
+  }
+
+  async findAllBest(options: FindAllBestDto): Promise<Article[]> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .orderBy('article.like_count', 'DESC')
+      .addOrderBy('article.created_at', 'DESC');
+
+    if (options.limit) {
+      query.limit(options.limit);
+    }
+
+    return query.getMany();
   }
 
   async getOneDetailOrFail(id: number): Promise<Article> {

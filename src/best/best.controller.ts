@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Query,
+  ConflictException,
 } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -16,6 +17,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Article } from '@root/article/entities/article.entity';
 import { Admin } from '@root/auth/auth.decorator';
 import { BestService } from './best.service';
 import { CreateBestDto } from './dto/create-best.dto';
@@ -35,14 +37,18 @@ export class BestController {
   @ApiOkResponse({ description: '인기글에 추가 성공', type: Best })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiConflictResponse({ description: '이미 인기글에 추가된 글입니다.' })
-  create(@Body() createBestDto: CreateBestDto): Promise<Best> {
-    return this.bestService.create(createBestDto);
+  async create(@Body() createBestDto: CreateBestDto): Promise<Best> {
+    const best = await this.bestService.createOrNot(createBestDto);
+    if (!best) {
+      throw new ConflictException('이미 인기글에 추가된 글입니다.');
+    }
+    return best;
   }
 
   @Get()
   @ApiOperation({ summary: '인기글 가져오기' })
-  @ApiOkResponse({ description: '인기글 목록', type: [Best] })
-  findAll(@Query() findAllBestDto: FindAllBestDto): Promise<Best[]> {
+  @ApiOkResponse({ description: '인기글 목록', type: [Article] })
+  findAll(@Query() findAllBestDto: FindAllBestDto): Promise<Article[]> {
     return this.bestService.findAll(findAllBestDto);
   }
 
