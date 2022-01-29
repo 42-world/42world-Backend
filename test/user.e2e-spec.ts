@@ -22,6 +22,9 @@ import { CategoryRepository } from '@category/repositories/category.repository';
 import { Comment } from '@comment/entities/comment.entity';
 import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
+import { ReactionModule } from '@root/reaction/reaction.module';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -29,6 +32,7 @@ describe('UserController (e2e)', () => {
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
+  let reactionArticleRepository: ReactionArticleRepository;
   let authService: AuthService;
   let JWT;
 
@@ -41,6 +45,7 @@ describe('UserController (e2e)', () => {
         ArticleModule,
         CategoryModule,
         CommentModule,
+        ReactionModule,
       ],
     }).compile();
 
@@ -62,6 +67,9 @@ describe('UserController (e2e)', () => {
     categoryRepository =
       moduleFixture.get<CategoryRepository>(CategoryRepository);
     commentRepository = moduleFixture.get<CommentRepository>(CommentRepository);
+    reactionArticleRepository = moduleFixture.get<ReactionArticleRepository>(
+      ReactionArticleRepository,
+    );
 
     authService = moduleFixture.get<AuthService>(AuthService);
 
@@ -99,16 +107,36 @@ describe('UserController (e2e)', () => {
 
     await articleRepository.save(newArticle);
 
+    const newArticle2 = new Article();
+    newArticle2.title = 'a2';
+    newArticle2.content = 'bb2';
+    newArticle2.categoryId = newCategory.id;
+    newArticle2.writerId = newUser2.id;
+
+    await articleRepository.save(newArticle2);
+
     const newComment = new Comment();
     newComment.content = 'cc';
     newComment.writerId = newUser.id;
     newComment.articleId = newArticle.id;
 
     await commentRepository.save(newComment);
+
+    const newReactionArticle = new ReactionArticle();
+    newReactionArticle.articleId = newArticle.id;
+    newReactionArticle.userId = newUser.id;
+
+    await reactionArticleRepository.save(newReactionArticle);
   });
 
   afterEach(async () => {
-    await userRepository.clear();
+    await Promise.all([
+      userRepository.clear(),
+      articleRepository.clear(),
+      commentRepository.clear(),
+      categoryRepository.clear(),
+      reactionArticleRepository.clear(),
+    ]);
   });
 
   afterAll(async () => {
@@ -185,6 +213,20 @@ describe('UserController (e2e)', () => {
 
     const comments = response.body as Comment[];
 
+    expect(comments.length).toEqual(1);
     expect(comments[0].content).toEqual('cc');
+  });
+
+  it('내가 좋아요 누른 게시글 목록 확인', async () => {
+    const response = await request(app)
+      .get('/users/me/like-articles')
+      .set('Cookie', `access_token=${JWT}`);
+
+    expect(response.status).toEqual(200);
+
+    const comments = response.body as ReactionArticle[];
+
+    expect(comments.length).toEqual(1);
+    expect(comments[0].articleId).toEqual(1);
   });
 });
