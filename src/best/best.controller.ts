@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Query,
+  ConflictException,
 } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -35,8 +36,12 @@ export class BestController {
   @ApiOkResponse({ description: '인기글에 추가 성공', type: Best })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiConflictResponse({ description: '이미 인기글에 추가된 글입니다.' })
-  create(@Body() createBestDto: CreateBestDto): Promise<Best> {
-    return this.bestService.create(createBestDto);
+  async create(@Body() createBestDto: CreateBestDto): Promise<Best> {
+    const best = await this.bestService.createOrNot(createBestDto);
+    if (!best) {
+      throw new ConflictException('이미 인기글에 추가된 글입니다.');
+    }
+    return best;
   }
 
   @Get()

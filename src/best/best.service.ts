@@ -1,8 +1,5 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { QueryFailedError } from 'typeorm';
 import { CreateBestDto } from './dto/create-best.dto';
 import { FindAllBestDto } from './dto/find-all-best.dto';
 import { Best } from './entities/best.entity';
@@ -12,11 +9,11 @@ import { BestRepository } from './repositories/best.repository';
 export class BestService {
   constructor(private readonly bestRepository: BestRepository) {}
 
-  async create(createBestDto: CreateBestDto): Promise<Best> {
+  async createOrNot(createBestDto: CreateBestDto): Promise<Best | void> {
     try {
       return await this.bestRepository.save(createBestDto);
     } catch (error) {
-      throw new ConflictException();
+      if (error instanceof QueryFailedError) return;
     }
   }
 
