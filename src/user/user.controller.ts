@@ -46,6 +46,7 @@ export class UserController {
     return user;
   }
 
+  // TODO: profile API는 me 와 합칠것
   @Get('profile')
   @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
