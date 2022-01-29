@@ -30,6 +30,8 @@ import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
 import { DetailArticleDto } from './dto/detail-article.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
+import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -59,8 +61,10 @@ export class ArticleController {
 
   @Get()
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiOkResponse({ description: '게시글들', type: [Article] })
-  findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
+  @ApiPaginatedResponse(Article)
+  findAll(
+    @Query() findAllArticle: FindAllArticleDto,
+  ): Promise<PageDto<Article>> {
     return this.articleService.findAll(findAllArticle);
   }
 
