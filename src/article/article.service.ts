@@ -87,17 +87,17 @@ export class ArticleService {
     this.articleRepository.save(article);
   }
 
-  increaseLikeCount(article: Article): void {
+  increaseLikeCount(article: Article): Promise<Article> {
     article.likeCount += 1;
-    this.articleRepository.save(article);
+    return this.articleRepository.save(article);
   }
 
-  decreaseLikeCount(article: Article): void {
+  decreaseLikeCount(article: Article): Promise<Article> {
     if (article.likeCount < 1) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     article.likeCount -= 1;
-    this.articleRepository.save(article);
+    return this.articleRepository.save(article);
   }
 
   findAllMyArticle(userId: number): Promise<Article[]> {
