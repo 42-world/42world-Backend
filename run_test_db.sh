@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 docker run -d --rm --name ft_world-mysql-test \
+--platform linux/x86_64 \
 -e MYSQL_DATABASE=ft_world \
 -e MYSQL_USER=ft_world \
 -e MYSQL_PASSWORD=ft_world \

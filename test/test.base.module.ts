@@ -5,6 +5,8 @@ import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@auth/jwt-auth.guard';
+import { getEnvPath } from '@root/utils';
+import configEmail from '@root/config/mail.config';
 
 @Module({
   imports: [
@@ -20,7 +22,12 @@ import { JwtAuthGuard } from '@auth/jwt-auth.guard';
       synchronize: true,
       logging: true,
     }),
-    ConfigModule,
+    ConfigModule.forRoot({
+      envFilePath: getEnvPath(),
+      isGlobal: true,
+      cache: true,
+      load: [configEmail],
+    }),
   ],
   providers: [
     {

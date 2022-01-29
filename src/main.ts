@@ -1,9 +1,11 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as morgan from 'morgan';
-import * as cookieParser from 'cookie-parser';
+import { join } from 'path';
 // import * as csurf from 'csurf';
 
 import { AppModule } from './app.module';
@@ -12,7 +14,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
 
@@ -46,6 +48,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views/ft-auth'));
+  app.setViewEngine('ejs');
   app.use(cookieParser());
   // app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
