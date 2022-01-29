@@ -30,6 +30,9 @@ import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
 import { DetailArticleDto } from './dto/detail-article.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
+import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -59,8 +62,10 @@ export class ArticleController {
 
   @Get()
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiOkResponse({ description: '게시글들', type: [Article] })
-  findAll(@Query() findAllArticle: FindAllArticleDto): Promise<Article[]> {
+  @ApiPaginatedResponse(Article)
+  findAll(
+    @Query() findAllArticle: FindAllArticleDto,
+  ): Promise<PageDto<Article>> {
     return this.articleService.findAll(findAllArticle);
   }
 
@@ -83,12 +88,17 @@ export class ArticleController {
 
   @Get(':id/comments')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiOkResponse({ description: '게시글 댓글들', type: [DetailCommentDto] })
+  @ApiPaginatedResponse(Comment)
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<Comment[]> {
-    const comments = await this.commentService.findAllByArticleId(articleId);
+    @Query() pageOptionDto: PageOptionsDto,
+  ): Promise<PageDto<DetailCommentDto>> {
+    articleId = articleId;
+    const comments = await this.commentService.findAllByArticleId(
+      articleId,
+      pageOptionDto,
+    );
     const reactionComments =
       await this.reactionService.findAllMyReactionComment(userId, articleId);
 

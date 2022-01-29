@@ -14,7 +14,7 @@ import {
   ApiUnauthorizedResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
-import { GetUser } from '@auth/auth.decorator';
+import { AlsoNovice, GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -43,6 +43,15 @@ export class UserController {
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: User })
   getOne(@GetUser() user: User): User {
+    return user;
+  }
+
+  // TODO: profile API는 me 와 합칠것
+  @Get('profile')
+  @AlsoNovice()
+  @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
+  @ApiOkResponse({ description: '내 정보', type: User })
+  getProfile(@GetUser() user: User): User {
     return user;
   }
 

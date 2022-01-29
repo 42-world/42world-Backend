@@ -6,7 +6,10 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
+import { Article } from '@root/article/entities/article.entity';
 import { GetUser } from '@root/auth/auth.decorator';
+import { LikeCommentDto } from './dto/like-article.dto';
 import { ReactionService } from './reaction.service';
 
 @ApiCookieAuth()
@@ -18,11 +21,11 @@ export class ReactionController {
 
   @Post('articles/:id')
   @ApiOperation({ summary: '게시글 좋아요 버튼' })
-  @ApiOkResponse({ description: '게시글 좋아요 버튼 누름' })
+  @ApiOkResponse({ description: '게시글 좋아요 버튼 누름', type: Article })
   async reactionArticleCreateOrDelete(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<void> {
+  ): Promise<DetailArticleDto> {
     return this.reactionService.articleCreateOrDelete(userId, articleId);
   }
 
@@ -33,7 +36,7 @@ export class ReactionController {
     @GetUser('id') userId: number,
     @Param('articleId', ParseIntPipe) articleId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
-  ): Promise<void> {
+  ): Promise<LikeCommentDto> {
     return this.reactionService.commentCreateOrDelete(
       userId,
       articleId,

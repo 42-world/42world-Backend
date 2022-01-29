@@ -12,6 +12,9 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
+import { PageDto } from '@root/pagination/pagination.dto';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -38,9 +41,12 @@ export class CommentService {
     return comment;
   }
 
-  async findAllByArticleId(articleId: number): Promise<Comment[]> {
+  async findAllByArticleId(
+    articleId: number,
+    pageOptionDto: PageOptionsDto,
+  ): Promise<PageDto<DetailCommentDto>> {
     await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(articleId);
+    return this.commentRepository.findAllByArticleId(articleId, pageOptionDto);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
@@ -76,17 +82,17 @@ export class CommentService {
     this.articleService.decreaseCommentCountById(article);
   }
 
-  increaseLikeCount(comment: Comment): void {
+  increaseLikeCount(comment: Comment): Promise<Comment> {
     comment.likeCount += 1;
-    this.commentRepository.save(comment);
+    return this.commentRepository.save(comment);
   }
 
-  decreaseLikeCount(comment: Comment): void {
+  decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount < 1) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     comment.likeCount -= 1;
-    this.commentRepository.save(comment);
+    return this.commentRepository.save(comment);
   }
 
   async findAllMyComment(userId: number): Promise<Comment[]> {

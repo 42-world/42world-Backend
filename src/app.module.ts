@@ -26,7 +26,7 @@ import { DatabaseModule } from './database/database.module';
 import { getEnvPath } from './utils';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
-import { AppService } from './app.service';
+import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { AppService } from './app.service';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/ft-auth/templates/'),
+            dir: path.join(__dirname, '/views/ft-auth/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,
@@ -81,6 +81,7 @@ import { AppService } from './app.service';
     AuthModule,
     BestModule,
     ReactionModule,
+    FtCheckinModule,
   ],
   controllers: [AppController],
   providers: [
@@ -88,7 +89,6 @@ import { AppService } from './app.service';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    AppService,
   ],
 })
 export class AppModule {}
