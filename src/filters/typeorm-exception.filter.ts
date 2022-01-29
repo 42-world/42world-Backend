@@ -15,10 +15,11 @@ export class TypeormExceptionFilter implements ExceptionFilter {
     const PHASE = process.env.NODE_ENV;
     const slackMessage = `[${PHASE}] ${exception.name}: ${exception.message}}`;
 
-    axios.post(
-      'https://hooks.slack.com/services/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',
-      { text: slackMessage },
-    );
+    try {
+      axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage }).then();
+    } catch (e) {
+      throw e;
+    }
 
     console.error(exception);
 
