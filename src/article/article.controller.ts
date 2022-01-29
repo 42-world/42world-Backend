@@ -32,7 +32,6 @@ import { articleCommentsHelper } from './helper/article.helper';
 import { DetailArticleDto } from './dto/detail-article.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
-import { FindAllCommentDto } from '@root/comment/dto/find-all-comment.dto';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @ApiCookieAuth()
