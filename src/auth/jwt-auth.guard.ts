@@ -39,13 +39,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     status?: any,
   ): TUser {
     const u = super.handleRequest(err, user, info, context, status) as User;
-    const role =
-      this.reflector.get<UserRole | undefined>(
-        ROLE_KEY,
-        context.getHandler(),
-      ) ?? UserRole.CADET;
+    const role: UserRole[] = this.reflector.get<UserRole[] | undefined>(
+      ROLE_KEY,
+      context.getHandler(),
+    ) ?? [UserRole.CADET, UserRole.ADMIN];
 
-    if (u.role !== UserRole.ADMIN && u.role !== role) {
+    if (!role.includes(u.role as UserRole)) {
       throw new ForbiddenException('접근 권한 없음');
     }
     return user;
