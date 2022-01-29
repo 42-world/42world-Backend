@@ -1,5 +1,5 @@
 import { FtCheckinService, GetFtCheckinDto } from './ft-checkin.service';
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, NotFoundException } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -57,7 +57,7 @@ export class FtCheckinController {
 
       return data;
     } catch (e) {
-      console.error(e);
+      throw new NotFoundException('데이터를 받아올 수 없습니다');
     }
   }
 }
