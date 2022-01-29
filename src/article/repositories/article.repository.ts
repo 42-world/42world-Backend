@@ -19,9 +19,12 @@ export class ArticleRepository extends Repository<Article> {
     if (options.categoryId)
       query.andWhere('category.id = :id', { id: options.categoryId });
 
-    const itemCount = await query.getCount();
+    const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto: options });
+    const pageMetaDto = new PageMetaDto({
+      totalCount,
+      pageOptionsDto: options,
+    });
 
     return new PageDto(entities, pageMetaDto);
   }

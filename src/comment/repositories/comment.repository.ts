@@ -19,9 +19,12 @@ export class CommentRepository extends Repository<Comment> {
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
 
-    const itemCount = await query.getCount();
+    const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto: options });
+    const pageMetaDto = new PageMetaDto({
+      totalCount,
+      pageOptionsDto: options,
+    });
 
     return new PageDto(entities, pageMetaDto);
   }
