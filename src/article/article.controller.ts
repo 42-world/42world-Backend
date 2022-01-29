@@ -32,6 +32,8 @@ import { articleCommentsHelper } from './helper/article.helper';
 import { DetailArticleDto } from './dto/detail-article.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
+import { FindAllCommentDto } from '@root/comment/dto/find-all-comment.dto';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -91,8 +93,13 @@ export class ArticleController {
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<Comment[]> {
-    const comments = await this.commentService.findAllByArticleId(articleId);
+    @Query() pageOptionDto: PageOptionsDto,
+  ): Promise<PageDto<DetailCommentDto>> {
+    articleId = articleId;
+    const comments = await this.commentService.findAllByArticleId(
+      articleId,
+      pageOptionDto,
+    );
     const reactionComments =
       await this.reactionService.findAllMyReactionComment(userId, articleId);
 
