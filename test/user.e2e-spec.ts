@@ -13,16 +13,30 @@ import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
+import { ArticleModule } from '@article/article.module';
+import { ArticleRepository } from '@article/repositories/article.repository';
+import { Article } from '@article/entities/article.entity';
+import { CategoryModule } from '@category/category.module';
+import { Category } from '@category/entities/category.entity';
+import { CategoryRepository } from '@category/repositories/category.repository';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
+  let articleRepository: ArticleRepository;
+  let categoryRepository: CategoryRepository;
   let authService: AuthService;
   let JWT;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestBaseModule, UserModule, AuthModule],
+      imports: [
+        TestBaseModule,
+        UserModule,
+        AuthModule,
+        ArticleModule,
+        CategoryModule,
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -39,6 +53,10 @@ describe('UserController (e2e)', () => {
     await app.init();
 
     userRepository = moduleFixture.get<UserRepository>(UserRepository);
+    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
+    categoryRepository =
+      moduleFixture.get<CategoryRepository>(CategoryRepository);
+
     authService = moduleFixture.get<AuthService>(AuthService);
 
     app = app.getHttpServer();
@@ -61,6 +79,19 @@ describe('UserController (e2e)', () => {
       userId: newUser.id,
       userRole: newUser.role,
     } as JWTPayload);
+
+    const newCategory = new Category();
+    newCategory.name = '자유게시판';
+
+    await categoryRepository.save(newCategory);
+
+    const newArticle = new Article();
+    newArticle.title = 'a';
+    newArticle.content = 'bb';
+    newArticle.categoryId = 1;
+    newArticle.writerId = 1;
+
+    await articleRepository.save(newArticle);
   });
 
   afterEach(async () => {
@@ -118,5 +149,17 @@ describe('UserController (e2e)', () => {
     const deletedUser = await userRepository.findOne(1, { withDeleted: true });
 
     expect(deletedUser.deletedAt).toBeTruthy();
+  });
+
+  it('내가 작성한 글 가져오기', async () => {
+    const response = await request(app)
+      .get('/users/me/articles')
+      .set('Cookie', `access_token=${JWT}`);
+
+    expect(response.status).toEqual(200);
+
+    const articles = response.body;
+
+    expect(articles[0].title).toEqual('a');
   });
 });
