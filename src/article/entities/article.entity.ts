@@ -27,7 +27,7 @@ export class Article {
 
   @ApiProperty()
   @Index('ix_title')
-  @Column({ type: 'varchar', length: 42, nullable: true })
+  @Column({ type: 'varchar', length: 42, nullable: false })
   title!: string;
 
   @ApiProperty()
