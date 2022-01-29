@@ -21,7 +21,7 @@ describe('UserController (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestBaseModule, AuthModule, UserModule],
+      imports: [TestBaseModule, UserModule, AuthModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -74,7 +74,7 @@ describe('UserController (e2e)', () => {
 
   it('내 정보 가져오기', async () => {
     const response = await request(app)
-      .get('/users')
+      .get('/users/me')
       .set('Cookie', `access_token=${JWT}`);
 
     expect(response.status).toEqual(200);
@@ -96,7 +96,7 @@ describe('UserController (e2e)', () => {
 
     expect(response.status).toEqual(200);
 
-    const deletedUser = await userRepository.findOne(1);
+    const deletedUser = await userRepository.findOne(1, { withDeleted: true });
     expect(deletedUser.deletedAt).toBeTruthy();
   });
 });
