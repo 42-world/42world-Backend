@@ -19,12 +19,16 @@ import { Article } from '@article/entities/article.entity';
 import { CategoryModule } from '@category/category.module';
 import { Category } from '@category/entities/category.entity';
 import { CategoryRepository } from '@category/repositories/category.repository';
+import { Comment } from '@comment/entities/comment.entity';
+import { CommentModule } from '@comment/comment.module';
+import { CommentRepository } from '@comment/repositories/comment.repository';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
+  let commentRepository: CommentRepository;
   let authService: AuthService;
   let JWT;
 
@@ -36,6 +40,7 @@ describe('UserController (e2e)', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
+        CommentModule,
       ],
     }).compile();
 
@@ -56,6 +61,7 @@ describe('UserController (e2e)', () => {
     articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
     categoryRepository =
       moduleFixture.get<CategoryRepository>(CategoryRepository);
+    commentRepository = moduleFixture.get<CommentRepository>(CommentRepository);
 
     authService = moduleFixture.get<AuthService>(AuthService);
 
@@ -88,10 +94,17 @@ describe('UserController (e2e)', () => {
     const newArticle = new Article();
     newArticle.title = 'a';
     newArticle.content = 'bb';
-    newArticle.categoryId = 1;
-    newArticle.writerId = 1;
+    newArticle.categoryId = newCategory.id;
+    newArticle.writerId = newUser.id;
 
     await articleRepository.save(newArticle);
+
+    const newComment = new Comment();
+    newComment.content = 'cc';
+    newComment.writerId = newUser.id;
+    newComment.articleId = newArticle.id;
+
+    await commentRepository.save(newComment);
   });
 
   afterEach(async () => {
@@ -158,8 +171,20 @@ describe('UserController (e2e)', () => {
 
     expect(response.status).toEqual(200);
 
-    const articles = response.body;
+    const articles = response.body as Article[];
 
     expect(articles[0].title).toEqual('a');
+  });
+
+  it('내가 작성한 댓글 가져오기', async () => {
+    const response = await request(app)
+      .get('/users/me/comments')
+      .set('Cookie', `access_token=${JWT}`);
+
+    expect(response.status).toEqual(200);
+
+    const comments = response.body as Comment[];
+
+    expect(comments[0].content).toEqual('cc');
   });
 });
