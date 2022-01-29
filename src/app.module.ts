@@ -43,7 +43,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/ft-auth/templates/'),
+            dir: path.join(__dirname, '/views/ft-auth/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,
