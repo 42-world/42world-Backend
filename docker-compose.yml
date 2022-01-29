@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3.4'
 services:
   db:
     image: mysql:5.7
@@ -30,9 +30,8 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-alpha}
     depends_on:
-      db:
-        condition: 'service_healthy'
-  
+      - db
+
   redis:
     image: redis:6.2.5
     command: redis-server --port 6379
