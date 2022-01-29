@@ -6,12 +6,12 @@ import * as cookieParser from 'cookie-parser';
 
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
-import { EntityNotFoundExceptionFilter } from '@root/filters/entity-not-found-exception.filter';
 import { UserRepository } from '@user/repositories/user.repository';
 import { User, UserRole } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
+import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -27,7 +27,7 @@ describe('UserController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
 
-    app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+    app.useGlobalFilters(new TypeormExceptionFilter());
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
