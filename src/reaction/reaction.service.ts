@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
+import { Article } from '@root/article/entities/article.entity';
 import { CommentService } from '@root/comment/comment.service';
 import { Repository } from 'typeorm';
 import {
@@ -32,7 +33,7 @@ export class ReactionService {
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<void> {
+  ): Promise<Article> {
     const reactionArticle = await this.reactionArticleRepository.findOne({
       userId,
       articleId,
@@ -41,11 +42,11 @@ export class ReactionService {
     const article = await this.articleService.getOne(articleId);
 
     if (reactionArticle) {
-      this.articleService.decreaseLikeCount(article);
       this.reactionArticleRepository.delete({ id: reactionArticle.id });
+      return this.articleService.decreaseLikeCount(article);
     } else {
-      this.articleService.increaseLikeCount(article);
       this.reactionArticleRepository.save({ userId, articleId, type });
+      return this.articleService.increaseLikeCount(article);
     }
   }
 
