@@ -46,7 +46,7 @@ export class UserController {
     return user;
   }
 
-  @Get('profile')
+  @Get('novice-profile')
   @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
   @ApiOkResponse({ description: '내 정보', type: User })
