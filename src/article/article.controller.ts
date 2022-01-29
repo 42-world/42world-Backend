@@ -89,7 +89,7 @@ export class ArticleController {
 
   @Get(':id/comments')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiOkResponse({ description: '게시글 댓글들', type: [DetailCommentDto] })
+  @ApiPaginatedResponse(Comment)
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
