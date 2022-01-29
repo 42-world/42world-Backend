@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Get, Query, Render } from '@nestjs/common';
 import { FtAuthService } from './ft-auth.service';
-import { GetUser, Novice, Public } from '@root/auth/auth.decorator';
+import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
 import { SigninFtAuthDto } from './dto/signin-ft-auth.dto';
 import {
@@ -18,7 +18,7 @@ export class FtAuthController {
   constructor(private readonly ftAuthService: FtAuthService) {}
 
   @Post()
-  @Novice()
+  @OnlyNovice()
   @ApiCookieAuth()
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
