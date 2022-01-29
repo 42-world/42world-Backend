@@ -9,6 +9,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
+import { PageDto } from '@root/pagination/pagination.dto';
 
 @Injectable()
 export class ArticleService {
@@ -25,7 +26,7 @@ export class ArticleService {
     return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
-  findAll(options?: FindAllArticleDto): Promise<Article[]> {
+  findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
     return this.articleRepository.findAll(options);
   }
 

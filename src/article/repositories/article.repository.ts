@@ -3,19 +3,30 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Article } from '@article/entities/article.entity';
 import { FindAllArticleDto } from '@article/dto/find-all-article.dto';
 import { NotFoundException } from '@nestjs/common';
+import { PageDto } from '@root/pagination/pagination.dto';
+import { PageMetaDto } from '@root/pagination/page-meta.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options?: FindAllArticleDto): Promise<Article[]> {
+  async findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
-      .orderBy('article.created_at', 'DESC');
+      .skip(options.skip)
+      .take(options.take)
+      .orderBy('article.createdAt', options.order);
 
     if (options.categoryId)
       query.andWhere('category.id = :id', { id: options.categoryId });
 
-    return query.getMany();
+    const totalCount = await query.getCount();
+    const entities = await query.getMany();
+    const pageMetaDto = new PageMetaDto({
+      totalCount,
+      pageOptionsDto: options,
+    });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async getOneDetailOrFail(id: number): Promise<Article> {
