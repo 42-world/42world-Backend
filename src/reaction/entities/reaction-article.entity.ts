@@ -42,11 +42,11 @@ export class ReactionArticle {
   articleId!: number;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
   @ManyToOne(() => User, (user) => user.reactionArticle, {
