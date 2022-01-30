@@ -31,9 +31,9 @@ export class FtAuth {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 }

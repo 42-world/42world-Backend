@@ -71,15 +71,15 @@ export class Article {
   likeCount!: number;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
   @ApiProperty()
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamp' })
   @Index('ix_deleted_at')
   deletedAt?: Date;
 
