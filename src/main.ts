@@ -1,17 +1,17 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ACCESS_TOKEN } from './auth/constants/access-token';
-import { ValidationPipe } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as morgan from 'morgan';
 import { join } from 'path';
-
 // import * as csurf from 'csurf';
+
+import { AppModule } from './app.module';
+import { ACCESS_TOKEN } from '@auth/constants/access-token';
+import { ValidationPipe } from '@nestjs/common';
+import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -40,7 +40,7 @@ async function bootstrap() {
     origin: ['http://localhost:3000', 'https://www.42world.kr'],
     credentials: true,
   });
-  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+  app.useGlobalFilters(new TypeormExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
