@@ -11,8 +11,8 @@ import {
   Index,
 } from 'typeorm';
 
-@Entity('authenticate')
-export class Authenticate {
+@Entity('ft_auth')
+export class FtAuth {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -20,20 +20,20 @@ export class Authenticate {
   @Column({ type: 'varchar', length: 40, nullable: false })
   intraId?: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   @Index('ix_user_id')
   userId!: number;
 
-  @OneToOne(() => User, (user) => user.authenticate, {
+  @OneToOne(() => User, (user) => user.ftAuth, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 }

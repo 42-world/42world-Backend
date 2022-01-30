@@ -2,31 +2,57 @@ import { PartialType } from '@nestjs/mapped-types';
 import { Article } from '@root/article/entities/article.entity';
 
 export class SeederDataArticle extends PartialType(Article) {
-  id: number;
-  category_id?: number;
-  writer_id?: number;
+  categoryId?: number;
+  writerId?: number;
 }
 
 export const articles: SeederDataArticle[] = [
   {
-    id: 1,
     title: 'title1',
     content: 'haha',
-    category_id: 1,
-    writer_id: 1,
+    categoryId: 1,
+    writerId: 1,
   },
   {
-    id: 2,
     title: 'title2',
     content: 'haha haha',
-    category_id: 1,
-    writer_id: 2,
+    categoryId: 1,
+    writerId: 2,
   },
   {
-    id: 3,
     title: 'title3',
     content: 'haha haha haha',
-    category_id: 2,
-    writer_id: 1,
+    categoryId: 2,
+    writerId: 1,
+  },
+  {
+    title: 'title4',
+    content: 'haha haha haha',
+    categoryId: 2,
+    writerId: 1,
+  },
+  {
+    title: 'title5',
+    content: 'haha haha haha',
+    categoryId: 2,
+    writerId: 1,
+  },
+  {
+    title: 'title6',
+    content: 'haha haha haha',
+    categoryId: 2,
+    writerId: 1,
+  },
+  {
+    title: 'title7',
+    content: 'haha haha haha',
+    categoryId: 2,
+    writerId: 1,
+  },
+  {
+    title: 'title8',
+    content: 'haha haha haha',
+    categoryId: 2,
+    writerId: 1,
   },
 ];

@@ -1,35 +1,50 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ArticleRepository } from './repositories/article.repository';
 import { FindAllArticleDto } from './dto/find-all-article.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
+import { CategoryService } from '@root/category/category.service';
+import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
 
 @Injectable()
 export class ArticleService {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(
+    private readonly articleRepository: ArticleRepository,
+    private readonly categoryService: CategoryService,
+  ) {}
 
-  create(
+  async create(
     writerId: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
+    await this.categoryService.existOrFail(createArticleDto.categoryId);
     return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
-  findAll(options?: FindAllArticleDto): Promise<Article[]> {
+  findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
     return this.articleRepository.findAll(options);
   }
 
-  getOne(id: number): Promise<Article> {
-    return this.articleRepository.getOneOrFail(id);
+  findAllBest(options: FindAllBestDto): Promise<Article[]> {
+    return this.articleRepository.findAllBest(options);
   }
 
-  async existOrFail(id: number): Promise<void> {
-    const isExist = await this.articleRepository.isExistById(id);
+  existOrFail(id: number): Promise<void> {
+    return this.articleRepository.existOrFail(id);
+  }
 
-    if (!isExist) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
+  getOne(id: number): Promise<Article> {
+    return this.articleRepository.findOneOrFail(id);
+  }
+
+  getOneDetail(id: number): Promise<Article> {
+    return this.articleRepository.getOneDetailOrFail(id);
   }
 
   async update(
@@ -37,6 +52,8 @@ export class ArticleService {
     writerId: number,
     updateArticleDto: UpdateArticleDto,
   ): Promise<void> {
+    if (updateArticleDto.categoryId)
+      await this.categoryService.existOrFail(updateArticleDto.categoryId);
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,
@@ -50,7 +67,7 @@ export class ArticleService {
   }
 
   async remove(id: number, writerId: number): Promise<void> {
-    const result = await this.articleRepository.delete({
+    const result = await this.articleRepository.softDelete({
       id,
       writerId,
     });
@@ -58,5 +75,37 @@ export class ArticleService {
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
+  }
+
+  increaseViewCount(article: Article): void {
+    article.viewCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  increaseCommentCount(article: Article): void {
+    article.commentCount += 1;
+    this.articleRepository.save(article);
+  }
+
+  decreaseCommentCountById(article: Article): void {
+    article.commentCount -= 1;
+    this.articleRepository.save(article);
+  }
+
+  increaseLikeCount(article: Article): Promise<Article> {
+    article.likeCount += 1;
+    return this.articleRepository.save(article);
+  }
+
+  decreaseLikeCount(article: Article): Promise<Article> {
+    if (article.likeCount < 1) {
+      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+    }
+    article.likeCount -= 1;
+    return this.articleRepository.save(article);
+  }
+
+  findAllMyArticle(userId: number): Promise<Article[]> {
+    return this.articleRepository.findAllMyArticle(userId);
   }
 }

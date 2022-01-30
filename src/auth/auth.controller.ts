@@ -1,4 +1,12 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '@user/user.service';
 import { AuthService } from './auth.service';
@@ -14,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { getCookieOption } from '@root/utils';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -58,10 +67,10 @@ export class AuthController {
       userId: user.id,
       userRole: user.role,
     } as JWTPayload);
-    response.cookie(ACCESS_TOKEN, jwt);
+    response.cookie(ACCESS_TOKEN, jwt, getCookieOption());
   }
 
-  @Get('signout')
+  @Delete('signout')
   @ApiCookieAuth()
   @ApiOperation({ summary: '로그아웃' })
   @ApiOkResponse({ description: '로그아웃 성공' })

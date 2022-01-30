@@ -1,34 +1,40 @@
-import { User } from '@user/entities/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { Article } from '@root/article/entities/article.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 
 @Entity('best')
 export class Best {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: false })
-  @Index('ix_user_id')
-  userId!: number;
+  @ApiProperty()
+  @Column({ nullable: false, unique: true })
+  @Index('ix_article_id')
+  articleId!: number;
 
-  @ManyToOne(() => User, (user) => user.best, {
+  @ApiProperty({ type: () => Article })
+  @OneToOne(() => Article, (article) => article.best, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article?: Article;
 
-  @CreateDateColumn()
+  @ApiProperty()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @ApiProperty()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 }

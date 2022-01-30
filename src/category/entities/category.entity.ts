@@ -7,6 +7,8 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity('category')
@@ -20,12 +22,17 @@ export class Category {
   name!: string;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn({ type: 'timestamp' })
+  @Index('ix_deleted_at')
+  deletedAt?: Date;
 
   @OneToMany(() => Article, (article) => article.category, {
     createForeignKeyConstraints: false,

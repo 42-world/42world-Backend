@@ -15,7 +15,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { GetUser } from '@root/auth/auth.decorator';
+import { User } from '@root/user/entities/user.entity';
 import { CommentService } from './comment.service';
+import { CreateCommentResultDto } from './dto/create-comment-result.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
@@ -30,11 +32,16 @@ export class CommentController {
   @Post()
   @ApiOperation({ summary: '댓글 생성' })
   @ApiOkResponse({ description: '생성된 댓글', type: Comment })
-  create(
-    @GetUser('id') writerId: number,
+  async create(
+    @GetUser() writer: User,
     @Body() createCommentDto: CreateCommentDto,
-  ): Promise<Comment> {
-    return this.commentService.create(writerId, createCommentDto);
+  ): Promise<CreateCommentResultDto> {
+    const comment = await this.commentService.create(
+      writer.id,
+      createCommentDto,
+    );
+
+    return { ...comment, writer: { nickname: writer.nickname } };
   }
 
   @Put(':id')

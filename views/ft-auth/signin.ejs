@@ -1,0 +1,44 @@
+<div>
+  <div>
+    <img
+      style="margin: auto; display: block; text-align: center"
+      src="https://avatars.githubusercontent.com/u/97225581?s=400&u=2c69bfb4d3794a8434ea4399cc329117806ecb4d&v=4"
+      alt="42world logo"
+    />
+  </div>
+  <div style="margin: auto; text-align: center">
+    <h1><%= locals.nickname %>님 안녕하세요!</h1>
+    <h2>아래 버튼을 눌러 인증을 완료해주세요</h2>
+    <div
+      style="
+        display: inline-block;
+        padding: 15px;
+        background-color: #01bbd6;
+        border-radius: 15px;
+        text-align: center;
+        margin: 20px;
+        width: 150px;
+        height: 60px;
+        line-height: 60px;
+      "
+    >
+      <a
+        href="<%= locals.endpoint %>?code=<%= locals.code %>"
+        style="
+          margin: auto;
+          color: white;
+          font-size: 30px;
+          font-weight: bolder;
+          text-align: center;
+          text-decoration-line: none;
+        "
+        >인증 하기</a
+      >
+    </div>
+    <h3>
+      요청하신 Github ID가 <%= locals.github %>와 일치하는지 확인해주세요.
+    </h3>
+    <h3>이 버튼은 30분 뒤 만료됩니다.</h3>
+    <div>42WORLD에서 보냄.</div>
+  </div>
+</div>

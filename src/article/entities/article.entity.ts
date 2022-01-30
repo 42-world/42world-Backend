@@ -8,12 +8,16 @@ import {
   OneToMany,
   JoinColumn,
   Index,
+  DeleteDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@user/entities/user.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Category } from '@category/entities/category.entity';
-import { Reaction } from '@root/reaction/entities/reaction.entity';
+import { Best } from '@root/best/entities/best.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 
 @Entity('article')
 export class Article {
@@ -23,16 +27,16 @@ export class Article {
 
   @ApiProperty()
   @Index('ix_title')
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 42, nullable: false })
   title!: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  content?: string;
+  @Column({ type: 'text', nullable: false })
+  content!: string;
 
   @ApiProperty()
   @Column({ default: 0 })
-  view_count!: number;
+  viewCount!: number;
 
   @ApiProperty()
   @Column({ nullable: false })
@@ -59,16 +63,25 @@ export class Article {
   writer?: User;
 
   @ApiProperty()
-  @Column({ nullable: true })
-  deletedAt?: Date;
+  @Column({ default: 0 })
+  commentCount!: number;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @Column({ default: 0 })
+  likeCount!: number;
+
+  @ApiProperty()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
+
+  @ApiProperty()
+  @DeleteDateColumn({ type: 'timestamp' })
+  @Index('ix_deleted_at')
+  deletedAt?: Date;
 
   @OneToMany(() => Comment, (comment) => comment.article, {
     createForeignKeyConstraints: false,
@@ -76,9 +89,32 @@ export class Article {
   })
   comment?: Comment[];
 
-  @OneToMany(() => Reaction, (reaction) => reaction.article, {
+  @ApiProperty({ type: () => ReactionArticle })
+  @OneToMany(
+    () => ReactionArticle,
+    (reactionArticle) => reactionArticle.article,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionArticle?: ReactionArticle[];
+
+  @ApiProperty({ type: () => ReactionComment })
+  @OneToMany(
+    () => ReactionComment,
+    (reactionComment) => reactionComment.article,
+    {
+      createForeignKeyConstraints: false,
+      nullable: true,
+    },
+  )
+  reactionComment?: ReactionComment[];
+
+  @ApiProperty()
+  @OneToOne(() => Best, (best) => best.article, {
     createForeignKeyConstraints: false,
     nullable: true,
   })
-  reaction?: Reaction[];
+  best?: Best;
 }

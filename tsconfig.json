@@ -18,8 +18,9 @@
       "@category/*": ["./src/category/*"],
       "@notification/*": ["./src/notification/*"],
       "@auth/*": ["./src/auth/*"],
-      "@authenticate/*": ["./src/authenticate/*"],
-      "@database/*": ["./src/database/*"]
+      "@ft-auth/*": ["src/ft-auth/*"],
+      "@database/*": ["./src/database/*"],
+      "@test/*": ["./test/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

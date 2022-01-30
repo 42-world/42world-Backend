@@ -3,19 +3,22 @@ import { User, UserRole } from '@user/entities/user.entity';
 
 export class SeederDataUser extends PartialType(User) {
   id: number;
-  oauth_token: string;
+  oauthToken: string;
   nickname: string;
+  role: UserRole;
 }
 
 export const users: SeederDataUser[] = [
   {
     id: 1,
-    oauth_token: 'test1234',
+    oauthToken: 'test1234',
     nickname: 'first user',
+    role: UserRole.CADET,
   },
   {
     id: 2,
-    oauth_token: 'test2345',
+    oauthToken: 'test2345',
     nickname: 'second user',
+    role: UserRole.NOVICE,
   },
 ];

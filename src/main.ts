@@ -1,16 +1,31 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-exception.filter';
 import * as cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ACCESS_TOKEN } from './auth/constants/access-token';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import * as morgan from 'morgan';
+import { join } from 'path';
+// import * as csurf from 'csurf';
+
+import { AppModule } from './app.module';
+import { ACCESS_TOKEN } from '@auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
+import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
+
+  morgan.token('body', (req) => JSON.stringify(req.body));
+  app.use(
+    morgan(
+      ':method :url :status :response-time ms - :res[content-length] :body',
+    ),
+  );
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
@@ -21,7 +36,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://www.42world.kr'],
+    credentials: true,
+  });
+  app.useGlobalFilters(new TypeormExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
@@ -29,7 +48,11 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views/ft-auth'));
+  app.setViewEngine('ejs');
   app.use(cookieParser());
+  // app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
 }
 bootstrap();

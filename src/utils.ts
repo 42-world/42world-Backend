@@ -1,3 +1,9 @@
+import { CookieOptions } from 'express';
+
+export const MINUTE = 60;
+export const HOUR = 60 * MINUTE;
+export const TIME2LIVE = 30 * MINUTE;
+
 export function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -20,4 +26,11 @@ export const getEnvPath = () => {
   if (process.env.NODE_ENV === 'alpha') return 'config/alpha.env';
   if (process.env.NODE_ENV === 'prod') return 'config/prod.env';
   return 'config/dev.env';
+};
+
+export const getCookieOption = (): CookieOptions => {
+  if (process.env.NODE_ENV === 'alpha' || process.env.NODE_ENV === 'prod') {
+    return { secure: true, sameSite: 'none' };
+  }
+  return {};
 };

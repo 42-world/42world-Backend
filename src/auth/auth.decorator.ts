@@ -19,8 +19,15 @@ export const GetGithubProfile = createParamDecorator(
   },
 );
 
-export const Admin = () => SetMetadata(ROLE_KEY, UserRole.ADMIN);
+export const Admin = () => SetMetadata(ROLE_KEY, [UserRole.ADMIN]);
 
-export const Cadet = () => SetMetadata(ROLE_KEY, UserRole.CADET);
+export const Cadet = () =>
+  SetMetadata(ROLE_KEY, [UserRole.CADET, UserRole.ADMIN]);
+
+export const AlsoNovice = () =>
+  SetMetadata(ROLE_KEY, [UserRole.NOVICE, UserRole.CADET, UserRole.ADMIN]);
+
+export const OnlyNovice = () =>
+  SetMetadata(ROLE_KEY, [UserRole.NOVICE, UserRole.ADMIN]);
 
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);

@@ -1,5 +1,13 @@
-import { IsString, IsInt, Min, Max, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+  IsNotEmpty,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { UserRole } from '../entities/user.entity';
 
 export class UpdateUserDto {
   @IsString()
@@ -13,4 +21,10 @@ export class UpdateUserDto {
   @IsOptional()
   @ApiPropertyOptional({ example: 0 })
   readonly character?: number;
+}
+
+export class UpdateRoleDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly role: UserRole;
 }
