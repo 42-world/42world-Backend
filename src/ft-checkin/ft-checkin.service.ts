@@ -36,8 +36,8 @@ export class FtCheckinService {
       try {
         const { data } = await axios.get(endpoint);
         const realData = {
-          seocho: data[SECHO],
-          gaepo: data[GAEPO],
+          seocho: data[SECHO] || 0,
+          gaepo: data[GAEPO] || 0,
         };
 
         await this.cacheManager.set(cacheKey, realData, {
