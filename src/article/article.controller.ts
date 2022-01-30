@@ -94,7 +94,6 @@ export class ArticleController {
     @Param('id', ParseIntPipe) articleId: number,
     @Query() pageOptionDto: PageOptionsDto,
   ): Promise<PageDto<DetailCommentDto>> {
-    articleId = articleId;
     const comments = await this.commentService.findAllByArticleId(
       articleId,
       pageOptionDto,
