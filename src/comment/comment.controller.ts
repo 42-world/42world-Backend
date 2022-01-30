@@ -41,7 +41,7 @@ export class CommentController {
       createCommentDto,
     );
 
-    return { ...comment, nickname: writer.nickname };
+    return { ...comment, writer: { nickname: writer.nickname } };
   }
 
   @Put(':id')

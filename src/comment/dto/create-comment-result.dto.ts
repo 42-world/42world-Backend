@@ -5,5 +5,7 @@ export class CreateCommentResultDto {
   articleId: number;
   writerId: number;
   createdAt: Date;
-  nickname: string;
+  writer: {
+    nickname: string;
+  };
 }
