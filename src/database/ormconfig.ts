@@ -17,7 +17,6 @@ export const ormconfig = (): IOrmconfig => ({
 
     synchronize: false,
     migrationsRun: true,
-    timezone: 'Z',
     logging: process.env.NODE_ENV !== 'prod',
 
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
