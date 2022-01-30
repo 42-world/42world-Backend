@@ -21,11 +21,11 @@ export const isExpired = (exp: Date): boolean => {
 };
 
 export const getEnvPath = () => {
-  if (process.env.NODE_ENV === 'test') return 'config/test.env';
-  if (process.env.NODE_ENV === 'dev') return 'config/dev.env';
-  if (process.env.NODE_ENV === 'alpha') return 'config/alpha.env';
-  if (process.env.NODE_ENV === 'prod') return 'config/prod.env';
-  return 'config/dev.env';
+  if (process.env.NODE_ENV === 'test') return 'config/.env.test';
+  if (process.env.NODE_ENV === 'dev') return 'config/.env.dev';
+  if (process.env.NODE_ENV === 'alpha') return 'config/.env.alpha';
+  if (process.env.NODE_ENV === 'prod') return 'config/.env.prod';
+  return 'config/.env.dev';
 };
 
 export const getCookieOption = (): CookieOptions => {
