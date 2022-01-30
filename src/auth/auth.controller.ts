@@ -22,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { getCookieOption } from '@root/utils';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -66,7 +67,7 @@ export class AuthController {
       userId: user.id,
       userRole: user.role,
     } as JWTPayload);
-    response.cookie(ACCESS_TOKEN, jwt);
+    response.cookie(ACCESS_TOKEN, jwt, getCookieOption());
   }
 
   @Delete('signout')
