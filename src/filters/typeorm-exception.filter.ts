@@ -12,6 +12,15 @@ export class TypeormExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    if (exception instanceof EntityNotFoundError) {
+      return response.status(404).json({
+        message: {
+          statusCode: 404,
+          message: exception.message.replace(FIND_DOUBLE_QUOTE, ''),
+        },
+      });
+    }
+
     const PHASE = process.env.NODE_ENV;
     const slackMessage = `[${PHASE}] ${exception.name}: ${exception.message}}`;
 
@@ -22,15 +31,6 @@ export class TypeormExceptionFilter implements ExceptionFilter {
     }
 
     console.error(exception);
-
-    if (exception instanceof EntityNotFoundError) {
-      return response.status(404).json({
-        message: {
-          statusCode: 404,
-          message: exception.message.replace(FIND_DOUBLE_QUOTE, ''),
-        },
-      });
-    }
 
     return response.status(500).json({
       message: {
