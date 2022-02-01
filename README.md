@@ -70,6 +70,7 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 - 아래 명령어를 입력하여 실행해주세요.
     ```
     make dev
+    yarn start:dev
     ```
     - 명령어는 디렉토리 최상단에서 실행해주세요.
 
