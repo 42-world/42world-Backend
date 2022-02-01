@@ -95,6 +95,10 @@ SLACK_HOOK_URL=
 ```
 
 ## 실행하기
+- docker-compose_backup.yml을 docker-compose.yml로 바꿔주세요
+  - 현재 docker-compose.yml은 배포하기 위한 세팅을 하느라 실험중인 상태입니다.
+  - docker-compose.yml은 추후 하나로 합쳐지거나 사라질 예정입니다.
+
 - 아래 명령어를 입력하여 실행해주세요.
     ```
     make dev
