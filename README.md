@@ -59,40 +59,8 @@ https://www.42world.kr/
     ```
 
 ## env 파일 형식
-비어있는 부분을 채워서 파일을 생성해주세요
+sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을 채워주세요.
 
-.env.dev
-```
-MYSQL_DATABASE=ft_world
-MYSQL_USER=ft_world
-MYSQL_PASSWORD=ft_world
-MYSQL_EXTERNAL_PORT=3306
-API_EXTERNAL_PORT=8888
-
-DB_HOST=db
-DB_PORT=3306
-DB_NAME=ft_world
-DB_USER_NAME=
-DB_USER_PASSWORD=
-
-REDIS_HOST=redis6379
-REDIS_PORT=6379
-
-PORT=8888
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GITHUB_CALLBACK_URL=http://localhost:3000/auth/github/callback
-JWT_SECRET=
-
-EMAIL_AUTH_EMAIL=42world.official@gmail.com
-EMAIL_AUTH_PASSWORD=
-EMAIL_HOST=smtp.gmail.com
-EMAIL_FROM_USER_NAME=42world
-EMAIL_ENDPOINT=http://localhost:8888/ft-auth
-FRONT_URL=http://localhost:3000
-
-SLACK_HOOK_URL=
-```
 
 ## 실행하기
 - docker-compose_backup.yml을 docker-compose.yml로 바꿔주세요
