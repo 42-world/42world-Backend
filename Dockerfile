@@ -5,7 +5,6 @@ RUN mkdir ft-world
 
 WORKDIR ft-world
 
-COPY ./config ./config
 COPY ./src ./src
 COPY ./test ./test
 COPY ./views ./views

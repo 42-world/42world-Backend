@@ -20,14 +20,6 @@ export const isExpired = (exp: Date): boolean => {
   return now >= exp;
 };
 
-export const getEnvPath = () => {
-  if (process.env.NODE_ENV === 'test') return 'config/.env.test';
-  if (process.env.NODE_ENV === 'dev') return 'config/.env.dev';
-  if (process.env.NODE_ENV === 'alpha') return 'config/.env.alpha';
-  if (process.env.NODE_ENV === 'prod') return 'config/.env.prod';
-  return 'config/.env.dev';
-};
-
 export const getCookieOption = (): CookieOptions => {
   if (process.env.NODE_ENV === 'alpha' || process.env.NODE_ENV === 'prod') {
     return { secure: true, sameSite: 'none' };
