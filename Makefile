@@ -1,7 +1,7 @@
 COMPOSE = sudo docker-compose
 COMPOSE_ENV = ${COMPOSE} --env-file config/.env.$(1)
 
-dev: db
+dev: db redis
 
 alpha:
 	export NODE_ENV=alpha && $(call COMPOSE_ENV,alpha) up --build -d
