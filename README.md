@@ -13,7 +13,7 @@ https://www.42world.kr/
 
 ```
 ├── config
-│    └── dev.env
+│    └── .env.dev
 ├── src
 │    ├── article
 │    ├── auth
@@ -32,7 +32,11 @@ https://www.42world.kr/
 
 ## 기술스택
 - Frontend: [React.js](https://reactjs.org/)
-- Backend: [Nest.js](https://nestjs.com/)
+- Backend
+  - [Nest.js](https://nestjs.com/)
+  - [TypeORM](https://typeorm.io/#/)
+  - [Redis](https://redis.io/)
+  - [Docker](https://www.docker.com/)
 
 # 프로젝트
 **! Docker 가 설치되어 있어야 합니다.**
@@ -54,12 +58,33 @@ https://www.42world.kr/
     yarn install
     ```
 
+## env 파일 형식
+sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을 채워주세요.
+
+
 ## 실행하기
+- docker-compose_backup.yml을 docker-compose.yml로 바꿔주세요
+  - 현재 docker-compose.yml은 배포하기 위한 세팅을 하느라 실험중인 상태입니다.
+  - docker-compose.yml은 추후 하나로 합쳐지거나 사라질 예정입니다.
+
 - 아래 명령어를 입력하여 실행해주세요.
     ```
     make dev
+    yarn start:dev
     ```
     - 명령어는 디렉토리 최상단에서 실행해주세요.
+
+## 테스트 실행하기
+현재 e2e 테스트의 일부만 제대로 구성되어 있습니다.
+
+다른 테스트 및 유닛테스트는 추후 보강 예정입니다.
+
+```
+./run_test_db.sh
+
+yarn test:e2e ./test/app.e2e-spec.ts
+```
+
 # 기여하기
 42world 커뮤니티 제작은 오픈소스로 진행되고 있습니다.
 

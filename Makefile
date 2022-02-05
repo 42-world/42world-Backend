@@ -46,7 +46,7 @@ api-alpha:
 
 api-prod:
 	sudo docker build -t ft-world-api .
-	sudo docker run -d -p 80:8888 --env-file config/.env ft-world-api
+	sudo docker run -d -p 80:80 --env-file config/.env ft-world-api
 
 api-build:
 	sudo docker build -t ft-world-api .
