@@ -20,7 +20,7 @@ import configEmail from '@root/config/mail.config';
       entities: [path.join(__dirname, '../src/**/*.entity{.ts,.js}')],
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: true,
-      logging: true,
+      logging: false,
     }),
     ConfigModule.forRoot({
       envFilePath: getEnvPath(),
