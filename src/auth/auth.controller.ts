@@ -1,20 +1,12 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
-  Post,
   Res,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserService } from '@user/user.service';
-import { AuthService } from './auth.service';
-import { GithubAuthGuard } from './github-auth.guard';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
-import { GithubProfile } from './interfaces/github-profile.interface';
-import { ACCESS_TOKEN } from './constants/access-token';
-import { GetGithubProfile, Public } from './auth.decorator';
 import {
   ApiCookieAuth,
   ApiOkResponse,
@@ -22,6 +14,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
+
+import { UserService } from '@user/user.service';
+import { AuthService } from './auth.service';
+import { GithubAuthGuard } from './github-auth.guard';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { GithubProfile } from './interfaces/github-profile.interface';
+import { ACCESS_TOKEN } from './constants/access-token';
+import { GetGithubProfile, Public } from './auth.decorator';
 import { getCookieOption } from '@root/utils';
 
 @ApiTags('Auth')
@@ -50,6 +51,7 @@ export class AuthController {
   @Get('github/callback')
   @Public()
   @UseGuards(GithubAuthGuard)
+  @UseFilters(AllExceptionsFilter)
   @ApiOperation({
     summary: '깃허브 로그인 콜백',
     description: `
