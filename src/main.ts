@@ -12,6 +12,7 @@ import { AppModule } from './app.module';
 import { ACCESS_TOKEN } from '@auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
+import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -41,6 +42,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalFilters(new TypeormExceptionFilter());
+  app.useGlobalFilters(new InternalServerErrorExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
