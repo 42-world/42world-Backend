@@ -15,6 +15,8 @@ export const ormconfig = (): IOrmconfig => ({
     entities: [__dirname + '../../**/*.entity{.ts,.js}'],
     namingStrategy: new SnakeNamingStrategy(),
 
+    timezone: 'Z',
+
     synchronize: false,
     migrationsRun: true,
     logging: process.env.NODE_ENV === 'dev',
