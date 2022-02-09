@@ -36,13 +36,16 @@ export const getCookieOption = (): CookieOptions => {
   return {};
 };
 
-export const errorHook = (exceptionName, exceptionMessage) => {
+export const errorHook = async (
+  exceptionName: string,
+  exceptionMessage: string,
+) => {
   const PHASE = process.env.NODE_ENV;
   const slackMessage = `[${PHASE}] ${exceptionName}: ${exceptionMessage}`;
 
   try {
-    axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage }).then();
+    await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
   } catch (e) {
-    throw e;
+    console.error(e);
   }
 };
