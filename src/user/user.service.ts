@@ -9,8 +9,10 @@ import { User } from './entities/user.entity';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async githubLogin(profile: GithubProfile): Promise<User> {
-    const user = await this.userRepository.findOne({ oauthToken: profile.id });
+  async githubLogin(githubProfile: GithubProfile): Promise<User> {
+    const user = await this.userRepository.findOne({
+      githubUid: githubProfile.id,
+    });
 
     if (user) {
       user.lastLogin = getNextMonth();
@@ -18,8 +20,9 @@ export class UserService {
     }
 
     const newUser = {
-      nickname: profile.nickname,
-      oauthToken: profile.id,
+      nickname: githubProfile.username,
+      githubUsername: githubProfile.username,
+      githubUid: githubProfile.id,
       lastLogin: getNextMonth(),
     };
 

@@ -78,14 +78,16 @@ describe('UserController (e2e)', () => {
 
   beforeEach(async () => {
     const newUser = new User();
-    newUser.oauthToken = 'test1234';
+    newUser.githubUid = 'test1234';
     newUser.nickname = 'first user';
+    newUser.githubUsername = 'first user';
     newUser.role = UserRole.CADET;
     await userRepository.save(newUser);
 
     const newUser2 = new User();
-    newUser2.oauthToken = 'test1234';
+    newUser2.githubUid = 'test1234';
     newUser2.nickname = 'second user';
+    newUser2.githubUsername = 'second user';
     newUser2.role = UserRole.CADET;
     await userRepository.save(newUser2);
 

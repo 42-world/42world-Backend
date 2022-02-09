@@ -14,7 +14,6 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Best } from '@root/best/entities/best.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 
@@ -31,12 +30,20 @@ export class User {
   id!: number;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 20, nullable: false })
   nickname!: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  oauthToken!: string;
+  @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
+  githubUsername!: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  ftIntraId!: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 42, nullable: false })
+  githubUid!: string;
 
   @ApiProperty()
   @Column({ nullable: true })
