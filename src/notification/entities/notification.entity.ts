@@ -38,6 +38,10 @@ export class Notification {
   content!: string;
 
   @ApiProperty()
+  @Column({ nullable: false })
+  contentId: number;
+
+  @ApiProperty()
   @Column({ nullable: false, default: false })
   isRead!: boolean;
 

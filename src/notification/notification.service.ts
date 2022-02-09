@@ -17,6 +17,7 @@ export class NotificationService {
     const notification: CreateNotificationDto = {
       type: NotificationType.NEW_COMMENT,
       content: comment.content,
+      contentId: article.id,
       userId: article.writerId,
     };
     return this.notificationRepository.save(notification);
