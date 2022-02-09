@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Article } from '@root/article/entities/article.entity';
 import { User } from '@user/entities/user.entity';
 
 import {
@@ -39,7 +40,14 @@ export class Notification {
 
   @ApiProperty()
   @Column({ nullable: false })
-  contentId: number;
+  articleId: number;
+
+  @ManyToOne(() => Article, (article) => article.notification, {
+    createForeignKeyConstraints: false,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article?: Article;
 
   @ApiProperty()
   @Column({ nullable: false, default: false })

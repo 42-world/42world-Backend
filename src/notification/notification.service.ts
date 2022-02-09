@@ -17,7 +17,7 @@ export class NotificationService {
     const notification: CreateNotificationDto = {
       type: NotificationType.NEW_COMMENT,
       content: `게시글 ${article.title} 에 새로운 댓글이 달렸습니다.\n${comment.content}`,
-      contentId: article.id,
+      articleId: article.id,
       userId: article.writerId,
     };
     return this.notificationRepository.save(notification);
