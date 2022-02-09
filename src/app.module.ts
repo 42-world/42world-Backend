@@ -23,7 +23,6 @@ import { AuthModule } from './auth/auth.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { DatabaseModule } from './database/database.module';
-import { getEnvPath } from './utils';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
 import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
@@ -31,7 +30,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: getEnvPath(),
+      envFilePath: 'config/.env',
       isGlobal: true,
       cache: true,
       load: [ormconfig, configEmail],
