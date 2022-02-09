@@ -81,8 +81,8 @@ export class ArticleController {
       userId,
       articleId,
     );
-
-    this.articleService.increaseViewCount(article);
+    if (article.writerId !== userId)
+      this.articleService.increaseViewCount(article);
     return { ...article, isLike };
   }
 
