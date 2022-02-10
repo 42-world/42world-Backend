@@ -13,7 +13,8 @@ import { Cache } from 'cache-manager';
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE } from './ft-auth.utils';
 import { TIME2LIVE } from '@root/utils';
-import { User, UserRole } from '@root/user/entities/user.entity';
+import { User } from '@root/user/entities/user.entity';
+import { UserRole } from '@user/interfaces/userrole.interface';
 import { FtAuthRedisValue } from './interfaces/ft-auth.interface';
 
 @Injectable()

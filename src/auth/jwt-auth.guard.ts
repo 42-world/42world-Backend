@@ -5,7 +5,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { User, UserRole } from '@root/user/entities/user.entity';
+import { User } from '@root/user/entities/user.entity';
+import { UserRole } from '@user/interfaces/userrole.interface';
 import { IS_PUBLIC_KEY, ROLE_KEY } from './constants/metadata-keys';
 
 /**
