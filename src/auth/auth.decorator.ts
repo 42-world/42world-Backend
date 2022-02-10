@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { User, UserRole } from '@root/user/entities/user.entity';
+import { User } from '@root/user/entities/user.entity';
+import { UserRole } from '@user/interfaces/userrole.interface';
 import { GithubProfile } from './interfaces/github-profile.interface';
 import { SetMetadata } from '@nestjs/common';
 import { IS_PUBLIC_KEY, ROLE_KEY } from './constants/metadata-keys';

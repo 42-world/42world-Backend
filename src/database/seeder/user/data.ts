@@ -1,5 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { User, UserRole } from '@user/entities/user.entity';
+import { User } from '@user/entities/user.entity';
+import { UserRole } from '@user/interfaces/userrole.interface';
 
 export class SeederDataUser extends PartialType(User) {
   id: number;
