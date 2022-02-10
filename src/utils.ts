@@ -1,4 +1,5 @@
 import { CookieOptions } from 'express';
+import axios from 'axios';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -25,4 +26,18 @@ export const getCookieOption = (): CookieOptions => {
     return { secure: true, sameSite: 'none' };
   }
   return {};
+};
+
+export const errorHook = async (
+  exceptionName: string,
+  exceptionMessage: string,
+) => {
+  const PHASE = process.env.NODE_ENV;
+  const slackMessage = `[${PHASE}] ${exceptionName}: ${exceptionMessage}`;
+
+  try {
+    await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
+  } catch (e) {
+    console.error(e);
+  }
 };

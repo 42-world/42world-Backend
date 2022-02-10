@@ -6,7 +6,7 @@ import { Seeder } from './seeder';
 import { UserSeederModule } from './user/user-seeder.module';
 import { CategorySeederModule } from './category/category-seeder.module';
 import { ArticleSeederModule } from './article/article-seeder.module';
-import { ormconfig } from '../ormconfig';
+import { ormconfig } from '@database/ormconfig';
 
 @Module({
   imports: [
