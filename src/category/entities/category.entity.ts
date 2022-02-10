@@ -1,5 +1,6 @@
 import { Article } from '@article/entities/article.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '@user/interfaces/userrole.interface';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -20,6 +21,30 @@ export class Category {
   @ApiProperty()
   @Column({ type: 'varchar', length: 40, nullable: false })
   name!: string;
+
+  @ApiProperty({ example: UserRole.CADET })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  writableArticle!: string;
+
+  @ApiProperty({ example: UserRole.CADET })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  readonlyArticle!: string;
+
+  @ApiProperty({ example: UserRole.CADET })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  writableComment!: string;
+
+  @ApiProperty({ example: UserRole.CADET })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  readonlyComment!: string;
+
+  @ApiProperty({ example: UserRole.CADET })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  reactionable!: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, default: false })
+  anonymity!: boolean;
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
