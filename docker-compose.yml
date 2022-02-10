@@ -11,7 +11,7 @@ services:
       - MYSQL_PASSWORD=${DB_USER_PASSWORD}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_INITDB_ARGS=--encoding=UTF-8
-      - TZ=UTC
+      - TZ=Asia/Seoul
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: 'mysqladmin ping -h localhost -u $$DB_USER_NAME --password=$$DB_USER_PASSWORD'
