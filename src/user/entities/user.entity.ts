@@ -1,4 +1,3 @@
-import { FtAuth } from '@ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -9,7 +8,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  OneToOne,
   DeleteDateColumn,
   Index,
 } from 'typeorm';
@@ -39,7 +37,7 @@ export class User {
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 20, nullable: true })
-  ftIntraId!: string;
+  intraId!: string;
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 42, nullable: false })
@@ -90,12 +88,6 @@ export class User {
     nullable: true,
   })
   notification?: Notification[];
-
-  @OneToOne(() => FtAuth, (ftAuth) => ftAuth.user, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  ftAuth?: FtAuth;
 
   @OneToMany(() => ReactionArticle, (reactionArticle) => reactionArticle.user, {
     createForeignKeyConstraints: false,

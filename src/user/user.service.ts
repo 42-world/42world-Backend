@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateUserDto, UpdateRoleDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateIntraAuthDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -41,11 +41,11 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async updateAuthenticate(
+  async updateIntraAuth(
     user: User,
-    updateRoleDto: UpdateRoleDto,
+    updateIntraAuthDto: UpdateIntraAuthDto,
   ): Promise<User> {
-    return this.userRepository.save({ ...user, ...updateRoleDto });
+    return this.userRepository.save({ ...user, ...updateIntraAuthDto });
   }
 
   async update(user: User): Promise<User> {
@@ -54,5 +54,9 @@ export class UserService {
 
   async remove(id: number): Promise<void> {
     await this.userRepository.softDelete({ id });
+  }
+
+  findByIntraId(intraId: string): Promise<User> {
+    return this.userRepository.findOne({ intraId });
   }
 }

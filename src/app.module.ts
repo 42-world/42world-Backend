@@ -18,7 +18,7 @@ import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { NotificationModule } from './notification/notification.module';
-import { FtAuthModule } from './ft-auth/ft-auth.module';
+import { IntraAuthModule } from './intra-auth/intra-auth.module';
 import { AuthModule } from './auth/auth.module';
 import { BestModule } from './best/best.module';
 import { ReactionModule } from './reaction/reaction.module';
@@ -42,7 +42,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/views/ft-auth/'),
+            dir: path.join(__dirname, '/views/intra-auth/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,
@@ -76,7 +76,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
     ArticleModule,
     CategoryModule,
     NotificationModule,
-    FtAuthModule,
+    IntraAuthModule,
     AuthModule,
     BestModule,
     ReactionModule,

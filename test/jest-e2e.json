@@ -17,6 +17,6 @@
     "^@authenticate/(.*)$": "<rootDir>/../src/authenticate/$1",
     "^@notification/(.*)$": "<rootDir>/../src/notification/$1",
     "^@database/(.*)$": "<rootDir>/../src/database/$1",
-    "^@ft-auth/(.*)$": "<rootDir>/../src/ft-auth/$1"
+    "^@intra-auth/(.*)$": "<rootDir>/../src/intra-auth/$1"
   }
 }
