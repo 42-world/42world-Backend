@@ -7,6 +7,7 @@ import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { PageMetaDto } from '@root/pagination/page-meta.dto';
 import { FindAllMyArticleDto } from '@article/dto/find-all-my-article-dto';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -64,11 +65,12 @@ export class ArticleRepository extends Repository<Article> {
   }
 
   async findAllMyArticle(
-    options?: FindAllMyArticleDto,
+    userId: number,
+    options?: PageOptionsDto,
   ): Promise<PageDto<Article>> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
-      .andWhere('article.writerId = :id', { id: options.userId })
+      .andWhere('article.writerId = :id', { id: userId })
       .skip(options.skip)
       .take(options.take)
       .orderBy('article.createdAt', options.order);

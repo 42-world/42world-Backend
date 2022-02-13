@@ -39,8 +39,8 @@ export class CommentRepository extends Repository<Comment> {
   }
 
   async findAllMyComment(
-    options: PageOptionsDto,
     userId: number,
+    options?: PageOptionsDto,
   ): Promise<PageDto<Comment>> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')

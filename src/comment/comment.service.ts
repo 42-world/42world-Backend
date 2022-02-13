@@ -96,9 +96,9 @@ export class CommentService {
   }
 
   async findAllMyComment(
-    options: PageOptionsDto,
     userId: number,
+    options?: PageOptionsDto,
   ): Promise<PageDto<Comment>> {
-    return this.commentRepository.findAllMyComment(options, userId);
+    return this.commentRepository.findAllMyComment(userId, options);
   }
 }

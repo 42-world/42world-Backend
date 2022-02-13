@@ -100,22 +100,19 @@ export class UserController {
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(Article)
   findAllMyArticle(
-    @Query() options: FindAllMyArticleDto,
+    @Query() options: PageOptionsDto,
     @GetUser('id') id: number,
   ): Promise<PageDto<Article>> {
-    return this.articleService.findAllMyArticle({
-      ...options,
-      userId: id,
-    } as FindAllMyArticleDto);
+    return this.articleService.findAllMyArticle(id, options);
   }
 
   @Get('me/comments')
   @ApiOperation({ summary: '내가 작성한 댓글' })
-  @ApiOkResponse({ description: '내가 작성한 댓글 목록', type: [Comment] })
+  @ApiPaginatedResponse(Comment)
   findAllMyComment(
     @Query() options: PageOptionsDto,
     @GetUser('id') id: number,
   ): Promise<PageDto<Comment>> {
-    return this.commentService.findAllMyComment(options, id);
+    return this.commentService.findAllMyComment(id, options);
   }
 }
