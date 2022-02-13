@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { PageMetaDto } from '@root/pagination/page-meta.dto';
+import { FindAllMyArticleDto } from '@article/dto/find-all-my-article-dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -62,10 +63,22 @@ export class ArticleRepository extends Repository<Article> {
     }
   }
 
-  async findAllMyArticle(userId: number): Promise<Article[]> {
-    return this.createQueryBuilder('article')
+  async findAllMyArticle(
+    options?: FindAllMyArticleDto,
+  ): Promise<PageDto<Article>> {
+    const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
-      .andWhere('article.writerId = :id', { id: userId })
-      .getMany();
+      .andWhere('article.writerId = :id', { id: options.userId })
+      .skip(options.skip)
+      .take(options.take)
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const entities = await query.getMany();
+    const pageMetaDto = new PageMetaDto({
+      totalCount,
+      pageOptionsDto: options,
+    });
+    return new PageDto(entities, pageMetaDto);
   }
 }
