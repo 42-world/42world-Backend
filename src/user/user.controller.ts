@@ -27,7 +27,6 @@ import { CommentService } from '@comment/comment.service';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { FindAllMyArticleDto } from '@root/article/dto/find-all-my-article-dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 

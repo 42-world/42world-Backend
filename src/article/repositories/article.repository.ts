@@ -6,7 +6,6 @@ import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { PageMetaDto } from '@root/pagination/page-meta.dto';
-import { FindAllMyArticleDto } from '@article/dto/find-all-my-article-dto';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @EntityRepository(Article)

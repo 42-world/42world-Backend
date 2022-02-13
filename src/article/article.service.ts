@@ -11,7 +11,6 @@ import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
-import { FindAllMyArticleDto } from './dto/find-all-my-article-dto';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @Injectable()
