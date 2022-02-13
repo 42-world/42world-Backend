@@ -112,7 +112,10 @@ export class UserController {
   @Get('me/comments')
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiOkResponse({ description: '내가 작성한 댓글 목록', type: [Comment] })
-  findAllMyComment(@GetUser('id') id: number): Promise<Comment[]> {
-    return this.commentService.findAllMyComment(id);
+  findAllMyComment(
+    @Query() options: PageOptionsDto,
+    @GetUser('id') id: number,
+  ): Promise<PageDto<Comment>> {
+    return this.commentService.findAllMyComment(options, id);
   }
 }
