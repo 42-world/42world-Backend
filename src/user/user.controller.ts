@@ -86,14 +86,12 @@ export class UserController {
 
   @Get('me/like-articles')
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
-  @ApiOkResponse({
-    description: '유저가 좋아요 누른 게시글 목록',
-    type: [ReactionArticle],
-  })
+  @ApiPaginatedResponse(ReactionArticle)
   findAllReactionArticle(
     @GetUser('id') userId: number,
-  ): Promise<ReactionArticle[]> {
-    return this.reactionService.findAllArticleByUserId(userId);
+    @Query() options: PageOptionsDto,
+  ): Promise<PageDto<ReactionArticle>> {
+    return this.reactionService.findAllArticleByUserId(userId, options);
   }
 
   @Get('me/articles')
