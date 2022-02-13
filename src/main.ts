@@ -6,7 +6,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as morgan from 'morgan';
 import { join } from 'path';
-// import * as csurf from 'csurf';
 
 import { AppModule } from './app.module';
 import { ACCESS_TOKEN } from '@auth/constants/access-token';
@@ -54,7 +53,6 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views/ft-auth'));
   app.setViewEngine('ejs');
   app.use(cookieParser());
-  // app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
 }
 bootstrap();
