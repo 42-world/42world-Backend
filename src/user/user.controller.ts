@@ -20,7 +20,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
+import {
+  ReactionArticle,
+  ReactionArticleType,
+} from '@root/reaction/entities/reaction-article.entity';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
 import { Article } from '@article/entities/article.entity';
@@ -85,10 +88,14 @@ export class UserController {
     description: '유저가 좋아요 누른 게시글 목록',
     type: [ReactionArticle],
   })
-  findAllReactionArticle(
+  async findAllReactionArticle(
     @GetUser('id') userId: number,
-  ): Promise<ReactionArticle[]> {
-    return this.reactionService.findAllArticleByUserId(userId);
+  ): Promise<Article[]> {
+    const likeArticles = await this.reactionService.findAllMyReactionArticle(
+      userId,
+      ReactionArticleType.LIKE,
+    );
+    return likeArticles.map((e) => e.article);
   }
 
   @Get('me/articles')
