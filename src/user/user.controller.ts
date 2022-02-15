@@ -88,7 +88,7 @@ export class UserController {
     description: '유저가 좋아요 누른 게시글 목록',
     type: [ReactionArticle],
   })
-  async findAllReactionArticle(
+  async findAllMyReactionArticle(
     @GetUser('id') userId: number,
   ): Promise<Article[]> {
     const likeArticles = await this.reactionService.findAllMyReactionArticle(
