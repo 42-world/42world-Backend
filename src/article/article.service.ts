@@ -11,12 +11,15 @@ import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
+import { DetailArticleDto } from './dto/detail-article.dto';
+import { ReactionService } from '@root/reaction/reaction.service';
 
 @Injectable()
 export class ArticleService {
   constructor(
     private readonly articleRepository: ArticleRepository,
     private readonly categoryService: CategoryService,
+    private readonly reactionService: ReactionService,
   ) {}
 
   async create(
@@ -43,8 +46,14 @@ export class ArticleService {
     return this.articleRepository.findOneOrFail(id);
   }
 
-  getOneDetail(id: number): Promise<Article> {
-    return this.articleRepository.getOneDetailOrFail(id);
+  async getOneDetail(id: number, userId: number): Promise<DetailArticleDto> {
+    const article = await this.articleRepository.getOneDetailOrFail(id);
+    const isLike = await this.reactionService.isMyReactionArticle(
+      userId,
+      article.id,
+    );
+
+    return { ...article, isLike, isSelf: article.writerId === userId };
   }
 
   async update(

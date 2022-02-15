@@ -76,14 +76,11 @@ export class ArticleController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<DetailArticleDto> {
-    const article = await this.articleService.getOneDetail(articleId);
-    const isLike = await this.reactionService.isMyReactionArticle(
-      userId,
-      articleId,
-    );
+    const article = await this.articleService.getOneDetail(articleId, userId);
+
     if (article.writerId !== userId)
       this.articleService.increaseViewCount(article);
-    return { ...article, isLike };
+    return article;
   }
 
   @Get(':id/comments')
