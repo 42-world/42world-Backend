@@ -8,7 +8,6 @@ import { CategoryModule } from '@category/category.module';
 import { Category } from '@category/entities/category.entity';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
-import { Comment } from '@comment/entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -22,6 +21,7 @@ import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
+import * as dummy from './utils/dummy';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -103,10 +103,7 @@ describe('UserController (e2e)', () => {
     newArticle.writerId = newUser.id;
     await articleRepository.save(newArticle);
 
-    const newComment = new Comment();
-    newComment.content = 'cc';
-    newComment.writerId = newUser.id;
-    newComment.articleId = newArticle.id;
+    const newComment = dummy.comment(newUser.id, newArticle.id);
     await commentRepository.save(newComment);
   });
 
