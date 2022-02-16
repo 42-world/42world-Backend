@@ -1,11 +1,8 @@
 import { ArticleModule } from '@article/article.module';
-import { Article } from '@article/entities/article.entity';
 import { ArticleRepository } from '@article/repositories/article.repository';
 import { AuthModule } from '@auth/auth.module';
 import { AuthService } from '@auth/auth.service';
-import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { CategoryModule } from '@category/category.module';
-import { Category } from '@category/entities/category.entity';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
@@ -14,7 +11,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
-import { User, UserRole } from '@user/entities/user.entity';
+import { UserRole } from '@user/entities/user.entity';
 import { UserRepository } from '@user/repositories/user.repository';
 import { UserModule } from '@user/user.module';
 import * as cookieParser from 'cookie-parser';
@@ -74,37 +71,17 @@ describe('UserController (e2e)', () => {
   });
 
   beforeEach(async () => {
-    const newUser = new User();
-    newUser.oauthToken = 'test1234';
-    newUser.nickname = 'first user';
-    newUser.role = UserRole.CADET;
-    await userRepository.save(newUser);
-
-    const newUser2 = new User();
-    newUser2.oauthToken = 'test1234';
-    newUser2.nickname = 'second user';
-    newUser2.role = UserRole.CADET;
+    const newUser1 = dummy.user('testAuth', 'nickname', UserRole.CADET);
+    const newUser2 = dummy.user('testAuth', 'nickname', UserRole.CADET);
+    await userRepository.save(newUser1);
     await userRepository.save(newUser2);
 
-    JWT = authService.getJWT({
-      userId: newUser.id,
-      userRole: newUser.role,
-    } as JWTPayload);
+    JWT = dummy.jwt(newUser1.id, newUser1.role, authService);
 
-    const newCategory = new Category();
-    newCategory.name = '자유게시판';
-
+    const newCategory = dummy.category('새로운 카테고리');
     await categoryRepository.save(newCategory);
-
-    const newArticle = new Article();
-    newArticle.title = 'a';
-    newArticle.content = 'bb';
-    newArticle.categoryId = newCategory.id;
-    newArticle.writerId = newUser.id;
+    const newArticle = dummy.article(newCategory.id, newUser1.id, '', '');
     await articleRepository.save(newArticle);
-
-    const newComment = dummy.comment(newUser.id, newArticle.id);
-    await commentRepository.save(newComment);
   });
 
   afterEach(async () => {
