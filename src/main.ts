@@ -9,7 +9,6 @@ import { join } from 'path';
 // import * as csurf from 'csurf';
 
 import { AppModule } from './app.module';
-import { ACCESS_TOKEN } from '@auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
@@ -32,7 +31,7 @@ async function bootstrap() {
     .setTitle('42World API')
     .setDescription('42World API')
     .setVersion('0.1')
-    .addCookieAuth(ACCESS_TOKEN)
+    .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
