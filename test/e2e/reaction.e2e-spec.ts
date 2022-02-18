@@ -76,25 +76,23 @@ describe('Reaction', () => {
     await app.close();
   });
 
-  describe('/reactions/articles/{id}', async () => {
-    beforeAll(async () => {
+  describe('/reactions/articles/{id}', () => {
+    beforeEach(async () => {
       const user = dummy.user('token', 'nickname', UserRole.CADET);
       await userRepository.save(user);
-      JWT = dummy.jwt(user.id, user.role, authService);
       const category = dummy.category('category');
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
+      JWT = dummy.jwt(user.id, user.role, authService);
     });
 
-    afterAll(async () => {
-      await Promise.all([
-        userRepository.clear(),
-        articleRepository.clear(),
-        commentRepository.clear(),
-        categoryRepository.clear(),
-        reactionArticleRepository.clear(),
-      ]);
+    afterEach(async () => {
+      await userRepository.clear();
+      await categoryRepository.clear();
+      await articleRepository.clear();
+      await commentRepository.clear();
+      await reactionArticleRepository.clear();
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
@@ -128,8 +126,86 @@ describe('Reaction', () => {
     });
 
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
+      const notExistId = 0;
+
       const response = await request(app)
-        .post('/reactions/articles/0')
+        .post('/reactions/articles/' + notExistId)
+        .set('Cookie', `access_token=${JWT}`);
+
+      expect(response.status).toEqual(404);
+    });
+  });
+
+  describe('/reactions/articles/{articleId}/comments/{commentId}', () => {
+    beforeEach(async () => {
+      const user = dummy.user('token', 'nickname', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = dummy.jwt(user.id, user.role, authService);
+      const category = dummy.category('category');
+      await categoryRepository.save(category);
+      const article = dummy.article(category.id, user.id, 'title', 'content');
+      await articleRepository.save(article);
+      const comment = dummy.comment(user.id, article.id, 'content');
+      await commentRepository.save(comment);
+    });
+
+    afterEach(async () => {
+      await userRepository.clear();
+      await categoryRepository.clear();
+      await articleRepository.clear();
+      await commentRepository.clear();
+      await reactionArticleRepository.clear();
+    });
+
+    test('[성공] POST - 좋아요가 없는 경우', async () => {
+      const response = await request(app)
+        .post('/reactions/articles/1/comments/1')
+        .set('Cookie', `access_token=${JWT}`);
+
+      expect(response.status).toEqual(201);
+      expect(response.body.isLike).toEqual(true);
+      expect(response.body.likeCount).toEqual(1);
+    });
+
+    test('[성공] POST - 좋아요가 있는 경우', async () => {
+      await request(app)
+        .post('/reactions/articles/1/comments/1')
+        .set('Cookie', `access_token=${JWT}`);
+
+      const response2 = await request(app)
+        .post('/reactions/articles/1/comments/1')
+        .set('Cookie', `access_token=${JWT}`);
+
+      reactionArticleRepository.findOne(1);
+
+      expect(response2.status).toEqual(201);
+      expect(response2.body.isLike).toEqual(false);
+      expect(response2.body.likeCount).toEqual(0);
+    });
+
+    test('[실패] POST - unauthorize', async () => {
+      const response = await request(app).post(
+        '/reactions/articles/1/comments/1',
+      );
+
+      expect(response.status).toEqual(401);
+    });
+
+    test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
+      const notExistId = 999;
+
+      const response = await request(app)
+        .post('/reactions/articles/' + notExistId + '/comments/1')
+        .set('Cookie', `access_token=${JWT}`);
+
+      expect(response.status).toEqual(201); // TODO - 코드가 이상하다 201을 돌려준다
+    });
+
+    test('[실패] POST - 없는 commentId를 보내는 경우', async () => {
+      const notExistId = 0;
+
+      const response = await request(app)
+        .post('/reactions/articles/1/comments/' + notExistId)
         .set('Cookie', `access_token=${JWT}`);
 
       expect(response.status).toEqual(404);
