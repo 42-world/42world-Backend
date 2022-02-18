@@ -20,7 +20,7 @@ import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
 
-describe('UserController (e2e)', () => {
+describe('Reaction', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -76,61 +76,63 @@ describe('UserController (e2e)', () => {
     await app.close();
   });
 
-  beforeEach(async () => {
-    const user = dummy.user('token', 'nickname', UserRole.CADET);
-    await userRepository.save(user);
-    JWT = dummy.jwt(user.id, user.role, authService);
-    const category = dummy.category('category');
-    await categoryRepository.save(category);
-    const article = dummy.article(category.id, user.id, 'title', 'content');
-    await articleRepository.save(article);
-  });
+  describe('/reactions/articles/{id}', async () => {
+    beforeAll(async () => {
+      const user = dummy.user('token', 'nickname', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = dummy.jwt(user.id, user.role, authService);
+      const category = dummy.category('category');
+      await categoryRepository.save(category);
+      const article = dummy.article(category.id, user.id, 'title', 'content');
+      await articleRepository.save(article);
+    });
 
-  afterEach(async () => {
-    await Promise.all([
-      userRepository.clear(),
-      articleRepository.clear(),
-      commentRepository.clear(),
-      categoryRepository.clear(),
-      reactionArticleRepository.clear(),
-    ]);
-  });
+    afterAll(async () => {
+      await Promise.all([
+        userRepository.clear(),
+        articleRepository.clear(),
+        commentRepository.clear(),
+        categoryRepository.clear(),
+        reactionArticleRepository.clear(),
+      ]);
+    });
 
-  test('[성공] POST /reactions/articles - 좋아요가 없는 경우', async () => {
-    const response = await request(app)
-      .post('/reactions/articles/1')
-      .set('Cookie', `access_token=${JWT}`);
+    test('[성공] POST - 좋아요가 없는 경우', async () => {
+      const response = await request(app)
+        .post('/reactions/articles/1')
+        .set('Cookie', `access_token=${JWT}`);
 
-    expect(response.status).toEqual(201);
-    expect(response.body.isLike).toEqual(true);
-    expect(response.body.likeCount).toEqual(1);
-  });
+      expect(response.status).toEqual(201);
+      expect(response.body.isLike).toEqual(true);
+      expect(response.body.likeCount).toEqual(1);
+    });
 
-  test('[성공] POST /reactions/articles - 좋아요가 있는 경우', async () => {
-    await request(app)
-      .post('/reactions/articles/1')
-      .set('Cookie', `access_token=${JWT}`);
+    test('[성공] POST - 좋아요가 있는 경우', async () => {
+      await request(app)
+        .post('/reactions/articles/1')
+        .set('Cookie', `access_token=${JWT}`);
 
-    const response2 = await request(app)
-      .post('/reactions/articles/1')
-      .set('Cookie', `access_token=${JWT}`);
+      const response2 = await request(app)
+        .post('/reactions/articles/1')
+        .set('Cookie', `access_token=${JWT}`);
 
-    expect(response2.status).toEqual(201);
-    expect(response2.body.isLike).toEqual(false);
-    expect(response2.body.likeCount).toEqual(0);
-  });
+      expect(response2.status).toEqual(201);
+      expect(response2.body.isLike).toEqual(false);
+      expect(response2.body.likeCount).toEqual(0);
+    });
 
-  test('[실패] POST /reactions/articles - unauthorize', async () => {
-    const response = await request(app).post('/reactions/articles/1');
+    test('[실패] POST - unauthorize', async () => {
+      const response = await request(app).post('/reactions/articles/1');
 
-    expect(response.status).toEqual(401);
-  });
+      expect(response.status).toEqual(401);
+    });
 
-  test('[실패] POST /reactions/articles - 없는 id를 보내는 경우', async () => {
-    const response = await request(app)
-      .post('/reactions/articles/0')
-      .set('Cookie', `access_token=${JWT}`);
+    test('[실패] POST - 없는 id를 보내는 경우', async () => {
+      const response = await request(app)
+        .post('/reactions/articles/0')
+        .set('Cookie', `access_token=${JWT}`);
 
-    expect(response.status).toEqual(404);
+      expect(response.status).toEqual(404);
+    });
   });
 });
