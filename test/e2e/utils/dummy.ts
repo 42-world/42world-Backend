@@ -10,11 +10,11 @@ export const user = (
   nickname: string,
   role: UserRole,
 ): User => {
-  const newUser2 = new User();
-  newUser2.oauthToken = oauthToken;
-  newUser2.nickname = nickname;
-  newUser2.role = role;
-  return newUser2;
+  const user = new User();
+  user.oauthToken = oauthToken;
+  user.nickname = nickname;
+  user.role = role;
+  return user;
 };
 
 export const jwt = (

@@ -70,18 +70,20 @@ describe('UserController (e2e)', () => {
     app = app.getHttpServer();
   });
 
+  afterAll(async () => {
+    await getConnection().dropDatabase();
+    await getConnection().close();
+    await app.close();
+  });
+
   beforeEach(async () => {
-    const newUser1 = dummy.user('testAuth', 'nickname', UserRole.CADET);
-    const newUser2 = dummy.user('testAuth', 'nickname', UserRole.CADET);
-    await userRepository.save(newUser1);
-    await userRepository.save(newUser2);
-
-    JWT = dummy.jwt(newUser1.id, newUser1.role, authService);
-
-    const newCategory = dummy.category('새로운 카테고리');
-    await categoryRepository.save(newCategory);
-    const newArticle = dummy.article(newCategory.id, newUser1.id, '', '');
-    await articleRepository.save(newArticle);
+    const user = dummy.user('token', 'nickname', UserRole.CADET);
+    await userRepository.save(user);
+    JWT = dummy.jwt(user.id, user.role, authService);
+    const category = dummy.category('category');
+    await categoryRepository.save(category);
+    const article = dummy.article(category.id, user.id, 'title', 'content');
+    await articleRepository.save(article);
   });
 
   afterEach(async () => {
@@ -94,13 +96,7 @@ describe('UserController (e2e)', () => {
     ]);
   });
 
-  afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
-    await app.close();
-  });
-
-  test('[성공] 게시글 리엑션 성공 - 좋아요가 없는 경우', async () => {
+  test('[성공] POST /reactions/articles - 좋아요가 없는 경우', async () => {
     const response = await request(app)
       .post('/reactions/articles/1')
       .set('Cookie', `access_token=${JWT}`);
@@ -110,7 +106,7 @@ describe('UserController (e2e)', () => {
     expect(response.body.likeCount).toEqual(1);
   });
 
-  test('[성공] 게시글 리엑션 성공 - 좋아요가 있는 경우', async () => {
+  test('[성공] POST /reactions/articles - 좋아요가 있는 경우', async () => {
     await request(app)
       .post('/reactions/articles/1')
       .set('Cookie', `access_token=${JWT}`);
@@ -124,9 +120,17 @@ describe('UserController (e2e)', () => {
     expect(response2.body.likeCount).toEqual(0);
   });
 
-  test('[실패] 게시글 리엑션 실패 - unauthorize', async () => {
-    const response2 = await request(app).post('/reactions/articles/1');
+  test('[실패] POST /reactions/articles - unauthorize', async () => {
+    const response = await request(app).post('/reactions/articles/1');
 
-    expect(response2.status).toEqual(401);
+    expect(response.status).toEqual(401);
+  });
+
+  test('[실패] POST /reactions/articles - 없는 id를 보내는 경우', async () => {
+    const response = await request(app)
+      .post('/reactions/articles/0')
+      .set('Cookie', `access_token=${JWT}`);
+
+    expect(response.status).toEqual(404);
   });
 });
