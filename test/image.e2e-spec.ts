@@ -15,7 +15,7 @@ import { ImageModule } from '@image/image.module';
 import { getConnection } from 'typeorm';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
 
-describe('UserController (e2e)', () => {
+describe('Image', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
@@ -45,37 +45,45 @@ describe('UserController (e2e)', () => {
     app = app.getHttpServer();
   });
 
-  beforeEach(async () => {
-    const newUser = new User();
-    newUser.oauthToken = 'test1234';
-    newUser.nickname = 'first user';
-    newUser.role = UserRole.CADET;
-    await userRepository.save(newUser);
-
-    JWT = authService.getJWT({
-      userId: newUser.id,
-      userRole: newUser.role,
-    } as JWTPayload);
-  });
-
-  afterEach(async () => {
-    await Promise.all([userRepository.clear()]);
-  });
-
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
     await app.close();
   });
 
-  test('이미지 업로드 url 생성', async () => {
-    const response = await request(app)
-      .post('/image')
-      .set('Cookie', `access_token=${JWT}`);
+  describe('/image', () => {
+    beforeEach(async () => {
+      const newUser = new User();
+      newUser.oauthToken = 'test1234';
+      newUser.nickname = 'first user';
+      newUser.role = UserRole.CADET;
+      await userRepository.save(newUser);
 
-    const result = response.body as UploadImageUrlResponseDto;
+      JWT = authService.getJWT({
+        userId: newUser.id,
+        userRole: newUser.role,
+      } as JWTPayload);
+    });
 
-    expect(response.status).toEqual(201);
-    expect(result.uploadUrl).toBeTruthy();
+    afterEach(async () => {
+      await Promise.all([userRepository.clear()]);
+    });
+
+    test('[성공] POST', async () => {
+      const response = await request(app)
+        .post('/image')
+        .set('Cookie', `access_token=${JWT}`);
+
+      const result = response.body as UploadImageUrlResponseDto;
+
+      expect(response.status).toEqual(201);
+      expect(result.uploadUrl).toBeTruthy();
+    });
+
+    test('[실패] POST - unauthorized', async () => {
+      const response = await request(app).post('/image');
+
+      expect(response.status).toEqual(401);
+    });
   });
 });
