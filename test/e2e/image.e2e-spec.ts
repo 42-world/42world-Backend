@@ -5,7 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from './test.base.module';
+import { TestBaseModule } from '../test.base.module';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
