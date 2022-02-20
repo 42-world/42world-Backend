@@ -92,14 +92,6 @@ describe('Reaction', () => {
       JWT = dummy.jwt(user.id, user.role, authService);
     });
 
-    afterEach(async () => {
-      await userRepository.clear();
-      await categoryRepository.clear();
-      await articleRepository.clear();
-      await commentRepository.clear();
-      await reactionArticleRepository.clear();
-    });
-
     test('[성공] POST - 좋아요가 없는 경우', async () => {
       const response = await request(app)
         .post('/reactions/articles/1')
@@ -152,14 +144,6 @@ describe('Reaction', () => {
       await articleRepository.save(article);
       const comment = dummy.comment(user.id, article.id, 'content');
       await commentRepository.save(comment);
-    });
-
-    afterEach(async () => {
-      await userRepository.clear();
-      await categoryRepository.clear();
-      await articleRepository.clear();
-      await commentRepository.clear();
-      await reactionArticleRepository.clear();
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
