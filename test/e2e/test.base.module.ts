@@ -22,7 +22,7 @@ import {
       username: 'ft_world',
       password: 'ft_world',
       database: 'ft_world',
-      entities: [path.join(__dirname, '../src/**/*.entity{.ts,.js}')],
+      entities: [path.join(__dirname, '../../src/**/*.entity{.ts,.js}')],
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: true,
       logging: false,
