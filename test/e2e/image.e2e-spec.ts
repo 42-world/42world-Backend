@@ -5,15 +5,16 @@ import * as cookieParser from 'cookie-parser';
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '../test.base.module';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { User, UserRole } from '@user/entities/user.entity';
-import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
+import { UserRole } from '@user/entities/user.entity';
 import { ImageModule } from '@image/image.module';
 import { getConnection } from 'typeorm';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
+import { TestBaseModule } from '@test/e2e/test.base.module';
+import { clearDB } from '@test/e2e/utils/utils';
+import * as dummy from './utils/dummy';
 
 describe('Image', () => {
   let app: INestApplication;
@@ -53,20 +54,14 @@ describe('Image', () => {
 
   describe('/image', () => {
     beforeEach(async () => {
-      const newUser = new User();
-      newUser.oauthToken = 'test1234';
-      newUser.nickname = 'first user';
-      newUser.role = UserRole.CADET;
+      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
       await userRepository.save(newUser);
 
-      JWT = authService.getJWT({
-        userId: newUser.id,
-        userRole: newUser.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(newUser.id, newUser.role, authService);
     });
 
     afterEach(async () => {
-      await Promise.all([userRepository.clear()]);
+      await clearDB();
     });
 
     test('[성공] POST', async () => {
