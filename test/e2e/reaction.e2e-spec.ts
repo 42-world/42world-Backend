@@ -19,6 +19,7 @@ import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
+import { clearDB } from './utils/utils';
 
 describe('Reaction', () => {
   let app: INestApplication;
@@ -74,6 +75,10 @@ describe('Reaction', () => {
     await getConnection().dropDatabase();
     await getConnection().close();
     await app.close();
+  });
+
+  beforeEach(async () => {
+    await clearDB();
   });
 
   describe('/reactions/articles/{id}', () => {
