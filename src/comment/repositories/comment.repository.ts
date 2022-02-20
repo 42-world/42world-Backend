@@ -30,10 +30,10 @@ export class CommentRepository extends Repository<Comment> {
   }
 
   async existOrFail(id: number): Promise<void> {
-    const exist_query = await this.query(`SELECT EXISTS
+    const existQuery = await this.query(`SELECT EXISTS
       (SELECT * FROM comment WHERE id=${id} AND deleted_at IS NULL)`);
-    const is_exist = Object.values(exist_query[0])[0];
-    if (is_exist === '0') {
+    const isExist = Object.values(existQuery[0])[0];
+    if (isExist === '0') {
       throw new NotFoundException(`Can't find Comments with id ${id}`);
     }
   }

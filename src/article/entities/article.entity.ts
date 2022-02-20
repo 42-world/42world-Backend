@@ -18,6 +18,7 @@ import { Category } from '@category/entities/category.entity';
 import { Best } from '@root/best/entities/best.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
+import { Notification } from '@root/notification/entities/notification.entity';
 
 @Entity('article')
 export class Article {
@@ -88,6 +89,12 @@ export class Article {
     nullable: true,
   })
   comment?: Comment[];
+
+  @OneToMany(() => Notification, (notification) => notification.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  notification?: Notification[];
 
   @ApiProperty({ type: () => ReactionArticle })
   @OneToMany(
