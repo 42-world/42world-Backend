@@ -165,8 +165,6 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `access_token=${JWT}`);
 
-      reactionArticleRepository.findOne(1);
-
       expect(response2.status).toEqual(201);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
