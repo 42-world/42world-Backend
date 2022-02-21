@@ -95,7 +95,7 @@ describe('Reaction', () => {
     test('[성공] POST - 좋아요가 없는 경우', async () => {
       const response = await request(app)
         .post('/reactions/articles/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(201);
       expect(response.body.isLike).toEqual(true);
@@ -105,11 +105,11 @@ describe('Reaction', () => {
     test('[성공] POST - 좋아요가 있는 경우', async () => {
       await request(app)
         .post('/reactions/articles/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       const response2 = await request(app)
         .post('/reactions/articles/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response2.status).toEqual(201);
       expect(response2.body.isLike).toEqual(false);
@@ -127,7 +127,7 @@ describe('Reaction', () => {
 
       const response = await request(app)
         .post('/reactions/articles/' + notExistId)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(404);
     });
@@ -149,7 +149,7 @@ describe('Reaction', () => {
     test('[성공] POST - 좋아요가 없는 경우', async () => {
       const response = await request(app)
         .post('/reactions/articles/1/comments/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(201);
       expect(response.body.isLike).toEqual(true);
@@ -159,11 +159,11 @@ describe('Reaction', () => {
     test('[성공] POST - 좋아요가 있는 경우', async () => {
       await request(app)
         .post('/reactions/articles/1/comments/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       const response2 = await request(app)
         .post('/reactions/articles/1/comments/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response2.status).toEqual(201);
       expect(response2.body.isLike).toEqual(false);
@@ -183,7 +183,7 @@ describe('Reaction', () => {
 
       const response = await request(app)
         .post('/reactions/articles/' + notExistId + '/comments/1')
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(201); // TODO - 코드가 이상하다 201을 돌려준다
     });
@@ -193,7 +193,7 @@ describe('Reaction', () => {
 
       const response = await request(app)
         .post('/reactions/articles/1/comments/' + notExistId)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(404);
     });
