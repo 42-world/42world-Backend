@@ -20,7 +20,8 @@
       "@auth/*": ["./src/auth/*"],
       "@ft-auth/*": ["src/ft-auth/*"],
       "@database/*": ["./src/database/*"],
-      "@test/*": ["./test/*"]
+      "@test/*": ["./test/*"],
+      "@image/*": ["./src/image/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
