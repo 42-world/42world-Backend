@@ -148,7 +148,7 @@ describe('UserController (e2e)', () => {
   it('내 정보 가져오기', async () => {
     const response = await request(app)
       .get('/users/me')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
   });
@@ -156,7 +156,7 @@ describe('UserController (e2e)', () => {
   it('특정 유저 정보 가져오기', async () => {
     const response = await request(app)
       .get('/users/2')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
     expect(response.body.id).toEqual(2);
@@ -171,7 +171,7 @@ describe('UserController (e2e)', () => {
     const response = await request(app)
       .put('/users')
       .send(updateData)
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
 
@@ -183,7 +183,7 @@ describe('UserController (e2e)', () => {
   it('유저 삭제하기', async () => {
     const response = await request(app)
       .delete('/users')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
 
@@ -195,7 +195,7 @@ describe('UserController (e2e)', () => {
   it('내가 작성한 글 가져오기', async () => {
     const response = await request(app)
       .get('/users/me/articles')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
 
@@ -207,7 +207,7 @@ describe('UserController (e2e)', () => {
   it('내가 작성한 댓글 가져오기', async () => {
     const response = await request(app)
       .get('/users/me/comments')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
 
@@ -220,7 +220,7 @@ describe('UserController (e2e)', () => {
   it('내가 좋아요 누른 게시글 목록 확인', async () => {
     const response = await request(app)
       .get('/users/me/like-articles')
-      .set('Cookie', `access_token=${JWT}`);
+      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
     expect(response.status).toEqual(200);
 
