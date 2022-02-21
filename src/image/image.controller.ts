@@ -1,5 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -8,6 +9,7 @@ import {
 import { ImageService } from '@image/image.service';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
 
+@ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Image')
 @Controller('image')
