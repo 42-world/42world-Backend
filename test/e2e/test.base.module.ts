@@ -2,10 +2,16 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import * as path from 'path';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@auth/jwt-auth.guard';
 import configEmail from '@root/config/mail.config';
+import { AwsSdkModule } from 'nest-aws-sdk';
+import {
+  AWS_ACCESS_KEY,
+  AWS_REGION,
+  AWS_SECRET_KEY,
+} from '@root/config/constants';
 
 @Module({
   imports: [
@@ -26,6 +32,19 @@ import configEmail from '@root/config/mail.config';
       isGlobal: true,
       cache: true,
       load: [configEmail],
+    }),
+    AwsSdkModule.forRootAsync({
+      defaultServiceOptions: {
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => {
+          return {
+            region: configService.get(AWS_REGION),
+            accessKeyId: configService.get(AWS_ACCESS_KEY),
+            secretAccessKey: configService.get(AWS_SECRET_KEY),
+          };
+        },
+      },
     }),
   ],
   providers: [
