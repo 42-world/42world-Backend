@@ -7,7 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { UserRepository } from '@user/repositories/user.repository';
-import { User, UserRole } from '@user/entities/user.entity';
+import { User } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
@@ -25,6 +25,7 @@ import { CommentRepository } from '@comment/repositories/comment.repository';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;

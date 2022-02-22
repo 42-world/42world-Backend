@@ -11,7 +11,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
-import { UserRole } from '@user/entities/user.entity';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { UserRepository } from '@user/repositories/user.repository';
 import { UserModule } from '@user/user.module';
 import * as cookieParser from 'cookie-parser';
