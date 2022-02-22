@@ -224,9 +224,9 @@ describe('UserController (e2e)', () => {
 
     expect(response.status).toEqual(200);
 
-    const comments = response.body as ReactionArticle[];
+    const articles = response.body as Article[];
 
-    expect(comments.length).toEqual(1);
-    expect(comments[0].articleId).toEqual(1);
+    expect(articles.length).toEqual(1);
+    expect(articles[0].id).toEqual(1);
   });
 });
