@@ -12,9 +12,9 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { FindAllArticleDto } from './dto/find-all-article.dto';
+import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
+import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
+import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
 import { Article } from './entities/article.entity';
 import { GetUser } from '@root/auth/auth.decorator';
 import { Comment } from '@root/comment/entities/comment.entity';
@@ -33,6 +33,7 @@ import { DetailArticleDto } from './dto/detail-article.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -52,21 +53,29 @@ export class ArticleController {
 
   @Post()
   @ApiOperation({ summary: '게시글 업로드' })
-  @ApiOkResponse({ description: '업로드된 게시글', type: Article })
-  create(
+  @ApiOkResponse({
+    description: '업로드된 게시글',
+    type: CreateArticleResponseDto,
+  })
+  async create(
     @GetUser('id') writerId: number,
-    @Body() createArticleDto: CreateArticleDto,
-  ): Promise<Article> {
-    return this.articleService.create(writerId, createArticleDto);
+    @Body() createArticleDto: CreateArticleRequestDto,
+  ): Promise<CreateArticleResponseDto> {
+    const article = await this.articleService.create(
+      writerId,
+      createArticleDto,
+    );
+
+    return CreateArticleResponseDto.of(article);
   }
 
   @Get()
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(Article)
   findAll(
-    @Query() findAllArticle: FindAllArticleDto,
+    @Query() findArticleRequestDto: FindArticleRequestDto,
   ): Promise<PageDto<Article>> {
-    return this.articleService.findAll(findAllArticle);
+    return this.articleService.findAll(findArticleRequestDto);
   }
 
   @Get(':id')
@@ -107,9 +116,9 @@ export class ArticleController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
-    @Body() updateArticleDto: UpdateArticleDto,
+    @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void> {
-    return this.articleService.update(id, writerId, updateArticleDto);
+    return this.articleService.update(id, writerId, updateArticleRequestDto);
   }
 
   @Delete(':id')

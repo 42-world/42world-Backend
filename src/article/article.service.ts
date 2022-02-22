@@ -1,12 +1,14 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { ArticleRepository } from './repositories/article.repository';
-import { FindAllArticleDto } from './dto/find-all-article.dto';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
+import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
+import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
@@ -19,18 +21,19 @@ export class ArticleService {
   constructor(
     private readonly articleRepository: ArticleRepository,
     private readonly categoryService: CategoryService,
+    @Inject(forwardRef(() => ReactionService))
     private readonly reactionService: ReactionService,
   ) {}
 
   async create(
     writerId: number,
-    createArticleDto: CreateArticleDto,
+    createArticleDto: CreateArticleRequestDto,
   ): Promise<Article> {
     await this.categoryService.existOrFail(createArticleDto.categoryId);
     return this.articleRepository.save({ ...createArticleDto, writerId });
   }
 
-  findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
+  findAll(options?: FindArticleRequestDto): Promise<PageDto<Article>> {
     return this.articleRepository.findAll(options);
   }
 
@@ -59,17 +62,19 @@ export class ArticleService {
   async update(
     id: number,
     writerId: number,
-    updateArticleDto: UpdateArticleDto,
+    updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void> {
-    if (updateArticleDto.categoryId)
-      await this.categoryService.existOrFail(updateArticleDto.categoryId);
+    if (updateArticleRequestDto.categoryId)
+      await this.categoryService.existOrFail(
+        updateArticleRequestDto.categoryId,
+      );
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,
     });
     const newArticle = {
       ...article,
-      ...updateArticleDto,
+      ...updateArticleRequestDto,
     };
 
     this.articleRepository.save(newArticle);

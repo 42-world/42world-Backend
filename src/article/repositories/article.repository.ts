@@ -1,7 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 
 import { Article } from '@article/entities/article.entity';
-import { FindAllArticleDto } from '@article/dto/find-all-article.dto';
+import { FindArticleRequestDto } from '@article/dto/request/find-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
@@ -9,7 +9,7 @@ import { PageMetaDto } from '@root/pagination/page-meta.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
+  async findAll(options?: FindArticleRequestDto): Promise<PageDto<Article>> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
