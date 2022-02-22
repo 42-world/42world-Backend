@@ -28,7 +28,7 @@ export class Category {
 
   @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
-  readonlyArticle!: string;
+  readableArticle!: string;
 
   @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
@@ -36,7 +36,7 @@ export class Category {
 
   @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
-  readonlyComment!: string;
+  readableComment!: string;
 
   @ApiProperty({ example: UserRole.CADET })
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
