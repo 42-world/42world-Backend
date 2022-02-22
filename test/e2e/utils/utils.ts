@@ -7,3 +7,6 @@ export const clearDB = async () => {
     await repository.query(`TRUNCATE TABLE ${entity.tableName}`);
   }
 };
+
+export const wait = (timeToDelay: number) =>
+  new Promise((resolve) => setTimeout(resolve, timeToDelay));
