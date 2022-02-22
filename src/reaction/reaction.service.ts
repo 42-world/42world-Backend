@@ -118,7 +118,13 @@ export class ReactionService {
     });
   }
 
-  findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
-    return this.reactionArticleRepository.findAllArticleByUserId(userId);
+  findAllMyReactionArticle(
+    userId: number,
+    type: ReactionArticleType = ReactionArticleType.LIKE,
+  ): Promise<ReactionArticle[]> {
+    return this.reactionArticleRepository.findAllMyReactionArticle(
+      userId,
+      type,
+    );
   }
 }
