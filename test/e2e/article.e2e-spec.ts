@@ -279,6 +279,7 @@ describe('Create Article (e2e)', () => {
     beforeEach(async () => {
       dummyUsers = await userRepository.save([
         dummy.user('test1234', 'first_user', UserRole.CADET),
+        dummy.user('test1234', 'second_user', UserRole.CADET),
       ]);
       dummyCategories = await categoryRepository.save([
         dummy.category('first_category'),
@@ -289,6 +290,12 @@ describe('Create Article (e2e)', () => {
           dummyUsers[0].id,
           'title1',
           'content1',
+        ),
+        dummy.article(
+          dummyCategories[0].id,
+          dummyUsers[1].id,
+          'title2',
+          'content2',
         ),
       ]);
       JWT = dummy.jwt(dummyUsers[0].id, dummyUsers[0].role, authService);
@@ -349,6 +356,26 @@ describe('Create Article (e2e)', () => {
       expect(result.content).toBe(updateArticleRequestDto.content);
       expect(result.categoryId).toBe(updateArticleRequestDto.categoryId);
       expect(result.writerId).toBe(dummyUsers[0].id);
+    });
+
+    test('[실패] PUT - 내가 쓴글이 아닌 게시글 수정', async () => {
+      const articleId = dummyArticles[1].id;
+      const updateArticleRequestDto: UpdateArticleRequestDto = {
+        title: 'title2',
+        content: 'content2',
+        categoryId: dummyCategories[0].id,
+      };
+
+      const response = await request(app)
+        .put(`/articles/${articleId}`)
+        .send(updateArticleRequestDto)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(404);
+
+      const result = await articleRepository.findOne(articleId);
+      expect(result.title).toBe(dummyArticles[1].title);
+      expect(result.content).toBe(dummyArticles[1].content);
+      expect(result.categoryId).toBe(dummyArticles[1].categoryId);
     });
 
     test.each([
@@ -417,6 +444,18 @@ describe('Create Article (e2e)', () => {
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeFalsy();
+    });
+
+    test('[실패] DELETE - 내가 쓴글이 아닌 게시글 삭제', async () => {
+      const articleId = dummyArticles[1].id;
+
+      const response = await request(app)
+        .delete(`/articles/${articleId}`)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(404);
+
+      const result = await articleRepository.findOne(articleId);
+      expect(result).toBeTruthy();
     });
 
     test.each([
