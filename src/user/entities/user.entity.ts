@@ -10,10 +10,12 @@ import {
   OneToMany,
   DeleteDateColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
+import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 
 export enum UserRole {
   CADET = 'CADET',
@@ -34,10 +36,6 @@ export class User {
   @ApiProperty()
   @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
   githubUsername!: string;
-
-  @ApiProperty()
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  intraId!: string;
 
   @ApiProperty()
   @Column({ type: 'varchar', length: 42, nullable: false })
@@ -100,4 +98,10 @@ export class User {
     nullable: true,
   })
   reactionComment?: ReactionComment[];
+
+  @OneToOne(() => IntraAuth, (intraAuth) => intraAuth.user, {
+    createForeignKeyConstraints: false,
+    nullable: false,
+  })
+  intraAuth?: IntraAuth;
 }

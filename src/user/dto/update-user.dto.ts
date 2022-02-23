@@ -30,5 +30,5 @@ export class UpdateIntraAuthDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly intraId: string;
+  readonly nickname: string;
 }

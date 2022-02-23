@@ -55,8 +55,4 @@ export class UserService {
   async remove(id: number): Promise<void> {
     await this.userRepository.softDelete({ id });
   }
-
-  findByIntraId(intraId: string): Promise<User> {
-    return this.userRepository.findOne({ intraId });
-  }
 }

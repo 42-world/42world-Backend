@@ -14,13 +14,20 @@ import { getEmail, getCode, TITLE } from './intra-auth.utils';
 import { TIME2LIVE } from '@root/utils';
 import { User, UserRole } from '@root/user/entities/user.entity';
 import { IntraAuthRedisValue } from './interfaces/intra-auth.interface';
+import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 
 @Injectable()
 export class IntraAuthService {
   constructor(
     private readonly mailerService: MailerService,
+
     private readonly userService: UserService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+
+    @InjectRepository(IntraAuth)
+    private readonly intraAuthRepository: Repository<IntraAuth>,
+
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   async _send(
@@ -44,7 +51,7 @@ export class IntraAuthService {
       throw new ForbiddenException('이미 인증된 사용자입니다.');
     }
 
-    const cadet = await this.userService.findByIntraId(intraId);
+    const cadet = await this.intraAuthRepository.findOne({ intraId: intraId });
 
     if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
@@ -65,23 +72,29 @@ export class IntraAuthService {
   }
 
   async getAuth(code: string) {
-    const ftAuth = await this.cacheManager.get<IntraAuthRedisValue>(code);
+    const intraAuth = await this.cacheManager.get<IntraAuthRedisValue>(code);
 
-    if (!ftAuth) {
+    if (!intraAuth) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
 
-    const cadet = await this.userService.findByIntraId(ftAuth.intraId);
+    const cadet = await this.intraAuthRepository.findOne({
+      intraId: intraAuth.intraId,
+    });
 
     if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
-    const user = await this.userService.getOne(ftAuth.userId);
+    const user = await this.userService.getOne(intraAuth.userId);
 
     await this.userService.updateIntraAuth(user, {
       role: UserRole.CADET,
-      intraId: ftAuth.intraId,
+      nickname: intraAuth.intraId,
+    });
+    await this.intraAuthRepository.save({
+      intraId: intraAuth.intraId,
+      userId: intraAuth.userId,
     });
     this.cacheManager.del(code);
   }
