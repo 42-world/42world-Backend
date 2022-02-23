@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Query, Render } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Query,
+  Render,
+  UseFilters,
+} from '@nestjs/common';
 import { FtAuthService } from './ft-auth.service';
 import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
@@ -11,6 +19,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
 
 @ApiTags('FT Auth')
 @Controller('ft-auth')
@@ -20,6 +29,7 @@ export class FtAuthController {
   @Post()
   @OnlyNovice()
   @ApiCookieAuth()
+  @UseFilters(AllExceptionsFilter)
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
   @ApiUnauthorizedResponse({ description: '인증 실패' })
