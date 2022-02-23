@@ -22,7 +22,7 @@ import { ReactionModule } from '@root/reaction/reaction.module';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { CreateArticleRequestDto } from '@root/article/dto/request/create-article-request.dto';
 import * as dummy from './utils/dummy';
-import { clearDB, wait } from './utils/utils';
+import { clearDB } from './utils/utils';
 import {
   buildValidateTest,
   값이_없는_경우,
@@ -348,7 +348,6 @@ describe('Create Article (e2e)', () => {
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `access_token=${JWT}`);
-      await wait(1000); // wait for article update in micro event queue
       expect(response.status).toEqual(200);
 
       const result = await articleRepository.findOne(articleId);
