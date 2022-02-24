@@ -1,8 +1,12 @@
-import { Body, Controller, Post, Get, Query, Render } from '@nestjs/common';
-import { IntraAuthService } from './intra-auth.service';
-import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
-import { User } from '@root/user/entities/user.entity';
-import { SigninIntraAuthDto } from './dto/signin-intra-auth.dto';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Query,
+  Render,
+  UseFilters,
+} from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiForbiddenResponse,
@@ -12,6 +16,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { IntraAuthService } from './intra-auth.service';
+import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
+import { User } from '@root/user/entities/user.entity';
+import { SigninIntraAuthDto } from './dto/signin-intra-auth.dto';
+import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
+
 @ApiTags('Intra Auth')
 @Controller('intra-auth')
 export class IntraAuthController {
@@ -20,6 +30,7 @@ export class IntraAuthController {
   @Post()
   @OnlyNovice()
   @ApiCookieAuth()
+  @UseFilters(AllExceptionsFilter)
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
   @ApiUnauthorizedResponse({ description: '인증 실패' })

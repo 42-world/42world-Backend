@@ -16,11 +16,15 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
     return Object.values(existQuery[0])[0] === '1';
   }
 
-  async findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
+  async findAllMyReactionArticle(
+    userId: number,
+    type: ReactionArticleType = ReactionArticleType.LIKE,
+  ): Promise<ReactionArticle[]> {
     return this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
+      .andWhere('reactionArticle.type = :type', { type })
       .getMany();
   }
 }

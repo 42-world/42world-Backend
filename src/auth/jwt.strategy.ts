@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ACCESS_TOKEN } from './constants/access-token';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { User } from '@root/user/entities/user.entity';
 
@@ -16,7 +15,7 @@ const getAccessToken = (request: any): string => {
     return request.headers.authorization;
   }
 
-  return request.cookies[ACCESS_TOKEN];
+  return request.cookies[process.env.ACCESS_TOKEN_KEY];
 };
 
 @Injectable()

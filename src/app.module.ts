@@ -26,6 +26,13 @@ import { DatabaseModule } from './database/database.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ormconfig } from './database/ormconfig';
 import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
+import { AwsSdkModule } from 'nest-aws-sdk';
+import {
+  AWS_ACCESS_KEY,
+  AWS_REGION,
+  AWS_SECRET_KEY,
+} from '@root/config/constants';
+import { ImageModule } from '@root/image/image.module';
 
 @Module({
   imports: [
@@ -71,6 +78,19 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
         }),
       ],
     }),
+    AwsSdkModule.forRootAsync({
+      defaultServiceOptions: {
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => {
+          return {
+            region: configService.get(AWS_REGION),
+            accessKeyId: configService.get(AWS_ACCESS_KEY),
+            secretAccessKey: configService.get(AWS_SECRET_KEY),
+          };
+        },
+      },
+    }),
     CommentModule,
     UserModule,
     ArticleModule,
@@ -81,6 +101,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
     BestModule,
     ReactionModule,
     FtCheckinModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [

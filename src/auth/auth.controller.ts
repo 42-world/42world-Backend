@@ -21,7 +21,6 @@ import { AuthService } from './auth.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { GithubProfile } from './interfaces/github-profile.interface';
-import { ACCESS_TOKEN } from './constants/access-token';
 import { GetGithubProfile, Public } from './auth.decorator';
 import { getCookieOption } from '@root/utils';
 
@@ -69,7 +68,7 @@ export class AuthController {
       userId: user.id,
       userRole: user.role,
     } as JWTPayload);
-    response.cookie(ACCESS_TOKEN, jwt, getCookieOption());
+    response.cookie(process.env.ACCESS_TOKEN_KEY, jwt, getCookieOption());
   }
 
   @Delete('signout')
@@ -78,6 +77,6 @@ export class AuthController {
   @ApiOkResponse({ description: '로그아웃 성공' })
   @ApiUnauthorizedResponse({ description: '인증 실패' })
   signout(@Res({ passthrough: true }) response: Response): void {
-    response.clearCookie(ACCESS_TOKEN);
+    response.clearCookie(process.env.ACCESS_TOKEN_KEY);
   }
 }
