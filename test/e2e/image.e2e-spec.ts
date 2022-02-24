@@ -54,7 +54,12 @@ describe('Image', () => {
 
   describe('/image', () => {
     beforeEach(async () => {
-      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
+      const newUser = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(newUser);
 
       JWT = dummy.jwt(newUser.id, newUser.role, authService);
