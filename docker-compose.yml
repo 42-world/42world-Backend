@@ -14,7 +14,7 @@ services:
       - TZ=Asia/Seoul
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: 'mysqladmin ping -h localhost -u $$DB_USER_NAME --password=$$DB_USER_PASSWORD'
+      test: 'mysqladmin ping -h localhost -u ${DB_USER_NAME} --password=${DB_USER_PASSWORD}'
       interval: 5s
       timeout: 1s
       retries: 10
