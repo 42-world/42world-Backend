@@ -1,57 +1,62 @@
-import * as winston from 'winston';
+import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import 'process';
 import appRoot from 'app-root-path';
 
 const logDir = `${appRoot}/logs`;
 
-const { combine, timestamp, printf } = winston.format;
+const { combine, timestamp, printf, prettyPrint } = format;
 
 const logFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} ${level}: ${message}`;
 });
 
-export const logger = winston.createLogger({
-  format: combine(
-    timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
-    }),
-    logFormat,
-  ),
+const options = {
+  file: {
+    level: 'info',
+    filename: `%DATE%.log`,
+    dirname: logDir,
+    maxFiles: 30,
+    zippedArchive: true,
+    format: combine(
+      timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss',
+      }),
+    ),
+  },
+  console: {
+    level: 'debug',
+    handleExceptions: true,
+    json: false,
+    colorize: true,
+    format: combine(
+      format.colorize(),
+      timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss',
+      }),
+      logFormat,
+    ),
+  },
+};
+
+export const logger = createLogger({
   transports: [
-    new winston.transports.DailyRotateFile({
-      level: 'info',
-      datePattern: 'YYYY-MM-DD',
-      dirname: logDir,
-      filename: `%DATE%.log`,
-      maxFiles: 30,
-      zippedArchive: true,
-    }),
-    new winston.transports.DailyRotateFile({
+    new transports.DailyRotateFile(options.file),
+    new transports.DailyRotateFile({
+      ...options.file,
       level: 'error',
-      datePattern: 'YYYY-MM-DD',
-      dirname: logDir,
       filename: `%DATE%.error.log`,
-      maxFiles: 30,
-      zippedArchive: true,
     }),
   ],
   exceptionHandlers: [
-    new winston.transports.DailyRotateFile({
+    new transports.DailyRotateFile({
+      ...options.file,
       level: 'error',
-      datePattern: 'YYYY-MM-DD',
-      dirname: logDir,
       filename: `%DATE%.exception.log`,
-      maxFiles: 30,
-      zippedArchive: true,
     }),
   ],
 });
 
 if (process.env.NODE_ENV !== 'prod') {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), logFormat),
-    }),
-  );
+  logger.add(new transports.Console(options.console));
 }
