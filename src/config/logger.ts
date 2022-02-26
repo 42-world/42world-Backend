@@ -1,9 +1,8 @@
-import appRoot from 'app-root-path';
 import 'process';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
-const logDir = `${appRoot}/logs`;
+const logDir = 'logs';
 
 const { combine, timestamp, printf } = format;
 
