@@ -1,7 +1,7 @@
+import appRoot from 'app-root-path';
+import 'process';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-import 'process';
-import appRoot from 'app-root-path';
 
 const logDir = `${appRoot}/logs`;
 
@@ -35,7 +35,7 @@ const options = {
   },
 };
 
-const logger = createLogger({
+export const logger = createLogger({
   transports: [
     new transports.DailyRotateFile(options.file),
     new transports.DailyRotateFile({
@@ -53,8 +53,13 @@ const logger = createLogger({
   ],
 });
 
+// morgan wiston 설정
+export const stream = {
+  write: (message) => {
+    logger.info(message);
+  },
+};
+
 if (process.env.NODE_ENV !== 'prod') {
   logger.add(new transports.Console(options.console));
 }
-
-export default logger;
