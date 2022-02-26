@@ -5,7 +5,7 @@ import appRoot from 'app-root-path';
 
 const logDir = `${appRoot}/logs`;
 
-const { combine, timestamp, printf, prettyPrint } = format;
+const { combine, timestamp, printf } = format;
 
 const logFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} ${level}: ${message}`;
@@ -18,11 +18,7 @@ const options = {
     dirname: logDir,
     maxFiles: 30,
     zippedArchive: true,
-    format: combine(
-      timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss',
-      }),
-    ),
+    format: combine(timestamp(), format.json()),
   },
   console: {
     level: 'debug',
