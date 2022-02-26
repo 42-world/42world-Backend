@@ -35,7 +35,7 @@ const options = {
   },
 };
 
-export const logger = createLogger({
+const logger = createLogger({
   transports: [
     new transports.DailyRotateFile(options.file),
     new transports.DailyRotateFile({
@@ -56,3 +56,5 @@ export const logger = createLogger({
 if (process.env.NODE_ENV !== 'prod') {
   logger.add(new transports.Console(options.console));
 }
+
+export default logger;
