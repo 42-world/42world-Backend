@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { User, UserRole } from '@root/user/entities/user.entity';
 import { IS_PUBLIC_KEY, ROLE_KEY } from './constants/metadata-keys';
+import { FORBIDDEN_USER_ROLE } from '@auth/constant';
 
 /**
  * Custom AuthGuard to check public handler and user roles
@@ -45,7 +46,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ) ?? [UserRole.CADET, UserRole.ADMIN];
 
     if (!role.includes(u.role as UserRole)) {
-      throw new ForbiddenException('접근 권한 없음');
+      throw new ForbiddenException(FORBIDDEN_USER_ROLE);
     }
     return user;
   }
