@@ -19,6 +19,7 @@
     "^@database/(.*)$": "<rootDir>/../../src/database/$1",
     "^@intra-auth/(.*)$": "<rootDir>/../../src/intra-auth/$1",
     "^@test/(.*)$": "<rootDir>/../../test/$1",
-    "^@image/(.*)$": "<rootDir>/../../src/image/$1"
+    "^@image/(.*)$": "<rootDir>/../../src/image/$1",
+    "^@cache/(.*)$": "<rootDir>/../../src/cache/$1"
   }
 }
