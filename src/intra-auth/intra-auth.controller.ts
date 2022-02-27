@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  Query,
-  Render,
-  UseFilters,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, Query, Render } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiForbiddenResponse,
@@ -25,7 +17,7 @@ import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
 @ApiTags('Intra Auth')
 @Controller('intra-auth')
 export class IntraAuthController {
-  constructor(private readonly ftAuthService: IntraAuthService) {}
+  constructor(private readonly intraAuthService: IntraAuthService) {}
 
   @Post()
   @OnlyNovice()
@@ -41,7 +33,7 @@ export class IntraAuthController {
     @GetUser() user: User,
     @Body() { intraId }: SigninIntraAuthDto,
   ) {
-    await this.ftAuthService.signin(intraId, user);
+    await this.intraAuthService.signin(intraId, user);
   }
 
   @Get()
@@ -52,7 +44,7 @@ export class IntraAuthController {
   @ApiForbiddenResponse({ description: '42인증 메일 코드 만료됨' })
   async getAuthCode(@Query('code') code: string) {
     try {
-      await this.ftAuthService.getAuth(code);
+      await this.intraAuthService.getAuth(code);
 
       return {
         title: 'Hello World!',
