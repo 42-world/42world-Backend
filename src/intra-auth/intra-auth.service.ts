@@ -1,33 +1,32 @@
 import { UserService } from '@user/user.service';
 import {
-  CACHE_MANAGER,
   ForbiddenException,
-  Inject,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cache } from 'cache-manager';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE } from './intra-auth.utils';
-import { TIME2LIVE } from '@root/utils';
 import { User, UserRole } from '@root/user/entities/user.entity';
-import { IntraAuthRedisValue } from './interfaces/intra-auth.interface';
+import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
+import { CacheService } from '@cache/cache.service';
+import {
+  SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
+  SIGNIN_ALREADY_EXIST_ERROR_MESSAGE,
+} from '@intra-auth/constant';
 
 @Injectable()
 export class IntraAuthService {
   constructor(
     private readonly mailerService: MailerService,
-
     private readonly userService: UserService,
+    private readonly cacheService: CacheService,
 
     @InjectRepository(IntraAuth)
     private readonly intraAuthRepository: Repository<IntraAuth>,
-
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
   ) {}
 
   async _send(
@@ -48,21 +47,21 @@ export class IntraAuthService {
 
   async signin(intraId: string, user: User) {
     if (user.role !== UserRole.NOVICE) {
-      throw new ForbiddenException('이미 인증된 사용자입니다.');
+      throw new ForbiddenException(SIGNIN_ALREADY_AUTH_ERROR_MESSAGE);
     }
 
     const cadet = await this.intraAuthRepository.findOne({ intraId: intraId });
 
     if (cadet) {
-      throw new ForbiddenException('이미 가입된 카뎃입니다.');
+      throw new ForbiddenException(SIGNIN_ALREADY_EXIST_ERROR_MESSAGE);
     }
 
     const email = getEmail(intraId);
     const code = await getCode(intraId);
-    const value = { userId: user.id, intraId };
-    await this.cacheManager.set<IntraAuthRedisValue>(code, value, {
-      ttl: TIME2LIVE,
-    });
+    const intraAuthMailDto = new IntraAuthMailDto(user.id, intraId);
+
+    await this.cacheService.setIntraAuthMailData(code, intraAuthMailDto);
+
     await this._send([email], `${TITLE}`, 'signin.ejs', {
       nickname: intraId,
       code: code,
@@ -72,30 +71,30 @@ export class IntraAuthService {
   }
 
   async getAuth(code: string) {
-    const intraAuth = await this.cacheManager.get<IntraAuthRedisValue>(code);
+    const intraAuthMailDto = await this.cacheService.getIntraAuthMailData(code);
 
-    if (!intraAuth) {
+    if (!intraAuthMailDto) {
       throw new ForbiddenException('존재하지 않는 토큰입니다.');
     }
 
     const cadet = await this.intraAuthRepository.findOne({
-      intraId: intraAuth.intraId,
+      intraId: intraAuthMailDto.intraId,
     });
 
     if (cadet) {
       throw new ForbiddenException('이미 가입된 카뎃입니다.');
     }
 
-    const user = await this.userService.getOne(intraAuth.userId);
+    const user = await this.userService.getOne(intraAuthMailDto.userId);
 
     await this.userService.updateIntraAuth(user, {
       role: UserRole.CADET,
-      nickname: intraAuth.intraId,
+      nickname: intraAuthMailDto.intraId,
     });
     await this.intraAuthRepository.save({
-      intraId: intraAuth.intraId,
-      userId: intraAuth.userId,
+      intraId: intraAuthMailDto.intraId,
+      userId: intraAuthMailDto.userId,
     });
-    this.cacheManager.del(code);
+    this.cacheService.del(code);
   }
 }
