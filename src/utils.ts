@@ -1,4 +1,5 @@
 import { CookieOptions } from 'express';
+import axios from 'axios';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -20,17 +21,23 @@ export const isExpired = (exp: Date): boolean => {
   return now >= exp;
 };
 
-export const getEnvPath = () => {
-  if (process.env.NODE_ENV === 'test') return 'config/.env.test';
-  if (process.env.NODE_ENV === 'dev') return 'config/.env.dev';
-  if (process.env.NODE_ENV === 'alpha') return 'config/.env.alpha';
-  if (process.env.NODE_ENV === 'prod') return 'config/.env.prod';
-  return 'config/.env.dev';
-};
-
 export const getCookieOption = (): CookieOptions => {
   if (process.env.NODE_ENV === 'alpha' || process.env.NODE_ENV === 'prod') {
     return { secure: true, sameSite: 'none' };
   }
   return {};
+};
+
+export const errorHook = async (
+  exceptionName: string,
+  exceptionMessage: string,
+) => {
+  const phase = process.env.NODE_ENV;
+  const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
+
+  try {
+    await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
+  } catch (e) {
+    console.error(e);
+  }
 };

@@ -1,22 +1,24 @@
-COMPOSE = sudo docker-compose
-COMPOSE_ENV = ${COMPOSE} --env-file config/.env.$(1)
+COMPOSE = docker-compose
+COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 
-dev: db
+dev:
+	cp ./config/.env.dev ./config/.env
+	make db redis
+	yarn start:dev
 
 alpha:
-	export NODE_ENV=alpha && $(call COMPOSE_ENV,alpha) up --build -d
+	cp ./config/.env.alpha ./config/.env
+	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d
 
 prod:
-	export NODE_ENV=prod && $(call COMPOSE_ENV,prod) up --build -d
+	cp ./config/.env.prod ./config/.env
+	make api-prod
 
 db-dev:
-	$(call COMPOSE_ENV,dev) up --build -d db
+	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d db
 
 db-alpha:
-	$(call COMPOSE_ENV,alpha) up --build -d db
-
-db-prod:
-	$(call COMPOSE_ENV,prod) up --build -d db
+	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d db
 
 db: db-dev
 
@@ -29,25 +31,28 @@ redis-down:
 	${COMPOSE} down redis
 
 redis-dev:
-	$(call COMPOSE_ENV,dev) up --build -d redis
+	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
 
 redis-alpha:
-	$(call COMPOSE_ENV,alpha) up --build -d redis
-
-redis-prod:
-	$(call COMPOSE_ENV,prod) up --build -d redis
+	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d redis
 
 api:
 	api-dev
 
 api-dev:
-	$(call COMPOSE_ENV,dev) up --build --no-deps -d api
+	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build --no-deps -d api
 
 api-alpha:
-	$(call COMPOSE_ENV,alpha) up --build --no-deps -d api
+	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build --no-deps -d api
 
 api-prod:
-	$(call COMPOSE_ENV,prod) up --build --no-deps -d api
+	sudo docker build -t ft-world-api .
+	sudo docker run -d -p 80:80 --env-file config/.env ft-world-api
+
+api-build:
+	sudo docker build -t ft-world-api .
+	sudo docker tag ft-world-api:latest public.ecr.aws/x9y9d0k9/ft-world-api:latest
+	sudo docker push public.ecr.aws/x9y9d0k9/ft-world-api:latest
 
 db-init:
 	sudo yarn typeorm:run

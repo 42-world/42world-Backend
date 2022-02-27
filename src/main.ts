@@ -6,12 +6,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as morgan from 'morgan';
 import { join } from 'path';
-// import * as csurf from 'csurf';
 
 import { AppModule } from './app.module';
-import { ACCESS_TOKEN } from '@auth/constants/access-token';
 import { ValidationPipe } from '@nestjs/common';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
+import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -31,7 +30,7 @@ async function bootstrap() {
     .setTitle('42World API')
     .setDescription('42World API')
     .setVersion('0.1')
-    .addCookieAuth(ACCESS_TOKEN)
+    .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
@@ -41,6 +40,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalFilters(new TypeormExceptionFilter());
+  app.useGlobalFilters(new InternalServerErrorExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
@@ -52,7 +52,6 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views/ft-auth'));
   app.setViewEngine('ejs');
   app.use(cookieParser());
-  // app.use(csurf({ cookie: true }));
   await app.listen(port || 3000);
 }
 bootstrap();

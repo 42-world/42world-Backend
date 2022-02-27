@@ -98,7 +98,7 @@ export class ArticleService {
   }
 
   decreaseLikeCount(article: Article): Promise<Article> {
-    if (article.likeCount < 1) {
+    if (article.likeCount <= 0) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     article.likeCount -= 1;

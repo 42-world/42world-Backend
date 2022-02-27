@@ -11,16 +11,20 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
     articleId: number,
     type: ReactionArticleType,
   ): Promise<boolean> {
-    const exist_query = await this.query(`SELECT EXISTS
+    const existQuery = await this.query(`SELECT EXISTS
       (SELECT * FROM reaction_article WHERE user_id=${userId} AND article_id=${articleId} AND type='${type}')`);
-    return Object.values(exist_query[0])[0] === '1';
+    return Object.values(existQuery[0])[0] === '1';
   }
 
-  async findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
+  async findAllMyReactionArticle(
+    userId: number,
+    type: ReactionArticleType = ReactionArticleType.LIKE,
+  ): Promise<ReactionArticle[]> {
     return this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
+      .andWhere('reactionArticle.type = :type', { type })
       .getMany();
   }
 }

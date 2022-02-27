@@ -1,14 +1,38 @@
 version: '3.4'
 services:
+  db:
+    image: mysql:5.7
+    platform: linux/x86_64
+    ports:
+      - '${DB_PORT:-2345}:3306'
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER_NAME}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_INITDB_ARGS=--encoding=UTF-8
+      - TZ=Asia/Seoul
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: 'mysqladmin ping -h localhost -u ${DB_USER_NAME} --password=${DB_USER_PASSWORD}'
+      interval: 5s
+      timeout: 1s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - ./db:/var/lib/mysql
   api:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - '${API_EXTERNAL_PORT:-8888}:8888'
+      - '${API_EXTERNAL_PORT:-8888}:${PORT:-8888}'
+    env_file:
+      - ./config/.env
     environment:
       - NODE_ENV=${NODE_ENV:-alpha}
     depends_on:
+      - db
       - redis
 
   redis:
