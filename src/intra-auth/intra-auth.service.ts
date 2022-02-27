@@ -34,14 +34,17 @@ export class IntraAuthService {
     subject: string,
     templateName: string,
     context: any = {},
-  ): Promise<boolean> {
-    await this.mailerService.sendMail({
-      to: tos.join(', '),
-      subject,
-      template: `${templateName}`,
-      context,
-    });
-
+  ): Promise<boolean | never> {
+    try {
+      await this.mailerService.sendMail({
+        to: tos.join(', '),
+        subject,
+        template: `${templateName}`,
+        context,
+      });
+    } catch (e: any) {
+      throw new InternalServerErrorException(e);
+    }
     return true;
   }
 
