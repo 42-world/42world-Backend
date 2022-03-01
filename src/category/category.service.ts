@@ -15,6 +15,10 @@ export class CategoryService {
     return this.categoryRepository.find();
   }
 
+  findOneOrFail(id: number): Promise<Category | never> {
+    return this.categoryRepository.findOneOrFail(id);
+  }
+
   existOrFail(id: number): Promise<void> {
     return this.categoryRepository.existOrFail(id);
   }
