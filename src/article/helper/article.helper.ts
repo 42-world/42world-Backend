@@ -1,5 +1,5 @@
 import { Comment } from '@root/comment/entities/comment.entity';
-import { PageDto } from '@root/pagination/pagination.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 import { DetailCommentDto } from '../dto/detail-comment.dto';
 

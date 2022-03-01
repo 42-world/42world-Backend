@@ -4,8 +4,8 @@ import { Article } from '@article/entities/article.entity';
 import { FindArticleRequestDto } from '@article/dto/request/find-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {

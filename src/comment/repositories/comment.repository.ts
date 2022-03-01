@@ -1,9 +1,9 @@
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
+import { PageOptionsDto } from '@root/pagination/dto/page-options.dto';
 import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @EntityRepository(Comment)

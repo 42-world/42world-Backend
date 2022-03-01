@@ -30,9 +30,9 @@ import {
 import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
-import { PageDto } from '@root/pagination/pagination.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageOptionsDto } from '@root/pagination/dto/page-options.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { User } from '@root/user/entities/user.entity';
 

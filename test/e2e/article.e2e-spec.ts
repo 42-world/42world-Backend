@@ -31,7 +31,7 @@ import {
   타입이_틀린_경우,
 } from './utils/validate-test';
 import { FindArticleRequestDto } from '@root/article/dto/request/find-article-request.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
 import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
 

@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Order } from './pagination.enum';
+import { Order } from '../interface/pagination.enum';
 
 export class PageOptionsDto {
   @ApiPropertyOptional({ enum: Order, default: Order.DESC })

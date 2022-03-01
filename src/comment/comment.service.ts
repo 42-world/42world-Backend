@@ -12,8 +12,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PageOptionsDto } from '@root/pagination/dto/page-options.dto';
 import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @Injectable()
