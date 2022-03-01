@@ -7,7 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { UserRepository } from '@user/repositories/user.repository';
-import { User, UserRole } from '@user/entities/user.entity';
+import { UserRole } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
@@ -17,14 +17,14 @@ import { ArticleModule } from '@article/article.module';
 import { ArticleRepository } from '@article/repositories/article.repository';
 import { Article } from '@article/entities/article.entity';
 import { CategoryModule } from '@category/category.module';
-import { Category } from '@category/entities/category.entity';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { Comment } from '@comment/entities/comment.entity';
 import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
 import { ReactionModule } from '@root/reaction/reaction.module';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
+import { clearDB } from '@test/e2e/utils/utils';
+import * as dummy from '@test/e2e/utils/dummy';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -77,16 +77,10 @@ describe('UserController (e2e)', () => {
   });
 
   beforeEach(async () => {
-    const newUser = new User();
-    newUser.oauthToken = 'test1234';
-    newUser.nickname = 'first user';
-    newUser.role = UserRole.CADET;
+    const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
     await userRepository.save(newUser);
 
-    const newUser2 = new User();
-    newUser2.oauthToken = 'test1234';
-    newUser2.nickname = 'second user';
-    newUser2.role = UserRole.CADET;
+    const newUser2 = dummy.user('test1234', 'second user', UserRole.CADET);
     await userRepository.save(newUser2);
 
     JWT = authService.getJWT({
@@ -94,55 +88,30 @@ describe('UserController (e2e)', () => {
       userRole: newUser.role,
     } as JWTPayload);
 
-    const newCategory = new Category();
-    newCategory.name = '자유게시판';
-
+    const newCategory = dummy.category('자유게시판');
     await categoryRepository.save(newCategory);
 
-    const newArticle = new Article();
-    newArticle.title = 'a';
-    newArticle.content = 'bb';
-    newArticle.categoryId = newCategory.id;
-    newArticle.writerId = newUser.id;
-
+    const newArticle = dummy.article(newCategory.id, newUser.id, 'a', 'bb');
     await articleRepository.save(newArticle);
 
-    const newArticle2 = new Article();
-    newArticle2.title = 'a2';
-    newArticle2.content = 'bb2';
-    newArticle2.categoryId = newCategory.id;
-    newArticle2.writerId = newUser2.id;
-
+    const newArticle2 = dummy.article(newCategory.id, newUser2.id, 'a2', 'bb2');
     await articleRepository.save(newArticle2);
 
-    const newComment = new Comment();
-    newComment.content = 'cc';
-    newComment.writerId = newUser.id;
-    newComment.articleId = newArticle.id;
-
+    const newComment = dummy.comment(newUser.id, newArticle.id, 'cc');
     await commentRepository.save(newComment);
 
-    const newReactionArticle = new ReactionArticle();
-    newReactionArticle.articleId = newArticle.id;
-    newReactionArticle.userId = newUser.id;
-
+    const newReactionArticle = dummy.reactionArticle(newArticle.id, newUser.id);
     await reactionArticleRepository.save(newReactionArticle);
-  });
-
-  afterEach(async () => {
-    await Promise.all([
-      userRepository.clear(),
-      articleRepository.clear(),
-      commentRepository.clear(),
-      categoryRepository.clear(),
-      reactionArticleRepository.clear(),
-    ]);
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
     await app.close();
+  });
+
+  beforeEach(async () => {
+    await clearDB();
   });
 
   it('내 정보 가져오기', async () => {
