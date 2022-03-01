@@ -51,10 +51,4 @@ export class BaseArticleDto {
 
   @ApiProperty()
   deletedAt?: Date;
-
-  constructor(partial: Partial<BaseArticleDto>) {
-    if (partial) {
-      Object.assign(this, partial);
-    }
-  }
 }
