@@ -13,7 +13,6 @@ import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
-import { DetailArticleDto } from './dto/detail-article.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
@@ -95,7 +94,7 @@ export class ArticleService {
     id: number,
     writerId: number,
     updateArticleRequestDto: UpdateArticleRequestDto,
-  ): Promise<void> {
+  ): Promise<void | never> {
     if (updateArticleRequestDto.categoryId)
       await this.categoryService.existOrFail(
         updateArticleRequestDto.categoryId,
@@ -112,14 +111,16 @@ export class ArticleService {
     await this.articleRepository.save(newArticle);
   }
 
-  async remove(id: number, writerId: number): Promise<void> {
+  async remove(id: number, writerId: number): Promise<void | never> {
     const result = await this.articleRepository.softDelete({
       id,
       writerId,
     });
 
     if (result.affected === 0) {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
+      throw new NotFoundException(
+        `Can't find Article with id ${id} with writer ${writerId}`,
+      );
     }
   }
 

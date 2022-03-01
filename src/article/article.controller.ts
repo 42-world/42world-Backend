@@ -21,6 +21,7 @@ import { Comment } from '@root/comment/entities/comment.entity';
 import { CommentService } from '@root/comment/comment.service';
 import {
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -29,7 +30,6 @@ import {
 import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
-import { DetailArticleDto } from './dto/detail-article.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
@@ -58,6 +58,7 @@ export class ArticleController {
     description: '업로드된 게시글',
     type: ArticleResponseDto,
   })
+  @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
     @GetUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
@@ -87,6 +88,7 @@ export class ArticleController {
     description: '게시글 상세',
     type: ArticleResponseDto,
   })
+  @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
@@ -120,21 +122,23 @@ export class ArticleController {
   @Put(':id')
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
-  ): Promise<void> {
+  ): Promise<void | never> {
     return this.articleService.update(id, writerId, updateArticleRequestDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
-  ): Promise<void> {
+  ): Promise<void | never> {
     return this.articleService.remove(id, writerId);
   }
 }
