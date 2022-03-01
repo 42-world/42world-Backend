@@ -15,6 +15,8 @@ import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { DetailArticleDto } from './dto/detail-article.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
+import { Category } from '@root/category/entities/category.entity';
+import { User } from '@root/user/entities/user.entity';
 
 @Injectable()
 export class ArticleService {
@@ -28,9 +30,22 @@ export class ArticleService {
   async create(
     writerId: number,
     createArticleDto: CreateArticleRequestDto,
-  ): Promise<Article> {
-    await this.categoryService.existOrFail(createArticleDto.categoryId);
-    return this.articleRepository.save({ ...createArticleDto, writerId });
+  ): Promise<
+    | {
+        article: Article; //
+        category: Category;
+      }
+    | never
+  > {
+    const category = await this.categoryService.findOneOrFail(
+      createArticleDto.categoryId,
+    );
+    const article = await this.articleRepository.save({
+      ...createArticleDto,
+      writerId,
+    });
+
+    return { article, category };
   }
 
   findAll(options?: FindArticleRequestDto): Promise<PageDto<Article>> {
@@ -49,14 +64,31 @@ export class ArticleService {
     return this.articleRepository.findOneOrFail(id);
   }
 
-  async getOneDetail(id: number, userId: number): Promise<DetailArticleDto> {
-    const article = await this.articleRepository.getOneDetailOrFail(id);
+  async findOneOrFail(
+    id: number,
+    userId: number,
+  ): Promise<
+    | {
+        article: Article;
+        category: Category;
+        writer: User;
+        isLike: boolean;
+        isSelf: boolean;
+      }
+    | never
+  > {
+    const article = await this.articleRepository.findOneOrFail(id, {
+      relations: ['writer', 'category'],
+    });
+    const category: Category = article.category;
+    const writer: User = article.writer;
     const isLike = await this.reactionService.isMyReactionArticle(
       userId,
       article.id,
     );
+    const isSelf = userId === article.writerId;
 
-    return { ...article, isLike, isSelf: article.writerId === userId };
+    return { article, category, writer, isLike, isSelf };
   }
 
   async update(

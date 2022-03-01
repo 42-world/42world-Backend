@@ -44,14 +44,14 @@ export class ArticleRepository extends Repository<Article> {
     return query.getMany();
   }
 
-  async getOneDetailOrFail(id: number): Promise<Article> {
-    return this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.writer', 'writer')
-      .leftJoinAndSelect('article.category', 'category')
-      .leftJoinAndSelect('article.reactionArticle', 'reactionArticle')
-      .andWhere('article.id = :id', { id })
-      .getOneOrFail();
-  }
+  // async myfindOneOrFail(id: number): Promise<Article | never> {
+  //   return this.createQueryBuilder('article')
+  //     .leftJoinAndSelect('article.writer', 'writer')
+  //     .leftJoinAndSelect('article.category', 'category')
+  //     .leftJoinAndSelect('article.reactionArticle', 'reactionArticle')
+  //     .andWhere('article.id = :id', { id })
+  //     .getOneOrFail();
+  // }
 
   async existOrFail(id: number): Promise<void> {
     const existQuery = await this.query(`SELECT EXISTS

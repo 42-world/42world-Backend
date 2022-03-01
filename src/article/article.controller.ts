@@ -33,7 +33,8 @@ import { DetailArticleDto } from './dto/detail-article.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
+import { ArticleResponseDto } from './dto/response/article-response.dto';
+import { User } from '@root/user/entities/user.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -55,18 +56,20 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiOkResponse({
     description: '업로드된 게시글',
-    type: CreateArticleResponseDto,
+    type: ArticleResponseDto,
   })
   async create(
-    @GetUser('id') writerId: number,
+    @GetUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
-  ): Promise<CreateArticleResponseDto> {
-    const article = await this.articleService.create(
-      writerId,
+  ): Promise<ArticleResponseDto | never> {
+    const { article, category } = await this.articleService.create(
+      user.id,
       createArticleDto,
     );
+    const isLike = false;
+    const isSelf = true;
 
-    return CreateArticleResponseDto.of(article);
+    return ArticleResponseDto.of(article, category, user, isLike, isSelf);
   }
 
   @Get()
@@ -80,16 +83,20 @@ export class ArticleController {
 
   @Get(':id')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
-  @ApiOkResponse({ description: '게시글 상세', type: DetailArticleDto })
-  async getOne(
+  @ApiOkResponse({
+    description: '게시글 상세',
+    type: ArticleResponseDto,
+  })
+  async findOne(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<DetailArticleDto> {
-    const article = await this.articleService.getOneDetail(articleId, userId);
+  ): Promise<ArticleResponseDto | never> {
+    const { article, category, writer, isLike, isSelf } =
+      await this.articleService.findOneOrFail(articleId, userId);
 
     if (article.writerId !== userId)
       this.articleService.increaseViewCount(article);
-    return article;
+    return ArticleResponseDto.of(article, category, writer, isLike, isSelf);
   }
 
   @Get(':id/comments')
