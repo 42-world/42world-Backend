@@ -4,12 +4,14 @@ import { Article } from '@article/entities/article.entity';
 import { FindArticleRequestDto } from '@article/dto/request/find-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
-import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options?: FindArticleRequestDto): Promise<PageDto<Article>> {
+  async findAll(
+    options?: FindArticleRequestDto,
+  ): Promise<PaginationResponseDto<Article>> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
@@ -22,12 +24,9 @@ export class ArticleRepository extends Repository<Article> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
+    const pageMetaDto = new PageMetaDto(options, totalCount);
 
-    return new PageDto(entities, pageMetaDto);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 
   async findAllBest(options: FindAllBestDto): Promise<Article[]> {

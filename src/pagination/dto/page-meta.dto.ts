@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PageOptionsDto } from './page-options.dto';
+import { PaginationRequestDto } from './pagination-request.dto';
 
 export class PageMetaDto {
   @ApiProperty()
@@ -20,9 +20,9 @@ export class PageMetaDto {
   @ApiProperty()
   readonly hasNextPage: boolean;
 
-  constructor(pageOptionsDto: PageOptionsDto, totalCount: number) {
-    this.page = pageOptionsDto.page;
-    this.take = pageOptionsDto.take;
+  constructor(paginationRequestDto: PaginationRequestDto, totalCount: number) {
+    this.page = paginationRequestDto.page;
+    this.take = paginationRequestDto.take;
     this.totalCount = totalCount;
     this.pageCount = Math.ceil(this.totalCount / this.take);
     this.hasPreviousPage = this.page > 1;

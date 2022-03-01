@@ -31,7 +31,7 @@ import {
   타입이_틀린_경우,
 } from './utils/validate-test';
 import { FindArticleRequestDto } from '@root/article/dto/request/find-article-request.dto';
-import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
 
@@ -224,7 +224,8 @@ describe('Create Article (e2e)', () => {
       const answerArticles: Article[] = dummyArticles.filter((article) => {
         return article.categoryId === dummyCategories[0].id;
       });
-      const articles: PageDto<Article> = response.body as PageDto<Article>;
+      const articles: PaginationResponseDto<Article> =
+        response.body as PaginationResponseDto<Article>;
       articles.data.forEach((article: Article) => {
         //TODO: response field 다 들어있는지 확인
         expect(answerArticles.map((e) => e.id)).toContainEqual(article.id);

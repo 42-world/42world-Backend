@@ -1,17 +1,17 @@
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
-import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
-import { PageOptionsDto } from '@root/pagination/dto/page-options.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
   async findAllByArticleId(
     articleId: number,
-    options: PageOptionsDto,
-  ): Promise<PageDto<DetailCommentDto>> {
+    options: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<DetailCommentDto>> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
       .andWhere('comment.articleId = :id', { id: articleId })
@@ -21,12 +21,9 @@ export class CommentRepository extends Repository<Comment> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
+    const pageMetaDto = new PageMetaDto(options, totalCount);
 
-    return new PageDto(entities, pageMetaDto);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 
   async existOrFail(id: number): Promise<void> {

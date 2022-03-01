@@ -3,7 +3,7 @@ import { Exclude, Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { Order } from '../interface/pagination.enum';
 
-export class PageOptionsDto {
+export class PaginationRequestDto {
   @ApiPropertyOptional({ enum: Order, default: Order.DESC })
   @IsEnum(Order)
   @IsOptional()

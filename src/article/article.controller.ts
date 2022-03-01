@@ -30,9 +30,9 @@ import {
 import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { articleCommentsHelper } from './helper/article.helper';
-import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
-import { PageOptionsDto } from '@root/pagination/dto/page-options.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { User } from '@root/user/entities/user.entity';
 
@@ -78,7 +78,7 @@ export class ArticleController {
   @ApiPaginatedResponse(Article)
   findAll(
     @Query() findArticleRequestDto: FindArticleRequestDto,
-  ): Promise<PageDto<Article>> {
+  ): Promise<PaginationResponseDto<Article>> {
     return this.articleService.findAll(findArticleRequestDto);
   }
 
@@ -107,8 +107,8 @@ export class ArticleController {
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-    @Query() pageOptionDto: PageOptionsDto,
-  ): Promise<PageDto<DetailCommentDto>> {
+    @Query() pageOptionDto: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<DetailCommentDto>> {
     const comments = await this.commentService.findAllByArticleId(
       articleId,
       pageOptionDto,

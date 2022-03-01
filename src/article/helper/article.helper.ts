@@ -1,10 +1,10 @@
 import { Comment } from '@root/comment/entities/comment.entity';
-import { PageDto } from '@root/pagination/dto/pagination.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 import { DetailCommentDto } from '../dto/detail-comment.dto';
 
 export const articleCommentsHelper = (
-  comments: PageDto<Comment>,
+  comments: PaginationResponseDto<Comment>,
   reactionComments: ReactionComment[],
 ) => {
   const data = comments.data;
@@ -17,5 +17,5 @@ export const articleCommentsHelper = (
       : { ...comment, isLike: false },
   ) as DetailCommentDto[];
 
-  return new PageDto(likeData, comments.meta);
+  return new PaginationResponseDto(likeData, comments.meta);
 };
