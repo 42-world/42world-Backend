@@ -1,5 +1,5 @@
 import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional } from 'class-validator';
 import { BaseArticleDto } from '@article/dto/base-article.dto';
 
 export class UpdateArticleRequestDto extends PickType(
@@ -10,9 +10,7 @@ export class UpdateArticleRequestDto extends PickType(
   @ApiPropertyOptional({ example: '수정된 제목 입니다.' })
   readonly title?: string;
 
-  @IsString()
   @IsOptional()
-  @MaxLength(4242)
   @ApiPropertyOptional({ example: '수정된 내용 입니다.' })
   readonly content?: string;
 
