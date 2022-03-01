@@ -88,7 +88,7 @@ export class CommentService {
   }
 
   decreaseLikeCount(comment: Comment): Promise<Comment> {
-    if (comment.likeCount < 1) {
+    if (comment.likeCount <= 0) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     comment.likeCount -= 1;
