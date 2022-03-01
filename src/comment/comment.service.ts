@@ -29,7 +29,7 @@ export class CommentService {
     writerId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    const article = await this.articleService.getOne(
+    const article = await this.articleService.findOneOrFailById(
       createCommentDto.articleId,
     );
     const comment = await this.commentRepository.save({
@@ -78,7 +78,9 @@ export class CommentService {
     }
 
     const comment = await this.getOne(id, { withDeleted: true });
-    const article = await this.articleService.getOne(comment.articleId);
+    const article = await this.articleService.findOneOrFailById(
+      comment.articleId,
+    );
     this.articleService.decreaseCommentCountById(article);
   }
 

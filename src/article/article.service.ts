@@ -59,7 +59,7 @@ export class ArticleService {
     return this.articleRepository.existOrFail(id);
   }
 
-  getOne(id: number): Promise<Article> {
+  findOneOrFailById(id: number): Promise<Article | never> {
     return this.articleRepository.findOneOrFail(id);
   }
 
