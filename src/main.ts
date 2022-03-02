@@ -7,7 +7,6 @@ import { InternalServerErrorExceptionFilter } from '@root/filters/internal-serve
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { stream } from './config/logger';
@@ -24,8 +23,6 @@ async function bootstrap() {
       { stream: stream },
     ),
   );
-
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
