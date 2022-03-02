@@ -66,10 +66,14 @@ export class ArticleController {
       writer.id,
       createArticleDto,
     );
-    const isLike = false;
-    const isSelf = true;
 
-    return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
+    return ArticleResponseDto.of({
+      article,
+      category,
+      writer,
+      isLike: false,
+      isSelf: true,
+    });
   }
 
   @Get()
