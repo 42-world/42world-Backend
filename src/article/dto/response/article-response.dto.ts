@@ -24,50 +24,37 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
   @ApiProperty({ example: false })
   isSelf!: boolean;
 
-  constructor(
-    public id: number,
-    public title: string,
-    public content: string,
-    public viewCount: number,
-    public categoryId: number,
-    public category: Category,
-    public writerId: number,
-    public writer: User,
-    public commentCount: number,
-    public likeCount: number,
-    public createdAt: Date,
-    public updatedAt: Date,
-    isLike: boolean,
-    isSelf: boolean,
-  ) {
+  constructor(config: {
+    id: number;
+    title: string;
+    content: string;
+    viewCount: number;
+    categoryId: number;
+    category: Category;
+    writerId: number;
+    writer: User;
+    commentCount: number;
+    likeCount: number;
+    createdAt: Date;
+    updatedAt: Date;
+    isLike: boolean;
+    isSelf: boolean;
+  }) {
     super();
 
-    this.isLike = isLike;
-    this.isSelf = isSelf;
+    Object.assign(this, config);
   }
 
-  static of(
-    article: Article,
-    category: Category,
-    writer: User,
-    isLike: boolean,
-    isSelf: boolean,
-  ): ArticleResponseDto {
-    return new ArticleResponseDto(
-      article.id,
-      article.title,
-      article.content,
-      article.viewCount,
-      article.categoryId,
-      category,
-      article.writerId,
-      writer,
-      article.commentCount,
-      article.likeCount,
-      article.createdAt,
-      article.updatedAt,
-      isLike,
-      isSelf,
-    );
+  static of(config: {
+    article: Article;
+    category: Category;
+    writer: User;
+    isLike: boolean;
+    isSelf: boolean;
+  }): ArticleResponseDto {
+    return new ArticleResponseDto({
+      ...config.article,
+      ...config,
+    });
   }
 }

@@ -15,7 +15,6 @@ import { ArticleService } from './article.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
-import { Article } from './entities/article.entity';
 import { GetUser } from '@root/auth/auth.decorator';
 import { Comment } from '@root/comment/entities/comment.entity';
 import { CommentService } from '@root/comment/comment.service';
@@ -60,26 +59,43 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
-    @GetUser() user: User,
+    @GetUser() writer: User,
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<ArticleResponseDto | never> {
     const { article, category } = await this.articleService.create(
-      user.id,
+      writer.id,
       createArticleDto,
     );
     const isLike = false;
     const isSelf = true;
 
-    return ArticleResponseDto.of(article, category, user, isLike, isSelf);
+    return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
   }
 
   @Get()
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiPaginatedResponse(Article)
-  findAll(
+  @ApiPaginatedResponse(ArticleResponseDto)
+  async findAll(
+    @GetUser() user: User,
     @Query() findArticleRequestDto: FindArticleRequestDto,
-  ): Promise<PaginationResponseDto<Article>> {
-    return this.articleService.findAll(findArticleRequestDto);
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.findAll(
+      findArticleRequestDto,
+    );
+
+    return PaginationResponseDto.of({
+      data: articles.map((article) =>
+        ArticleResponseDto.of({
+          article,
+          category: article.category,
+          writer: article.writer,
+          isLike: false,
+          isSelf: user.id === article.writerId,
+        }),
+      ),
+      paginationRequestDto: findArticleRequestDto as PaginationRequestDto,
+      totalCount,
+    });
   }
 
   @Get(':id')
@@ -98,7 +114,7 @@ export class ArticleController {
 
     if (article.writerId !== userId)
       this.articleService.increaseViewCount(article);
-    return ArticleResponseDto.of(article, category, writer, isLike, isSelf);
+    return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
   }
 
   @Get(':id/comments')

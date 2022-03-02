@@ -16,14 +16,14 @@ export class PaginationResponseDto<T> {
     this.meta = meta;
   }
 
-  static of<T>(
-    data: T[],
-    paginationRequestDto: PaginationRequestDto,
-    totalCount: number,
-  ): PaginationResponseDto<T> {
+  static of<T>(config: {
+    data: T[];
+    paginationRequestDto: PaginationRequestDto;
+    totalCount: number;
+  }): PaginationResponseDto<T> {
     return new PaginationResponseDto(
-      data,
-      new PageMetaDto(paginationRequestDto, totalCount),
+      config.data,
+      new PageMetaDto(config.paginationRequestDto, config.totalCount),
     );
   }
 }

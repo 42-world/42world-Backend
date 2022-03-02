@@ -12,7 +12,6 @@ import { UpdateArticleRequestDto } from './dto/request/update-article-request.dt
 import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
@@ -47,9 +46,10 @@ export class ArticleService {
     return { article, category };
   }
 
-  findAll(
-    options?: FindArticleRequestDto,
-  ): Promise<PaginationResponseDto<Article>> {
+  findAll(options: FindArticleRequestDto): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
     return this.articleRepository.findAll(options);
   }
 
