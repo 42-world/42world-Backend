@@ -14,8 +14,9 @@ import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 import { CacheService } from '@cache/cache.service';
 import {
+  CADET_ALREADY_EXIST_ERROR_MESSAGE,
+  NOT_EXIST_TOKEN_ERROR_MESSAGE,
   SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
-  SIGNIN_ALREADY_EXIST_ERROR_MESSAGE,
 } from '@intra-auth/constant';
 
 @Injectable()
@@ -48,16 +49,12 @@ export class IntraAuthService {
     return true;
   }
 
-  async signin(intraId: string, user: User) {
+  async signin(intraId: string, user: User): Promise<void | never> {
     if (user.role !== UserRole.NOVICE) {
       throw new ForbiddenException(SIGNIN_ALREADY_AUTH_ERROR_MESSAGE);
     }
 
-    const cadet = await this.intraAuthRepository.findOne({ intraId: intraId });
-
-    if (cadet) {
-      throw new ForbiddenException(SIGNIN_ALREADY_EXIST_ERROR_MESSAGE);
-    }
+    await this.checkExistCadet(intraId);
 
     const email = getEmail(intraId);
     const code = await getCode(intraId);
@@ -73,31 +70,32 @@ export class IntraAuthService {
     });
   }
 
-  async getAuth(code: string) {
+  async getAuth(code: string): Promise<void | never> {
     const intraAuthMailDto = await this.cacheService.getIntraAuthMailData(code);
 
     if (!intraAuthMailDto) {
-      throw new ForbiddenException('존재하지 않는 토큰입니다.');
+      throw new ForbiddenException(NOT_EXIST_TOKEN_ERROR_MESSAGE);
     }
 
-    const cadet = await this.intraAuthRepository.findOne({
-      intraId: intraAuthMailDto.intraId,
-    });
-
-    if (cadet) {
-      throw new ForbiddenException('이미 가입된 카뎃입니다.');
-    }
+    await this.checkExistCadet(intraAuthMailDto.intraId);
 
     const user = await this.userService.getOne(intraAuthMailDto.userId);
 
-    await this.userService.updateIntraAuth(user, {
+    await this.userService.updateToCadet(user, {
       role: UserRole.CADET,
       nickname: intraAuthMailDto.intraId,
     });
-    await this.intraAuthRepository.save({
-      intraId: intraAuthMailDto.intraId,
-      userId: intraAuthMailDto.userId,
+    await this.intraAuthRepository.save(intraAuthMailDto);
+    await this.cacheService.del(code);
+  }
+
+  private async checkExistCadet(intraId: string): Promise<void | never> {
+    const cadet = await this.intraAuthRepository.findOne({
+      intraId: intraId,
     });
-    this.cacheService.del(code);
+
+    if (cadet) {
+      throw new ForbiddenException(CADET_ALREADY_EXIST_ERROR_MESSAGE);
+    }
   }
 }
