@@ -36,7 +36,9 @@ export const errorHook = async (
   const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
 
   try {
-    await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
+    if (phase === 'prod') {
+      await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
+    }
   } catch (e) {
     console.error(e);
   }
