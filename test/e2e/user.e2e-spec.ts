@@ -76,34 +76,6 @@ describe('UserController (e2e)', () => {
     app = app.getHttpServer();
   });
 
-  beforeEach(async () => {
-    const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
-    await userRepository.save(newUser);
-
-    const newUser2 = dummy.user('test1234', 'second user', UserRole.CADET);
-    await userRepository.save(newUser2);
-
-    JWT = authService.getJWT({
-      userId: newUser.id,
-      userRole: newUser.role,
-    } as JWTPayload);
-
-    const newCategory = dummy.category('자유게시판');
-    await categoryRepository.save(newCategory);
-
-    const newArticle = dummy.article(newCategory.id, newUser.id, 'a', 'bb');
-    await articleRepository.save(newArticle);
-
-    const newArticle2 = dummy.article(newCategory.id, newUser2.id, 'a2', 'bb2');
-    await articleRepository.save(newArticle2);
-
-    const newComment = dummy.comment(newUser.id, newArticle.id, 'cc');
-    await commentRepository.save(newComment);
-
-    const newReactionArticle = dummy.reactionArticle(newArticle.id, newUser.id);
-    await reactionArticleRepository.save(newReactionArticle);
-  });
-
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
@@ -114,88 +86,198 @@ describe('UserController (e2e)', () => {
     await clearDB();
   });
 
-  it('내 정보 가져오기', async () => {
-    const response = await request(app)
-      .get('/users/me')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+  describe('/users/me', () => {
+    beforeEach(async () => {
+      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(newUser);
 
-    expect(response.status).toEqual(200);
+      JWT = authService.getJWT({
+        userId: newUser.id,
+        userRole: newUser.role,
+      } as JWTPayload);
+    });
+
+    test('[성공] GET - 내 정보 가져오기', async () => {
+      const response = await request(app)
+        .get('/users/me')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+    });
   });
 
-  it('특정 유저 정보 가져오기', async () => {
-    const response = await request(app)
-      .get('/users/2')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+  describe('/users/{id}', () => {
+    let user;
 
-    expect(response.status).toEqual(200);
-    expect(response.body.id).toEqual(2);
+    beforeEach(async () => {
+      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = authService.getJWT({
+        userId: user.id,
+        userRole: user.role,
+      } as JWTPayload);
+    });
+
+    test('[성공] GET - 특정 유저 정보 가져오기', async () => {
+      const response = await request(app)
+        .get(`/users/${user.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.id).toEqual(user.id);
+      expect(response.body.nickname).toEqual(user.nickname);
+    });
   });
 
-  it('유저 프로필 변경', async () => {
-    const updateData = {
-      nickname: 'rockpell',
-      character: 2,
-    } as UpdateUserDto;
+  describe('/users', () => {
+    let user;
 
-    const response = await request(app)
-      .put('/users')
-      .send(updateData)
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+    beforeEach(async () => {
+      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = authService.getJWT({
+        userId: user.id,
+        userRole: user.role,
+      } as JWTPayload);
+    });
 
-    expect(response.status).toEqual(200);
+    test('[성공] PUT - 유저 프로필 변경', async () => {
+      const updateData = {
+        nickname: 'rockpell',
+        character: 2,
+      } as UpdateUserDto;
 
-    const updatedUser = await userRepository.findOne(1);
-    expect(updatedUser.nickname).toEqual('rockpell');
-    expect(updatedUser.character).toEqual(2);
+      const response = await request(app)
+        .put('/users')
+        .send(updateData)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+
+      const updatedUser = await userRepository.findOne(user.id);
+      expect(updatedUser.nickname).toEqual('rockpell');
+      expect(updatedUser.character).toEqual(2);
+    });
+
+    test('[성공] DELETE - 유저 삭제하기', async () => {
+      const response = await request(app)
+        .delete('/users')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+
+      const deletedUser = await userRepository.findOne(user.id, {
+        withDeleted: true,
+      });
+
+      expect(deletedUser.deletedAt).toBeTruthy();
+    });
   });
 
-  it('유저 삭제하기', async () => {
-    const response = await request(app)
-      .delete('/users')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+  describe('/users/me/articles', () => {
+    let user;
+    let category;
+    let article;
 
-    expect(response.status).toEqual(200);
+    beforeEach(async () => {
+      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = authService.getJWT({
+        userId: user.id,
+        userRole: user.role,
+      } as JWTPayload);
 
-    const deletedUser = await userRepository.findOne(1, { withDeleted: true });
+      category = dummy.category('자유게시판');
+      await categoryRepository.save(category);
+      article = dummy.article(category.id, user.id, 'a', 'bb');
+      await articleRepository.save(article);
+    });
 
-    expect(deletedUser.deletedAt).toBeTruthy();
+    test('[성공] GET - 내가 작성한 글 가져오기', async () => {
+      const response = await request(app)
+        .get('/users/me/articles')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+
+      const articles = response.body.data as Article[];
+
+      expect(articles[0].title).toEqual(article.title);
+    });
   });
 
-  it('내가 작성한 글 가져오기', async () => {
-    const response = await request(app)
-      .get('/users/me/articles')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+  describe('/users/me/comments', () => {
+    let user;
+    let category;
+    let article;
+    let comment;
 
-    expect(response.status).toEqual(200);
+    beforeEach(async () => {
+      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = authService.getJWT({
+        userId: user.id,
+        userRole: user.role,
+      } as JWTPayload);
 
-    const articles = response.body.data as Article[];
+      category = dummy.category('자유게시판');
+      await categoryRepository.save(category);
+      article = dummy.article(category.id, user.id, 'a', 'bb');
+      await articleRepository.save(article);
+      comment = dummy.comment(user.id, user.id, 'cc');
+      await commentRepository.save(comment);
+    });
 
-    expect(articles[0].title).toEqual('a');
+    test('[성공] GET - 내가 작성한 댓글 가져오기', async () => {
+      const response = await request(app)
+        .get('/users/me/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+
+      const comments = response.body.data as Comment[];
+
+      expect(comments.length).toEqual(1);
+      expect(comments[0].content).toEqual(comment.content);
+    });
   });
 
-  it('내가 작성한 댓글 가져오기', async () => {
-    const response = await request(app)
-      .get('/users/me/comments')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+  describe('/users/me/like-articles', () => {
+    let user;
+    let category;
+    let article;
+    let comment;
+    let reactionArticle;
 
-    expect(response.status).toEqual(200);
+    beforeEach(async () => {
+      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      await userRepository.save(user);
+      JWT = authService.getJWT({
+        userId: user.id,
+        userRole: user.role,
+      } as JWTPayload);
 
-    const comments = response.body.data as Comment[];
+      category = dummy.category('자유게시판');
+      await categoryRepository.save(category);
+      article = dummy.article(category.id, user.id, 'a', 'bb');
+      await articleRepository.save(article);
+      comment = dummy.comment(user.id, user.id, 'cc');
+      await commentRepository.save(comment);
+      reactionArticle = dummy.reactionArticle(article.id, user.id);
+      await reactionArticleRepository.save(reactionArticle);
+    });
 
-    expect(comments.length).toEqual(1);
-    expect(comments[0].content).toEqual('cc');
-  });
+    test('[성공] GET - 내가 좋아요 누른 게시글 목록 확인', async () => {
+      const response = await request(app)
+        .get('/users/me/like-articles')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-  it('내가 좋아요 누른 게시글 목록 확인', async () => {
-    const response = await request(app)
-      .get('/users/me/like-articles')
-      .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(200);
 
-    expect(response.status).toEqual(200);
+      const articles = response.body.data as Article[];
 
-    const articles = response.body.data as Article[];
-
-    expect(articles.length).toEqual(1);
-    expect(articles[0].id).toEqual(1);
+      expect(articles.length).toEqual(1);
+      expect(articles[0].id).toEqual(reactionArticle.id);
+    });
   });
 });
