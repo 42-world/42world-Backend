@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateUserDto, UpdateIntraAuthDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateToCadetDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -41,9 +41,9 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async updateIntraAuth(
+  async updateToCadet(
     user: User,
-    updateIntraAuthDto: UpdateIntraAuthDto,
+    updateIntraAuthDto: UpdateToCadetDto,
   ): Promise<User> {
     return this.userRepository.save({ ...user, ...updateIntraAuthDto });
   }

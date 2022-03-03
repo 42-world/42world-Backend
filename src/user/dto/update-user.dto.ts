@@ -23,7 +23,7 @@ export class UpdateUserDto {
   readonly character?: number;
 }
 
-export class UpdateIntraAuthDto {
+export class UpdateToCadetDto {
   @IsString()
   @IsNotEmpty()
   readonly role: UserRole;
