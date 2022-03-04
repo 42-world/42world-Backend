@@ -42,7 +42,20 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
   }) {
     super();
 
-    Object.assign(this, config);
+    this.id = config.id;
+    this.title = config.title;
+    this.content = config.content;
+    this.viewCount = config.viewCount;
+    this.categoryId = config.categoryId;
+    this.category = config.category;
+    this.writerId = config.writerId;
+    this.writer = config.writer;
+    this.commentCount = config.commentCount;
+    this.likeCount = config.likeCount;
+    this.createdAt = config.createdAt;
+    this.updatedAt = config.updatedAt;
+    this.isLike = config.isLike;
+    this.isSelf = config.isSelf;
   }
 
   static of(config: {
