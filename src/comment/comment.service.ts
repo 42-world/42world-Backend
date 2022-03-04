@@ -37,7 +37,7 @@ export class CommentService {
       writerId,
     });
     this.notificationService.createNewComment(article, comment);
-    this.articleService.increaseCommentCount(article);
+    this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
@@ -78,10 +78,7 @@ export class CommentService {
     }
 
     const comment = await this.getOne(id, { withDeleted: true });
-    const article = await this.articleService.findOneOrFailById(
-      comment.articleId,
-    );
-    this.articleService.decreaseCommentCountById(article);
+    this.articleService.decreaseCommentCount(comment.articleId);
   }
 
   increaseLikeCount(comment: Comment): Promise<Comment> {

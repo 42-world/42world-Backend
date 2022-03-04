@@ -117,7 +117,7 @@ export class ArticleController {
       await this.articleService.findOneOrFail(articleId, userId);
 
     if (article.writerId !== userId)
-      this.articleService.increaseViewCount(article);
+      this.articleService.increaseViewCount(article.id);
     return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
   }
 

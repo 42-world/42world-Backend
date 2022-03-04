@@ -126,32 +126,29 @@ export class ArticleService {
     }
   }
 
-  async increaseViewCount(article: Article): Promise<void> {
-    article.viewCount += 1;
-    await this.articleRepository.save(article);
+  async increaseViewCount(articleId: number): Promise<void> {
+    await this.articleRepository.increaseViewCount(articleId);
   }
 
-  async increaseCommentCount(article: Article): Promise<void> {
-    article.commentCount += 1;
-    await this.articleRepository.save(article);
+  async increaseCommentCount(articleId: number): Promise<void> {
+    await this.articleRepository.increaseCommentCount(articleId);
   }
 
-  async decreaseCommentCountById(article: Article): Promise<void> {
-    article.commentCount -= 1;
-    await this.articleRepository.save(article);
+  async decreaseCommentCount(articleId: number): Promise<void> {
+    await this.articleRepository.decreaseCommentCount(articleId);
   }
 
   async increaseLikeCount(article: Article): Promise<Article> {
-    article.likeCount += 1;
-    return await this.articleRepository.save(article);
+    await this.articleRepository.increaseLikeCount(article.id);
+    return { ...article, likeCount: article.likeCount + 1 };
   }
 
-  async decreaseLikeCount(article: Article): Promise<Article> {
+  async decreaseLikeCount(article: Article): Promise<Article | never> {
     if (article.likeCount <= 0) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
-    article.likeCount -= 1;
-    return await this.articleRepository.save(article);
+    await this.articleRepository.decreaseLikeCount(article.id);
+    return { ...article, likeCount: article.likeCount - 1 };
   }
 
   findAllMyArticle(userId: number): Promise<Article[]> {
