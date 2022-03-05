@@ -264,6 +264,32 @@ describe('Create Article (e2e)', () => {
       });
     });
 
+    test('[성공] GET - 게시글 목록 조회 권한 높은사람', async () => {
+      const findArticleRequestDto = {
+        categoryId: dummyCategories[0].id,
+      };
+
+      JWT = dummy.jwt(dummyUsers[3].id, dummyUsers[3].role, authService);
+      const response = await request(app)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(200);
+    });
+
+    test('[실패] GET - 게시글 목록 조회 권한 낮은사람', async () => {
+      const findArticleRequestDto = {
+        categoryId: dummyCategories[0].id,
+      };
+
+      JWT = dummy.jwt(dummyUsers[2].id, dummyUsers[2].role, authService);
+      const response = await request(app)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(406);
+    });
+
     test.each([
       ...buildValidateTest<FindArticleRequestDto>('categoryId', [
         타입이_틀린_경우({
