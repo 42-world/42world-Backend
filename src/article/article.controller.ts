@@ -61,7 +61,7 @@ export class ArticleController {
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<ArticleResponseDto | never> {
     const { article, category } = await this.articleService.create(
-      writer.id,
+      writer,
       createArticleDto,
     );
 

@@ -26,7 +26,7 @@ export class ArticleService {
   ) {}
 
   async create(
-    writerId: number,
+    writer: User,
     createArticleDto: CreateArticleRequestDto,
   ): Promise<
     | {
@@ -38,9 +38,10 @@ export class ArticleService {
     const category = await this.categoryService.findOneOrFail(
       createArticleDto.categoryId,
     );
+    this.categoryService.checkAvailable('writableArticle', category, writer);
     const article = await this.articleRepository.save({
       ...createArticleDto,
-      writerId,
+      writerId: writer.id,
     });
 
     return { article, category };
