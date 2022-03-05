@@ -96,6 +96,7 @@ export class ArticleController {
   }
 
   @Get(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
@@ -103,13 +104,13 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ArticleResponseDto | never> {
     const { article, category, writer, isLike, isSelf } =
-      await this.articleService.findOneOrFail(articleId, userId);
+      await this.articleService.findOneOrFail(articleId, user);
 
-    if (article.writerId !== userId)
+    if (article.writerId !== user.id)
       this.articleService.increaseViewCount(article.id);
     return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
   }

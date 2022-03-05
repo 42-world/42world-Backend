@@ -75,7 +75,7 @@ export class ArticleService {
 
   async findOneOrFail(
     id: number,
-    userId: number,
+    user: User,
   ): Promise<
     | {
         article: Article;
@@ -89,15 +89,23 @@ export class ArticleService {
     const article = await this.articleRepository.findOneOrFail(id, {
       relations: ['writer', 'category'],
     });
-    const category: Category = article.category;
-    const writer: User = article.writer;
+    this.categoryService.checkAvailable(
+      'readableArticle',
+      article.category,
+      user,
+    );
     const isLike = await this.reactionService.isMyReactionArticle(
-      userId,
+      user.id,
       article.id,
     );
-    const isSelf = userId === article.writerId;
 
-    return { article, category, writer, isLike, isSelf };
+    return {
+      article,
+      category: article.category,
+      writer: article.writer,
+      isLike,
+      isSelf: user.id === article.writerId,
+    };
   }
 
   async update(
