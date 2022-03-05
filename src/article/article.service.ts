@@ -52,13 +52,21 @@ export class ArticleService {
     options: FindArticleRequestDto,
   ): Promise<{
     articles: Article[];
+    category: Category;
     totalCount: number;
   }> {
     const category = await this.categoryService.findOneOrFail(
       options.categoryId,
     );
     this.categoryService.checkAvailable('readableArticle', category, user);
-    return this.articleRepository.findAll(options);
+    const { articles, totalCount } = await this.articleRepository.findAll(
+      options,
+    );
+    return {
+      articles,
+      category,
+      totalCount,
+    };
   }
 
   findAllBest(options: FindAllBestDto): Promise<Article[]> {

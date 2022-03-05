@@ -13,13 +13,10 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
-      .leftJoinAndSelect('article.category', 'category')
       .skip(options.skip)
       .take(options.take)
+      .where('category_id = :id', { id: options.categoryId })
       .orderBy('article.createdAt', options.order);
-
-    if (options.categoryId)
-      query.andWhere('category.id = :id', { id: options.categoryId });
 
     const totalCount = await query.getCount();
     const articles = await query.getMany();

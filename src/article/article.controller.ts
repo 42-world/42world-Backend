@@ -83,13 +83,11 @@ export class ArticleController {
     @GetUser() user: User,
     @Query() findArticleRequestDto: FindArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.findAll(
-      user,
-      findArticleRequestDto,
-    );
+    const { articles, category, totalCount } =
+      await this.articleService.findAll(user, findArticleRequestDto);
 
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, userId: user.id }),
+      data: ArticleResponseDto.ofArray({ articles, category, userId: user.id }),
       paginationRequestDto: findArticleRequestDto as PaginationRequestDto,
       totalCount,
     });

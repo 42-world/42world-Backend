@@ -73,12 +73,13 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
 
   static ofArray(config: {
     articles: Article[];
+    category: Category;
     userId: number;
   }): ArticleResponseDto[] {
     return config.articles.map((article) =>
       ArticleResponseDto.of({
         article,
-        category: article.category,
+        category: config.category,
         writer: article.writer,
         isLike: false,
         isSelf: config.userId === article.writerId,
