@@ -8,14 +8,14 @@ export class BaseArticleDto {
   id!: number;
 
   @IsString()
-  @IsNotEmpty()
   @MaxLength(42)
+  @IsNotEmpty()
   @ApiProperty({ example: '제목 입니다.' })
   title!: string;
 
   @IsString()
-  @IsNotEmpty()
   @MaxLength(4242)
+  @IsNotEmpty()
   @ApiProperty({ example: '내용 입니다.' })
   content!: string;
 
@@ -31,6 +31,9 @@ export class BaseArticleDto {
   @ApiProperty()
   category?: Category;
 
+  @IsInt()
+  @Min(0)
+  @IsNotEmpty()
   @ApiProperty()
   writerId!: number;
 
