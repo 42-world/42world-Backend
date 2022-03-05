@@ -80,7 +80,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
-    @GetUser() user: User,
+    @GetUser('id') userId: number,
     @Query() findArticleRequestDto: FindArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.findAll(
@@ -88,15 +88,7 @@ export class ArticleController {
     );
 
     return PaginationResponseDto.of({
-      data: articles.map((article) =>
-        ArticleResponseDto.of({
-          article,
-          category: article.category,
-          writer: article.writer,
-          isLike: false,
-          isSelf: user.id === article.writerId,
-        }),
-      ),
+      data: ArticleResponseDto.ofArray({ articles, userId }),
       paginationRequestDto: findArticleRequestDto as PaginationRequestDto,
       totalCount,
     });

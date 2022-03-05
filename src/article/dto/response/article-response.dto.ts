@@ -70,4 +70,19 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
       ...config,
     });
   }
+
+  static ofArray(config: {
+    articles: Article[];
+    userId: number;
+  }): ArticleResponseDto[] {
+    return config.articles.map((article) =>
+      ArticleResponseDto.of({
+        article,
+        category: article.category,
+        writer: article.writer,
+        isLike: false,
+        isSelf: config.userId === article.writerId,
+      }),
+    );
+  }
 }
