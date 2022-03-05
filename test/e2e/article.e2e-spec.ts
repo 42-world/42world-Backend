@@ -339,6 +339,8 @@ describe('Create Article (e2e)', () => {
       dummyUsers = await userRepository.save([
         dummy.user('test1234', 'first_user', UserRole.CADET),
         dummy.user('test1234', 'second_user', UserRole.CADET),
+        dummy.user('test2345', 'noivce', UserRole.NOVICE),
+        dummy.user('test2345', 'admin', UserRole.ADMIN),
       ]);
       dummyCategories = await categoryRepository.save([
         dummy.category('first_category'),
@@ -379,6 +381,26 @@ describe('Create Article (e2e)', () => {
       expect(result.isLike).toBe(false);
       expect(result.category.id).toBe(dummyCategories[0].id);
       expect(result.writer.id).toBe(dummyUsers[0].id);
+    });
+
+    test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
+      const articleId = dummyArticles[0].id;
+
+      JWT = dummy.jwt(dummyUsers[3].id, dummyUsers[3].role, authService);
+      const response = await request(app)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(200);
+    });
+
+    test('[실패] GET - 게시글 상세 조회 권한 낮은사람', async () => {
+      const articleId = dummyArticles[0].id;
+
+      JWT = dummy.jwt(dummyUsers[2].id, dummyUsers[2].role, authService);
+      const response = await request(app)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `access_token=${JWT}`);
+      expect(response.status).toEqual(406);
     });
 
     test.each([
