@@ -11,7 +11,10 @@ export class CommentRepository extends Repository<Comment> {
   async findAllByArticleId(
     articleId: number,
     options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<DetailCommentDto>> {
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
       .andWhere('comment.articleId = :id', { id: articleId })
@@ -20,10 +23,9 @@ export class CommentRepository extends Repository<Comment> {
       .orderBy('comment.createdAt', options.order);
 
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto(options, totalCount);
+    const comments = await query.getMany();
 
-    return new PaginationResponseDto(entities, pageMetaDto);
+    return { comments, totalCount };
   }
 
   async existOrFail(id: number): Promise<void> {

@@ -12,9 +12,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -43,10 +41,16 @@ export class CommentService {
 
   async findAllByArticleId(
     articleId: number,
-    pageOptionDto: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<DetailCommentDto>> {
+    paginationRequestDto: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
     await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(articleId, pageOptionDto);
+    return this.commentRepository.findAllByArticleId(
+      articleId,
+      paginationRequestDto,
+    );
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {

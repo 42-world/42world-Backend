@@ -16,7 +16,6 @@ import { CreateArticleRequestDto } from './dto/request/create-article-request.dt
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
 import { GetUser } from '@root/auth/auth.decorator';
-import { Comment } from '@root/comment/entities/comment.entity';
 import { CommentService } from '@root/comment/comment.service';
 import {
   ApiCookieAuth,
@@ -26,14 +25,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { DetailCommentDto } from './dto/detail-comment.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
-import { articleCommentsHelper } from './helper/article.helper';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { User } from '@root/user/entities/user.entity';
+import { CommentResponseDto } from './dto/response/comment-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -115,20 +113,29 @@ export class ArticleController {
 
   @Get(':id/comments')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiPaginatedResponse(Comment)
+  @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-    @Query() pageOptionDto: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<DetailCommentDto>> {
-    const comments = await this.commentService.findAllByArticleId(
-      articleId,
-      pageOptionDto,
-    );
+    @Query() paginationRequestDto: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<CommentResponseDto>> {
+    const { comments, totalCount } =
+      await this.commentService.findAllByArticleId(
+        articleId,
+        paginationRequestDto,
+      );
     const reactionComments =
       await this.reactionService.findAllMyReactionComment(userId, articleId);
 
-    return articleCommentsHelper(comments, reactionComments);
+    return PaginationResponseDto.of({
+      data: CommentResponseDto.ofArray({
+        comments,
+        reactionComments,
+        userId,
+      }),
+      paginationRequestDto: paginationRequestDto as PaginationRequestDto,
+      totalCount,
+    });
   }
 
   @Put(':id')
