@@ -1,10 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
-import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
