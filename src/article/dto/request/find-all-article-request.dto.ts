@@ -5,7 +5,7 @@ import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dt
 
 const _PickedBaseArticle = PickType(BaseArticleDto, ['categoryId']);
 
-export class FindArticleRequestDto extends IntersectionType(
+export class FindAllArticleRequestDto extends IntersectionType(
   _PickedBaseArticle,
   PaginationRequestDto,
 ) {

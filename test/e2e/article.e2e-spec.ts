@@ -30,7 +30,7 @@ import {
   잘못된_값을_입력한_경우,
   타입이_틀린_경우,
 } from './utils/validate-test';
-import { FindArticleRequestDto } from '@root/article/dto/request/find-article-request.dto';
+import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
@@ -134,6 +134,7 @@ describe('Create Article (e2e)', () => {
       JWT = dummy.jwt(dummyUsers[0].id, dummyUsers[0].role, authService);
     });
 
+    // TODO: CADET, NOVICE, ADMIN 모두 테스트 필요
     test('[성공] POST - 게시글 정상 업로드', async () => {
       const createArticlRequesteDto: CreateArticleRequestDto = {
         title: 'test title',
@@ -291,7 +292,7 @@ describe('Create Article (e2e)', () => {
     });
 
     test.each([
-      ...buildValidateTest<FindArticleRequestDto>('categoryId', [
+      ...buildValidateTest<FindAllArticleRequestDto>('categoryId', [
         타입이_틀린_경우({
           wrongValue: 'abc',
           message: ['categoryId must be an integer number'],

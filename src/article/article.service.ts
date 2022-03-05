@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ArticleRepository } from './repositories/article.repository';
-import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
+import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { Article } from './entities/article.entity';
@@ -49,7 +49,7 @@ export class ArticleService {
 
   async findAll(
     user: User,
-    options: FindArticleRequestDto,
+    options: FindAllArticleRequestDto,
   ): Promise<{
     articles: Article[];
     category: Category;

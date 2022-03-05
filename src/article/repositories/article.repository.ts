@@ -1,13 +1,13 @@
 import { EntityRepository, Repository } from 'typeorm';
 
 import { Article } from '@article/entities/article.entity';
-import { FindArticleRequestDto } from '@article/dto/request/find-article-request.dto';
+import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options: FindArticleRequestDto): Promise<{
+  async findAll(options: FindAllArticleRequestDto): Promise<{
     articles: Article[];
     totalCount: number;
   }> {

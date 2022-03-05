@@ -14,7 +14,7 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
-import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
+import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
 import { AlsoNovice, GetUser } from '@root/auth/auth.decorator';
 import { CommentService } from '@root/comment/comment.service';
 import {
@@ -31,7 +31,7 @@ import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { User } from '@root/user/entities/user.entity';
-import { CommentResponseDto } from './dto/response/comment-response.dto';
+import { CommentResponseDto } from '../comment/dto/response/comment-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -81,7 +81,7 @@ export class ArticleController {
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
     @GetUser() user: User,
-    @Query() findArticleRequestDto: FindArticleRequestDto,
+    @Query() findArticleRequestDto: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, category, totalCount } =
       await this.articleService.findAll(user, findArticleRequestDto);
