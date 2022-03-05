@@ -47,10 +47,17 @@ export class ArticleService {
     return { article, category };
   }
 
-  findAll(options: FindArticleRequestDto): Promise<{
+  async findAll(
+    user: User,
+    options: FindArticleRequestDto,
+  ): Promise<{
     articles: Article[];
     totalCount: number;
   }> {
+    const category = await this.categoryService.findOneOrFail(
+      options.categoryId,
+    );
+    this.categoryService.checkAvailable('readableArticle', category, user);
     return this.articleRepository.findAll(options);
   }
 

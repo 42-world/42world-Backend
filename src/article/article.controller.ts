@@ -76,18 +76,20 @@ export class ArticleController {
   }
 
   @Get()
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Query() findArticleRequestDto: FindArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.findAll(
+      user,
       findArticleRequestDto,
     );
 
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, userId }),
+      data: ArticleResponseDto.ofArray({ articles, userId: user.id }),
       paginationRequestDto: findArticleRequestDto as PaginationRequestDto,
       totalCount,
     });
