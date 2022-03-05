@@ -15,7 +15,7 @@ import { ArticleService } from './article.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { FindArticleRequestDto } from './dto/request/find-article-request.dto';
-import { GetUser } from '@root/auth/auth.decorator';
+import { AlsoNovice, GetUser } from '@root/auth/auth.decorator';
 import { CommentService } from '@root/comment/comment.service';
 import {
   ApiCookieAuth,
@@ -50,6 +50,7 @@ export class ArticleController {
   ) {}
 
   @Post()
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiOkResponse({
     description: '업로드된 게시글',
