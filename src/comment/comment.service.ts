@@ -42,10 +42,13 @@ export class CommentService {
   async findAllByArticleId(
     articleId: number,
     paginationRequestDto: PaginationRequestDto,
-  ): Promise<{
-    comments: Comment[];
-    totalCount: number;
-  }> {
+  ): Promise<
+    | {
+        comments: Comment[];
+        totalCount: number;
+      }
+    | never
+  > {
     await this.articleService.existOrFail(articleId);
     return this.commentRepository.findAllByArticleId(
       articleId,

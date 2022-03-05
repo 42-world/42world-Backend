@@ -118,7 +118,7 @@ export class ArticleController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() paginationRequestDto: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<CommentResponseDto>> {
+  ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
     const { comments, totalCount } =
       await this.commentService.findAllByArticleId(
         articleId,
@@ -133,7 +133,7 @@ export class ArticleController {
         reactionComments,
         userId,
       }),
-      paginationRequestDto: paginationRequestDto as PaginationRequestDto,
+      paginationRequestDto,
       totalCount,
     });
   }
