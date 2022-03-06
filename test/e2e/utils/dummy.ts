@@ -4,6 +4,7 @@ import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { Category } from '@category/entities/category.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { User, UserRole } from '@user/entities/user.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 export const user = (
   oauthToken: string,
@@ -58,4 +59,14 @@ export const comment = (
   comment.writerId = userId;
   comment.articleId = articleId;
   return comment;
+};
+
+export const reactionArticle = (
+  articleId: number,
+  userId: number,
+): ReactionArticle => {
+  const reactionArticle = new ReactionArticle();
+  reactionArticle.articleId = articleId;
+  reactionArticle.userId = userId;
+  return reactionArticle;
 };
