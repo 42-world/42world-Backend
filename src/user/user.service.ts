@@ -43,9 +43,9 @@ export class UserService {
 
   async updateToCadet(
     user: User,
-    updateIntraAuthDto: UpdateToCadetDto,
+    updateToCadetDto: UpdateToCadetDto,
   ): Promise<User> {
-    return this.userRepository.save({ ...user, ...updateIntraAuthDto });
+    return this.userRepository.save({ ...user, ...updateToCadetDto });
   }
 
   async update(user: User): Promise<User> {
