@@ -11,6 +11,7 @@ import { Article } from './entities/article.entity';
 import { CategoryService } from '@root/category/category.service';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PageDto } from '@root/pagination/pagination.dto';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
 
 @Injectable()
 export class ArticleService {
@@ -105,7 +106,10 @@ export class ArticleService {
     return this.articleRepository.save(article);
   }
 
-  findAllMyArticle(userId: number): Promise<Article[]> {
-    return this.articleRepository.findAllMyArticle(userId);
+  findAllMyArticle(
+    userId: number,
+    options?: PageOptionsDto,
+  ): Promise<PageDto<Article>> {
+    return this.articleRepository.findAllMyArticle(userId, options);
   }
 }

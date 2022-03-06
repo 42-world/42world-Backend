@@ -33,8 +33,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  const originList = process.env.ORIGIN_LIST || '';
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://www.42world.kr'],
+    origin: originList.split(',').map((item) => item.trim()),
     credentials: true,
   });
   app.useGlobalFilters(new TypeormExceptionFilter());

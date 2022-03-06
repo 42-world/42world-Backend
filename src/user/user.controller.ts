@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -20,14 +21,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
-import {
-  ReactionArticle,
-  ReactionArticleType,
-} from '@root/reaction/entities/reaction-article.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
+import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -84,31 +85,31 @@ export class UserController {
 
   @Get('me/like-articles')
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
-  @ApiOkResponse({
-    description: '유저가 좋아요 누른 게시글 목록',
-    type: [ReactionArticle],
-  })
-  async findAllMyReactionArticle(
+  @ApiPaginatedResponse(ReactionArticle)
+  findAllReactionArticle(
     @GetUser('id') userId: number,
-  ): Promise<Article[]> {
-    const likeArticles = await this.reactionService.findAllMyReactionArticle(
-      userId,
-      ReactionArticleType.LIKE,
-    );
-    return likeArticles.map((e) => e.article);
+    @Query() options: PageOptionsDto,
+  ): Promise<PageDto<ReactionArticle>> {
+    return this.reactionService.findAllArticleByUserId(userId, options);
   }
 
   @Get('me/articles')
   @ApiOperation({ summary: '내가 작성한 글' })
-  @ApiOkResponse({ description: '내가 작성한 글 목록', type: [Article] })
-  findAllMyArticle(@GetUser('id') id: number): Promise<Article[]> {
-    return this.articleService.findAllMyArticle(id);
+  @ApiPaginatedResponse(Article)
+  findAllMyArticle(
+    @Query() options: PageOptionsDto,
+    @GetUser('id') id: number,
+  ): Promise<PageDto<Article>> {
+    return this.articleService.findAllMyArticle(id, options);
   }
 
   @Get('me/comments')
   @ApiOperation({ summary: '내가 작성한 댓글' })
-  @ApiOkResponse({ description: '내가 작성한 댓글 목록', type: [Comment] })
-  findAllMyComment(@GetUser('id') id: number): Promise<Comment[]> {
-    return this.commentService.findAllMyComment(id);
+  @ApiPaginatedResponse(Comment)
+  findAllMyComment(
+    @Query() options: PageOptionsDto,
+    @GetUser('id') id: number,
+  ): Promise<PageDto<Comment>> {
+    return this.commentService.findAllMyComment(id, options);
   }
 }
