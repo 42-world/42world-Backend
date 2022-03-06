@@ -1,16 +1,15 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
+import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
+import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
-
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
+import { stream } from './config/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -21,10 +20,9 @@ async function bootstrap() {
   app.use(
     morgan(
       ':method :url :status :response-time ms - :res[content-length] :body',
+      { stream: stream },
     ),
   );
-
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
