@@ -88,7 +88,12 @@ describe('UserController (e2e)', () => {
 
   describe('/users/me', () => {
     beforeEach(async () => {
-      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
+      const newUser = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(newUser);
 
       JWT = authService.getJWT({
@@ -110,7 +115,12 @@ describe('UserController (e2e)', () => {
     let user;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -133,7 +143,12 @@ describe('UserController (e2e)', () => {
     let user;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -180,7 +195,12 @@ describe('UserController (e2e)', () => {
     let article;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -213,7 +233,12 @@ describe('UserController (e2e)', () => {
     let comment;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -250,7 +275,12 @@ describe('UserController (e2e)', () => {
     let reactionArticle;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
