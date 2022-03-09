@@ -1,31 +1,32 @@
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import configEmail from './config/mail.config';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { CacheModule, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import * as redisStore from 'cache-manager-ioredis';
-import * as winston from 'winston';
 import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from 'nest-winston';
+  AWS_ACCESS_KEY,
+  AWS_REGION,
+  AWS_SECRET_KEY,
+} from '@root/config/constants';
+import { ImageModule } from '@root/image/image.module';
+import * as redisStore from 'cache-manager-ioredis';
+import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
-
 import { AppController } from './app.controller';
-import { CommentModule } from './comment/comment.module';
-import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
-import { CategoryModule } from './category/category.module';
-import { NotificationModule } from './notification/notification.module';
-import { FtAuthModule } from './ft-auth/ft-auth.module';
 import { AuthModule } from './auth/auth.module';
-import { BestModule } from './best/best.module';
-import { ReactionModule } from './reaction/reaction.module';
-import { DatabaseModule } from './database/database.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { BestModule } from './best/best.module';
+import { CategoryModule } from './category/category.module';
+import { CommentModule } from './comment/comment.module';
+import configEmail from './config/mail.config';
+import { DatabaseModule } from './database/database.module';
 import { ormconfig } from './database/ormconfig';
+import { FtAuthModule } from './ft-auth/ft-auth.module';
 import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
+import { NotificationModule } from './notification/notification.module';
+import { ReactionModule } from './reaction/reaction.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -58,18 +59,18 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
       port: process.env.REDIS_PORT ?? 6379,
       isGlobal: true,
     }),
-    WinstonModule.forRoot({
-      transports: [
-        new winston.transports.Console({
-          level: 'silly',
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            nestWinstonModuleUtilities.format.nestLike('42world', {
-              prettyPrint: true,
-            }),
-          ),
-        }),
-      ],
+    AwsSdkModule.forRootAsync({
+      defaultServiceOptions: {
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => {
+          return {
+            region: configService.get(AWS_REGION),
+            accessKeyId: configService.get(AWS_ACCESS_KEY),
+            secretAccessKey: configService.get(AWS_SECRET_KEY),
+          };
+        },
+      },
     }),
     CommentModule,
     UserModule,
@@ -81,6 +82,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
     BestModule,
     ReactionModule,
     FtCheckinModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [

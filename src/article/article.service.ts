@@ -175,7 +175,10 @@ export class ArticleService {
     return { ...article, likeCount: article.likeCount - 1 };
   }
 
-  findAllMyArticle(userId: number): Promise<Article[]> {
-    return this.articleRepository.findAllMyArticle(userId);
+  findAllMyArticle(
+    userId: number,
+    options?: PageOptionsDto,
+  ): Promise<PageDto<Article>> {
+    return this.articleRepository.findAllMyArticle(userId, options);
   }
 }

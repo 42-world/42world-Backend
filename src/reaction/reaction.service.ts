@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { CommentService } from '@root/comment/comment.service';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
 import { Repository } from 'typeorm';
 import { LikeCommentDto } from './dto/like-article.dto';
 import {
@@ -118,7 +120,13 @@ export class ReactionService {
     });
   }
 
-  findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
-    return this.reactionArticleRepository.findAllArticleByUserId(userId);
+  findAllArticleByUserId(
+    userId: number,
+    options?: PageOptionsDto,
+  ): Promise<PageDto<ReactionArticle>> {
+    return this.reactionArticleRepository.findAllArticleByUserId(
+      userId,
+      options,
+    );
   }
 }

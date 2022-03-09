@@ -1,3 +1,6 @@
+import { PageMetaDto } from '@root/pagination/page-meta.dto';
+import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PageDto } from '@root/pagination/pagination.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,
@@ -16,11 +19,24 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
     return Object.values(existQuery[0])[0] === '1';
   }
 
-  async findAllArticleByUserId(userId: number): Promise<ReactionArticle[]> {
-    return this.createQueryBuilder('reactionArticle')
+  async findAllArticleByUserId(
+    userId: number,
+    options?: PageOptionsDto,
+  ): Promise<PageDto<ReactionArticle>> {
+    const query = this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
-      .getMany();
+      .skip(options.skip)
+      .take(options.take)
+      .orderBy('reactionArticle.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const entities = await query.getMany();
+    const pageMetaDto = new PageMetaDto({
+      totalCount,
+      pageOptionsDto: options,
+    });
+    return new PageDto(entities, pageMetaDto);
   }
 }

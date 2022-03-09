@@ -101,7 +101,10 @@ export class CommentService {
     return this.commentRepository.save(comment);
   }
 
-  async findAllMyComment(userId: number): Promise<Comment[]> {
-    return this.commentRepository.findAllMyComment(userId);
+  async findAllMyComment(
+    userId: number,
+    options?: PageOptionsDto,
+  ): Promise<PageDto<Comment>> {
+    return this.commentRepository.findAllMyComment(userId, options);
   }
 }
