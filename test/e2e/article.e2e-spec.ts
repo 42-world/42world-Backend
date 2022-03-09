@@ -145,7 +145,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .post('/articles')
         .send(createArticlRequesteDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(201);
 
       const result = response.body as Article;
@@ -169,7 +169,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .post('/articles')
         .send(createArticlRequesteDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(201);
     });
 
@@ -184,7 +184,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .post('/articles')
         .send(createArticlRequesteDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(406);
     });
 
@@ -238,7 +238,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .post('/articles')
         .send(createArticlRequesteDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       tester.expectErrorResponse(response);
     });
@@ -251,7 +251,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .get('/articles')
         .query(findArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
 
       const answerArticles: Article[] = dummyArticles.filter((article) => {
@@ -274,7 +274,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .get('/articles')
         .query(findArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
     });
 
@@ -287,7 +287,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .get('/articles')
         .query(findArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(406);
     });
 
@@ -314,7 +314,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .get('/articles')
         .query(findArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       tester.expectErrorResponse(response);
     });
@@ -368,7 +368,7 @@ describe('Create Article (e2e)', () => {
 
       const response = await request(app)
         .get(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
 
       const result = response.body as DetailArticleDto;
@@ -390,7 +390,7 @@ describe('Create Article (e2e)', () => {
       JWT = dummy.jwt(dummyUsers[3].id, dummyUsers[3].role, authService);
       const response = await request(app)
         .get(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
     });
 
@@ -400,7 +400,7 @@ describe('Create Article (e2e)', () => {
       JWT = dummy.jwt(dummyUsers[2].id, dummyUsers[2].role, authService);
       const response = await request(app)
         .get(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(406);
     });
 
@@ -413,7 +413,7 @@ describe('Create Article (e2e)', () => {
 
       const response = await request(app)
         .get(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       tester.expectErrorResponse(response);
     });
@@ -429,7 +429,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
 
       const result = await articleRepository.findOne(articleId);
@@ -450,7 +450,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(404);
 
       const result = await articleRepository.findOne(articleId);
@@ -510,7 +510,7 @@ describe('Create Article (e2e)', () => {
       const response = await request(app)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       tester.expectErrorResponse(response);
     });
@@ -520,7 +520,7 @@ describe('Create Article (e2e)', () => {
 
       const response = await request(app)
         .delete(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
 
       const result = await articleRepository.findOne(articleId);
@@ -532,7 +532,7 @@ describe('Create Article (e2e)', () => {
 
       const response = await request(app)
         .delete(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(404);
 
       const result = await articleRepository.findOne(articleId);
@@ -548,7 +548,7 @@ describe('Create Article (e2e)', () => {
 
       const response = await request(app)
         .delete(`/articles/${articleId}`)
-        .set('Cookie', `access_token=${JWT}`);
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       tester.expectErrorResponse(response);
     });

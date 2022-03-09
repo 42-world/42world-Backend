@@ -1,12 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
-
 import { Article } from '@article/entities/article.entity';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -41,15 +40,6 @@ export class ArticleRepository extends Repository<Article> {
     return query.getMany();
   }
 
-  // async myfindOneOrFail(id: number): Promise<Article | never> {
-  //   return this.createQueryBuilder('article')
-  //     .leftJoinAndSelect('article.writer', 'writer')
-  //     .leftJoinAndSelect('article.category', 'category')
-  //     .leftJoinAndSelect('article.reactionArticle', 'reactionArticle')
-  //     .andWhere('article.id = :id', { id })
-  //     .getOneOrFail();
-  // }
-
   async existOrFail(id: number): Promise<void> {
     const existQuery = await this.query(`SELECT EXISTS
 		(SELECT * FROM article WHERE id=${id} AND deleted_at IS NULL)`);
@@ -61,8 +51,8 @@ export class ArticleRepository extends Repository<Article> {
 
   async findAllMyArticle(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<Article>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<Article>> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.writerId = :id', { id: userId })
@@ -72,11 +62,8 @@ export class ArticleRepository extends Repository<Article> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
-    return new PageDto(entities, pageMetaDto);
+    const pageMetaDto = new PageMetaDto(options, totalCount);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 
   async increaseViewCount(id: number): Promise<void> {

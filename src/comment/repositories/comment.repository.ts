@@ -2,6 +2,8 @@ import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
@@ -36,8 +38,8 @@ export class CommentRepository extends Repository<Comment> {
 
   async findAllMyComment(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<Comment>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<Comment>> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
@@ -48,10 +50,7 @@ export class CommentRepository extends Repository<Comment> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
-    return new PageDto(entities, pageMetaDto);
+    const pageMetaDto = new PageMetaDto(options, totalCount);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 }

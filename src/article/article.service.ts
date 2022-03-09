@@ -15,6 +15,8 @@ import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 
 @Injectable()
 export class ArticleService {
@@ -177,8 +179,8 @@ export class ArticleService {
 
   findAllMyArticle(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<Article>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<Article>> {
     return this.articleRepository.findAllMyArticle(userId, options);
   }
 }

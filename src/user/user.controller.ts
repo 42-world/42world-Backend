@@ -26,9 +26,9 @@ import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -88,8 +88,8 @@ export class UserController {
   @ApiPaginatedResponse(ReactionArticle)
   findAllReactionArticle(
     @GetUser('id') userId: number,
-    @Query() options: PageOptionsDto,
-  ): Promise<PageDto<ReactionArticle>> {
+    @Query() options: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<ReactionArticle>> {
     return this.reactionService.findAllArticleByUserId(userId, options);
   }
 
@@ -97,9 +97,9 @@ export class UserController {
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(Article)
   findAllMyArticle(
-    @Query() options: PageOptionsDto,
+    @Query() options: PaginationRequestDto,
     @GetUser('id') id: number,
-  ): Promise<PageDto<Article>> {
+  ): Promise<PaginationResponseDto<Article>> {
     return this.articleService.findAllMyArticle(id, options);
   }
 
@@ -107,9 +107,9 @@ export class UserController {
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(Comment)
   findAllMyComment(
-    @Query() options: PageOptionsDto,
+    @Query() options: PaginationRequestDto,
     @GetUser('id') id: number,
-  ): Promise<PageDto<Comment>> {
+  ): Promise<PaginationResponseDto<Comment>> {
     return this.commentService.findAllMyComment(id, options);
   }
 }
