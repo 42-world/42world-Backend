@@ -1,6 +1,10 @@
 COMPOSE = docker-compose
 COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 
+.PHONY: test
+test:
+	yarn test:e2e ./test/e2e/*.e2e-spec.ts
+
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db redis
