@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateUserDto, UpdateRoleDto } from './dto/update-user.dto';
+import { UpdateRoleDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 
 @Injectable()
 export class UserService {
@@ -30,11 +31,15 @@ export class UserService {
     return this.userRepository.findOneOrFail(id);
   }
 
-  async updateProfile(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateProfile(
+    user: User,
+    updateUserProfileDto: UpdateUserProfileRequestDto,
+  ): Promise<User> {
     const newUser: User = {
       ...user,
-      ...updateUserDto,
+      ...updateUserProfileDto,
     };
+
     return this.userRepository.save(newUser);
   }
 

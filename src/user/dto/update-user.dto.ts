@@ -1,27 +1,5 @@
-import {
-  IsString,
-  IsInt,
-  Min,
-  Max,
-  IsOptional,
-  IsNotEmpty,
-} from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { UserRole } from '@user/interfaces/userrole.interface';
-
-export class UpdateUserDto {
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({ example: 'minsu' })
-  readonly nickname?: string;
-
-  @IsInt()
-  @Min(0)
-  @Max(4)
-  @IsOptional()
-  @ApiPropertyOptional({ example: 0 })
-  readonly character?: number;
-}
 
 export class UpdateRoleDto {
   @IsString()
