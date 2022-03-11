@@ -7,13 +7,15 @@ import { User, UserRole } from '@user/entities/user.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 export const user = (
-  oauthToken: string,
+  githubUid: string,
   nickname: string,
+  githubUsername: string,
   role: UserRole,
 ): User => {
   const user = new User();
-  user.oauthToken = oauthToken;
+  user.githubUid = githubUid;
   user.nickname = nickname;
+  user.githubUsername = githubUsername;
   user.role = role;
   return user;
 };

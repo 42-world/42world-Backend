@@ -18,10 +18,11 @@
       "@category/*": ["./src/category/*"],
       "@notification/*": ["./src/notification/*"],
       "@auth/*": ["./src/auth/*"],
-      "@ft-auth/*": ["src/ft-auth/*"],
+      "@intra-auth/*": ["src/intra-auth/*"],
       "@database/*": ["./src/database/*"],
       "@test/*": ["./test/*"],
-      "@image/*": ["./src/image/*"]
+      "@image/*": ["./src/image/*"],
+      "@cache/*": ["./src/cache/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

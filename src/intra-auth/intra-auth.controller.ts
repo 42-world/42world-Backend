@@ -7,10 +7,6 @@ import {
   Render,
   UseFilters,
 } from '@nestjs/common';
-import { FtAuthService } from './ft-auth.service';
-import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
-import { User } from '@root/user/entities/user.entity';
-import { SigninFtAuthDto } from './dto/signin-ft-auth.dto';
 import {
   ApiCookieAuth,
   ApiForbiddenResponse,
@@ -19,12 +15,17 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import { IntraAuthService } from './intra-auth.service';
+import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
+import { User } from '@root/user/entities/user.entity';
+import { SigninIntraAuthDto } from './dto/signin-intra-auth.dto';
 import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
 
-@ApiTags('FT Auth')
-@Controller('ft-auth')
-export class FtAuthController {
-  constructor(private readonly ftAuthService: FtAuthService) {}
+@ApiTags('Intra Auth')
+@Controller('intra-auth')
+export class IntraAuthController {
+  constructor(private readonly intraAuthService: IntraAuthService) {}
 
   @Post()
   @OnlyNovice()
@@ -36,8 +37,11 @@ export class FtAuthController {
   @ApiForbiddenResponse({
     description: '접근 권한 없음 | 이미 인증된 사용자 | 이미 가입된 카뎃',
   })
-  async sendMail(@GetUser() user: User, @Body() { intraId }: SigninFtAuthDto) {
-    await this.ftAuthService.signin(intraId, user);
+  async sendMail(
+    @GetUser() user: User,
+    @Body() { intraId }: SigninIntraAuthDto,
+  ) {
+    await this.intraAuthService.signin(intraId, user);
   }
 
   @Get()
@@ -48,7 +52,7 @@ export class FtAuthController {
   @ApiForbiddenResponse({ description: '42인증 메일 코드 만료됨' })
   async getAuthCode(@Query('code') code: string) {
     try {
-      await this.ftAuthService.getAuth(code);
+      await this.intraAuthService.getAuth(code);
 
       return {
         title: 'Hello World!',

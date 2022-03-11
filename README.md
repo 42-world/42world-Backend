@@ -23,7 +23,7 @@ https://www.42world.kr/
 │    ├── config
 │    ├── database
 │    ├── filters
-│    ├── ft-auth
+│    ├── intra-auth
 │    ├── notification
 │    ├── reaction
 │    └── user
