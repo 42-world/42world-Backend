@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateUserDto, UpdateRoleDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateToCadetDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async githubLogin(profile: GithubProfile): Promise<User> {
-    const user = await this.userRepository.findOne({ oauthToken: profile.id });
+  async githubLogin(githubProfile: GithubProfile): Promise<User> {
+    const user = await this.userRepository.findOne({
+      githubUid: githubProfile.id,
+    });
 
     if (user) {
       user.lastLogin = getNextMonth();
@@ -18,8 +20,9 @@ export class UserService {
     }
 
     const newUser = {
-      nickname: profile.nickname,
-      oauthToken: profile.id,
+      nickname: githubProfile.username,
+      githubUsername: githubProfile.username,
+      githubUid: githubProfile.id,
       lastLogin: getNextMonth(),
     };
 
@@ -38,11 +41,11 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async updateAuthenticate(
+  async updateToCadet(
     user: User,
-    updateRoleDto: UpdateRoleDto,
+    updateToCadetDto: UpdateToCadetDto,
   ): Promise<User> {
-    return this.userRepository.save({ ...user, ...updateRoleDto });
+    return this.userRepository.save({ ...user, ...updateToCadetDto });
   }
 
   async update(user: User): Promise<User> {

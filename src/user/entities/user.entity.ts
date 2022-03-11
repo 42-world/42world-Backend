@@ -1,4 +1,3 @@
-import { FtAuth } from '@ft-auth/entities/ft-auth.entity';
 import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@notification/entities/notification.entity';
@@ -9,14 +8,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  OneToOne,
   DeleteDateColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Best } from '@root/best/entities/best.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
+import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 import { UserRole } from '@user/interfaces/userrole.interface';
 
 @Entity('user')
@@ -26,12 +25,16 @@ export class User {
   id!: number;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 20, nullable: false })
   nickname!: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  oauthToken!: string;
+  @Column({ type: 'varchar', length: 20, nullable: false, unique: true })
+  githubUsername!: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', length: 42, nullable: false })
+  githubUid!: string;
 
   @ApiProperty()
   @Column({ nullable: true })
@@ -79,12 +82,6 @@ export class User {
   })
   notification?: Notification[];
 
-  @OneToOne(() => FtAuth, (ftAuth) => ftAuth.user, {
-    createForeignKeyConstraints: false,
-    nullable: true,
-  })
-  ftAuth?: FtAuth;
-
   @OneToMany(() => ReactionArticle, (reactionArticle) => reactionArticle.user, {
     createForeignKeyConstraints: false,
     nullable: true,
@@ -96,4 +93,10 @@ export class User {
     nullable: true,
   })
   reactionComment?: ReactionComment[];
+
+  @OneToOne(() => IntraAuth, (intraAuth) => intraAuth.user, {
+    createForeignKeyConstraints: false,
+    nullable: false,
+  })
+  intraAuth?: IntraAuth;
 }

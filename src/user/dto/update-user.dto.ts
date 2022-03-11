@@ -23,8 +23,12 @@ export class UpdateUserDto {
   readonly character?: number;
 }
 
-export class UpdateRoleDto {
+export class UpdateToCadetDto {
   @IsString()
   @IsNotEmpty()
   readonly role: UserRole;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly nickname: string;
 }

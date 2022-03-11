@@ -14,6 +14,7 @@ import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { ArticleModule } from './article/article.module';
+import { IntraAuthModule } from './intra-auth/intra-auth.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { BestModule } from './best/best.module';
@@ -22,7 +23,6 @@ import { CommentModule } from './comment/comment.module';
 import configEmail from './config/mail.config';
 import { DatabaseModule } from './database/database.module';
 import { ormconfig } from './database/ormconfig';
-import { FtAuthModule } from './ft-auth/ft-auth.module';
 import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
 import { NotificationModule } from './notification/notification.module';
 import { ReactionModule } from './reaction/reaction.module';
@@ -43,7 +43,7 @@ import { UserModule } from './user/user.module';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/views/ft-auth/'),
+            dir: path.join(__dirname, '/views/intra-auth/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,
@@ -77,7 +77,7 @@ import { UserModule } from './user/user.module';
     ArticleModule,
     CategoryModule,
     NotificationModule,
-    FtAuthModule,
+    IntraAuthModule,
     AuthModule,
     BestModule,
     ReactionModule,

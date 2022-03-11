@@ -83,7 +83,12 @@ describe('Reaction', () => {
 
   describe('/reactions/articles/{id}', () => {
     beforeEach(async () => {
-      const user = dummy.user('token', 'nickname', UserRole.CADET);
+      const user = dummy.user(
+        'token',
+        'nickname',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       const category = dummy.category('category');
       await categoryRepository.save(category);
@@ -135,7 +140,12 @@ describe('Reaction', () => {
 
   describe('/reactions/articles/{articleId}/comments/{commentId}', () => {
     beforeEach(async () => {
-      const user = dummy.user('token', 'nickname', UserRole.CADET);
+      const user = dummy.user(
+        'token',
+        'nickname',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = dummy.jwt(user.id, user.role, authService);
       const category = dummy.category('category');

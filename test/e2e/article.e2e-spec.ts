@@ -102,10 +102,15 @@ describe('Create Article (e2e)', () => {
   describe('/articles', () => {
     beforeEach(async () => {
       dummyUsers = await userRepository.save([
-        dummy.user('test1234', 'first_user', UserRole.CADET),
-        dummy.user('test2345', 'second_user', UserRole.CADET),
-        dummy.user('test2345', 'noivce', UserRole.NOVICE),
-        dummy.user('test2345', 'admin', UserRole.ADMIN),
+        dummy.user('test1234', 'first_user', 'githubUserName1', UserRole.CADET),
+        dummy.user(
+          'test2345',
+          'second_user',
+          'githubUserName2',
+          UserRole.CADET,
+        ),
+        dummy.user('test2345', 'noivce', 'githubUserName3', UserRole.NOVICE),
+        dummy.user('test2345', 'admin', 'githubUserName4', UserRole.ADMIN),
       ]);
       dummyCategories = await categoryRepository.save([
         dummy.category('first_category'),
@@ -338,10 +343,15 @@ describe('Create Article (e2e)', () => {
 
     beforeEach(async () => {
       dummyUsers = await userRepository.save([
-        dummy.user('test1234', 'first_user', UserRole.CADET),
-        dummy.user('test1234', 'second_user', UserRole.CADET),
-        dummy.user('test2345', 'noivce', UserRole.NOVICE),
-        dummy.user('test2345', 'admin', UserRole.ADMIN),
+        dummy.user('test1234', 'first_user', 'githubUserName1', UserRole.CADET),
+        dummy.user(
+          'test1234',
+          'second_user',
+          'githubUserName2',
+          UserRole.CADET,
+        ),
+        dummy.user('test2345', 'noivce', 'githubUserName3', UserRole.NOVICE),
+        dummy.user('test2345', 'admin', 'githubUserName4', UserRole.ADMIN),
       ]);
       dummyCategories = await categoryRepository.save([
         dummy.category('first_category'),
