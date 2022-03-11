@@ -16,12 +16,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
-
-export enum UserRole {
-  CADET = 'CADET',
-  ADMIN = 'ADMIN',
-  NOVICE = 'NOVICE',
-}
+import { UserRole } from '@user/interfaces/userrole.interface';
 
 @Entity('user')
 export class User {

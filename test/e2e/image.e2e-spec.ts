@@ -8,13 +8,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { UserRole } from '@user/entities/user.entity';
 import { ImageModule } from '@image/image.module';
 import { getConnection } from 'typeorm';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { clearDB } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 
 describe('Image', () => {

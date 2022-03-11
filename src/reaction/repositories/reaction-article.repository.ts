@@ -1,6 +1,6 @@
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,
@@ -21,8 +21,8 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
 
   async findAllArticleByUserId(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<ReactionArticle>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<ReactionArticle>> {
     const query = this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
@@ -33,10 +33,7 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
-    return new PageDto(entities, pageMetaDto);
+    const pageMetaDto = new PageMetaDto(options, totalCount);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 }

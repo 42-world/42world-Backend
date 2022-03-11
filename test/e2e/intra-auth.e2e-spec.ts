@@ -12,7 +12,6 @@ import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { clearDB } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
-import { UserRole } from '@user/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 import { IntraAuthController } from '@intra-auth/intra-auth.controller';
@@ -20,6 +19,7 @@ import { IntraAuthService } from '@intra-auth/intra-auth.service';
 import { CacheService } from '@cache/cache.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
+import { UserRole } from '@user/interfaces/userrole.interface';
 
 describe('IntraAuth', () => {
   let app: INestApplication;

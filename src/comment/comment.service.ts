@@ -12,9 +12,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 
 @Injectable()
 export class CommentService {
@@ -29,7 +28,7 @@ export class CommentService {
     writerId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    const article = await this.articleService.getOne(
+    const article = await this.articleService.findOneOrFailById(
       createCommentDto.articleId,
     );
     const comment = await this.commentRepository.save({
@@ -37,16 +36,25 @@ export class CommentService {
       writerId,
     });
     this.notificationService.createNewComment(article, comment);
-    this.articleService.increaseCommentCount(article);
+    this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
   async findAllByArticleId(
     articleId: number,
-    pageOptionDto: PageOptionsDto,
-  ): Promise<PageDto<DetailCommentDto>> {
+    paginationRequestDto: PaginationRequestDto,
+  ): Promise<
+    | {
+        comments: Comment[];
+        totalCount: number;
+      }
+    | never
+  > {
     await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(articleId, pageOptionDto);
+    return this.commentRepository.findAllByArticleId(
+      articleId,
+      paginationRequestDto,
+    );
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
@@ -78,8 +86,7 @@ export class CommentService {
     }
 
     const comment = await this.getOne(id, { withDeleted: true });
-    const article = await this.articleService.getOne(comment.articleId);
-    this.articleService.decreaseCommentCountById(article);
+    this.articleService.decreaseCommentCount(comment.articleId);
   }
 
   increaseLikeCount(comment: Comment): Promise<Comment> {
@@ -97,8 +104,8 @@ export class CommentService {
 
   async findAllMyComment(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<Comment>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<Comment>> {
     return this.commentRepository.findAllMyComment(userId, options);
   }
 }
