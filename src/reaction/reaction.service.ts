@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
 import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { CommentService } from '@root/comment/comment.service';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { Repository } from 'typeorm';
 import { LikeCommentDto } from './dto/like-article.dto';
 import {
@@ -42,7 +42,7 @@ export class ReactionService {
       articleId,
       type,
     });
-    const article = await this.articleService.getOne(articleId);
+    const article = await this.articleService.findOneOrFailById(articleId);
 
     if (reactionArticle) {
       this.reactionArticleRepository.delete({ id: reactionArticle.id });
@@ -122,8 +122,8 @@ export class ReactionService {
 
   findAllArticleByUserId(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<ReactionArticle>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<ReactionArticle>> {
     return this.reactionArticleRepository.findAllArticleByUserId(
       userId,
       options,

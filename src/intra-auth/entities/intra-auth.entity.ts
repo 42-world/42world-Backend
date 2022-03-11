@@ -1,30 +1,29 @@
-import { User } from '@user/entities/user.entity';
-
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
+  Entity,
   Index,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { User } from '@user/entities/user.entity';
 
-@Entity('ft_auth')
-export class FtAuth {
+@Entity('intra_auth')
+export class IntraAuth {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Index('ix_intra_id')
-  @Column({ type: 'varchar', length: 40, nullable: false })
+  @Column({ type: 'varchar', length: 20, nullable: false })
   intraId?: string;
 
   @Column({ nullable: false, unique: true })
   @Index('ix_user_id')
   userId!: number;
 
-  @OneToOne(() => User, (user) => user.ftAuth, {
+  @OneToOne(() => User, (user) => user.intraAuth, {
     createForeignKeyConstraints: false,
     nullable: false,
   })

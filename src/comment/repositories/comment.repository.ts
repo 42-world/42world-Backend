@@ -1,17 +1,19 @@
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
+import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
   async findAllByArticleId(
     articleId: number,
-    options: PageOptionsDto,
-  ): Promise<PageDto<DetailCommentDto>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
       .andWhere('comment.articleId = :id', { id: articleId })
@@ -20,13 +22,9 @@ export class CommentRepository extends Repository<Comment> {
       .orderBy('comment.createdAt', options.order);
 
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
+    const comments = await query.getMany();
 
-    return new PageDto(entities, pageMetaDto);
+    return { comments, totalCount };
   }
 
   async existOrFail(id: number): Promise<void> {
@@ -40,8 +38,8 @@ export class CommentRepository extends Repository<Comment> {
 
   async findAllMyComment(
     userId: number,
-    options?: PageOptionsDto,
-  ): Promise<PageDto<Comment>> {
+    options?: PaginationRequestDto,
+  ): Promise<PaginationResponseDto<Comment>> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
@@ -52,10 +50,7 @@ export class CommentRepository extends Repository<Comment> {
 
     const totalCount = await query.getCount();
     const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
-    return new PageDto(entities, pageMetaDto);
+    const pageMetaDto = new PageMetaDto(options, totalCount);
+    return new PaginationResponseDto(entities, pageMetaDto);
   }
 }

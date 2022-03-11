@@ -7,7 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { UserRepository } from '@user/repositories/user.repository';
-import { UserRole } from '@user/entities/user.entity';
+import { User } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
@@ -24,6 +24,7 @@ import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { clearDB } from '@test/e2e/utils/utils';
 import * as dummy from '@test/e2e/utils/dummy';
 
@@ -89,7 +90,12 @@ describe('UserController (e2e)', () => {
 
   describe('/users/me', () => {
     beforeEach(async () => {
-      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
+      const newUser = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(newUser);
 
       JWT = authService.getJWT({
@@ -111,7 +117,12 @@ describe('UserController (e2e)', () => {
     let user;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -134,7 +145,12 @@ describe('UserController (e2e)', () => {
     let user;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -181,7 +197,12 @@ describe('UserController (e2e)', () => {
     let article;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -214,7 +235,12 @@ describe('UserController (e2e)', () => {
     let comment;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
@@ -251,7 +277,12 @@ describe('UserController (e2e)', () => {
     let reactionArticle;
 
     beforeEach(async () => {
-      user = dummy.user('test1234', 'first user', UserRole.CADET);
+      user = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
       JWT = authService.getJWT({
         userId: user.id,
