@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ApiProperty } from '@nestjs/swagger';
 
 const GAEPO = 'gaepo';
-const SECHO = 'secho';
+const SEOCHO = 'seocho';
 
 export class GetFtCheckinDto {
   @ApiProperty({ example: 42 })
@@ -36,7 +36,7 @@ export class FtCheckinService {
       try {
         const { data } = await axios.get(endpoint);
         const realData = {
-          seocho: data[SECHO] || 0,
+          seocho: data[SEOCHO] || 0,
           gaepo: data[GAEPO] || 0,
         };
 
