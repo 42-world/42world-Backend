@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getNextMonth } from '@root/utils';
 import { GithubProfile } from '@auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
-import { UpdateToCadetDto } from './dto/update-user.dto';
+import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 
