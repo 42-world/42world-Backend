@@ -6,6 +6,7 @@ import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
+import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -15,7 +16,7 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })
       .orderBy('article.createdAt', options.order);
@@ -56,7 +57,7 @@ export class ArticleRepository extends Repository<Article> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.writerId = :id', { id: userId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('article.createdAt', options.order);
 

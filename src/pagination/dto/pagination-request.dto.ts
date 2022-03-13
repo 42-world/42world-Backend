@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { Order } from '../interface/pagination.enum';
 
@@ -31,11 +31,4 @@ export class PaginationRequestDto {
   @Max(1000)
   @IsOptional()
   readonly take?: number = 10;
-
-  @Exclude({
-    toClassOnly: true,
-  })
-  get skip(): number {
-    return (this.page - 1) * this.take;
-  }
 }
