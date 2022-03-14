@@ -21,14 +21,13 @@ import { User } from './entities/user.entity';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
-import { Comment } from '@comment/entities/comment.entity';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { UserResponseDto } from './dto/response/user-response.dto';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ArticleResponseDto } from '@root/article/dto/response/article-response.dto';
-import { CommentResponseDto } from '@root/comment/dto/response/comment-response.dto';
+import { MyCommentResponseDto } from '@root/comment/dto/response/my-comment-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -128,15 +127,15 @@ export class UserController {
 
   @Get('me/comments')
   @ApiOperation({ summary: '내가 작성한 댓글' })
-  @ApiPaginatedResponse(Comment)
+  @ApiPaginatedResponse(MyCommentResponseDto)
   async findAllMyComment(
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Comment>> {
+  ): Promise<PaginationResponseDto<MyCommentResponseDto>> {
     const { comments, totalCount } =
       await this.commentService.findAllByWriterId(userId, options);
     return PaginationResponseDto.of({
-      data: CommentResponseDto.ofArray({ comments, userId }),
+      data: MyCommentResponseDto.ofArray({ comments }),
       options,
       totalCount,
     });

@@ -2,6 +2,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseCommentDto } from '@root/comment/dto/base-comment.dto';
 import { Comment } from '@root/comment/entities/comment.entity';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
+import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 import { User } from '@root/user/entities/user.entity';
 
 export class CommentResponseDto extends PickType(BaseCommentDto, [
@@ -26,7 +27,7 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
     likeCount: number;
     articleId: number;
     writerId: number;
-    writer: User;
+    writer: UserResponseDto;
     createdAt: Date;
     updatedAt: Date;
     isLike: boolean;
@@ -55,6 +56,7 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
     return new CommentResponseDto({
       ...config.comment,
       ...config,
+      writer: UserResponseDto.of({ user: config.writer }),
     });
   }
 
