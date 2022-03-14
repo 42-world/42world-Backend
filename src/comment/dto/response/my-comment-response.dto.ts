@@ -1,25 +1,49 @@
-import { IntersectionType, PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseArticleDto } from '@root/article/dto/base-article.dto';
+import { Article } from '@root/article/entities/article.entity';
 import { CategoryResponseDto } from '@root/category/dto/response/category-response.dto';
 import { Category } from '@root/category/entities/category.entity';
 import { BaseCommentDto } from '@root/comment/dto/base-comment.dto';
 import { Comment } from '@root/comment/entities/comment.entity';
 
-export class MyCommentResponseDto extends IntersectionType(
-  PickType(BaseCommentDto, [
-    'id',
-    'content',
-    'articleId',
-    'createdAt',
-    'updatedAt',
-  ]),
-  PickType(BaseArticleDto, ['category']),
-) {
+class InnerArticleDto extends PickType(BaseArticleDto, [
+  'id',
+  'title',
+  'category',
+]) {
+  constructor(config: {
+    id: number;
+    title: string;
+    category: CategoryResponseDto;
+  }) {
+    super();
+
+    this.id = config.id;
+    this.title = config.title;
+    this.category = config.category;
+  }
+
+  static of(config: { article: Article; category: Category }): InnerArticleDto {
+    return new InnerArticleDto({
+      ...config.article,
+      category: CategoryResponseDto.of({ category: config.category }),
+    });
+  }
+}
+
+export class MyCommentResponseDto extends PickType(BaseCommentDto, [
+  'id',
+  'content',
+  'createdAt',
+  'updatedAt',
+]) {
+  @ApiProperty({ type: () => InnerArticleDto })
+  article: InnerArticleDto;
+
   constructor(config: {
     id: number;
     content: string;
-    articleId: number;
-    category: CategoryResponseDto;
+    article: InnerArticleDto;
     createdAt: Date;
     updatedAt: Date;
   }) {
@@ -27,19 +51,21 @@ export class MyCommentResponseDto extends IntersectionType(
 
     this.id = config.id;
     this.content = config.content;
-    this.articleId = config.articleId;
-    this.category = config.category;
+    this.article = config.article;
     this.createdAt = config.createdAt;
     this.updatedAt = config.updatedAt;
   }
 
   static of(config: {
     comment: Comment;
-    category: Category;
+    article: Article;
   }): MyCommentResponseDto {
     return new MyCommentResponseDto({
       ...config.comment,
-      category: CategoryResponseDto.of({ category: config.category }),
+      article: InnerArticleDto.of({
+        article: config.article,
+        category: config.article.category,
+      }),
     });
   }
 
@@ -47,7 +73,7 @@ export class MyCommentResponseDto extends IntersectionType(
     return config.comments.map((comment: Comment) => {
       return MyCommentResponseDto.of({
         comment,
-        category: comment.article.category,
+        article: comment.article,
       });
     });
   }
