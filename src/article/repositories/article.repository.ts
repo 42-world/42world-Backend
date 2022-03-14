@@ -32,6 +32,7 @@ export class ArticleRepository extends Repository<Article> {
     totalCount: number;
   }> {
     const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.writerId = :id', { id: writerId })
       .skip(options.skip)
