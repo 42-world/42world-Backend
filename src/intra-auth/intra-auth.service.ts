@@ -80,7 +80,9 @@ export class IntraAuthService {
 
     await this.checkExistCadet(intraAuthMailDto.intraId);
 
-    const user = await this.userService.getOne(intraAuthMailDto.userId);
+    const user = await this.userService.findOneByIdOrFail(
+      intraAuthMailDto.userId,
+    );
 
     await this.userService.updateToCadet(user, {
       role: UserRole.CADET,
