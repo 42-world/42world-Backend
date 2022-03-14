@@ -38,8 +38,11 @@ export class CommentRepository extends Repository<Comment> {
 
   async findAllMyComment(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Comment>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
@@ -49,8 +52,8 @@ export class CommentRepository extends Repository<Comment> {
       .orderBy('comment.createdAt', options.order);
 
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto(options, totalCount);
-    return new PaginationResponseDto(entities, pageMetaDto);
+    const comments = await query.getMany();
+
+    return { comments, totalCount };
   }
 }

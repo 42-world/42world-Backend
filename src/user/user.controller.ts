@@ -20,7 +20,6 @@ import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
 import { Article } from '@article/entities/article.entity';
@@ -31,6 +30,8 @@ import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-r
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ArticleResponseDto } from '@root/article/dto/response/article-response.dto';
+import { CommentResponseDto } from '@root/comment/dto/response/comment-response.dto';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -116,10 +117,7 @@ export class UserController {
       options,
     );
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({
-        articles,
-        userId,
-      }),
+      data: ArticleResponseDto.ofArray({ articles, userId }),
       options,
       totalCount,
     });
@@ -128,10 +126,18 @@ export class UserController {
   @Get('me/comments')
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(Comment)
-  findAllMyComment(
+  async findAllMyComment(
+    @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-    @GetUser('id') id: number,
   ): Promise<PaginationResponseDto<Comment>> {
-    return this.commentService.findAllMyComment(id, options);
+    const { comments, totalCount } = await this.commentService.findAllMyComment(
+      userId,
+      options,
+    );
+    return PaginationResponseDto.of({
+      data: CommentResponseDto.ofArray({ comments, userId }),
+      options,
+      totalCount,
+    });
   }
 }

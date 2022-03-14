@@ -99,10 +99,13 @@ export class CommentService {
     return this.commentRepository.save(comment);
   }
 
-  async findAllMyComment(
+  findAllMyComment(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Comment>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
     return this.commentRepository.findAllMyComment(userId, options);
   }
 }

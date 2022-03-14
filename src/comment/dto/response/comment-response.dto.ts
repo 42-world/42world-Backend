@@ -60,9 +60,10 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
 
   static ofArray(config: {
     comments: Comment[];
-    reactionComments: ReactionComment[];
+    reactionComments?: ReactionComment[];
     userId: number;
   }): CommentResponseDto[] {
+    config.reactionComments = config.reactionComments || [];
     return config.comments.map((comment: Comment) => {
       const isLike = !!config.reactionComments.find(
         (reactionComment) => reactionComment.commentId === comment.id,
