@@ -4,7 +4,8 @@ import { Article } from '@root/article/entities/article.entity';
 import { Comment } from '@root/comment/entities/comment.entity';
 import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { Notification, NotificationType } from './entities/notification.entity';
+import { Notification } from './entities/notification.entity';
+import { NotificationType } from './interfaces/notifiaction.interface';
 
 @Injectable()
 export class NotificationService {
@@ -14,12 +15,12 @@ export class NotificationService {
   ) {}
 
   createNewComment(article: Article, comment: Comment): Promise<Notification> {
-    const notification: CreateNotificationDto = {
+    const notification = new CreateNotificationDto({
       type: NotificationType.NEW_COMMENT,
       content: `게시글 ${article.title} 에 새로운 댓글이 달렸습니다.\n${comment.content}`,
       articleId: article.id,
       userId: article.writerId,
-    };
+    });
     return this.notificationRepository.save(notification);
   }
 
