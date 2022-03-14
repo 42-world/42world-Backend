@@ -3,6 +3,7 @@ import { BaseArticleDto } from '@article/dto/base-article.dto';
 import { Article } from '@root/article/entities/article.entity';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
+import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 
 export class ArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
@@ -49,7 +50,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     this.categoryId = config.categoryId;
     this.category = config.category;
     this.writerId = config.writerId;
-    this.writer = config.writer;
+    this.writer = UserResponseDto.of({ user: config.writer });
     this.commentCount = config.commentCount;
     this.likeCount = config.likeCount;
     this.createdAt = config.createdAt;
