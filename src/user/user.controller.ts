@@ -30,6 +30,7 @@ import { UserResponseDto } from './dto/response/user-response.dto';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
+import { ArticleResponseDto } from '@root/article/dto/response/article-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -106,11 +107,22 @@ export class UserController {
   @Get('me/articles')
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(Article)
-  findAllMyArticle(
+  async findAllMyArticle(
+    @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-    @GetUser('id') id: number,
   ): Promise<PaginationResponseDto<Article>> {
-    return this.articleService.findAllMyArticle(id, options);
+    const { articles, totalCount } = await this.articleService.findAllMyArticle(
+      userId,
+      options,
+    );
+    return PaginationResponseDto.of({
+      data: ArticleResponseDto.ofArray({
+        articles,
+        userId,
+      }),
+      options,
+      totalCount,
+    });
   }
 
   @Get('me/comments')
