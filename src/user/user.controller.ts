@@ -134,10 +134,8 @@ export class UserController {
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<Comment>> {
-    const { comments, totalCount } = await this.commentService.findAllMyComment(
-      userId,
-      options,
-    );
+    const { comments, totalCount } =
+      await this.commentService.findAllByWriterId(userId, options);
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({ comments, userId }),
       options,

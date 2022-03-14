@@ -13,7 +13,6 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 
 @Injectable()
 export class CommentService {
@@ -58,6 +57,16 @@ export class CommentService {
     return this.commentRepository.findOneOrFail(id, options);
   }
 
+  findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
+    return this.commentRepository.findAllByWriterId(writerId, options);
+  }
+
   async updateContent(
     id: number,
     writerId: number,
@@ -97,15 +106,5 @@ export class CommentService {
     }
     comment.likeCount -= 1;
     return this.commentRepository.save(comment);
-  }
-
-  findAllMyComment(
-    userId: number,
-    options: PaginationRequestDto,
-  ): Promise<{
-    comments: Comment[];
-    totalCount: number;
-  }> {
-    return this.commentRepository.findAllMyComment(userId, options);
   }
 }
