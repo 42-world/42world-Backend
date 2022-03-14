@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Article } from '@root/article/entities/article.entity';
 import { User } from '@root/user/entities/user.entity';
 import {
@@ -18,16 +17,13 @@ export enum ReactionArticleType {
 
 @Entity('reaction_article')
 export class ReactionArticle {
-  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_user_id')
   userId!: number;
 
-  @ApiProperty()
   @Column({
     type: 'enum',
     enum: ReactionArticleType,
@@ -36,16 +32,13 @@ export class ReactionArticle {
   })
   type!: ReactionArticleType;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
   articleId!: number;
 
-  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @ApiProperty()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 

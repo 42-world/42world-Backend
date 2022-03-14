@@ -1,6 +1,4 @@
-import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,

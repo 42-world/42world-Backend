@@ -10,7 +10,6 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
 import { Article } from '@root/article/entities/article.entity';
 
 export enum ReactionCommentType {
@@ -19,16 +18,13 @@ export enum ReactionCommentType {
 
 @Entity('reaction_comment')
 export class ReactionComment {
-  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_user_id')
   userId!: number;
 
-  @ApiProperty()
   @Column({
     type: 'enum',
     enum: ReactionCommentType,
@@ -37,21 +33,17 @@ export class ReactionComment {
   })
   type!: ReactionCommentType;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_comment_id')
   commentId!: number;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
   articleId!: number;
 
-  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @ApiProperty()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
