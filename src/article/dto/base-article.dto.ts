@@ -29,7 +29,7 @@ export class BaseArticleDto {
   @ApiProperty({ example: 1 })
   categoryId!: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => CategoryUserAbilityResponseDto })
   category?: CategoryUserAbilityResponseDto | CategoryResponseDto;
 
   @IsInt()
