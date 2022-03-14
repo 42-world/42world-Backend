@@ -19,7 +19,7 @@ import {
 import { IntraAuthService } from './intra-auth.service';
 import { GetUser, OnlyNovice, Public } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
-import { SigninIntraAuthDto } from './dto/signin-intra-auth.dto';
+import { SigninIntraAuthRequestDto } from './dto/signin-intra-auth-request.dto';
 import { AllExceptionsFilter } from '@root/filters/all-exception.filter';
 
 @ApiTags('Intra Auth')
@@ -39,7 +39,7 @@ export class IntraAuthController {
   })
   async sendMail(
     @GetUser() user: User,
-    @Body() { intraId }: SigninIntraAuthDto,
+    @Body() { intraId }: SigninIntraAuthRequestDto,
   ) {
     await this.intraAuthService.signin(intraId, user);
   }
