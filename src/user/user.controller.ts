@@ -39,7 +39,6 @@ import { CommentResponseDto } from '@root/comment/dto/response/comment-response.
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly notificationService: NotificationService,
     private readonly reactionService: ReactionService,
     private readonly articleService: ArticleService,
     private readonly commentService: CommentService,
@@ -48,7 +47,7 @@ export class UserController {
   @Get('me')
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
-  getOne(@GetUser() user: User): UserResponseDto {
+  findOne(@GetUser() user: User): UserResponseDto {
     return UserResponseDto.of({ user });
   }
 
@@ -57,17 +56,17 @@ export class UserController {
   @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
   @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
-  getProfile(@GetUser() user: User): UserResponseDto {
+  findOneProfile(@GetUser() user: User): UserResponseDto {
     return UserResponseDto.of({ user });
   }
 
   @Get(':id')
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
   @ApiOkResponse({ description: '유저 정보', type: UserResponseDto })
-  async getOneById(
+  async findOneById(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<UserResponseDto> {
-    const user = await this.userService.getOne(id);
+  ): Promise<UserResponseDto | never> {
+    const user = await this.userService.findOneOrFail(id);
 
     return UserResponseDto.of({ user });
   }
