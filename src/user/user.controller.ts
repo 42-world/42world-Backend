@@ -94,11 +94,11 @@ export class UserController {
 
   @Get('me/like-articles')
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
-  @ApiPaginatedResponse(Article)
+  @ApiPaginatedResponse(ArticleResponseDto)
   async findAllReactionArticle(
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Article>> {
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { likeArticles, totalCount } =
       await this.reactionService.findAllArticleByUserId(userId, options);
     return PaginationResponseDto.of({
@@ -113,11 +113,11 @@ export class UserController {
 
   @Get('me/articles')
   @ApiOperation({ summary: '내가 작성한 글' })
-  @ApiPaginatedResponse(Article)
+  @ApiPaginatedResponse(ArticleResponseDto)
   async findAllMyArticle(
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Article>> {
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } =
       await this.articleService.findAllByWriterId(userId, options);
     return PaginationResponseDto.of({
