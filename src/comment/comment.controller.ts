@@ -21,7 +21,6 @@ import { CommentService } from './comment.service';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 import { CommentResponseDto } from './dto/response/comment-response.dto';
-import { Comment } from './entities/comment.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -32,7 +31,7 @@ export class CommentController {
 
   @Post()
   @ApiOperation({ summary: '댓글 생성' })
-  @ApiOkResponse({ description: '생성된 댓글', type: Comment })
+  @ApiOkResponse({ description: '생성된 댓글', type: CreateCommentRequestDto })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async create(
     @GetUser() writer: User,
@@ -53,7 +52,7 @@ export class CommentController {
 
   @Put(':id')
   @ApiOperation({ summary: '댓글 수정' })
-  @ApiOkResponse({ description: '수정된 댓글', type: Comment })
+  @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
   updateContent(
     @Param('id', ParseIntPipe) id: number,
