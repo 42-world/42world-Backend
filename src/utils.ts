@@ -1,5 +1,6 @@
 import { CookieOptions } from 'express';
 import axios from 'axios';
+import { UserRole } from './user/interfaces/userrole.interface';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -43,3 +44,17 @@ export const errorHook = async (
     console.error(e);
   }
 };
+
+export function compareRole(rule: UserRole, mine: UserRole): boolean {
+  const toRoleId = (r: UserRole) => {
+    switch (r) {
+      case UserRole.ADMIN:
+        return 3;
+      case UserRole.CADET:
+        return 2;
+      case UserRole.NOVICE:
+        return 1;
+    }
+  };
+  return toRoleId(rule) <= toRoleId(mine);
+}
