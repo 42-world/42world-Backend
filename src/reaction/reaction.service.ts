@@ -74,7 +74,7 @@ export class ReactionService {
       commentId,
       type,
     });
-    const comment = await this.commentService.getOne(commentId);
+    const comment = await this.commentService.findOneByIdOrFail(commentId);
 
     if (reactionArticle) {
       this.reactionCommentRepository.delete({ id: reactionArticle.id });

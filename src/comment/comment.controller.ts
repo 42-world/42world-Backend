@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -17,9 +18,9 @@ import {
 import { GetUser } from '@root/auth/auth.decorator';
 import { User } from '@root/user/entities/user.entity';
 import { CommentService } from './comment.service';
-import { CreateCommentResultDto } from './dto/create-comment-result.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
+import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
+import { CommentResponseDto } from './dto/response/comment-response.dto';
 import { Comment } from './entities/comment.entity';
 
 @ApiCookieAuth()
@@ -32,36 +33,44 @@ export class CommentController {
   @Post()
   @ApiOperation({ summary: '댓글 생성' })
   @ApiOkResponse({ description: '생성된 댓글', type: Comment })
+  @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async create(
     @GetUser() writer: User,
-    @Body() createCommentDto: CreateCommentDto,
-  ): Promise<CreateCommentResultDto> {
+    @Body() createCommentDto: CreateCommentRequestDto,
+  ): Promise<CommentResponseDto | never> {
     const comment = await this.commentService.create(
       writer.id,
       createCommentDto,
     );
 
-    return { ...comment, writer: { nickname: writer.nickname } };
+    return CommentResponseDto.of({
+      comment,
+      writer,
+      isLike: false,
+      isSelf: true,
+    });
   }
 
   @Put(':id')
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '수정된 댓글', type: Comment })
+  @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
   updateContent(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
-    @Body() updateCommentDto: UpdateCommentDto,
-  ): Promise<Comment> {
-    return this.commentService.updateContent(id, writerId, updateCommentDto);
+    @GetUser() writer: User,
+    @Body() updateCommentDto: UpdateCommentRequestDto,
+  ): Promise<void | never> {
+    return this.commentService.updateContent(id, writer.id, updateCommentDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
+  @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
   remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
-  ): Promise<void> {
+  ): Promise<void | never> {
     return this.commentService.remove(id, writerId);
   }
 }
