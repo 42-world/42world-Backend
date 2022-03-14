@@ -42,7 +42,7 @@ export class ReactionService {
       articleId,
       type,
     });
-    const article = await this.articleService.findOneOrFailById(articleId);
+    const article = await this.articleService.findOneByIdOrFail(articleId);
 
     if (reactionArticle) {
       this.reactionArticleRepository.delete({ id: reactionArticle.id });

@@ -70,6 +70,16 @@ export class ArticleService {
     };
   }
 
+  findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    return this.articleRepository.findAllByWriterId(writerId, options);
+  }
+
   findAllBest(options: FindAllBestDto): Promise<Article[]> {
     return this.articleRepository.findAllBest(options);
   }
@@ -78,7 +88,7 @@ export class ArticleService {
     return this.articleRepository.existOrFail(id);
   }
 
-  findOneOrFailById(id: number): Promise<Article | never> {
+  findOneByIdOrFail(id: number): Promise<Article | never> {
     return this.articleRepository.findOneOrFail(id);
   }
 
@@ -174,15 +184,5 @@ export class ArticleService {
     }
     await this.articleRepository.decreaseLikeCount(article.id);
     return { ...article, likeCount: article.likeCount - 1 };
-  }
-
-  findAllMyArticle(
-    userId: number,
-    options: PaginationRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    return this.articleRepository.findAllMyArticle(userId, options);
   }
 }

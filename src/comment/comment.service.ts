@@ -28,7 +28,7 @@ export class CommentService {
     writerId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    const article = await this.articleService.findOneOrFailById(
+    const article = await this.articleService.findOneByIdOrFail(
       createCommentDto.articleId,
     );
     const comment = await this.commentRepository.save({

@@ -30,7 +30,7 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  findOneOrFail(id: number): Promise<User | never> {
+  findOneByIdOrFail(id: number): Promise<User | never> {
     return this.userRepository.findOneOrFail(id);
   }
 

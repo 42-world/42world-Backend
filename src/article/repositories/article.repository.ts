@@ -24,6 +24,26 @@ export class ArticleRepository extends Repository<Article> {
     return { articles, totalCount };
   }
 
+  async findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('article.writerId = :id', { id: writerId })
+      .skip(options.skip)
+      .take(options.take)
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
   async findAllBest(options: FindAllBestDto): Promise<Article[]> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
@@ -45,26 +65,6 @@ export class ArticleRepository extends Repository<Article> {
     if (isExist === '0') {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
-  }
-
-  async findAllMyArticle(
-    userId: number,
-    options: PaginationRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    const query = this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.category', 'category')
-      .andWhere('article.writerId = :id', { id: userId })
-      .skip(options.skip)
-      .take(options.take)
-      .orderBy('article.createdAt', options.order);
-
-    const totalCount = await query.getCount();
-    const articles = await query.getMany();
-
-    return { articles, totalCount };
   }
 
   async increaseViewCount(id: number): Promise<void> {

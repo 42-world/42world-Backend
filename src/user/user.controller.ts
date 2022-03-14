@@ -18,7 +18,6 @@ import {
 import { AlsoNovice, GetUser } from '@auth/auth.decorator';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { NotificationService } from '@root/notification/notification.service';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
@@ -66,7 +65,7 @@ export class UserController {
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserResponseDto | never> {
-    const user = await this.userService.findOneOrFail(id);
+    const user = await this.userService.findOneByIdOrFail(id);
 
     return UserResponseDto.of({ user });
   }
@@ -119,10 +118,8 @@ export class UserController {
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<Article>> {
-    const { articles, totalCount } = await this.articleService.findAllMyArticle(
-      userId,
-      options,
-    );
+    const { articles, totalCount } =
+      await this.articleService.findAllByWriterId(userId, options);
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, userId }),
       options,
