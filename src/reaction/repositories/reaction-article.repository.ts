@@ -21,8 +21,11 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
 
   async findAllArticleByUserId(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<ReactionArticle>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    likeArticles: ReactionArticle[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
@@ -31,9 +34,9 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
       .take(options.take)
       .orderBy('reactionArticle.createdAt', options.order);
 
+    const likeArticles = await query.getMany();
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto(options, totalCount);
-    return new PaginationResponseDto(entities, pageMetaDto);
+
+    return { likeArticles, totalCount };
   }
 }

@@ -122,8 +122,11 @@ export class ReactionService {
 
   findAllArticleByUserId(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<ReactionArticle>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    likeArticles: ReactionArticle[];
+    totalCount: number;
+  }> {
     return this.reactionArticleRepository.findAllArticleByUserId(
       userId,
       options,

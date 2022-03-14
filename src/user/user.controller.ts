@@ -31,7 +31,6 @@ import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dt
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { ArticleResponseDto } from '@root/article/dto/response/article-response.dto';
 import { CommentResponseDto } from '@root/comment/dto/response/comment-response.dto';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -97,12 +96,21 @@ export class UserController {
 
   @Get('me/like-articles')
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
-  @ApiPaginatedResponse(ReactionArticle)
-  findAllReactionArticle(
+  @ApiPaginatedResponse(Article)
+  async findAllReactionArticle(
     @GetUser('id') userId: number,
     @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<ReactionArticle>> {
-    return this.reactionService.findAllArticleByUserId(userId, options);
+  ): Promise<PaginationResponseDto<Article>> {
+    const { likeArticles, totalCount } =
+      await this.reactionService.findAllArticleByUserId(userId, options);
+    return PaginationResponseDto.of({
+      data: ArticleResponseDto.ofArray({
+        articles: likeArticles.map((e) => e.article),
+        userId,
+      }),
+      options,
+      totalCount,
+    });
   }
 
   @Get('me/articles')
