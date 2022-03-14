@@ -81,14 +81,14 @@ export class ArticleController {
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
     @GetUser() user: User,
-    @Query() findArticleRequestDto: FindAllArticleRequestDto,
+    @Query() options: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, category, totalCount } =
-      await this.articleService.findAll(user, findArticleRequestDto);
+      await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, category, userId: user.id }),
-      paginationRequestDto: findArticleRequestDto as PaginationRequestDto,
+      options,
       totalCount,
     });
   }
@@ -119,13 +119,10 @@ export class ArticleController {
   async getComments(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-    @Query() paginationRequestDto: PaginationRequestDto,
+    @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
     const { comments, totalCount } =
-      await this.commentService.findAllByArticleId(
-        articleId,
-        paginationRequestDto,
-      );
+      await this.commentService.findAllByArticleId(articleId, options);
     const reactionComments =
       await this.reactionService.findAllMyReactionComment(userId, articleId);
 
@@ -135,7 +132,7 @@ export class ArticleController {
         reactionComments,
         userId,
       }),
-      paginationRequestDto,
+      options,
       totalCount,
     });
   }

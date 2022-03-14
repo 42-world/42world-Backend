@@ -18,12 +18,12 @@ export class PaginationResponseDto<T> {
 
   static of<T>(config: {
     data: T[];
-    paginationRequestDto: PaginationRequestDto;
+    options: PaginationRequestDto;
     totalCount: number;
   }): PaginationResponseDto<T> {
     return new PaginationResponseDto(
       config.data,
-      new PageMetaDto(config.paginationRequestDto, config.totalCount),
+      new PageMetaDto(config.options, config.totalCount),
     );
   }
 }

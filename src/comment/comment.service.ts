@@ -42,7 +42,7 @@ export class CommentService {
 
   async findAllByArticleId(
     articleId: number,
-    paginationRequestDto: PaginationRequestDto,
+    options: PaginationRequestDto,
   ): Promise<
     | {
         comments: Comment[];
@@ -51,10 +51,7 @@ export class CommentService {
     | never
   > {
     await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(
-      articleId,
-      paginationRequestDto,
-    );
+    return this.commentRepository.findAllByArticleId(articleId, options);
   }
 
   getOne(id: number, options?: FindOneOptions): Promise<Comment> {
