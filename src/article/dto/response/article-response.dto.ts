@@ -4,6 +4,7 @@ import { Article } from '@root/article/entities/article.entity';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
+import { CategoryUserAbilityResponseDto } from '@root/category/dto/response/category-user-ability-response.dto';
 
 export class ArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
@@ -31,9 +32,9 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     content: string;
     viewCount: number;
     categoryId: number;
-    category: Category;
+    category: CategoryUserAbilityResponseDto;
     writerId: number;
-    writer: User;
+    writer: UserResponseDto;
     commentCount: number;
     likeCount: number;
     createdAt: Date;
@@ -50,7 +51,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     this.categoryId = config.categoryId;
     this.category = config.category;
     this.writerId = config.writerId;
-    this.writer = UserResponseDto.of({ user: config.writer });
+    this.writer = config.writer;
     this.commentCount = config.commentCount;
     this.likeCount = config.likeCount;
     this.createdAt = config.createdAt;
@@ -64,18 +65,24 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     category: Category;
     writer: User;
     isLike: boolean;
-    isSelf: boolean;
+    user: User;
   }): ArticleResponseDto {
     return new ArticleResponseDto({
       ...config.article,
       ...config,
+      category: CategoryUserAbilityResponseDto.of({
+        category: config.category,
+        user: config.user,
+      }),
+      writer: UserResponseDto.of({ user: config.writer }),
+      isSelf: config.user.id === config.writer.id,
     });
   }
 
   static ofArray(config: {
     articles: Article[];
     category?: Category;
-    userId: number;
+    user: User;
   }): ArticleResponseDto[] {
     return config.articles.map((article) =>
       ArticleResponseDto.of({
@@ -83,7 +90,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
         category: config.category || article.category,
         writer: article.writer,
         isLike: false,
-        isSelf: config.userId === article.writerId,
+        user: config.user,
       }),
     );
   }

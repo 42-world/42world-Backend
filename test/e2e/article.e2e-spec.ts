@@ -32,7 +32,6 @@ import {
 } from './utils/validate-test';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
-import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
 
 describe('Create Article (e2e)', () => {
@@ -381,7 +380,7 @@ describe('Create Article (e2e)', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
 
-      const result = response.body as DetailArticleDto;
+      const result = response.body;
       expect(result.title).toBe(dummyArticles[0].title);
       expect(result.content).toBe(dummyArticles[0].content);
       expect(result.categoryId).toBe(dummyArticles[0].categoryId);

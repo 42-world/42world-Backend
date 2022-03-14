@@ -58,20 +58,20 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
-    @GetUser() writer: User,
+    @GetUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<ArticleResponseDto | never> {
     const { article, category } = await this.articleService.create(
-      writer,
+      user,
       createArticleDto,
     );
 
     return ArticleResponseDto.of({
       article,
       category,
-      writer,
+      writer: user,
       isLike: false,
-      isSelf: true,
+      user,
     });
   }
 
@@ -87,7 +87,7 @@ export class ArticleController {
       await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, category, userId: user.id }),
+      data: ArticleResponseDto.ofArray({ articles, category, user }),
       options,
       totalCount,
     });
@@ -105,12 +105,12 @@ export class ArticleController {
     @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ArticleResponseDto | never> {
-    const { article, category, writer, isLike, isSelf } =
+    const { article, category, writer, isLike } =
       await this.articleService.findOneOrFail(articleId, user);
 
     if (article.writerId !== user.id)
       this.articleService.increaseViewCount(article.id);
-    return ArticleResponseDto.of({ article, category, writer, isLike, isSelf });
+    return ArticleResponseDto.of({ article, category, writer, isLike, user });
   }
 
   @Get(':id/comments')

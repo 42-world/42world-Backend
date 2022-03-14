@@ -21,7 +21,6 @@ import { User } from './entities/user.entity';
 import { ReactionService } from '@root/reaction/reaction.service';
 import { ArticleService } from '@article/article.service';
 import { CommentService } from '@comment/comment.service';
-import { Article } from '@article/entities/article.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { ApiPaginatedResponse } from '@root/pagination/pagination.decorator';
 import { UserResponseDto } from './dto/response/user-response.dto';
@@ -96,15 +95,15 @@ export class UserController {
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllReactionArticle(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { likeArticles, totalCount } =
-      await this.reactionService.findAllArticleByUserId(userId, options);
+      await this.reactionService.findAllArticleByUserId(user.id, options);
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({
         articles: likeArticles.map((e) => e.article),
-        userId,
+        user,
       }),
       options,
       totalCount,
@@ -115,13 +114,13 @@ export class UserController {
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllMyArticle(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } =
-      await this.articleService.findAllByWriterId(userId, options);
+      await this.articleService.findAllByWriterId(user.id, options);
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, userId }),
+      data: ArticleResponseDto.ofArray({ articles, user }),
       options,
       totalCount,
     });

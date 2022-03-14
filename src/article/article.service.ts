@@ -101,7 +101,6 @@ export class ArticleService {
         category: Category;
         writer: User;
         isLike: boolean;
-        isSelf: boolean;
       }
     | never
   > {
@@ -123,7 +122,6 @@ export class ArticleService {
       category: article.category,
       writer: article.writer,
       isLike,
-      isSelf: user.id === article.writerId,
     };
   }
 
