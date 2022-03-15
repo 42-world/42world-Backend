@@ -5,7 +5,7 @@ import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { compareRole } from '@root/utils';
 import { BaseCategoryDto } from '../base-category.dto';
 
-export class CategoryUserAbilityResponseDto extends PickType(BaseCategoryDto, [
+export class CategoryUserAuthResponseDto extends PickType(BaseCategoryDto, [
   'id',
   'name',
   'anonymity',
@@ -50,9 +50,9 @@ export class CategoryUserAbilityResponseDto extends PickType(BaseCategoryDto, [
   static of(config: {
     category: Category;
     user: User;
-  }): CategoryUserAbilityResponseDto {
+  }): CategoryUserAuthResponseDto {
     const userRole = config.user.role as UserRole;
-    return new CategoryUserAbilityResponseDto({
+    return new CategoryUserAuthResponseDto({
       ...config.category,
       isArticleWritable: compareRole(
         config.category.writableArticle as UserRole,

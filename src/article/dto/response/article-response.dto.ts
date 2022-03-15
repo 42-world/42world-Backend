@@ -4,7 +4,7 @@ import { Article } from '@root/article/entities/article.entity';
 import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
-import { CategoryUserAbilityResponseDto } from '@root/category/dto/response/category-user-ability-response.dto';
+import { CategoryUserAuthResponseDto } from '@root/category/dto/response/category-user-auth-response.dto';
 
 export class ArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
@@ -32,7 +32,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     content: string;
     viewCount: number;
     categoryId: number;
-    category: CategoryUserAbilityResponseDto;
+    category: CategoryUserAuthResponseDto;
     writerId: number;
     writer: UserResponseDto;
     commentCount: number;
@@ -70,7 +70,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     return new ArticleResponseDto({
       ...config.article,
       ...config,
-      category: CategoryUserAbilityResponseDto.of({
+      category: CategoryUserAuthResponseDto.of({
         category: config.category,
         user: config.user,
       }),
