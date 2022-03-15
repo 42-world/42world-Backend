@@ -12,6 +12,7 @@ import { ImageModule } from '@root/image/image.module';
 import * as redisStore from 'cache-manager-ioredis';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
+
 import { AppController } from './app.controller';
 import { ArticleModule } from './article/article.module';
 import { IntraAuthModule } from './intra-auth/intra-auth.module';
@@ -27,6 +28,7 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
 import { NotificationModule } from './notification/notification.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { UserModule } from './user/user.module';
+import { AdminModule } from '@root/admin/admin.module';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { UserModule } from './user/user.module';
         },
       },
     }),
+    AdminModule.register(),
     CommentModule,
     UserModule,
     ArticleModule,

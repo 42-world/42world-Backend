@@ -10,10 +10,11 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Index,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity('category')
-export class Category {
+export class Category extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;

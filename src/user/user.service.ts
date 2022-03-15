@@ -34,7 +34,7 @@ export class UserService {
   }
 
   async updateProfile(user: User, updateUserDto: UpdateUserDto): Promise<User> {
-    const newUser: User = {
+    const newUser = {
       ...user,
       ...updateUserDto,
     };
