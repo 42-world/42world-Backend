@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,7 +12,7 @@ import {
 import { User } from '@user/entities/user.entity';
 
 @Entity('intra_auth')
-export class IntraAuth {
+export class IntraAuth extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
