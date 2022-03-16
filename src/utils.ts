@@ -1,5 +1,6 @@
 import { CookieOptions } from 'express';
 import axios from 'axios';
+import { PaginationRequestDto } from './pagination/dto/pagination-request.dto';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -42,4 +43,8 @@ export const errorHook = async (
   } catch (e) {
     console.error(e);
   }
+};
+
+export const getPaginationSkip = (paginationDto: PaginationRequestDto) => {
+  return (paginationDto.page - 1) * paginationDto.take;
 };

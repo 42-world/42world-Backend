@@ -4,6 +4,7 @@ import { Comment } from '@comment/entities/comment.entity';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
+import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
@@ -17,7 +18,7 @@ export class CommentRepository extends Repository<Comment> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
       .andWhere('comment.articleId = :id', { id: articleId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
 
@@ -38,13 +39,13 @@ export class CommentRepository extends Repository<Comment> {
 
   async findAllMyComment(
     userId: number,
-    options?: PaginationRequestDto,
+    options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<Comment>> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('comment.writerId = :id', { id: userId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
 
