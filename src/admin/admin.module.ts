@@ -9,6 +9,7 @@ import { Database, Resource } from '@adminjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '@user/entities/user.entity';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
+import { Notification } from '@notification/entities/notification.entity';
 
 AdminJS.registerAdapter({ Database, Resource });
 
@@ -21,7 +22,7 @@ export class AdminModule {
         return {
           adminJsOptions: {
             rootPath: '/admin',
-            resources: [Category, User, IntraAuth],
+            resources: [Category, User, IntraAuth, Notification],
           },
           auth: {
             authenticate: async (email, password) => ({ email: 'test' }),

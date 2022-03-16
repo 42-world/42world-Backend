@@ -11,6 +11,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  BaseEntity,
 } from 'typeorm';
 
 export enum NotificationType {
@@ -19,7 +20,7 @@ export enum NotificationType {
 }
 
 @Entity('notification')
-export class Notification {
+export class Notification extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
