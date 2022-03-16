@@ -11,6 +11,7 @@ import {
   DeleteDateColumn,
   Index,
   OneToOne,
+  BaseEntity,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
@@ -19,7 +20,7 @@ import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 import { UserRole } from '@user/interfaces/userrole.interface';
 
 @Entity('user')
-export class User {
+export class User extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
