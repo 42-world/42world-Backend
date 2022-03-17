@@ -3,6 +3,7 @@ import { Article } from '@article/entities/article.entity';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -12,7 +13,7 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })
       .orderBy('article.createdAt', options.order);
@@ -34,7 +35,7 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('article.writerId = :id', { id: writerId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('article.createdAt', options.order);
 

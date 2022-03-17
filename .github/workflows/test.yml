@@ -1,0 +1,45 @@
+name: Test CI
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DB_HOST: ${{secrets.DB_HOST}}
+      DB_NAME: ${{secrets.DB_NAME}}
+      DB_PORT: ${{secrets.DB_PORT}}
+      DB_USER_NAME: ${{secrets.DB_USER_NAME}}
+      DB_USER_PASSWORD: ${{secrets.DB_USER_PASSWORD}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      GITHUB_CALLBACK_URL: ${{secrets.NEST_GITHUB_CALLBACK_URL}}
+      GITHUB_CLIENT_ID: ${{secrets.NEST_GITHUB_CLIENT_ID}}
+      GITHUB_CLIENT_SECRET: ${{secrets.NEST_GITHUB_CLIENT_SECRET}}
+      AWS_REGION: ${{secrets.AWS_REGION}}
+      AWS_ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY}}
+      AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY}}
+      AWS_S3_UPLOAD_BUCKET: ${{secrets.AWS_S3_UPLOAD_BUCKET}}
+      ACCESS_TOKEN_KEY: ${{secrets.ACCESS_TOKEN_KEY}}
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: GitHub Action for Yarn
+        uses: Borales/actions-yarn@v2.3.0
+      - run: ./run_test_db.sh
+      - run: yarn test:e2e

@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from '@comment/entities/comment.entity';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
@@ -15,7 +16,7 @@ export class CommentRepository extends Repository<Comment> {
     const query = this.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.writer', 'writer')
       .andWhere('comment.articleId = :id', { id: articleId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
 
@@ -36,7 +37,7 @@ export class CommentRepository extends Repository<Comment> {
       .leftJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('comment.writerId = :id', { id: writerId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
 

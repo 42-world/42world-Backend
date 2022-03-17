@@ -1,4 +1,5 @@
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { getPaginationSkip } from '@root/utils';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,
@@ -29,7 +30,7 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
-      .skip(options.skip)
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('reactionArticle.createdAt', options.order);
 

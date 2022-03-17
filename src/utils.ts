@@ -1,6 +1,7 @@
 import { CookieOptions } from 'express';
 import axios from 'axios';
 import { UserRole } from './user/interfaces/userrole.interface';
+import { PaginationRequestDto } from './pagination/dto/pagination-request.dto';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -45,6 +46,7 @@ export const errorHook = async (
   }
 };
 
+
 export function compareRole(rule: UserRole, mine: UserRole): boolean {
   const toRoleId = (r: UserRole) => {
     switch (r) {
@@ -58,3 +60,8 @@ export function compareRole(rule: UserRole, mine: UserRole): boolean {
   };
   return toRoleId(rule) <= toRoleId(mine);
 }
+
+export const getPaginationSkip = (paginationDto: PaginationRequestDto) => {
+  return (paginationDto.page - 1) * paginationDto.take;
+};
+
