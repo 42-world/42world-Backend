@@ -32,6 +32,7 @@ import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dt
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { User } from '@root/user/entities/user.entity';
 import { CommentResponseDto } from '../comment/dto/response/comment-response.dto';
+import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -70,7 +71,6 @@ export class ArticleController {
       article,
       category,
       writer: user,
-      isLike: false,
       user,
     });
   }
@@ -98,19 +98,25 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
-    type: ArticleResponseDto,
+    type: FindOneArticleResponseDto,
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
     @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<ArticleResponseDto | never> {
+  ): Promise<FindOneArticleResponseDto | never> {
     const { article, category, writer, isLike } =
       await this.articleService.findOneOrFail(articleId, user);
 
     if (article.writerId !== user.id)
       this.articleService.increaseViewCount(article.id);
-    return ArticleResponseDto.of({ article, category, writer, isLike, user });
+    return FindOneArticleResponseDto.of({
+      article,
+      category,
+      writer,
+      isLike,
+      user,
+    });
   }
 
   @Get(':id/comments')

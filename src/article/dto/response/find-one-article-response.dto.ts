@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseArticleDto } from '@article/dto/base-article.dto';
 import { Article } from '@root/article/entities/article.entity';
 import { Category } from '@root/category/entities/category.entity';
@@ -6,7 +6,7 @@ import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 import { CategoryUserAuthResponseDto } from '@root/category/dto/response/category-user-auth-response.dto';
 
-export class ArticleResponseDto extends PickType(BaseArticleDto, [
+export class FindOneArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
   'title',
   'content',
@@ -20,6 +20,12 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
   'createdAt',
   'updatedAt',
 ]) {
+  @ApiProperty({ example: false })
+  isLike!: boolean;
+
+  @ApiProperty({ example: false })
+  isSelf!: boolean;
+
   constructor(config: {
     id: number;
     title: string;
@@ -33,6 +39,8 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     likeCount: number;
     createdAt: Date;
     updatedAt: Date;
+    isLike: boolean;
+    isSelf: boolean;
   }) {
     super();
 
@@ -48,15 +56,18 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     this.likeCount = config.likeCount;
     this.createdAt = config.createdAt;
     this.updatedAt = config.updatedAt;
+    this.isLike = config.isLike;
+    this.isSelf = config.isSelf;
   }
 
   static of(config: {
     article: Article;
     category: Category;
     writer: User;
+    isLike: boolean;
     user: User;
-  }): ArticleResponseDto {
-    return new ArticleResponseDto({
+  }): FindOneArticleResponseDto {
+    return new FindOneArticleResponseDto({
       ...config.article,
       ...config,
       category: CategoryUserAuthResponseDto.of({
@@ -64,21 +75,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
         user: config.user,
       }),
       writer: UserResponseDto.of({ user: config.writer }),
+      isSelf: config.user.id === config.writer.id,
     });
-  }
-
-  static ofArray(config: {
-    articles: Article[];
-    category?: Category;
-    user: User;
-  }): ArticleResponseDto[] {
-    return config.articles.map((article) =>
-      ArticleResponseDto.of({
-        article,
-        category: config.category || article.category,
-        writer: article.writer,
-        user: config.user,
-      }),
-    );
   }
 }
