@@ -127,20 +127,20 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
     const { comments, totalCount } =
-      await this.commentService.findAllByArticleId(articleId, options);
+      await this.commentService.findAllByArticleId(user, articleId, options);
     const reactionComments =
-      await this.reactionService.findAllMyReactionComment(userId, articleId);
+      await this.reactionService.findAllMyReactionComment(user.id, articleId);
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
         comments,
         reactionComments,
-        userId,
+        userId: user.id,
       }),
       options,
       totalCount,

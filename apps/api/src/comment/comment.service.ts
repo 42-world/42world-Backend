@@ -13,6 +13,8 @@ import {
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
+import { User } from '@root/user/entities/user.entity';
+import { CategoryService } from '@root/category/category.service';
 
 @Injectable()
 export class CommentService {
@@ -21,18 +23,23 @@ export class CommentService {
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(
-    writerId: number,
+    writer: User,
     createCommentDto: CreateCommentRequestDto,
   ): Promise<Comment | never> {
     const article = await this.articleService.findOneByIdOrFail(
       createCommentDto.articleId,
     );
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('writableComment', category, writer);
     const comment = await this.commentRepository.save({
       ...createCommentDto,
-      writerId,
+      writerId: writer.id,
     });
     this.notificationService.createNewComment(article, comment);
     this.articleService.increaseCommentCount(article.id);
@@ -40,6 +47,7 @@ export class CommentService {
   }
 
   async findAllByArticleId(
+    user: User,
     articleId: number,
     options: PaginationRequestDto,
   ): Promise<
@@ -49,7 +57,11 @@ export class CommentService {
       }
     | never
   > {
-    await this.articleService.existOrFail(articleId);
+    const article = await this.articleService.findOneByIdOrFail(articleId);
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('readableComment', category, user);
     return this.commentRepository.findAllByArticleId(articleId, options);
   }
 
