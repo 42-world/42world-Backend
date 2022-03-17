@@ -3,6 +3,7 @@ import { CategoryService } from '@api/category/category.service';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { NotificationService } from '@api/notification/notification.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
@@ -53,6 +54,7 @@ export class CommentService {
   ): Promise<
     | {
         comments: Comment[];
+        category: Category;
         totalCount: number;
       }
     | never
@@ -62,7 +64,9 @@ export class CommentService {
       article.categoryId,
     );
     this.categoryService.checkAvailable('readableComment', category, user);
-    return this.commentRepository.findAllByArticleId(articleId, options);
+    const { comments, totalCount } =
+      await this.commentRepository.findAllByArticleId(articleId, options);
+    return { comments, category, totalCount };
   }
 
   findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {

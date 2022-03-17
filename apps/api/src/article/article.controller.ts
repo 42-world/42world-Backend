@@ -5,7 +5,9 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
 import { ReactionService } from '@api/reaction/reaction.service';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
+import { compareRole } from '@app/utils/utils';
 import {
   Body,
   Controller,
@@ -109,8 +111,14 @@ export class ArticleController {
     @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<FindOneArticleResponseDto | never> {
-    const { article, category, writer, isLike } =
+    const { article, category, writer } =
       await this.articleService.findOneOrFail(articleId, user);
+    let isLike = false;
+    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
+      isLike = await this.reactionService.isMyReactionArticle(
+        user.id,
+        article.id,
+      );
 
     if (article.writerId !== user.id)
       this.articleService.increaseViewCount(article.id);
@@ -132,10 +140,14 @@ export class ArticleController {
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
-    const { comments, totalCount } =
+    const { comments, category, totalCount } =
       await this.commentService.findAllByArticleId(user, articleId, options);
-    const reactionComments =
-      await this.reactionService.findAllMyReactionComment(user.id, articleId);
+    let reactionComments = [];
+    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
+      reactionComments = await this.reactionService.findAllMyReactionComment(
+        user.id,
+        articleId,
+      );
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
