@@ -1,6 +1,7 @@
 import { GetUser } from '@api/auth/auth.decorator';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
   Controller,
   HttpCode,
@@ -35,11 +36,11 @@ export class ReactionController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async reactionArticleCreateOrDelete(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ReactionResponseDto | never> {
     const { article, isLike } =
-      await this.reactionService.articleCreateOrDelete(userId, articleId);
+      await this.reactionService.articleCreateOrDelete(user, articleId);
 
     return ReactionResponseDto.of<Article>({ entity: article, isLike });
   }
@@ -53,13 +54,13 @@ export class ReactionController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 댓글' })
   async reactionCommentCreateOrDelete(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Param('articleId', ParseIntPipe) articleId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
   ): Promise<ReactionResponseDto | never> {
     const { comment, isLike } =
       await this.reactionService.commentCreateOrDelete(
-        userId,
+        user,
         articleId,
         commentId,
       );
