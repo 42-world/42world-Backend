@@ -2,6 +2,7 @@ import { IsString, IsInt, IsNotEmpty, MaxLength, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 import { CategoryResponseDto } from '@root/category/dto/response/category-response.dto';
+import { AnonyUserResponseDto } from '@root/user/dto/response/anony-user-response.dto';
 
 export class BaseArticleDto {
   @ApiProperty()
@@ -38,7 +39,7 @@ export class BaseArticleDto {
   writerId!: number;
 
   @ApiProperty({ type: () => UserResponseDto })
-  writer?: UserResponseDto;
+  writer?: UserResponseDto | AnonyUserResponseDto;
 
   @ApiProperty()
   commentCount!: number;

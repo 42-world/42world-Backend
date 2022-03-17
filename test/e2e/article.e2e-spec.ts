@@ -431,7 +431,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = response.body as FindOneArticleResponseDto;
+      const result = response.body;
       expect(result.title).toBe(articles[2].title);
       expect(result.content).toBe(articles[2].content);
       expect(result.categoryId).toBe(articles[2].categoryId);

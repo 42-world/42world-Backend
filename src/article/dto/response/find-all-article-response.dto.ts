@@ -3,6 +3,9 @@ import { BaseArticleDto } from '@article/dto/base-article.dto';
 import { Article } from '@root/article/entities/article.entity';
 import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
+import { Category } from '@root/category/entities/category.entity';
+import { AnonyUserResponseDto } from '@root/user/dto/response/anony-user-response.dto';
+import { ANONY_USER_ID } from '@root/user/constant';
 
 export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
@@ -24,7 +27,7 @@ export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
     viewCount: number;
     categoryId: number;
     writerId: number;
-    writer: UserResponseDto;
+    writer: UserResponseDto | AnonyUserResponseDto;
     commentCount: number;
     likeCount: number;
     createdAt: Date;
@@ -47,14 +50,22 @@ export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
 
   static of(config: {
     articles: Article[];
+    category: Category;
     user: User;
   }): FindAllArticleResponseDto[] {
-    return config.articles.map(
-      (article) =>
-        new FindAllArticleResponseDto({
-          ...article,
-          writer: UserResponseDto.of({ user: article.writer }),
-        }),
-    );
+    return config.articles.map((article) => {
+      const writer = config.category.anonymity
+        ? AnonyUserResponseDto.of()
+        : UserResponseDto.of({ user: article.writer });
+      const writerId = config.category.anonymity
+        ? ANONY_USER_ID
+        : article.writerId;
+
+      return new FindAllArticleResponseDto({
+        ...article,
+        writer,
+        writerId,
+      });
+    });
   }
 }

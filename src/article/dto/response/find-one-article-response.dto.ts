@@ -5,6 +5,8 @@ import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 import { CategoryResponseDto } from '@root/category/dto/response/category-response.dto';
+import { ANONY_USER_ID } from '@root/user/constant';
+import { AnonyUserResponseDto } from '@root/user/dto/response/anony-user-response.dto';
 
 export class FindOneArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
@@ -34,7 +36,7 @@ export class FindOneArticleResponseDto extends PickType(BaseArticleDto, [
     categoryId: number;
     category: CategoryResponseDto;
     writerId: number;
-    writer: UserResponseDto;
+    writer: UserResponseDto | AnonyUserResponseDto;
     commentCount: number;
     likeCount: number;
     createdAt: Date;
@@ -67,14 +69,23 @@ export class FindOneArticleResponseDto extends PickType(BaseArticleDto, [
     isLike: boolean;
     user: User;
   }): FindOneArticleResponseDto {
+    const category = CategoryResponseDto.of({
+      category: config.category,
+      user: config.user,
+    });
+    const writer = category.isAnonymous
+      ? AnonyUserResponseDto.of()
+      : UserResponseDto.of({ user: config.writer });
+    const writerId = category.isAnonymous
+      ? ANONY_USER_ID
+      : config.article.writerId;
+
     return new FindOneArticleResponseDto({
       ...config.article,
       ...config,
-      category: CategoryResponseDto.of({
-        category: config.category,
-        user: config.user,
-      }),
-      writer: UserResponseDto.of({ user: config.writer }),
+      category,
+      writer,
+      writerId,
       isSelf: config.user.id === config.writer.id,
     });
   }
