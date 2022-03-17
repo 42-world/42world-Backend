@@ -16,6 +16,11 @@ import { CommentModule } from '@comment/comment.module';
 import { CreateArticleRequestDto } from '@root/article/dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
+import {
+  ANONY_USER_CHARACTER,
+  ANONY_USER_ID,
+  ANONY_USER_NICKNAME,
+} from '@root/user/constant';
 
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
@@ -82,6 +87,7 @@ describe('Article', () => {
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
         dummy.article(categories.free.id, users.cadet[0].id, 'title2', 'text2'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl3', 'text3'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -222,6 +228,30 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    test('[성공] GET - 익명 게시글 목록 조회', async () => {
+      const findArticleRequestDto = {
+        categoryId: categories.anony.id,
+      };
+
+      const response = await request(httpServer)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles[0].id).toBe(articles[2].id);
+      expect(responseArticles[0].title).toBe(articles[2].title);
+      expect(responseArticles[0].content).toBe(articles[2].content);
+      expect(responseArticles[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.role).toBeUndefined();
+      expect(responseArticles[0].writer.createdAt).toBeUndefined();
+      expect(responseArticles[0].writer.updatedAt).toBeUndefined();
+      expect(responseArticles[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseArticles[0].writer.character).toBe(ANONY_USER_CHARACTER);
+    });
+
     test('[성공] GET - 게시글 목록 조회 권한 높은사람', async () => {
       const findArticleRequestDto = {
         categoryId: categories.free.id,
@@ -357,6 +387,7 @@ describe('Article', () => {
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
         dummy.article(categories.free.id, users.cadet[1].id, 'title1', 'text1'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl1', 'text1'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -390,6 +421,28 @@ describe('Article', () => {
       const response = await request(httpServer).get(`/articles/${articleId}`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
+    test('[성공] GET - 익명 게시글 상세 조회', async () => {
+      const articleId = articles[2].id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const result = response.body as FindOneArticleResponseDto;
+      expect(result.title).toBe(articles[2].title);
+      expect(result.content).toBe(articles[2].content);
+      expect(result.categoryId).toBe(articles[2].categoryId);
+      expect(result.writerId).toBe(ANONY_USER_ID);
+      expect(result.category.id).toBe(categories.anony.id);
+      expect(result.writer.id).toBe(ANONY_USER_ID);
+      expect(result.writer.role).toBeUndefined();
+      expect(result.writer.createdAt).toBeUndefined();
+      expect(result.writer.updatedAt).toBeUndefined();
+      expect(result.writer.nickname).toContain(ANONY_USER_NICKNAME);
+      expect(result.writer.character).toBe(ANONY_USER_CHARACTER);
     });
 
     test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
