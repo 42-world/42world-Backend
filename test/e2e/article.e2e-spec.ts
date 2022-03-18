@@ -313,7 +313,6 @@ describe('Create Article (e2e)', () => {
         categoryId: dummyCategories[0].id,
         page: 1,
         take: 10,
-        skip: 0,
       });
 
       const response = await request(app)
