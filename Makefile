@@ -8,7 +8,7 @@ test:
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db redis
-	yarn start:dev
+	./wait-for-it.sh localhost:2345 -- yarn start:dev
 
 alpha:
 	cp ./config/.env.alpha ./config/.env
