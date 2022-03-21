@@ -8,7 +8,7 @@ import { BaseCategoryDto } from '../base-category.dto';
 export class CategoryResponseDto extends PickType(BaseCategoryDto, [
   'id',
   'name',
-  'anonymity',
+  'isAnonymous',
 ]) {
   @ApiProperty({ example: true })
   isArticleWritable!: boolean;
@@ -33,7 +33,7 @@ export class CategoryResponseDto extends PickType(BaseCategoryDto, [
     isCommentWritable: boolean;
     isCommentReadable: boolean;
     isReactionable: boolean;
-    anonymity: boolean;
+    isAnonymous: boolean;
   }) {
     super();
 
@@ -44,7 +44,7 @@ export class CategoryResponseDto extends PickType(BaseCategoryDto, [
     this.isCommentWritable = config.isCommentWritable;
     this.isCommentReadable = config.isCommentReadable;
     this.isReactionable = config.isReactionable;
-    this.anonymity = config.anonymity;
+    this.isAnonymous = config.isAnonymous;
   }
 
   static of(config: { category: Category; user: User }): CategoryResponseDto {
@@ -62,6 +62,7 @@ export class CategoryResponseDto extends PickType(BaseCategoryDto, [
       isCommentWritable: compareRole(writableComment, userRole),
       isCommentReadable: compareRole(readableComment, userRole),
       isReactionable: compareRole(reactionable, userRole),
+      isAnonymous: config.category.anonymity,
     });
   }
 }

@@ -27,5 +27,5 @@ export class BaseCategoryDto {
   reactionable!: string;
 
   @ApiProperty()
-  anonymity!: boolean;
+  isAnonymous!: boolean;
 }
