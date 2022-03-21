@@ -1,18 +1,15 @@
 import { PickType } from '@nestjs/swagger';
 import { BaseArticleDto } from '@article/dto/base-article.dto';
 import { Article } from '@root/article/entities/article.entity';
-import { Category } from '@root/category/entities/category.entity';
 import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
-import { CategoryUserAuthResponseDto } from '@root/category/dto/response/category-user-auth-response.dto';
 
-export class ArticleResponseDto extends PickType(BaseArticleDto, [
+export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
   'title',
   'content',
   'viewCount',
   'categoryId',
-  'category',
   'writerId',
   'writer',
   'commentCount',
@@ -26,7 +23,6 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     content: string;
     viewCount: number;
     categoryId: number;
-    category: CategoryUserAuthResponseDto;
     writerId: number;
     writer: UserResponseDto;
     commentCount: number;
@@ -41,7 +37,6 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     this.content = config.content;
     this.viewCount = config.viewCount;
     this.categoryId = config.categoryId;
-    this.category = config.category;
     this.writerId = config.writerId;
     this.writer = config.writer;
     this.commentCount = config.commentCount;
@@ -51,33 +46,15 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
   }
 
   static of(config: {
-    article: Article;
-    category: Category;
-    writer: User;
-    user: User;
-  }): ArticleResponseDto {
-    return new ArticleResponseDto({
-      ...config.article,
-      ...config,
-      category: CategoryUserAuthResponseDto.of({
-        category: config.category,
-        user: config.user,
-      }),
-      writer: UserResponseDto.of({ user: config.writer }),
-    });
-  }
-
-  static ofArray(config: {
     articles: Article[];
     user: User;
-  }): ArticleResponseDto[] {
-    return config.articles.map((article) =>
-      ArticleResponseDto.of({
-        article,
-        category: article.category,
-        writer: article.writer,
-        user: config.user,
-      }),
+  }): FindAllArticleResponseDto[] {
+    return config.articles.map(
+      (article) =>
+        new FindAllArticleResponseDto({
+          ...article,
+          writer: UserResponseDto.of({ user: article.writer }),
+        }),
     );
   }
 }

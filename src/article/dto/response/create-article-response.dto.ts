@@ -6,7 +6,7 @@ import { User } from '@root/user/entities/user.entity';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
 import { CategoryUserAuthResponseDto } from '@root/category/dto/response/category-user-auth-response.dto';
 
-export class ArticleResponseDto extends PickType(BaseArticleDto, [
+export class CreateArticleResponseDto extends PickType(BaseArticleDto, [
   'id',
   'title',
   'content',
@@ -55,8 +55,8 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     category: Category;
     writer: User;
     user: User;
-  }): ArticleResponseDto {
-    return new ArticleResponseDto({
+  }): CreateArticleResponseDto {
+    return new CreateArticleResponseDto({
       ...config.article,
       ...config,
       category: CategoryUserAuthResponseDto.of({
@@ -65,19 +65,5 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
       }),
       writer: UserResponseDto.of({ user: config.writer }),
     });
-  }
-
-  static ofArray(config: {
-    articles: Article[];
-    user: User;
-  }): ArticleResponseDto[] {
-    return config.articles.map((article) =>
-      ArticleResponseDto.of({
-        article,
-        category: article.category,
-        writer: article.writer,
-        user: config.user,
-      }),
-    );
   }
 }
