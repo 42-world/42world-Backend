@@ -176,7 +176,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.OK); // TODO - 코드가 이상하다 HttpStatus.OK을 돌려준다
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {
