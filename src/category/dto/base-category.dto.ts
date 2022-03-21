@@ -12,19 +12,19 @@ export class BaseCategoryDto {
   name!: string;
 
   @ApiProperty({ example: UserRole.CADET })
-  writableArticle!: string;
+  writableArticle!: UserRole;
 
   @ApiProperty({ example: UserRole.CADET })
-  readableArticle!: string;
+  readableArticle!: UserRole;
 
   @ApiProperty({ example: UserRole.CADET })
-  writableComment!: string;
+  writableComment!: UserRole;
 
   @ApiProperty({ example: UserRole.CADET })
-  readableComment!: string;
+  readableComment!: UserRole;
 
   @ApiProperty({ example: UserRole.CADET })
-  reactionable!: string;
+  reactionable!: UserRole;
 
   @ApiProperty()
   isAnonymous!: boolean;
