@@ -1,7 +1,6 @@
 import { IsString, IsInt, IsNotEmpty, MaxLength, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
-import { CategoryUserAuthResponseDto } from '@root/category/dto/response/category-user-auth-response.dto';
 import { CategoryResponseDto } from '@root/category/dto/response/category-response.dto';
 
 export class BaseArticleDto {
@@ -29,8 +28,8 @@ export class BaseArticleDto {
   @ApiProperty({ example: 1 })
   categoryId!: number;
 
-  @ApiProperty({ type: () => CategoryUserAuthResponseDto })
-  category?: CategoryUserAuthResponseDto | CategoryResponseDto;
+  @ApiProperty({ type: () => CategoryResponseDto })
+  category?: CategoryResponseDto;
 
   @IsInt()
   @Min(0)

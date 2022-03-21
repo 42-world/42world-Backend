@@ -17,7 +17,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Admin } from '@root/auth/auth.decorator';
+import { Admin, GetUser } from '@root/auth/auth.decorator';
+import { User } from '@root/user/entities/user.entity';
 import { CategoryService } from './category.service';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
 import { CategoryResponseDto } from './dto/response/category-response.dto';
@@ -35,20 +36,26 @@ export class CategoryController {
   @ApiOkResponse({ description: '카테고리', type: CategoryResponseDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   async create(
+    @GetUser() user: User,
     @Body() createCategoryDto: CreateCategoryRequestDto,
   ): Promise<CategoryResponseDto> {
     const category = await this.categoryService.create(createCategoryDto);
 
-    return CategoryResponseDto.of({ category });
+    return CategoryResponseDto.of({ category, user });
   }
 
   @Get()
   @ApiOperation({ summary: '카테고리 종류 가져오기' })
-  @ApiOkResponse({ description: '카테고리 종류', type: [CategoryResponseDto] })
-  async findAll(): Promise<CategoryResponseDto[]> {
+  @ApiOkResponse({
+    description: '카테고리 종류',
+    type: [CategoryResponseDto],
+  })
+  async findAll(@GetUser() user: User): Promise<CategoryResponseDto[]> {
     const categories = await this.categoryService.findAll();
 
-    return CategoryResponseDto.ofArray({ categories });
+    return categories.map((category) =>
+      CategoryResponseDto.of({ category, user }),
+    );
   }
 
   @Put(':id/name')
@@ -58,12 +65,13 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiNotFoundResponse({ description: '카테고리 없음' })
   async updateName(
+    @GetUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
   ): Promise<CreateCategoryRequestDto> {
     const category = await this.categoryService.updateName(id, name);
 
-    return CategoryResponseDto.of({ category });
+    return CategoryResponseDto.of({ category, user });
   }
 
   @Delete(':id')

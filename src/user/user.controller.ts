@@ -129,13 +129,13 @@ export class UserController {
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(MyCommentResponseDto)
   async findAllMyComment(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<MyCommentResponseDto>> {
     const { comments, totalCount } =
-      await this.commentService.findAllByWriterId(userId, options);
+      await this.commentService.findAllByWriterId(user.id, options);
     return PaginationResponseDto.of({
-      data: MyCommentResponseDto.ofArray({ comments }),
+      data: MyCommentResponseDto.ofArray({ comments, user }),
       options,
       totalCount,
     });

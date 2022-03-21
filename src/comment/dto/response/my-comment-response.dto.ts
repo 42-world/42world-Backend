@@ -5,6 +5,7 @@ import { CategoryResponseDto } from '@root/category/dto/response/category-respon
 import { Category } from '@root/category/entities/category.entity';
 import { BaseCommentDto } from '@root/comment/dto/base-comment.dto';
 import { Comment } from '@root/comment/entities/comment.entity';
+import { User } from '@root/user/entities/user.entity';
 
 class InnerArticleDto extends PickType(BaseArticleDto, [
   'id',
@@ -23,10 +24,17 @@ class InnerArticleDto extends PickType(BaseArticleDto, [
     this.category = config.category;
   }
 
-  static of(config: { article: Article; category: Category }): InnerArticleDto {
+  static of(config: {
+    article: Article;
+    category: Category;
+    user: User;
+  }): InnerArticleDto {
     return new InnerArticleDto({
       ...config.article,
-      category: CategoryResponseDto.of({ category: config.category }),
+      category: CategoryResponseDto.of({
+        category: config.category,
+        user: config.user,
+      }),
     });
   }
 }
@@ -59,21 +67,27 @@ export class MyCommentResponseDto extends PickType(BaseCommentDto, [
   static of(config: {
     comment: Comment;
     article: Article;
+    user: User;
   }): MyCommentResponseDto {
     return new MyCommentResponseDto({
       ...config.comment,
       article: InnerArticleDto.of({
         article: config.article,
         category: config.article.category,
+        user: config.user,
       }),
     });
   }
 
-  static ofArray(config: { comments: Comment[] }): MyCommentResponseDto[] {
+  static ofArray(config: {
+    comments: Comment[];
+    user: User;
+  }): MyCommentResponseDto[] {
     return config.comments.map((comment: Comment) => {
       return MyCommentResponseDto.of({
         comment,
         article: comment.article,
+        user: config.user,
       });
     });
   }
