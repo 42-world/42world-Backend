@@ -2,10 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Article } from '@article/entities/article.entity';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
-import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
-import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Article)
@@ -27,15 +24,36 @@ export class ArticleRepository extends Repository<Article> {
     return { articles, totalCount };
   }
 
-  async findAllBest(options: FindAllBestDto): Promise<Article[]> {
+  async findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('article.writerId = :id', { id: writerId })
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
+  async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .orderBy('article.like_count', 'DESC')
       .addOrderBy('article.created_at', 'DESC');
 
-    if (options.limit) {
-      query.limit(options.limit);
+    if (options.take) {
+      query.limit(options.take);
     }
 
     return query.getMany();
@@ -48,23 +66,6 @@ export class ArticleRepository extends Repository<Article> {
     if (isExist === '0') {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
-  }
-
-  async findAllMyArticle(
-    userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<Article>> {
-    const query = this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.category', 'category')
-      .andWhere('article.writerId = :id', { id: userId })
-      .skip(getPaginationSkip(options))
-      .take(options.take)
-      .orderBy('article.createdAt', options.order);
-
-    const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto(options, totalCount);
-    return new PaginationResponseDto(entities, pageMetaDto);
   }
 
   async increaseViewCount(id: number): Promise<void> {

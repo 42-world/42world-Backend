@@ -1,7 +1,7 @@
 import { IsString, IsInt, IsNotEmpty, Min, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Article } from '@root/article/entities/article.entity';
-import { User } from '@root/user/entities/user.entity';
+import { UserResponseDto } from '@root/user/dto/response/user-response.dto';
+import { ArticleResponseDto } from '@root/article/dto/response/article-response.dto';
 
 export class BaseCommentDto {
   @ApiProperty()
@@ -22,8 +22,8 @@ export class BaseCommentDto {
   @ApiProperty({ example: 1 })
   articleId!: number;
 
-  @ApiProperty()
-  article?: Article;
+  @ApiProperty({ type: () => ArticleResponseDto })
+  article?: ArticleResponseDto;
 
   @IsInt()
   @Min(0)
@@ -31,8 +31,8 @@ export class BaseCommentDto {
   @ApiProperty()
   writerId!: number;
 
-  @ApiProperty({ type: () => User })
-  writer?: User;
+  @ApiProperty({ type: () => UserResponseDto })
+  writer?: UserResponseDto;
 
   @ApiProperty()
   createdAt!: Date;

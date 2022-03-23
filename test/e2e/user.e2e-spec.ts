@@ -7,15 +7,14 @@ import * as cookieParser from 'cookie-parser';
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { UserRepository } from '@user/repositories/user.repository';
-import { User } from '@user/entities/user.entity';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { AuthService } from '@auth/auth.service';
 import { TestBaseModule } from './test.base.module';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { UpdateUserDto } from '@user/dto/update-user.dto';
 import { ArticleModule } from '@article/article.module';
 import { ArticleRepository } from '@article/repositories/article.repository';
 import { Article } from '@article/entities/article.entity';
+import { UpdateUserProfileRequestDto } from '@root/user/dto/request/update-user-profile-request.dto';
 import { CategoryModule } from '@category/category.module';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { Comment } from '@comment/entities/comment.entity';
@@ -161,7 +160,7 @@ describe('UserController (e2e)', () => {
       const updateData = {
         nickname: 'rockpell',
         character: 2,
-      } as UpdateUserDto;
+      } as UpdateUserProfileRequestDto;
 
       const response = await request(app)
         .put('/users')

@@ -1,12 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@root/article/article.service';
-import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
+import { Article } from '@root/article/entities/article.entity';
 import { CommentService } from '@root/comment/comment.service';
+import { Comment } from '@root/comment/entities/comment.entity';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { Repository } from 'typeorm';
-import { LikeCommentDto } from './dto/like-article.dto';
 import {
   ReactionArticle,
   ReactionArticleType,
@@ -36,31 +35,31 @@ export class ReactionService {
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<DetailArticleDto> {
-    const reactionArticle = await this.reactionArticleRepository.findOne({
+  ): Promise<
+    | {
+        article: Article;
+        isLike: boolean;
+      }
+    | never
+  > {
+    const isReaction = await this.reactionArticleRepository.isExist(
       userId,
       articleId,
       type,
-    });
-    const article = await this.articleService.findOneOrFailById(articleId);
+    );
+    let article = await this.articleService.findOneByIdOrFail(articleId);
+    let isLike: boolean;
 
-    if (reactionArticle) {
-      this.reactionArticleRepository.delete({ id: reactionArticle.id });
-      const res = await this.articleService.decreaseLikeCount(article);
-      const response = {
-        ...res,
-        isLike: false,
-      };
-      return response;
+    if (isReaction) {
+      await this.reactionArticleRepository.delete({ userId, articleId, type });
+      article = await this.articleService.decreaseLikeCount(article);
+      isLike = false;
     } else {
-      this.reactionArticleRepository.save({ userId, articleId, type });
-      const res = await this.articleService.increaseLikeCount(article);
-      const response = {
-        ...res,
-        isLike: true,
-      };
-      return response;
+      await this.reactionArticleRepository.save({ userId, articleId, type });
+      article = await this.articleService.increaseLikeCount(article);
+      isLike = true;
     }
+    return { article, isLike };
   }
 
   async commentCreateOrDelete(
@@ -68,22 +67,30 @@ export class ReactionService {
     articleId: number,
     commentId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
-  ): Promise<LikeCommentDto> {
-    const reactionArticle = await this.reactionCommentRepository.findOne({
+  ): Promise<
+    | {
+        comment: Comment;
+        isLike: boolean;
+      }
+    | never
+  > {
+    const isReaction = await this.reactionCommentRepository.findOne({
       userId,
       commentId,
       type,
     });
-    const comment = await this.commentService.getOne(commentId);
+    let comment = await this.commentService.findOneByIdOrFail(commentId);
+    let isLike: boolean;
 
-    if (reactionArticle) {
-      this.reactionCommentRepository.delete({ id: reactionArticle.id });
-      const res = await this.commentService.decreaseLikeCount(comment);
-      const response = {
-        ...res,
-        isLike: false,
-      };
-      return response;
+    if (isReaction) {
+      this.reactionCommentRepository.delete({
+        userId,
+        articleId,
+        commentId,
+        type,
+      });
+      comment = await this.commentService.decreaseLikeCount(comment);
+      isLike = false;
     } else {
       this.reactionCommentRepository.save({
         userId,
@@ -91,13 +98,10 @@ export class ReactionService {
         commentId,
         type,
       });
-      const res = await this.commentService.increaseLikeCount(comment);
-      const response = {
-        ...res,
-        isLike: true,
-      };
-      return response;
+      comment = await this.commentService.increaseLikeCount(comment);
+      isLike = true;
     }
+    return { comment, isLike };
   }
 
   isMyReactionArticle(
@@ -122,8 +126,11 @@ export class ReactionService {
 
   findAllArticleByUserId(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<ReactionArticle>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    likeArticles: ReactionArticle[];
+    totalCount: number;
+  }> {
     return this.reactionArticleRepository.findAllArticleByUserId(
       userId,
       options,

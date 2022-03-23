@@ -1,5 +1,4 @@
 import { Article } from '@article/entities/article.entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { ReactionComment } from '@root/reaction/entities/reaction-comment.entity';
 import { User } from '@user/entities/user.entity';
 import {
@@ -17,19 +16,15 @@ import {
 
 @Entity('comment')
 export class Comment {
-  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ApiProperty()
   @Column({ type: 'text', nullable: false })
   content!: string;
 
-  @ApiProperty()
   @Column({ default: 0 })
   likeCount!: number;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_article_id')
   articleId!: number;
@@ -41,12 +36,10 @@ export class Comment {
   @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
   article?: Article;
 
-  @ApiProperty()
   @Column({ nullable: false })
   @Index('ix_writer_id')
   writerId!: number;
 
-  @ApiProperty({ type: () => User })
   @ManyToOne(() => User, (user) => user.comment, {
     createForeignKeyConstraints: false,
     nullable: false,
@@ -54,20 +47,16 @@ export class Comment {
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
   writer?: User;
 
-  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @ApiProperty()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @ApiProperty()
   @DeleteDateColumn({ type: 'timestamp' })
   @Index('ix_deleted_at')
   deletedAt?: Date;
 
-  @ApiProperty({ type: () => ReactionComment })
   @OneToMany(
     () => ReactionComment,
     (reactionComment) => reactionComment.comment,

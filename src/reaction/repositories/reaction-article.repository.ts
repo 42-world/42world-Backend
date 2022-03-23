@@ -1,6 +1,4 @@
-import { PageMetaDto } from '@root/pagination/dto/page-meta.dto';
 import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { getPaginationSkip } from '@root/utils';
 import { EntityRepository, Repository } from 'typeorm';
 import {
@@ -22,19 +20,23 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
 
   async findAllArticleByUserId(
     userId: number,
-    options?: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<ReactionArticle>> {
+    options: PaginationRequestDto,
+  ): Promise<{
+    likeArticles: ReactionArticle[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
+      .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
       .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('reactionArticle.createdAt', options.order);
 
+    const likeArticles = await query.getMany();
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto(options, totalCount);
-    return new PaginationResponseDto(entities, pageMetaDto);
+
+    return { likeArticles, totalCount };
   }
 }
