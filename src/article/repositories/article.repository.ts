@@ -1,56 +1,62 @@
 import { EntityRepository, Repository } from 'typeorm';
-
 import { Article } from '@article/entities/article.entity';
-import { FindAllArticleDto } from '@article/dto/find-all-article.dto';
+import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { NotFoundException } from '@nestjs/common';
-import { FindAllBestDto } from '@root/best/dto/find-all-best.dto';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageMetaDto } from '@root/pagination/page-meta.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { getPaginationSkip } from '@root/utils';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options?: FindAllArticleDto): Promise<PageDto<Article>> {
+  async findAll(options: FindAllArticleRequestDto): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .where('category_id = :id', { id: options.categoryId })
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
+  async findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
-      .skip(options.skip)
+      .andWhere('article.writerId = :id', { id: writerId })
+      .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('article.createdAt', options.order);
 
-    if (options.categoryId)
-      query.andWhere('category.id = :id', { id: options.categoryId });
-
     const totalCount = await query.getCount();
-    const entities = await query.getMany();
-    const pageMetaDto = new PageMetaDto({
-      totalCount,
-      pageOptionsDto: options,
-    });
+    const articles = await query.getMany();
 
-    return new PageDto(entities, pageMetaDto);
+    return { articles, totalCount };
   }
 
-  async findAllBest(options: FindAllBestDto): Promise<Article[]> {
+  async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .orderBy('article.like_count', 'DESC')
       .addOrderBy('article.created_at', 'DESC');
 
-    if (options.limit) {
-      query.limit(options.limit);
+    if (options.take) {
+      query.limit(options.take);
     }
 
     return query.getMany();
-  }
-
-  async getOneDetailOrFail(id: number): Promise<Article> {
-    return this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.writer', 'writer')
-      .leftJoinAndSelect('article.category', 'category')
-      .leftJoinAndSelect('article.reactionArticle', 'reactionArticle')
-      .andWhere('article.id = :id', { id })
-      .getOneOrFail();
   }
 
   async existOrFail(id: number): Promise<void> {
@@ -62,10 +68,33 @@ export class ArticleRepository extends Repository<Article> {
     }
   }
 
-  async findAllMyArticle(userId: number): Promise<Article[]> {
-    return this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.category', 'category')
-      .andWhere('article.writerId = :id', { id: userId })
-      .getMany();
+  async increaseViewCount(id: number): Promise<void> {
+    await this.query(
+      `UPDATE article SET view_count = view_count + 1 WHERE id=${id}`,
+    );
+  }
+
+  async increaseCommentCount(id: number): Promise<void> {
+    await this.query(
+      `UPDATE article SET comment_count = comment_count + 1 WHERE id=${id}`,
+    );
+  }
+
+  async decreaseCommentCount(id: number): Promise<void> {
+    await this.query(
+      `UPDATE article SET comment_count = comment_count - 1 WHERE id=${id}`,
+    );
+  }
+
+  async increaseLikeCount(id: number): Promise<void> {
+    await this.query(
+      `UPDATE article SET like_count = like_count + 1 WHERE id=${id}`,
+    );
+  }
+
+  async decreaseLikeCount(id: number): Promise<void> {
+    await this.query(
+      `UPDATE article SET like_count = like_count - 1 WHERE id=${id}`,
+    );
   }
 }

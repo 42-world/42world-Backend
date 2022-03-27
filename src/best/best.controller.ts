@@ -12,6 +12,7 @@ import {
   ApiConflictResponse,
   ApiCookieAuth,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -19,9 +20,9 @@ import {
 } from '@nestjs/swagger';
 import { Article } from '@root/article/entities/article.entity';
 import { Admin } from '@root/auth/auth.decorator';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
 import { BestService } from './best.service';
-import { CreateBestDto } from './dto/create-best.dto';
-import { FindAllBestDto } from './dto/find-all-best.dto';
+import { CreateBestRequestDto } from './dto/request/create-best-request.dto';
 import { Best } from './entities/best.entity';
 
 @ApiCookieAuth()
@@ -37,7 +38,9 @@ export class BestController {
   @ApiOkResponse({ description: '인기글에 추가 성공', type: Best })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiConflictResponse({ description: '이미 인기글에 추가된 글입니다.' })
-  async create(@Body() createBestDto: CreateBestDto): Promise<Best> {
+  async create(
+    @Body() createBestDto: CreateBestRequestDto,
+  ): Promise<Best | never> {
     const best = await this.bestService.createOrNot(createBestDto);
     if (!best) {
       throw new ConflictException('이미 인기글에 추가된 글입니다.');
@@ -48,7 +51,7 @@ export class BestController {
   @Get()
   @ApiOperation({ summary: '인기글 가져오기' })
   @ApiOkResponse({ description: '인기글 목록', type: [Article] })
-  findAll(@Query() findAllBestDto: FindAllBestDto): Promise<Article[]> {
+  findAll(@Query() findAllBestDto: PaginationRequestDto): Promise<Article[]> {
     return this.bestService.findAll(findAllBestDto);
   }
 
@@ -57,7 +60,8 @@ export class BestController {
   @ApiOperation({ summary: '인기글에서 내리기 (관리자)' })
   @ApiOkResponse({ description: '인기글 내리기 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
-  remove(@Param('id') id: number): Promise<void> {
+  @ApiNotFoundResponse({ description: '존재하지 않는 인기글입니다.' })
+  remove(@Param('id') id: number): Promise<void | never> {
     return this.bestService.remove(id);
   }
 }

@@ -1,15 +1,16 @@
 import { Controller, Post, Param, ParseIntPipe } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { DetailArticleDto } from '@root/article/dto/detail-article.dto';
 import { Article } from '@root/article/entities/article.entity';
 import { GetUser } from '@root/auth/auth.decorator';
-import { LikeCommentDto } from './dto/like-article.dto';
+import { Comment } from '@root/comment/entities/comment.entity';
+import { ReactionResponseDto } from './dto/response/reaction-response.dto';
 import { ReactionService } from './reaction.service';
 
 @ApiCookieAuth()
@@ -21,26 +22,40 @@ export class ReactionController {
 
   @Post('articles/:id')
   @ApiOperation({ summary: '게시글 좋아요 버튼' })
-  @ApiOkResponse({ description: '게시글 좋아요 버튼 누름', type: Article })
+  @ApiOkResponse({
+    description: '게시글 좋아요 버튼 누름',
+    type: ReactionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async reactionArticleCreateOrDelete(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<DetailArticleDto> {
-    return this.reactionService.articleCreateOrDelete(userId, articleId);
+  ): Promise<ReactionResponseDto | never> {
+    const { article, isLike } =
+      await this.reactionService.articleCreateOrDelete(userId, articleId);
+
+    return ReactionResponseDto.of<Article>({ entity: article, isLike });
   }
 
   @Post('articles/:articleId/comments/:commentId')
   @ApiOperation({ summary: '댓글 좋아요 버튼' })
-  @ApiOkResponse({ description: '댓글 좋아요 버튼 누름' })
+  @ApiOkResponse({
+    description: '댓글 좋아요 버튼 누름',
+    type: ReactionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: '존재하지 않는 댓글' })
   async reactionCommentCreateOrDelete(
     @GetUser('id') userId: number,
     @Param('articleId', ParseIntPipe) articleId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
-  ): Promise<LikeCommentDto> {
-    return this.reactionService.commentCreateOrDelete(
-      userId,
-      articleId,
-      commentId,
-    );
+  ): Promise<ReactionResponseDto | never> {
+    const { comment, isLike } =
+      await this.reactionService.commentCreateOrDelete(
+        userId,
+        articleId,
+        commentId,
+      );
+
+    return ReactionResponseDto.of<Comment>({ entity: comment, isLike });
   }
 }

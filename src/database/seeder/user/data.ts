@@ -1,24 +1,28 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { User, UserRole } from '@user/entities/user.entity';
+import { User } from '@user/entities/user.entity';
+import { UserRole } from '@user/interfaces/userrole.interface';
 
 export class SeederDataUser extends PartialType(User) {
   id: number;
-  oauthToken: string;
+  githubUid: string;
   nickname: string;
+  githubUsername: string;
   role: UserRole;
 }
 
 export const users: SeederDataUser[] = [
   {
     id: 1,
-    oauthToken: 'test1234',
-    nickname: 'first user',
+    githubUid: 'test1234',
+    nickname: 'first_user',
+    githubUsername: 'github_first_user',
     role: UserRole.CADET,
   },
   {
     id: 2,
-    oauthToken: 'test2345',
-    nickname: 'second user',
+    githubUid: 'test2345',
+    nickname: 'second_user',
+    githubUsername: 'github_second_user',
     role: UserRole.NOVICE,
   },
 ];

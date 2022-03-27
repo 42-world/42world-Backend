@@ -1,5 +1,5 @@
 import { Article } from '@article/entities/article.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '@user/interfaces/userrole.interface';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,23 +13,36 @@ import {
 
 @Entity('category')
 export class Category {
-  @ApiProperty()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ApiProperty()
   @Column({ type: 'varchar', length: 40, nullable: false })
   name!: string;
 
-  @ApiProperty()
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  writableArticle!: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  readableArticle!: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  writableComment!: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  readableComment!: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
+  reactionable!: string;
+
+  @Column({ nullable: false, default: false })
+  anonymity!: boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
-  @ApiProperty()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @ApiProperty()
   @DeleteDateColumn({ type: 'timestamp' })
   @Index('ix_deleted_at')
   deletedAt?: Date;

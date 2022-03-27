@@ -8,13 +8,11 @@ import {
 import { ArticleService } from '@root/article/article.service';
 import { NotificationService } from '@root/notification/notification.service';
 import { FindOneOptions } from 'typeorm';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { PageDto } from '@root/pagination/pagination.dto';
-import { PageOptionsDto } from '@root/pagination/page-options.dto';
-import { DetailCommentDto } from '@root/article/dto/detail-comment.dto';
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
+import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 
 @Injectable()
 export class CommentService {
@@ -27,9 +25,9 @@ export class CommentService {
 
   async create(
     writerId: number,
-    createCommentDto: CreateCommentDto,
-  ): Promise<Comment> {
-    const article = await this.articleService.getOne(
+    createCommentDto: CreateCommentRequestDto,
+  ): Promise<Comment | never> {
+    const article = await this.articleService.findOneByIdOrFail(
       createCommentDto.articleId,
     );
     const comment = await this.commentRepository.save({
@@ -37,34 +35,52 @@ export class CommentService {
       writerId,
     });
     this.notificationService.createNewComment(article, comment);
-    this.articleService.increaseCommentCount(article);
+    this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
   async findAllByArticleId(
     articleId: number,
-    pageOptionDto: PageOptionsDto,
-  ): Promise<PageDto<DetailCommentDto>> {
+    options: PaginationRequestDto,
+  ): Promise<
+    | {
+        comments: Comment[];
+        totalCount: number;
+      }
+    | never
+  > {
     await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(articleId, pageOptionDto);
+    return this.commentRepository.findAllByArticleId(articleId, options);
   }
 
-  getOne(id: number, options?: FindOneOptions): Promise<Comment> {
+  findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
     return this.commentRepository.findOneOrFail(id, options);
+  }
+
+  findAllByWriterId(
+    writerId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
+    comments: Comment[];
+    totalCount: number;
+  }> {
+    return this.commentRepository.findAllByWriterId(writerId, options);
   }
 
   async updateContent(
     id: number,
     writerId: number,
-    updateCommentDto: UpdateCommentDto,
-  ): Promise<Comment> {
+    updateCommentDto: UpdateCommentRequestDto,
+  ): Promise<void | never> {
     const comment = await this.commentRepository.findOneOrFail({
       id,
       writerId,
     });
-
-    comment.content = updateCommentDto.content;
-    return this.commentRepository.save(comment);
+    const newComment = {
+      ...comment,
+      ...updateCommentDto,
+    };
+    await this.commentRepository.save(newComment);
   }
 
   async remove(id: number, writerId: number): Promise<void> {
@@ -77,9 +93,8 @@ export class CommentService {
       throw new NotFoundException(`Can't find Comment with id ${id}`);
     }
 
-    const comment = await this.getOne(id, { withDeleted: true });
-    const article = await this.articleService.getOne(comment.articleId);
-    this.articleService.decreaseCommentCountById(article);
+    const comment = await this.findOneByIdOrFail(id, { withDeleted: true });
+    this.articleService.decreaseCommentCount(comment.articleId);
   }
 
   increaseLikeCount(comment: Comment): Promise<Comment> {
@@ -93,9 +108,5 @@ export class CommentService {
     }
     comment.likeCount -= 1;
     return this.commentRepository.save(comment);
-  }
-
-  async findAllMyComment(userId: number): Promise<Comment[]> {
-    return this.commentRepository.findAllMyComment(userId);
   }
 }

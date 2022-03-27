@@ -20,7 +20,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
   ): Promise<any> {
     const githubProfile: GithubProfile = {
       id: profile.id,
-      nickname: profile.username,
+      username: profile.username,
     };
     done(null, githubProfile);
   }

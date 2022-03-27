@@ -8,13 +8,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { UserRole } from '@user/entities/user.entity';
 import { ImageModule } from '@image/image.module';
 import { getConnection } from 'typeorm';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { clearDB } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
+import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 
 describe('Image', () => {
   let app: INestApplication;
@@ -30,6 +31,7 @@ describe('Image', () => {
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
 
+    app.useGlobalFilters(new InternalServerErrorExceptionFilter());
     app.useGlobalFilters(new TypeormExceptionFilter());
     app.useGlobalPipes(
       new ValidationPipe({
@@ -54,7 +56,12 @@ describe('Image', () => {
 
   describe('/image', () => {
     beforeEach(async () => {
-      const newUser = dummy.user('test1234', 'first user', UserRole.CADET);
+      const newUser = dummy.user(
+        'test1234',
+        'first user',
+        'githubUsername',
+        UserRole.CADET,
+      );
       await userRepository.save(newUser);
 
       JWT = dummy.jwt(newUser.id, newUser.role, authService);

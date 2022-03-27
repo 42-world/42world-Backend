@@ -1,3 +1,5 @@
+import { PaginationRequestDto } from '@root/pagination/dto/pagination-request.dto';
+import { getPaginationSkip } from '@root/utils';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,
@@ -16,15 +18,25 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
     return Object.values(existQuery[0])[0] === '1';
   }
 
-  async findAllMyReactionArticle(
+  async findAllArticleByUserId(
     userId: number,
-    type: ReactionArticleType = ReactionArticleType.LIKE,
-  ): Promise<ReactionArticle[]> {
-    return this.createQueryBuilder('reactionArticle')
+    options: PaginationRequestDto,
+  ): Promise<{
+    likeArticles: ReactionArticle[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('reactionArticle')
       .leftJoinAndSelect('reactionArticle.article', 'article')
+      .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
-      .andWhere('reactionArticle.type = :type', { type })
-      .getMany();
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .orderBy('reactionArticle.createdAt', options.order);
+
+    const likeArticles = await query.getMany();
+    const totalCount = await query.getCount();
+
+    return { likeArticles, totalCount };
   }
 }

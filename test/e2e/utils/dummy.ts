@@ -3,16 +3,20 @@ import { AuthService } from '@auth/auth.service';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { Category } from '@category/entities/category.entity';
 import { Comment } from '@comment/entities/comment.entity';
-import { User, UserRole } from '@user/entities/user.entity';
+import { UserRole } from '@root/user/interfaces/userrole.interface';
+import { User } from '@user/entities/user.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 export const user = (
-  oauthToken: string,
+  githubUid: string,
   nickname: string,
+  githubUsername: string,
   role: UserRole,
 ): User => {
   const user = new User();
-  user.oauthToken = oauthToken;
+  user.githubUid = githubUid;
   user.nickname = nickname;
+  user.githubUsername = githubUsername;
   user.role = role;
   return user;
 };
@@ -58,4 +62,14 @@ export const comment = (
   comment.writerId = userId;
   comment.articleId = articleId;
   return comment;
+};
+
+export const reactionArticle = (
+  articleId: number,
+  userId: number,
+): ReactionArticle => {
+  const reactionArticle = new ReactionArticle();
+  reactionArticle.articleId = articleId;
+  reactionArticle.userId = userId;
+  return reactionArticle;
 };
