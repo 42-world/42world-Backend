@@ -20,15 +20,17 @@ import { CacheService } from '@cache/cache.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 import { UserRole } from '@user/interfaces/userrole.interface';
+import { instance, mock, when } from 'ts-mockito';
+import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
 
 describe('IntraAuth', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
-  let cacheService: CacheService;
+  const cacheService: CacheService = mock(CacheService);
+  const mailerService: MailerService = mock(MailerService);
   let JWT;
   let cadetJWT;
-  const sendMailMock = jest.fn();
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,16 +45,12 @@ describe('IntraAuth', () => {
         {
           provide: MailerService,
           useValue: {
-            sendMail: sendMailMock,
+            sendMail: mailerService.sendMail,
           },
         },
         {
           provide: CacheService,
-          useValue: {
-            setIntraAuthMailData: jest.fn(),
-            getIntraAuthMailData: jest.fn(),
-            del: jest.fn(),
-          },
+          useValue: instance(cacheService),
         },
       ],
       controllers: [IntraAuthController],
@@ -74,7 +72,6 @@ describe('IntraAuth', () => {
 
     userRepository = moduleFixture.get<UserRepository>(UserRepository);
     authService = moduleFixture.get<AuthService>(AuthService);
-    cacheService = moduleFixture.get<CacheService>(CacheService);
 
     app = app.getHttpServer();
   });
@@ -85,13 +82,10 @@ describe('IntraAuth', () => {
     await app.close();
   });
 
-  beforeEach(() => {
-    sendMailMock.mockClear();
-  });
-
   describe('/intra-auth', () => {
+    let newUser;
     beforeEach(async () => {
-      const newUser = dummy.user(
+      newUser = dummy.user(
         'test1',
         'first user',
         'githubUsername',
@@ -122,8 +116,6 @@ describe('IntraAuth', () => {
         .send({ intraId: 'rockpell' });
 
       expect(response.status).toEqual(201);
-      expect(cacheService.setIntraAuthMailData).toBeCalled();
-      expect(sendMailMock).toBeCalled();
     });
 
     test('[실패] POST - user role이 NOVICE가 아닌 경우', async () => {
@@ -137,6 +129,65 @@ describe('IntraAuth', () => {
       // 현재는 구글 계정 에러랑 구분할 방법이 없어서 500애러로 처리
       // expect(response.status).toEqual(403);
       // expect(response.body.message).toEqual(FORBIDDEN_USER_ROLE);
+    });
+
+    test('[성공] GET', async () => {
+      when(cacheService.getIntraAuthMailData('code')).thenResolve(
+        new IntraAuthMailDto(newUser.id, 'intraId'),
+      );
+
+      const response = await request(app)
+        .get('/intra-auth')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
+        .query({ code: 'code' });
+
+      expect(response.status).toEqual(200);
+      expect(response.text).toEqual(
+        '<div>\n' +
+          '    <div>\n' +
+          '      <img\n' +
+          '        style="margin: auto; display: block; text-align: center"\n' +
+          '        src="https://avatars.githubusercontent.com/u/97225581?s=400&u=2c69bfb4d3794a8434ea4399cc329117806ecb4d&v=4"\n' +
+          '        alt="42world logo"\n' +
+          '      />\n' +
+          '    </div>\n' +
+          '    <div style="margin: auto; text-align: center">\n' +
+          '      <h1>Hello World!</h1>\n' +
+          '      <h2>인증에 성공했습니다! 🥳</h2>\n' +
+          '\n' +
+          '      <div\n' +
+          '        style="\n' +
+          '          display: inline-block;\n' +
+          '          padding: 15px;\n' +
+          '          background-color: #01bbd6;\n' +
+          '          border-radius: 15px;\n' +
+          '          text-align: center;\n' +
+          '          margin: 20px;\n' +
+          '          width: 250px;\n' +
+          '          height: 60px;\n' +
+          '          line-height: 60px;\n' +
+          '        "\n' +
+          '      >\n' +
+          '        <a\n' +
+          '          href=' +
+          `"${process.env.FRONT_URL}"` +
+          '\n' +
+          '          style="\n' +
+          '            margin: auto;\n' +
+          '            color: white;\n' +
+          '            font-size: 30px;\n' +
+          '            font-weight: bolder;\n' +
+          '            text-align: center;\n' +
+          '            text-decoration-line: none;\n' +
+          '          "\n' +
+          '          >Welcome, Cadet!</a\n' +
+          '        >\n' +
+          '      </div>\n' +
+          '      <div>- 42WORLD -</div>\n' +
+          '    </div>\n' +
+          '  </div>\n' +
+          '  ',
+      );
     });
   });
 });
