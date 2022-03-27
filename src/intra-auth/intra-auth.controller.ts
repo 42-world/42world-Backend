@@ -45,7 +45,7 @@ export class IntraAuthController {
   }
 
   @Get()
-  @Render('results.ejs')
+  @Render('intra-auth/results.ejs')
   @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
   @ApiOkResponse({ description: '42인증 완료' })
