@@ -152,11 +152,19 @@ describe('UserController (e2e)', () => {
     let user;
     const githubUid = 'test github uid';
     const nickname = 'test nickname';
+    const nickname2 = 'test nickname2';
     const githubUsername = 'github user name';
 
     beforeEach(async () => {
       user = dummy.user(githubUid, nickname, githubUsername, UserRole.CADET);
+      const user2 = dummy.user(
+        'test github uid2',
+        nickname2,
+        'github user name2',
+        UserRole.CADET,
+      );
       await userRepository.save(user);
+      await userRepository.save(user2);
       JWT = authService.getJWT({
         userId: user.id,
         userRole: user.role,
@@ -177,6 +185,24 @@ describe('UserController (e2e)', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual('rockpell');
+      expect(updatedUser.character).toEqual(2);
+    });
+
+    test('[성공] PUT - 중복된 닉네임인 경우', async () => {
+      // nickname2는 유저2의 닉네임이다
+      const updateData = {
+        nickname: nickname2,
+        character: 2,
+      } as UpdateUserProfileRequestDto;
+      const response = await request(app)
+        .put('/users')
+        .send(updateData)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(200);
+
+      const updatedUser = await userRepository.findOne(user.id);
+      expect(updatedUser.nickname).toEqual(nickname2);
       expect(updatedUser.character).toEqual(2);
     });
 
