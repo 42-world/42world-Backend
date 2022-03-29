@@ -23,18 +23,23 @@ import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { CreateArticleRequestDto } from '@root/article/dto/request/create-article-request.dto';
 import * as dummy from './utils/dummy';
 import { clearDB } from './utils/utils';
-import {
-  buildValidateTest,
-  값이_없는_경우,
-  엔티티가_없는_경우,
-  잘못된_값을_입력한_경우,
-  타입이_틀린_경우,
-} from './utils/validate-test';
+import { testDto } from './utils/validate-test';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { PaginationResponseDto } from '@root/pagination/dto/pagination-response.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
 
-describe('Create Article (e2e)', () => {
+/*
+테스트 짜는 순서
+1. 정상적인 시나리오대로 성공 케이스 작성
+2. 권한 관련해서 실패 케이스 작성
+3. 400을 제회의한 의도적인 예외처리 관련해서 실패 케이스 작성
+4. dto 에서 날수있는 예외처리 관련해서 실패 케이스 작성
+
+성공 케이스는 응답값 다 잘 있는지 확인할것
+실패 케이스는 상태코드만 확인할것
+*/
+
+describe('Article', () => {
   let app: INestApplication;
 
   let userRepository: UserRepository;
@@ -74,12 +79,11 @@ describe('Create Article (e2e)', () => {
     );
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
+    userRepository = moduleFixture.get(UserRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
 
-    authService = moduleFixture.get<AuthService>(AuthService);
+    authService = moduleFixture.get(AuthService);
 
     app = app.getHttpServer();
   });
@@ -138,8 +142,7 @@ describe('Create Article (e2e)', () => {
       JWT = dummy.jwt(dummyUsers[0].id, dummyUsers[0].role, authService);
     });
 
-    // TODO: CADET, NOVICE, ADMIN 모두 테스트 필요
-    test('[성공] POST - 게시글 정상 업로드', async () => {
+    test('[성공] POST - 글쓰기', async () => {
       const createArticlRequesteDto: CreateArticleRequestDto = {
         title: 'test title',
         content: 'test content',
@@ -192,48 +195,33 @@ describe('Create Article (e2e)', () => {
       expect(response.status).toEqual(406);
     });
 
-    test.each([
-      ...buildValidateTest<CreateArticleRequestDto>('title', [
-        값이_없는_경우(),
-        타입이_틀린_경우({
-          wrongValue: 123,
-          message: ['title must be a string'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '42자를 넘김',
-          wrongValue: 'a'.repeat(50),
-          message: ['title must be shorter than or equal to 42 characters'],
-        }),
-      ]),
-      ...buildValidateTest<CreateArticleRequestDto>('content', [
-        값이_없는_경우(),
-        타입이_틀린_경우({
-          wrongValue: 123,
-          message: ['content must be a string'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '4242자를 넘김',
-          wrongValue: 'a'.repeat(5000),
-          message: ['content must be shorter than or equal to 4242 characters'],
-        }),
-      ]),
-      ...buildValidateTest<CreateArticleRequestDto>('categoryId', [
-        값이_없는_경우(),
-        타입이_틀린_경우({
-          wrongValue: 'abc',
-          message: ['categoryId must be an integer number'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '음수',
-          wrongValue: -1,
-          message: ['categoryId must not be less than 0'],
-        }),
-        엔티티가_없는_경우({
-          notExistEntityId: 99,
-        }),
-      ]),
-    ])('[실패] POST - %s', async (_, tester) => {
-      const createArticlRequesteDto = tester.buildDto({
+    test('[실패] POST - 글쓰기 존재하지 않는 카테고리', async () => {
+      const createArticlRequesteDto = {
+        title: 'test title',
+        content: 'test content',
+        categoryId: 99,
+      };
+
+      const response = await request(app)
+        .post('/articles')
+        .send(createArticlRequesteDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(404);
+    });
+
+    testDto<CreateArticleRequestDto>([
+      ['title', undefined],
+      ['title', 123],
+      ['title', 'a'.repeat(50), '42자를 넘김'],
+      ['content', undefined],
+      ['content', 123],
+      ['content', 'a'.repeat(5000), '4242자를 넘김'],
+      ['categoryId', undefined],
+      ['categoryId', 'abc'],
+      ['categoryId', -1],
+    ])('[실패] POST - 글쓰기 dto의 %s인 경우', async (_, buildDto) => {
+      const createArticlRequesteDto = buildDto({
         title: 'test title',
         content: 'test content',
         categoryId: dummyCategories[0].id,
@@ -244,7 +232,7 @@ describe('Create Article (e2e)', () => {
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      tester.expectErrorResponse(response);
+      expect(response.status).toBe(400);
     });
 
     test('[성공] GET - 게시글 목록 조회', async () => {
@@ -295,20 +283,24 @@ describe('Create Article (e2e)', () => {
       expect(response.status).toEqual(406);
     });
 
-    test.each([
-      ...buildValidateTest<FindAllArticleRequestDto>('categoryId', [
-        타입이_틀린_경우({
-          wrongValue: 'abc',
-          message: ['categoryId must be an integer number'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '음수',
-          wrongValue: -1,
-          message: ['categoryId must not be less than 0'],
-        }),
-      ]),
-    ])('[실패] GET - %s', async (_, tester) => {
-      const findArticleRequestDto = tester.buildDto({
+    test('[실패] GET - 게시글 목록 조희 존재하지 않는 카테고리', async () => {
+      const findArticleRequestDto = {
+        categoryId: 99,
+      };
+
+      const response = await request(app)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(404);
+    });
+
+    testDto<FindAllArticleRequestDto>([
+      ['categoryId', 'abc'],
+      ['categoryId', -1],
+    ])('[실패] GET - 게시글 목록 조희 dto의 %s인 경우', async (_, buildDto) => {
+      const findArticleRequestDto = buildDto({
         categoryId: dummyCategories[0].id,
         page: 1,
         take: 10,
@@ -319,26 +311,11 @@ describe('Create Article (e2e)', () => {
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      tester.expectErrorResponse(response);
+      expect(response.status).toBe(400);
     });
   });
 
   describe('/articles/:id', () => {
-    type ArticleIdQuery = { articleId: number };
-    const articleIdValidateTests = [
-      타입이_틀린_경우({
-        wrongValue: 'abc',
-        message: 'Validation failed (numeric string is expected)',
-      }),
-      엔티티가_없는_경우({
-        // TODO: 테스트 타입을 잘못된 값을 입력한 경우로 변경
-        notExistEntityId: -1,
-      }),
-      엔티티가_없는_경우({
-        notExistEntityId: 99,
-      }),
-    ];
-
     beforeEach(async () => {
       dummyUsers = await userRepository.save([
         dummy.user('test1234', 'first_user', 'githubUserName1', UserRole.CADET),
@@ -412,10 +389,21 @@ describe('Create Article (e2e)', () => {
       expect(response.status).toEqual(406);
     });
 
-    test.each([
-      ...buildValidateTest<ArticleIdQuery>('articleId', articleIdValidateTests),
-    ])('[실패] GET - %s', async (_, tester) => {
-      const articleId = tester.buildDto({
+    test('[실패] GET - 게시글 상세 조회 존재하지 않는 게시글', async () => {
+      const articleId = 99;
+
+      const response = await request(app)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(404);
+    });
+
+    testDto<{ articleId: number }>([
+      ['articleId', undefined],
+      ['articleId', 'abc'],
+    ])('[실패] GET - 게시글 상세 조회 %s인 경우', async (_, buildDto) => {
+      const articleId = buildDto({
         articleId: dummyArticles[0].id,
       }).articleId;
 
@@ -423,7 +411,7 @@ describe('Create Article (e2e)', () => {
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      tester.expectErrorResponse(response);
+      expect(response.status).toBe(400);
     });
 
     test('[성공] PUT - 게시글 수정', async () => {
@@ -447,7 +435,7 @@ describe('Create Article (e2e)', () => {
       expect(result.writerId).toBe(dummyUsers[0].id);
     });
 
-    test('[실패] PUT - 내가 쓴글이 아닌 게시글 수정', async () => {
+    test('[실패] PUT - 게시글 수정 내가 쓴글이 아닌경우', async () => {
       const articleId = dummyArticles[1].id;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
@@ -467,60 +455,80 @@ describe('Create Article (e2e)', () => {
       expect(result.categoryId).toBe(dummyArticles[1].categoryId);
     });
 
-    test.each([
-      ...buildValidateTest<ArticleIdQuery>('articleId', articleIdValidateTests),
-      ...buildValidateTest<UpdateArticleRequestDto>('title', [
-        타입이_틀린_경우({
-          wrongValue: 123,
-          message: ['title must be a string'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '42자를 넘김',
-          wrongValue: 'a'.repeat(50),
-          message: ['title must be shorter than or equal to 42 characters'],
-        }),
-      ]),
-      ...buildValidateTest<UpdateArticleRequestDto>('content', [
-        타입이_틀린_경우({
-          wrongValue: 123,
-          message: ['content must be a string'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '4242자를 넘김',
-          wrongValue: 'a'.repeat(5000),
-          message: ['content must be shorter than or equal to 4242 characters'],
-        }),
-      ]),
-      ...buildValidateTest<CreateArticleRequestDto>('categoryId', [
-        타입이_틀린_경우({
-          wrongValue: 'abc',
-          message: ['categoryId must be an integer number'],
-        }),
-        잘못된_값을_입력한_경우({
-          detail: '음수',
-          wrongValue: -1,
-          message: ['categoryId must not be less than 0'],
-        }),
-        엔티티가_없는_경우({
-          notExistEntityId: 99,
-        }),
-      ]),
-    ])('[실패] PUT - %s', async (_, tester) => {
-      const dto = tester.buildDto({
-        articleId: dummyArticles[0].id,
+    test('[실패] PUT - 게시글 수정 존재하지 않는 게시글', async () => {
+      const articleId = 99;
+      const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
         categoryId: dummyCategories[0].id,
-      });
-      const { articleId, ...updateArticleRequestDto } = dto as ArticleIdQuery &
-        UpdateArticleRequestDto;
+      };
 
       const response = await request(app)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      tester.expectErrorResponse(response);
+      expect(response.status).toBe(404);
+    });
+
+    test('[실패] PUT - 게시글 수정 존재하지 않는 카테고리', async () => {
+      const articleId = dummyArticles[0].id;
+      const updateArticleRequestDto: UpdateArticleRequestDto = {
+        title: 'title2',
+        content: 'content2',
+        categoryId: 99,
+      };
+
+      const response = await request(app)
+        .put(`/articles/${articleId}`)
+        .send(updateArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(404);
+    });
+
+    testDto<{ articleId: number }>([
+      ['articleId', undefined],
+      ['articleId', 'abc'],
+    ])('[실패] PUT - 게시글 수정 게시글id가 %s인 경우', async (_, buildDto) => {
+      const articleId = buildDto({
+        articleId: dummyArticles[0].id,
+      }).articleId;
+      const updateArticleRequestDto: UpdateArticleRequestDto = {
+        title: 'title2',
+        content: 'content2',
+        categoryId: dummyCategories[0].id,
+      };
+
+      const response = await request(app)
+        .put(`/articles/${articleId}`)
+        .send(updateArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(400);
+    });
+
+    testDto<UpdateArticleRequestDto>([
+      ['title', 123],
+      ['title', 'a'.repeat(50), '42자를 넘김'],
+      ['content', 123],
+      ['content', 'a'.repeat(5000), '4242자를 넘김'],
+      ['categoryId', 'abc'],
+      ['categoryId', -1],
+    ])('[실패] PUT - 게시글 수정 dto가 %s인 경우', async (_, buildDto) => {
+      const articleId = dummyArticles[0].id;
+      const updateArticleRequestDto = buildDto({
+        title: 'title2',
+        content: 'content2',
+        categoryId: dummyCategories[0].id,
+      });
+
+      const response = await request(app)
+        .put(`/articles/${articleId}`)
+        .send(updateArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(400);
     });
 
     test('[성공] DELETE - 게시글 삭제', async () => {
@@ -535,7 +543,7 @@ describe('Create Article (e2e)', () => {
       expect(result).toBeFalsy();
     });
 
-    test('[실패] DELETE - 내가 쓴글이 아닌 게시글 삭제', async () => {
+    test('[실패] DELETE - 게시글 삭제 내가 쓴글이 아닌경우', async () => {
       const articleId = dummyArticles[1].id;
 
       const response = await request(app)
@@ -547,10 +555,23 @@ describe('Create Article (e2e)', () => {
       expect(result).toBeTruthy();
     });
 
-    test.each([
-      ...buildValidateTest<ArticleIdQuery>('articleId', articleIdValidateTests),
-    ])('[실패] DELETE - %s', async (_, tester) => {
-      const articleId = tester.buildDto({
+    test('[실패] DELETE - 게시글 삭제 존재하지 않는 게시글', async () => {
+      const articleId = 99;
+
+      const response = await request(app)
+        .delete(`/articles/${articleId}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(404);
+
+      const result = await articleRepository.findOne(articleId);
+      expect(result).toBeFalsy();
+    });
+
+    testDto<{ articleId: number }>([
+      ['articleId', undefined],
+      ['articleId', 'abc'],
+    ])('[실패] DELETE - 게시글 삭제 dto가 %s인 경우', async (_, buildDto) => {
+      const articleId = buildDto({
         articleId: dummyArticles[0].id,
       }).articleId;
 
@@ -558,7 +579,7 @@ describe('Create Article (e2e)', () => {
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      tester.expectErrorResponse(response);
+      expect(response.status).toBe(400);
     });
   });
 });
