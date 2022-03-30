@@ -21,6 +21,7 @@ import { CacheService } from '@cache/cache.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserRole } from '@user/interfaces/userrole.interface';
 import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
+import { User } from '@user/entities/user.entity';
 
 describe('IntraAuth', () => {
   let httpServer: INestApplication;
@@ -72,7 +73,9 @@ describe('IntraAuth', () => {
   });
 
   describe('/intra-auth', () => {
-    let newUser;
+    let newUser: User;
+    const intraId = 'rockpell';
+
     beforeEach(async () => {
       newUser = dummy.user(
         'test1',
@@ -102,7 +105,7 @@ describe('IntraAuth', () => {
       const response = await request(httpServer)
         .post('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
-        .send({ intraId: 'rockpell' });
+        .send({ intraId });
 
       expect(response.status).toEqual(HttpStatus.CREATED);
     });
@@ -111,7 +114,7 @@ describe('IntraAuth', () => {
       const response = await request(httpServer)
         .post('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`)
-        .send({ intraId: 'rockpell' });
+        .send({ intraId });
 
       expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -121,14 +124,16 @@ describe('IntraAuth', () => {
     });
 
     test('[성공] GET - 이메일 인증', async () => {
-      when(cacheService.getIntraAuthMailData('code')).thenResolve(
-        new IntraAuthMailDto(newUser.id, 'intraId'),
+      const mailCode = 'code';
+
+      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(
+        new IntraAuthMailDto(newUser.id, intraId),
       );
 
       const response = await request(httpServer)
         .get('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
-        .query({ code: 'code' });
+        .query({ code: mailCode });
 
       let resultEjs: string;
       try {
