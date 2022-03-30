@@ -48,6 +48,7 @@ describe('User', () => {
     }).compile();
 
     const app = createTestApp(moduleFixture);
+    await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
     articleRepository = moduleFixture.get(ArticleRepository);
@@ -86,7 +87,7 @@ describe('User', () => {
     });
 
     test('[성공] GET - 내 정보 가져오기', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/users/me')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -112,7 +113,7 @@ describe('User', () => {
     });
 
     test('[성공] GET - 특정 유저 정보 가져오기', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/users/${user.id}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -122,7 +123,7 @@ describe('User', () => {
     });
 
     test('[실패] GET - 없는 유저 id를 요청한 경우', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/users/${999}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -163,7 +164,7 @@ describe('User', () => {
         nickname: updatedNickname,
         character: 2,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -181,7 +182,7 @@ describe('User', () => {
         nickname: user2.nickname,
         character: 2,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -199,7 +200,7 @@ describe('User', () => {
         nickname: '',
         character: 2,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -215,7 +216,7 @@ describe('User', () => {
       const updateData = {
         nickname: updatedNickname,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -231,7 +232,7 @@ describe('User', () => {
       const updateData = {
         character: 2,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -248,7 +249,7 @@ describe('User', () => {
         nickname: 'rockpell',
         character: 999,
       } as UpdateUserProfileRequestDto;
-      const response = await request(app)
+      const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -262,7 +263,7 @@ describe('User', () => {
     });
 
     test('[성공] DELETE - 유저 삭제하기', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .delete('/users')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -301,7 +302,7 @@ describe('User', () => {
     });
 
     test('[성공] GET - 내가 작성한 글 가져오기', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/users/me/articles')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -341,7 +342,7 @@ describe('User', () => {
     });
 
     test('[성공] GET - 내가 작성한 댓글 가져오기', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/users/me/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -385,7 +386,7 @@ describe('User', () => {
     });
 
     test('[성공] GET - 내가 좋아요 누른 게시글 목록 확인', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/users/me/like-articles')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
