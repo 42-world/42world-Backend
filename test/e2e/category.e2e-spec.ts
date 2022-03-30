@@ -57,6 +57,14 @@ describe('Category', () => {
     authService = moduleFixture.get(AuthService);
 
     server = app.getHttpServer();
+
+    dummyUsers.push(dummy.user('admin', 'admin', 'admin', UserRole.ADMIN));
+    dummyUsers.push(dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET));
+    dummyUsers.push(dummy.user('novice', 'novice', 'novice', UserRole.NOVICE));
+
+    dummyCategories.push(dummy.category('자유게시판'));
+    dummyCategories.push(dummy.category('익명게시판'));
+    dummyCategories.push(dummy.category('유머게시판'));
   });
 
   afterAll(async () => {
@@ -66,13 +74,6 @@ describe('Category', () => {
   });
 
   describe('/categories', () => {
-    dummyUsers.push(dummy.user('admin', 'admin', 'admin', UserRole.ADMIN));
-    dummyUsers.push(dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET));
-    dummyUsers.push(dummy.user('novice', 'novice', 'novice', UserRole.NOVICE));
-
-    dummyCategories.push(dummy.category('자유게시판'));
-    dummyCategories.push(dummy.category('익명게시판'));
-    dummyCategories.push(dummy.category('유머게시판'));
     beforeEach(async () => {
       await userRepository.save(dummyUsers);
       await categoryRepository.save(dummyCategories);
@@ -181,6 +182,17 @@ describe('Category', () => {
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
+  });
+
+  describe('/categories/{id}/name', () => {
+    beforeEach(async () => {
+      await userRepository.save(dummyUsers);
+      await categoryRepository.save(dummyCategories);
+    });
+
+    afterEach(async () => {
+      await clearDB();
+    });
 
     test('[성공] PUT - ADMIN이 카테고리 이름 수정', async () => {
       const jwt = dummy.jwt(dummyUsers[0].id, dummyUsers[0].role, authService);
@@ -223,6 +235,17 @@ describe('Category', () => {
       const response = await request(server).put(`/categories/${id}/name`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('/categories/{id}', () => {
+    beforeEach(async () => {
+      await userRepository.save(dummyUsers);
+      await categoryRepository.save(dummyCategories);
+    });
+
+    afterEach(async () => {
+      await clearDB();
     });
 
     test('[성공] DELETE - ADMIN이 카테고리 삭제', async () => {
