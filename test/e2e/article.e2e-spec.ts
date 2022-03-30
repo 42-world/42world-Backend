@@ -22,7 +22,7 @@ import { UpdateArticleRequestDto } from '@root/article/dto/request/update-articl
 
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB } from './utils/utils';
+import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
 
 /*
@@ -44,7 +44,7 @@ import { testDto } from './utils/validate-test';
  */
 
 describe('Article', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
 
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -66,21 +66,10 @@ describe('Article', () => {
         ArticleModule,
         CategoryModule,
         CommentModule,
-        ReactionModule,
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    const app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
@@ -89,13 +78,13 @@ describe('Article', () => {
 
     authService = moduleFixture.get(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   beforeEach(async () => {
@@ -120,7 +109,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -144,7 +133,7 @@ describe('Article', () => {
       };
 
       JWT = dummy.jwt2(users.admin[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -159,7 +148,7 @@ describe('Article', () => {
       };
 
       JWT = dummy.jwt2(users.novice[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -173,7 +162,7 @@ describe('Article', () => {
         categoryId: 99,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -198,7 +187,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       });
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -211,7 +200,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -243,7 +232,7 @@ describe('Article', () => {
       };
 
       JWT = dummy.jwt2(users.admin[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -256,7 +245,7 @@ describe('Article', () => {
       };
 
       JWT = dummy.jwt2(users.novice[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -268,7 +257,7 @@ describe('Article', () => {
         categoryId: 99,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -284,7 +273,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       });
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -307,7 +296,7 @@ describe('Article', () => {
     test('[성공] GET - 게시글 상세 조회', async () => {
       const articleId = articles[0].id;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
@@ -331,7 +320,7 @@ describe('Article', () => {
       const articleId = articles[0].id;
 
       JWT = dummy.jwt2(users.admin[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
@@ -341,7 +330,7 @@ describe('Article', () => {
       const articleId = articles[0].id;
 
       JWT = dummy.jwt2(users.novice[0], authService);
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(406);
@@ -350,7 +339,7 @@ describe('Article', () => {
     test('[실패] GET - 게시글 상세 조회 존재하지 않는 게시글', async () => {
       const articleId = 99;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -365,7 +354,7 @@ describe('Article', () => {
         articleId: articles[0].id,
       }).articleId;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -380,7 +369,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -401,7 +390,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -421,7 +410,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -437,7 +426,7 @@ describe('Article', () => {
         categoryId: 99,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -458,7 +447,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -481,7 +470,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       });
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -492,7 +481,7 @@ describe('Article', () => {
     test('[성공] DELETE - 게시글 삭제', async () => {
       const articleId = articles[0].id;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(200);
@@ -504,7 +493,7 @@ describe('Article', () => {
     test('[실패] DELETE - 게시글 삭제 내가 쓴글이 아닌경우', async () => {
       const articleId = articles[1].id;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(404);
@@ -516,7 +505,7 @@ describe('Article', () => {
     test('[실패] DELETE - 게시글 삭제 존재하지 않는 게시글', async () => {
       const articleId = 99;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(404);
@@ -533,7 +522,7 @@ describe('Article', () => {
         articleId: articles[0].id,
       }).articleId;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
