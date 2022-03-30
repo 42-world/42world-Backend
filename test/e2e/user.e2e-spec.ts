@@ -9,7 +9,7 @@ import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
 import { Comment } from '@comment/entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ReactionModule } from '@root/reaction/reaction.module';
@@ -107,7 +107,7 @@ describe('UserController (e2e)', () => {
         .get('/users/me')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
     });
   });
 
@@ -133,7 +133,7 @@ describe('UserController (e2e)', () => {
         .get(`/users/${user.id}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
       expect(response.body.id).toEqual(user.id);
       expect(response.body.nickname).toEqual(user.nickname);
     });
@@ -145,7 +145,7 @@ describe('UserController (e2e)', () => {
 
       // 404를 던지는게 원래 맞는 건가요
       // TODO - 스웨거에 반영하기
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 
@@ -184,7 +184,7 @@ describe('UserController (e2e)', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual('rockpell');
@@ -202,7 +202,7 @@ describe('UserController (e2e)', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user2.nickname);
@@ -220,7 +220,7 @@ describe('UserController (e2e)', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual('');
@@ -236,7 +236,7 @@ describe('UserController (e2e)', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual('mimseong');
@@ -252,7 +252,7 @@ describe('UserController (e2e)', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user.nickname);
@@ -270,7 +270,7 @@ describe('UserController (e2e)', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       // TODO - 스웨거에 반영하기
-      expect(response.status).toEqual(400);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user.nickname);
@@ -282,7 +282,7 @@ describe('UserController (e2e)', () => {
         .delete('/users')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const deletedUser = await userRepository.findOne(user.id, {
         withDeleted: true,
@@ -321,7 +321,7 @@ describe('UserController (e2e)', () => {
         .get('/users/me/articles')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const articles = response.body.data as Article[];
 
@@ -361,7 +361,7 @@ describe('UserController (e2e)', () => {
         .get('/users/me/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const comments = response.body.data as Comment[];
 
@@ -405,7 +405,7 @@ describe('UserController (e2e)', () => {
         .get('/users/me/like-articles')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const articles = response.body.data as Article[];
 
