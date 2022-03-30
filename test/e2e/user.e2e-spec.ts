@@ -26,7 +26,7 @@ import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 
-describe('UserController (e2e)', () => {
+describe('User', () => {
   let app: INestApplication;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
