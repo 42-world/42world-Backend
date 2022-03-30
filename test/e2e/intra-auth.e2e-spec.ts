@@ -1,8 +1,9 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnection } from 'typeorm';
+import { readFileSync } from 'fs';
 
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
@@ -22,6 +23,7 @@ import { InternalServerErrorExceptionFilter } from '@root/filters/internal-serve
 import { UserRole } from '@user/interfaces/userrole.interface';
 import { instance, mock, when } from 'ts-mockito';
 import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
+import { join } from 'path';
 
 describe('IntraAuth', () => {
   let app: INestApplication;
@@ -70,8 +72,8 @@ describe('IntraAuth', () => {
     );
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    authService = moduleFixture.get<AuthService>(AuthService);
+    userRepository = moduleFixture.get(UserRepository);
+    authService = moduleFixture.get(AuthService);
 
     app = app.getHttpServer();
   });
@@ -109,13 +111,13 @@ describe('IntraAuth', () => {
       await clearDB();
     });
 
-    test('[성공] POST', async () => {
+    test('[성공] POST - 이메일 전송', async () => {
       const response = await request(app)
         .post('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .send({ intraId: 'rockpell' });
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(HttpStatus.CREATED);
     });
 
     test('[실패] POST - user role이 NOVICE가 아닌 경우', async () => {
@@ -124,14 +126,14 @@ describe('IntraAuth', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`)
         .send({ intraId: 'rockpell' });
 
-      expect(response.status).toEqual(500);
+      expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
 
-      // 현재는 구글 계정 에러랑 구분할 방법이 없어서 500애러로 처리
-      // expect(response.status).toEqual(403);
+      // 현재는 구글 계정 에러랑 구분할 방법이 없어서 500에러로 처리
+      // expect(response.status).toEqual(HttpStatus.FORBIDDEN);
       // expect(response.body.message).toEqual(FORBIDDEN_USER_ROLE);
     });
 
-    test('[성공] GET', async () => {
+    test('[성공] GET - 이메일 인증', async () => {
       when(cacheService.getIntraAuthMailData('code')).thenResolve(
         new IntraAuthMailDto(newUser.id, 'intraId'),
       );
@@ -141,53 +143,26 @@ describe('IntraAuth', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .query({ code: 'code' });
 
-      expect(response.status).toEqual(200);
-      expect(response.text).toEqual(
-        '<div>\n' +
-          '    <div>\n' +
-          '      <img\n' +
-          '        style="margin: auto; display: block; text-align: center"\n' +
-          '        src="https://avatars.githubusercontent.com/u/97225581?s=400&u=2c69bfb4d3794a8434ea4399cc329117806ecb4d&v=4"\n' +
-          '        alt="42world logo"\n' +
-          '      />\n' +
-          '    </div>\n' +
-          '    <div style="margin: auto; text-align: center">\n' +
-          '      <h1>Hello World!</h1>\n' +
-          '      <h2>인증에 성공했습니다! 🥳</h2>\n' +
-          '\n' +
-          '      <div\n' +
-          '        style="\n' +
-          '          display: inline-block;\n' +
-          '          padding: 15px;\n' +
-          '          background-color: #01bbd6;\n' +
-          '          border-radius: 15px;\n' +
-          '          text-align: center;\n' +
-          '          margin: 20px;\n' +
-          '          width: 250px;\n' +
-          '          height: 60px;\n' +
-          '          line-height: 60px;\n' +
-          '        "\n' +
-          '      >\n' +
-          '        <a\n' +
-          '          href=' +
-          `"${process.env.FRONT_URL}"` +
-          '\n' +
-          '          style="\n' +
-          '            margin: auto;\n' +
-          '            color: white;\n' +
-          '            font-size: 30px;\n' +
-          '            font-weight: bolder;\n' +
-          '            text-align: center;\n' +
-          '            text-decoration-line: none;\n' +
-          '          "\n' +
-          '          >Welcome, Cadet!</a\n' +
-          '        >\n' +
-          '      </div>\n' +
-          '      <div>- 42WORLD -</div>\n' +
-          '    </div>\n' +
-          '  </div>\n' +
-          '  ',
-      );
+      let resultEjs: string;
+      try {
+        const resultEjsPath = join(
+          __dirname,
+          '../../views/intra-auth/results.ejs',
+        );
+        resultEjs = readFileSync(resultEjsPath, 'utf8');
+      } catch (err) {
+        console.error(err);
+      }
+
+      expect(resultEjs).toBeTruthy();
+      const expectedEjs = resultEjs
+        .replace('<%= locals.title %>', 'Hello World!')
+        .replace('<%= locals.message %>', '인증에 성공했습니다! 🥳')
+        .replace('<%= locals.button %>', 'Welcome, Cadet!')
+        .replace('<%= locals.endpoint %>', process.env.FRONT_URL);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      expect(response.text).toEqual(expectedEjs);
     });
   });
 });
