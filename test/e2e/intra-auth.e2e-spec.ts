@@ -1,36 +1,34 @@
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnection } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { instance, mock, when } from 'ts-mockito';
 import { readFileSync } from 'fs';
+import { join } from 'path';
 
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { TestBaseModule } from '@test/e2e/test.base.module';
-import { clearDB } from '@test/e2e/utils/utils';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { IntraAuth } from '@intra-auth/entities/intra-auth.entity';
 import { IntraAuthController } from '@intra-auth/intra-auth.controller';
 import { IntraAuthService } from '@intra-auth/intra-auth.service';
 import { CacheService } from '@cache/cache.service';
 import { MailerService } from '@nestjs-modules/mailer';
-import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 import { UserRole } from '@user/interfaces/userrole.interface';
-import { instance, mock, when } from 'ts-mockito';
 import { IntraAuthMailDto } from '@cache/dto/intra-auth.dto';
-import { join } from 'path';
 
 describe('IntraAuth', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
   const cacheService: CacheService = mock(CacheService);
   const mailerService: MailerService = mock(MailerService);
+
   let JWT;
   let cadetJWT;
 
@@ -58,30 +56,19 @@ describe('IntraAuth', () => {
       controllers: [IntraAuthController],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app.useGlobalFilters(new InternalServerErrorExceptionFilter());
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    const app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
     authService = moduleFixture.get(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   describe('/intra-auth', () => {
@@ -112,7 +99,7 @@ describe('IntraAuth', () => {
     });
 
     test('[성공] POST - 이메일 전송', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .send({ intraId: 'rockpell' });
@@ -121,7 +108,7 @@ describe('IntraAuth', () => {
     });
 
     test('[실패] POST - user role이 NOVICE가 아닌 경우', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`)
         .send({ intraId: 'rockpell' });
@@ -138,7 +125,7 @@ describe('IntraAuth', () => {
         new IntraAuthMailDto(newUser.id, 'intraId'),
       );
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .get('/intra-auth')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .query({ code: 'code' });
