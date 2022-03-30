@@ -152,6 +152,7 @@ describe('UserController (e2e)', () => {
   describe('/users', () => {
     let user: User;
     let user2: User;
+    const updatedNickname = 'updated nickname';
 
     beforeEach(async () => {
       user = dummy.user(
@@ -176,7 +177,7 @@ describe('UserController (e2e)', () => {
 
     test('[성공] PUT - 유저 프로필 변경', async () => {
       const updateData = {
-        nickname: 'rockpell',
+        nickname: updatedNickname,
         character: 2,
       } as UpdateUserProfileRequestDto;
       const response = await request(app)
@@ -187,7 +188,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual('rockpell');
+      expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(2);
     });
 
@@ -229,7 +230,7 @@ describe('UserController (e2e)', () => {
 
     test('[성공] PUT - 닉네임만 변경하는 경우', async () => {
       const updateData = {
-        nickname: 'mimseong',
+        nickname: updatedNickname,
       } as UpdateUserProfileRequestDto;
       const response = await request(app)
         .put('/users')
@@ -239,7 +240,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toEqual(HttpStatus.OK);
 
       const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual('mimseong');
+      expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(0);
     });
 
