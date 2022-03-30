@@ -9,31 +9,29 @@ import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
 import { Comment } from '@comment/entities/comment.entity';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
 import { UpdateUserProfileRequestDto } from '@root/user/dto/request/update-user-profile-request.dto';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import * as dummy from '@test/e2e/utils/dummy';
-import { clearDB } from '@test/e2e/utils/utils';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { User } from '@user/entities/user.entity';
 import { UserRepository } from '@user/repositories/user.repository';
 import { UserModule } from '@user/user.module';
-import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 
 describe('User', () => {
-  let app: INestApplication;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
   let reactionArticleRepository: ReactionArticleRepository;
   let authService: AuthService;
+  let httpServer: INestApplication;
   let JWT;
 
   beforeAll(async () => {
@@ -49,37 +47,22 @@ describe('User', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
+    const app = createTestApp(moduleFixture);
 
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
-    await app.init();
+    userRepository = moduleFixture.get(UserRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
+    commentRepository = moduleFixture.get(CommentRepository);
+    reactionArticleRepository = moduleFixture.get(ReactionArticleRepository);
+    authService = moduleFixture.get(AuthService);
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
-    commentRepository = moduleFixture.get<CommentRepository>(CommentRepository);
-    reactionArticleRepository = moduleFixture.get<ReactionArticleRepository>(
-      ReactionArticleRepository,
-    );
-
-    authService = moduleFixture.get<AuthService>(AuthService);
-
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   beforeEach(async () => {
