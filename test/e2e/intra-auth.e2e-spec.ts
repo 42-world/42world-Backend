@@ -78,16 +78,16 @@ describe('IntraAuth', () => {
 
     beforeEach(async () => {
       newUser = dummy.user(
-        'test1',
-        'first user',
+        'user githubUid',
+        'user',
         'githubUsername',
         UserRole.NOVICE,
       );
       await userRepository.save(newUser);
 
       const cadetUser = dummy.user(
-        'test2',
-        'first user2',
+        'user2 githubUid',
+        'user2',
         'githubUsername2',
         UserRole.CADET,
       );
