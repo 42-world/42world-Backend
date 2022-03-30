@@ -18,6 +18,7 @@ import { UpdateUserProfileRequestDto } from '@root/user/dto/request/update-user-
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB } from '@test/e2e/utils/utils';
+import { User } from '@user/entities/user.entity';
 import { UserRepository } from '@user/repositories/user.repository';
 import { UserModule } from '@user/user.module';
 import * as cookieParser from 'cookie-parser';
@@ -87,17 +88,17 @@ describe('UserController (e2e)', () => {
 
   describe('/users/me', () => {
     beforeEach(async () => {
-      const newUser = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+      const user = dummy.user(
+        'test github uid',
+        'test nickname',
+        'github user name',
         UserRole.CADET,
       );
-      await userRepository.save(newUser);
+      await userRepository.save(user);
 
       JWT = authService.getJWT({
-        userId: newUser.id,
-        userRole: newUser.role,
+        userId: user.id,
+        userRole: user.role,
       } as JWTPayload);
     });
 
@@ -111,13 +112,13 @@ describe('UserController (e2e)', () => {
   });
 
   describe('/users/{id}', () => {
-    let user;
+    let user: User;
 
     beforeEach(async () => {
       user = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+        'test github uid',
+        'test nickname',
+        'github user name',
         UserRole.CADET,
       );
       await userRepository.save(user);
@@ -149,17 +150,19 @@ describe('UserController (e2e)', () => {
   });
 
   describe('/users', () => {
-    let user;
-    const githubUid = 'test github uid';
-    const nickname = 'test nickname';
-    const nickname2 = 'test nickname2';
-    const githubUsername = 'github user name';
+    let user: User;
+    let user2: User;
 
     beforeEach(async () => {
-      user = dummy.user(githubUid, nickname, githubUsername, UserRole.CADET);
-      const user2 = dummy.user(
+      user = dummy.user(
+        'test github uid',
+        'test nickname',
+        'github user name',
+        UserRole.CADET,
+      );
+      user2 = dummy.user(
         'test github uid2',
-        nickname2,
+        'test nickname2',
         'github user name2',
         UserRole.CADET,
       );
@@ -191,7 +194,7 @@ describe('UserController (e2e)', () => {
     test('[성공] PUT - 중복된 닉네임인 경우', async () => {
       // nickname2는 유저2의 닉네임이다
       const updateData = {
-        nickname: nickname2,
+        nickname: user2.nickname,
         character: 2,
       } as UpdateUserProfileRequestDto;
       const response = await request(app)
@@ -202,7 +205,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toEqual(200);
 
       const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual(nickname2);
+      expect(updatedUser.nickname).toEqual(user2.nickname);
       expect(updatedUser.character).toEqual(2);
     });
 
@@ -252,7 +255,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toEqual(200);
 
       const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual(nickname);
+      expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(2);
     });
 
@@ -270,7 +273,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toEqual(400);
 
       const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual(nickname);
+      expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(0);
     });
 
@@ -290,15 +293,15 @@ describe('UserController (e2e)', () => {
   });
 
   describe('/users/me/articles', () => {
-    let user;
+    let user: User;
     let category;
     let article;
 
     beforeEach(async () => {
       user = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+        'test github uid',
+        'test nickname',
+        'github user name',
         UserRole.CADET,
       );
       await userRepository.save(user);
