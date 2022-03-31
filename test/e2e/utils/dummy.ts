@@ -3,9 +3,10 @@ import { AuthService } from '@auth/auth.service';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { Category } from '@category/entities/category.entity';
 import { Comment } from '@comment/entities/comment.entity';
+import { Notification } from '@root/notification/entities/notification.entity';
+import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { User } from '@user/entities/user.entity';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 
 export const user = (
   githubUid: string,
@@ -72,4 +73,16 @@ export const reactionArticle = (
   reactionArticle.articleId = articleId;
   reactionArticle.userId = userId;
   return reactionArticle;
+};
+
+export const notification = (
+  userId: number,
+  articleId: number,
+  content: string,
+): Notification => {
+  const notification = new Notification();
+  notification.content = content;
+  notification.userId = userId;
+  notification.articleId = articleId;
+  return notification;
 };
