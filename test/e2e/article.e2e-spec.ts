@@ -43,6 +43,7 @@ import { FindOneArticleResponseDto } from '@root/article/dto/response/find-one-a
  * HttpStatus.INTERNAL_SERVER_ERROR 쓸것
  * 더미 데이터 어떻게 할지 고민해볼것
  * response dto 가 제대로 확인되고있는지 체크할것
+ * unauthenticated 에러가 잘 나오는지 확인할것
  */
 
 describe('Article', () => {
@@ -125,6 +126,12 @@ describe('Article', () => {
       expect(result.viewCount).toBe(0);
       expect(result.likeCount).toBe(0);
       expect(result.commentCount).toBe(0);
+    });
+
+    test('[실패] POST - unauthorized', async () => {
+      const response = await request(httpServer).post('/articles');
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[성공] POST - 글쓰기 권한 높은사람', async () => {
@@ -228,6 +235,12 @@ describe('Article', () => {
       );
     });
 
+    test('[실패] GET - unauthorized', async () => {
+      const response = await request(httpServer).get('/articles');
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
     test('[성공] GET - 게시글 목록 조회 권한 높은사람', async () => {
       const findArticleRequestDto = {
         categoryId: categories.free.id,
@@ -318,6 +331,14 @@ describe('Article', () => {
       expect(result.writer.nickname).toBe(users.cadet[0].nickname);
     });
 
+    test('[실패] GET - unauthorized', async () => {
+      const articleId = articles[0].id;
+
+      const response = await request(httpServer).get(`/articles/${articleId}`);
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
     test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
       const articleId = articles[0].id;
 
@@ -382,6 +403,14 @@ describe('Article', () => {
       expect(result.content).toBe(updateArticleRequestDto.content);
       expect(result.categoryId).toBe(updateArticleRequestDto.categoryId);
       expect(result.writerId).toBe(users.cadet[0].id);
+    });
+
+    test('[실패] PUT - unauthorized', async () => {
+      const articleId = articles[0].id;
+
+      const response = await request(httpServer).put(`/articles/${articleId}`);
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] PUT - 게시글 수정 내가 쓴글이 아닌경우', async () => {
@@ -490,6 +519,16 @@ describe('Article', () => {
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeFalsy();
+    });
+
+    test('[실패] DELETE - unauthorized', async () => {
+      const articleId = articles[0].id;
+
+      const response = await request(httpServer).delete(
+        `/articles/${articleId}`,
+      );
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] DELETE - 게시글 삭제 내가 쓴글이 아닌경우', async () => {
