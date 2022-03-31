@@ -24,6 +24,8 @@ import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
+import { CreateArticleResponseDto } from '@root/article/dto/response/create-article-response.dto';
+import { FindOneArticleResponseDto } from '@root/article/dto/response/find-one-article-response.dto';
 
 /*
 테스트 짜는 순서
@@ -115,7 +117,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.CREATED);
 
-      const result = response.body as Article;
+      const result = response.body as CreateArticleResponseDto;
       expect(result.title).toBe(createArticlRequesteDto.title);
       expect(result.content).toBe(createArticlRequesteDto.content);
       expect(result.categoryId).toBe(createArticlRequesteDto.categoryId);
@@ -301,7 +303,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = response.body;
+      const result = response.body as FindOneArticleResponseDto;
       expect(result.title).toBe(articles[0].title);
       expect(result.content).toBe(articles[0].content);
       expect(result.categoryId).toBe(articles[0].categoryId);
