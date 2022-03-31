@@ -23,6 +23,8 @@ import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
 import { CreateArticleResponseDto } from '@root/article/dto/response/create-article-response.dto';
 import { FindOneArticleResponseDto } from '@root/article/dto/response/find-one-article-response.dto';
+import { Comment } from '@root/comment/entities/comment.entity';
+import { CommentRepository } from '@root/comment/repositories/comment.repository';
 
 describe('Article', () => {
   let httpServer: INestApplication;
@@ -30,6 +32,7 @@ describe('Article', () => {
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
+  let commentRepository: CommentRepository;
 
   let authService: AuthService;
   let JWT: string;
@@ -56,7 +59,7 @@ describe('Article', () => {
     userRepository = moduleFixture.get(UserRepository);
     articleRepository = moduleFixture.get(ArticleRepository);
     categoryRepository = moduleFixture.get(CategoryRepository);
-
+    commentRepository = moduleFixture.get(CommentRepository);
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -269,6 +272,78 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/articles/:id/comments', () => {
+    let comments: Comment[];
+
+    beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await articleRepository.save([
+        dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
+      ]);
+      comments = await commentRepository.save([
+        dummy.comment(users.cadet[0].id, articles[0].id, 'comment1'),
+        dummy.comment(users.cadet[0].id, articles[0].id, 'comment2'),
+      ]);
+      JWT = dummy.jwt2(users.cadet[0], authService);
+    });
+
+    test('[성공] GET - 게시글 댓글 목록 조회', async () => {
+      const articleId = articles[0].id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+      expect(responseComments.length).toBe(2);
+      expect(responseComments[0].id).toBe(comments[1].id);
+      expect(responseComments[0].content).toBe(comments[1].content);
+      expect(responseComments[0].writerId).toBe(comments[1].writerId);
+      expect(responseComments[0].writer.id).toBe(comments[1].writerId);
+      expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
+      expect(responseComments[0].articleId).toBe(comments[1].articleId);
+      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
+      expect(responseComments[1].id).toBe(comments[0].id);
+    });
+
+    test('[실패] GET - unauthorized', async () => {
+      const articleId = articles[0].id;
+
+      const response = await request(httpServer).get(
+        `/articles/${articleId}/comments`,
+      );
+
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
+    test('[실패] GET - 게시글 댓글 목록 존재하지 않는 게시글', async () => {
+      const articleId = 99;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+    });
+
+    testDto<{ articleId: number }>([
+      ['articleId', undefined],
+      ['articleId', 'abc'],
+    ])('[실패] GET - 게시글 댓글 목록 %s인 경우', async (_, buildDto) => {
+      const articleId = buildDto({
+        articleId: articles[0].id,
+      }).articleId;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
