@@ -278,7 +278,7 @@ describe('Article', () => {
     });
   });
 
-  describe('/articles/:id/comments', () => {
+  describe('/articles/{id}/comments', () => {
     let comments: Comment[];
 
     beforeEach(async () => {
@@ -350,7 +350,7 @@ describe('Article', () => {
     });
   });
 
-  describe('/articles/:id', () => {
+  describe('/articles/{id}', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
