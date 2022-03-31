@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
@@ -113,7 +113,7 @@ describe('Article', () => {
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(HttpStatus.CREATED);
 
       const result = response.body as Article;
       expect(result.title).toBe(createArticlRequesteDto.title);
@@ -137,7 +137,7 @@ describe('Article', () => {
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(HttpStatus.CREATED);
     });
 
     test('[실패] POST - 글쓰기 권한 낮은사람', async () => {
@@ -152,7 +152,7 @@ describe('Article', () => {
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(406);
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
 
     test('[실패] POST - 글쓰기 존재하지 않는 카테고리', async () => {
@@ -167,7 +167,7 @@ describe('Article', () => {
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     testDto<CreateArticleRequestDto>([
@@ -192,7 +192,7 @@ describe('Article', () => {
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     test('[성공] GET - 게시글 목록 조회', async () => {
@@ -204,7 +204,7 @@ describe('Article', () => {
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const responseArticles = response.body.data as Article[];
       expect(responseArticles.length).toBe(2);
@@ -236,7 +236,7 @@ describe('Article', () => {
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
     });
 
     test('[실패] GET - 게시글 목록 조회 권한 낮은사람', async () => {
@@ -249,7 +249,7 @@ describe('Article', () => {
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(406);
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
 
     test('[실패] GET - 게시글 목록 조희 존재하지 않는 카테고리', async () => {
@@ -262,7 +262,7 @@ describe('Article', () => {
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     testDto<FindAllArticleRequestDto>([
@@ -278,7 +278,7 @@ describe('Article', () => {
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
   });
 
@@ -299,7 +299,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const result = response.body;
       expect(result.title).toBe(articles[0].title);
@@ -323,7 +323,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
     });
 
     test('[실패] GET - 게시글 상세 조회 권한 낮은사람', async () => {
@@ -333,7 +333,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(406);
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
 
     test('[실패] GET - 게시글 상세 조회 존재하지 않는 게시글', async () => {
@@ -343,7 +343,7 @@ describe('Article', () => {
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     testDto<{ articleId: number }>([
@@ -358,7 +358,7 @@ describe('Article', () => {
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     test('[성공] PUT - 게시글 수정', async () => {
@@ -373,7 +373,7 @@ describe('Article', () => {
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(updateArticleRequestDto.title);
@@ -394,7 +394,7 @@ describe('Article', () => {
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(articles[1].title);
@@ -415,7 +415,7 @@ describe('Article', () => {
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     test('[실패] PUT - 게시글 수정 존재하지 않는 카테고리', async () => {
@@ -431,7 +431,7 @@ describe('Article', () => {
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     testDto<{ articleId: number }>([
@@ -452,7 +452,7 @@ describe('Article', () => {
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     testDto<UpdateArticleRequestDto>([
@@ -475,7 +475,7 @@ describe('Article', () => {
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
     test('[성공] DELETE - 게시글 삭제', async () => {
@@ -484,7 +484,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeFalsy();
@@ -496,7 +496,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeTruthy();
@@ -508,7 +508,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeFalsy();
@@ -526,7 +526,7 @@ describe('Article', () => {
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
   });
 });
