@@ -1,21 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import * as cookieParser from 'cookie-parser';
 
 import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ArticleModule } from '@article/article.module';
 import { ArticleRepository } from '@article/repositories/article.repository';
 import { Article } from '@article/entities/article.entity';
 import { CategoryModule } from '@category/category.module';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
-import { ReactionModule } from '@root/reaction/reaction.module';
 import { CreateArticleRequestDto } from '@root/article/dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from '@root/article/dto/request/find-all-article-request.dto';
 import { UpdateArticleRequestDto } from '@root/article/dto/request/update-article-request.dto';
@@ -26,25 +23,6 @@ import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
 import { CreateArticleResponseDto } from '@root/article/dto/response/create-article-response.dto';
 import { FindOneArticleResponseDto } from '@root/article/dto/response/find-one-article-response.dto';
-
-/*
-테스트 짜는 순서
-1. 정상적인 시나리오대로 성공 케이스 작성
-2. 권한 관련해서 실패 케이스 작성
-3. 400을 제회의한 의도적인 예외처리 관련해서 실패 케이스 작성
-4. dto 에서 날수있는 예외처리 관련해서 실패 케이스 작성
-
-성공 케이스는 응답값 다 잘 있는지 확인할것
-실패 케이스는 상태코드만 확인할것
-*/
-
-/**
- * test module 유틸로 빼기
- * HttpStatus.INTERNAL_SERVER_ERROR 쓸것
- * 더미 데이터 어떻게 할지 고민해볼것
- * response dto 가 제대로 확인되고있는지 체크할것
- * unauthenticated 에러가 잘 나오는지 확인할것
- */
 
 describe('Article', () => {
   let httpServer: INestApplication;
@@ -384,6 +362,7 @@ describe('Article', () => {
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
+    // TODO: novice 도 게시글 수정/삭제 가능한지 추가
     test('[성공] PUT - 게시글 수정', async () => {
       const articleId = articles[0].id;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
