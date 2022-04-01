@@ -12,7 +12,7 @@ import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB } from './utils/utils';
+import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let app: INestApplication;
@@ -28,14 +28,7 @@ describe('Notification', () => {
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
 
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get<UserRepository>(UserRepository);
