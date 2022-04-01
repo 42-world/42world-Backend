@@ -119,9 +119,9 @@ describe('Notification', () => {
   describe('/notifications/readall', () => {
     beforeEach(async () => {
       const dummyUser = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+        'test github uid',
+        'first nickname',
+        'github user name',
         UserRole.CADET,
       );
       await userRepository.save(dummyUser);
