@@ -1,8 +1,8 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getConnection } from 'typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { getConnection, Repository } from 'typeorm';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { instance, mock, when } from 'ts-mockito';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -26,7 +26,9 @@ import { User } from '@user/entities/user.entity';
 describe('IntraAuth', () => {
   let httpServer: INestApplication;
   let userRepository: UserRepository;
+  let intraAuthRepository: Repository<IntraAuth>;
   let authService: AuthService;
+
   const cacheService: CacheService = mock(CacheService);
   const mailerService: MailerService = mock(MailerService);
 
@@ -61,6 +63,7 @@ describe('IntraAuth', () => {
     await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
+    intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -80,7 +83,7 @@ describe('IntraAuth', () => {
       newUser = dummy.user(
         'user githubUid',
         'user',
-        'githubUsername',
+        'user githubUsername',
         UserRole.NOVICE,
       );
       await userRepository.save(newUser);
@@ -88,7 +91,7 @@ describe('IntraAuth', () => {
       const cadetUser = dummy.user(
         'user2 githubUid',
         'user2',
-        'githubUsername2',
+        'user2 githubUsername',
         UserRole.CADET,
       );
       await userRepository.save(cadetUser);
@@ -151,6 +154,51 @@ describe('IntraAuth', () => {
         .replace('<%= locals.title %>', 'Hello World!')
         .replace('<%= locals.message %>', '인증에 성공했습니다! 🥳')
         .replace('<%= locals.button %>', 'Welcome, Cadet!')
+        .replace('<%= locals.endpoint %>', process.env.FRONT_URL);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      expect(response.text).toEqual(expectedEjs);
+    });
+
+    test('[실패] GET - 이미 가입된 카뎃', async () => {
+      const mailCode = 'code';
+      const cadetUser = dummy.user(
+        'cadet githubUid',
+        'cadet nickname',
+        'cadet githubUsername',
+        UserRole.CADET,
+      );
+      await userRepository.save(cadetUser);
+
+      await intraAuthRepository.save(
+        new IntraAuthMailDto(cadetUser.id, intraId),
+      );
+
+      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(
+        new IntraAuthMailDto(cadetUser.id, intraId),
+      );
+
+      const response = await request(httpServer)
+        .get('/intra-auth')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
+        .query({ code: mailCode });
+
+      let resultEjs: string;
+      try {
+        const resultEjsPath = join(
+          __dirname,
+          '../../views/intra-auth/results.ejs',
+        );
+        resultEjs = readFileSync(resultEjsPath, 'utf8');
+      } catch (err) {
+        console.error(err);
+      }
+
+      expect(resultEjs).toBeTruthy();
+      const expectedEjs = resultEjs
+        .replace('<%= locals.title %>', 'Oops! There is an error ...')
+        .replace('<%= locals.message %>', '인증에 실패했습니다 😭')
+        .replace('<%= locals.button %>', 'Retry')
         .replace('<%= locals.endpoint %>', process.env.FRONT_URL);
 
       expect(response.status).toEqual(HttpStatus.OK);
