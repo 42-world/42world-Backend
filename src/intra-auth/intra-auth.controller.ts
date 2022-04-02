@@ -48,8 +48,7 @@ export class IntraAuthController {
   @Render('intra-auth/results.ejs')
   @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
-  @ApiOkResponse({ description: '42인증 완료' })
-  @ApiForbiddenResponse({ description: '42인증 메일 코드 만료됨' })
+  @ApiOkResponse({ description: 'results.ejs 파일 렌더링' })
   async getAuthCode(@Query('code') code: string) {
     try {
       await this.intraAuthService.getAuth(code);
