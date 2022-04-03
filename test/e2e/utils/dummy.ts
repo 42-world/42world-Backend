@@ -12,11 +12,13 @@ export const user = (
   nickname: string,
   githubUsername: string,
   role: UserRole,
+  character = 0,
 ): User => {
   const user = new User();
   user.githubUid = githubUid;
   user.nickname = nickname;
   user.githubUsername = githubUsername;
+  user.character = character;
   user.role = role;
   return user;
 };
