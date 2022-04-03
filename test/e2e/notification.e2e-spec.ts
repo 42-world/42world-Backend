@@ -117,14 +117,43 @@ describe('Notification', () => {
   });
 
   describe('/notifications/readall', () => {
+    let dummyUser: User;
+    let dummyCategory: Category;
+    let dummyArticle: Article;
+    let dummyNotification1: Notification;
+    let dummyNotification2: Notification;
+
     beforeEach(async () => {
-      const dummyUser = dummy.user(
+      dummyUser = dummy.user(
         'test github uid',
         'first nickname',
         'github user name',
         UserRole.CADET,
       );
       await userRepository.save(dummyUser);
+      dummyCategory = dummy.category('test category');
+      await categoryRepository.save(dummyCategory);
+      dummyArticle = dummy.article(
+        dummyCategory.id,
+        dummyUser.id,
+        'title',
+        'content',
+      );
+      await articleRepository.save(dummyArticle);
+      dummyNotification1 = dummy.notification(
+        NotificationType.NEW_COMMENT,
+        dummyUser.id,
+        dummyArticle.id,
+        'notification content',
+      );
+      dummyNotification2 = dummy.notification(
+        NotificationType.NEW_COMMENT,
+        dummyUser.id,
+        dummyArticle.id,
+        'notification content',
+      );
+      await notificationRepository.save(dummyNotification1);
+      await notificationRepository.save(dummyNotification2);
       JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
     });
 
@@ -133,6 +162,12 @@ describe('Notification', () => {
         .patch('/notifications/readall')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
+      const readNotifications = await notificationRepository.find({
+        userId: dummyUser.id,
+      });
+      expect(readNotifications.length).toEqual(2);
+      expect(readNotifications[0].isRead).toEqual(true);
+      expect(readNotifications[1].isRead).toEqual(true);
     });
   });
 });
