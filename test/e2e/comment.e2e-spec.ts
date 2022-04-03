@@ -22,10 +22,13 @@ describe('Comments', () => {
   let httpServer: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
-  let JWT;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
+
+  let JWT;
+  let anotherJWT;
+  let noviceJWT;
 
   const categoryName = '자유게시판';
   const articleTitle = '제목';
@@ -33,6 +36,8 @@ describe('Comments', () => {
   const commentContent = '재밌다';
   let category;
   let cadetUser;
+  let anotherCadetUser;
+  let noviceUser;
   let targetArticle;
 
   beforeAll(async () => {
@@ -79,6 +84,28 @@ describe('Comments', () => {
     await userRepository.save(cadetUser);
     JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
 
+    anotherCadetUser = dummy.user(
+      'anothergithubUid',
+      'nickname',
+      'anotherGHusername',
+      UserRole.CADET,
+    );
+    await userRepository.save(anotherCadetUser);
+    anotherJWT = dummy.jwt(
+      anotherCadetUser.id,
+      anotherCadetUser.role,
+      authService,
+    );
+
+    noviceUser = dummy.user(
+      'novicegithubUid',
+      'nickname',
+      'noviceGHUsername',
+      UserRole.NOVICE,
+    );
+    await userRepository.save(noviceUser);
+    noviceJWT = dummy.jwt(noviceUser.id, noviceUser.role, authService);
+
     category = dummy.category(categoryName);
     await categoryRepository.save(category);
 
@@ -106,6 +133,15 @@ describe('Comments', () => {
       expect(result.writerId).toEqual(cadetUser.id);
       expect(result.writer.role).toEqual(cadetUser.role);
     });
+
+    test('[실패] POST - 권한 없는 유저가 댓글 생성', async () => {
+      const response = await request(httpServer)
+        .post('/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`)
+        .send({ content: commentContent, articleId: targetArticle.id });
+
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+    });
   });
 
   describe('/comments/:id', () => {
@@ -127,12 +163,44 @@ describe('Comments', () => {
       expect(response.status).toEqual(HttpStatus.OK);
     });
 
+    test('[실패] PUT - 작성자가 아닌 다른 카뎃이 댓글 수정', async () => {
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${anotherJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    });
+
+    test('[실패] PUT - 권한 없는 유저가 댓글 수정', async () => {
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+    });
+
     test('[성공] DELETE - 댓글 삭제', async () => {
       const response = await request(httpServer)
         .delete(`/comments/${comment.id}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(HttpStatus.OK);
+    });
+
+    test('[성공] DELETE - 작성자가 아닌 다른 카뎃이 댓글 삭제', async () => {
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${anotherJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    });
+
+    test('[성공] DELETE - 권한 없는 유저가 댓글 삭제', async () => {
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
   });
 });
