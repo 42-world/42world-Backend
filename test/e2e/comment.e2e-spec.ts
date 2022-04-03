@@ -1,3 +1,4 @@
+import { Category } from './../../src/category/entities/category.entity';
 import { Article } from './../../src/article/entities/article.entity';
 import { User } from './../../src/user/entities/user.entity';
 import { CommentRepository } from './../../src/comment/repositories/comment.repository';
@@ -36,7 +37,7 @@ describe('Comments', () => {
   const articleTitle = '제목';
   const articleContent = '본문';
   const commentContent = '댓글 내용';
-  let category: string;
+  let category: Category;
   let cadetUser: User;
   let anotherCadetUser: User;
   let noviceUser: User;
