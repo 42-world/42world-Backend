@@ -225,7 +225,7 @@ describe('User', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(updatedNickname);
-      expect(updatedUser.character).toEqual(0);
+      expect(updatedUser.character).toEqual(user.character);
     });
 
     test('[성공] PUT - 캐릭터만 변경하는 경우', async () => {
@@ -246,7 +246,7 @@ describe('User', () => {
 
     test('[실패] PUT - 없는 캐릭터 번호', async () => {
       const updateData = {
-        nickname: 'rockpell',
+        nickname: updatedNickname,
         character: 999,
       } as UpdateUserProfileRequestDto;
       const response = await request(httpServer)
@@ -325,9 +325,9 @@ describe('User', () => {
 
     beforeEach(async () => {
       user = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+        'test github uid',
+        'test nickname',
+        'github user name',
         UserRole.CADET,
       );
       await userRepository.save(user);
@@ -367,9 +367,9 @@ describe('User', () => {
 
     beforeEach(async () => {
       user = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+        'test github uid',
+        'test nickname',
+        'github user name',
         UserRole.CADET,
       );
       await userRepository.save(user);
@@ -380,9 +380,9 @@ describe('User', () => {
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'a', 'bb');
+      article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'cc');
+      comment = dummy.comment(user.id, user.id, 'content');
       await commentRepository.save(comment);
       reactionArticle = dummy.reactionArticle(article.id, user.id);
       await reactionArticleRepository.save(reactionArticle);
