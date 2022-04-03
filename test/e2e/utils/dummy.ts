@@ -5,7 +5,6 @@ import { Category } from '@category/entities/category.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { Notification } from '@root/notification/entities/notification.entity';
 import { NotificationType } from '@root/notification/interfaces/notifiaction.interface';
-import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { User } from '@user/entities/user.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
@@ -91,7 +90,6 @@ export const reactionArticle = (
   return reactionArticle;
 };
 
-
 export const notification = (
   type: NotificationType,
   userId: number,
@@ -104,6 +102,7 @@ export const notification = (
   notification.userId = userId;
   notification.articleId = articleId;
   return notification;
+};
 
 export type DummyUsers = {
   cadet: User[];
