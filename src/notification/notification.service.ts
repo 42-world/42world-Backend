@@ -33,6 +33,6 @@ export class NotificationService {
       where: { userId, isRead: false },
     });
     notifications.forEach((notification) => (notification.isRead = true));
-    this.notificationRepository.save(notifications);
+    await this.notificationRepository.save(notifications);
   }
 }
