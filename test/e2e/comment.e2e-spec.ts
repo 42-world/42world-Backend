@@ -1,3 +1,4 @@
+import { CommentRepository } from './../../src/comment/repositories/comment.repository';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -24,6 +25,15 @@ describe('Comments', () => {
   let JWT;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
+  let commentRepository: CommentRepository;
+
+  const categoryName = '자유게시판';
+  const articleTitle = '제목';
+  const articleContent = '본문';
+  const commentContent = '재밌다';
+  let category;
+  let cadetUser;
+  let targetArticle;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -40,11 +50,11 @@ describe('Comments', () => {
     const app = createTestApp(moduleFixture);
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
-    authService = moduleFixture.get<AuthService>(AuthService);
+    userRepository = moduleFixture.get(UserRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
+    commentRepository = moduleFixture.get(CommentRepository);
+    authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
   });
@@ -59,38 +69,30 @@ describe('Comments', () => {
     await clearDB();
   });
 
+  beforeEach(async () => {
+    cadetUser = dummy.user(
+      'githubUid',
+      'nickname',
+      'githubUsername',
+      UserRole.CADET,
+    );
+    await userRepository.save(cadetUser);
+    JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+
+    category = dummy.category(categoryName);
+    await categoryRepository.save(category);
+
+    targetArticle = dummy.article(
+      category.id,
+      cadetUser.id,
+      articleTitle,
+      articleContent,
+    );
+    await articleRepository.save(targetArticle);
+  });
+
   describe('/comments', () => {
-    let cadetUser;
-
-    beforeEach(async () => {
-      cadetUser = dummy.user(
-        'cadetUser githubUid',
-        'cadetUser nickname',
-        'cadetUser githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(cadetUser);
-      JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
-    });
-
-    test('[성공] POST', async () => {
-      const categoryName = '자유게시판';
-      const articleTitle = '제목';
-      const articleContent = '본문';
-      const commentContent = '재밌다';
-      const category = dummy.category(categoryName);
-
-      await categoryRepository.save(category);
-
-      const targetArticle = dummy.article(
-        category.id,
-        cadetUser.id,
-        articleTitle,
-        articleContent,
-      );
-
-      await articleRepository.save(targetArticle);
-
+    test('[성공] POST - 댓글 생성', async () => {
       const response = await request(httpServer)
         .post('/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
@@ -103,6 +105,34 @@ describe('Comments', () => {
       expect(result.content).toEqual(commentContent);
       expect(result.writerId).toEqual(cadetUser.id);
       expect(result.writer.role).toEqual(cadetUser.role);
+    });
+  });
+
+  describe('/comments/:id', () => {
+    let comment;
+
+    beforeEach(async () => {
+      comment = dummy.comment(cadetUser.id, targetArticle.id, commentContent);
+      await commentRepository.save(comment);
+    });
+
+    test('[성공] PUT - 댓글 수정', async () => {
+      const updateContent = '수정된 댓글 내용';
+
+      const response = await request(httpServer)
+        .put(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
+        .send({ content: updateContent });
+
+      expect(response.status).toEqual(HttpStatus.OK);
+    });
+
+    test('[성공] DELETE - 댓글 삭제', async () => {
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
     });
   });
 });
