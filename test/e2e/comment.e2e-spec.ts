@@ -1,27 +1,24 @@
-import { CategoryModule } from '@root/category/category.module';
-import { AuthModule } from '@auth/auth.module';
-import { CommentModule } from '@root/comment/comment.module';
-import { ArticleModule } from '@root/article/article.module';
-import { CategoryRepository } from '@category/repositories/category.repository';
-import { ArticleRepository } from '@article/repositories/article.repository';
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnection } from 'typeorm';
 
+import { CategoryModule } from '@category/category.module';
+import { AuthModule } from '@auth/auth.module';
+import { ArticleModule } from '@article/article.module';
+import { ArticleRepository } from '@article/repositories/article.repository';
+import { CategoryRepository } from '@category/repositories/category.repository';
+import { CommentModule } from '@comment/comment.module';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { UserModule } from '@user/user.module';
-import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
-import { clearDB } from '@test/e2e/utils/utils';
-import * as dummy from './utils/dummy';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { UserRole } from '@user/interfaces/userrole.interface';
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
+import * as dummy from './utils/dummy';
 
 describe('Comments', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
   let JWT;
@@ -40,18 +37,7 @@ describe('Comments', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app.useGlobalFilters(new InternalServerErrorExceptionFilter());
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    const app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get<UserRepository>(UserRepository);
@@ -60,13 +46,13 @@ describe('Comments', () => {
       moduleFixture.get<CategoryRepository>(CategoryRepository);
     authService = moduleFixture.get<AuthService>(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   afterEach(async () => {
@@ -74,16 +60,17 @@ describe('Comments', () => {
   });
 
   describe('/comments', () => {
-    let newUser;
+    let cadetUser;
+
     beforeEach(async () => {
-      newUser = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
+      cadetUser = dummy.user(
+        'cadetUser githubUid',
+        'cadetUser nickname',
+        'cadetUser githubUsername',
         UserRole.CADET,
       );
-      await userRepository.save(newUser);
-      JWT = dummy.jwt(newUser.id, newUser.role, authService);
+      await userRepository.save(cadetUser);
+      JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
     });
 
     test('[성공] POST', async () => {
@@ -94,22 +81,28 @@ describe('Comments', () => {
       const category = dummy.category(categoryName);
 
       await categoryRepository.save(category);
+
       const targetArticle = dummy.article(
         category.id,
-        newUser.id,
+        cadetUser.id,
         articleTitle,
         articleContent,
       );
+
       await articleRepository.save(targetArticle);
-      const response = await request(app)
+
+      const response = await request(httpServer)
         .post('/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .send({ content: commentContent, articleId: targetArticle.id });
-      console.log(response.body);
-      const result = response.body;
-      console.log('status == ', response.status);
+
       expect(response.status).toEqual(HttpStatus.CREATED);
+
+      const result = response.body;
+
       expect(result.content).toEqual(commentContent);
+      expect(result.writerId).toEqual(cadetUser.id);
+      expect(result.writer.role).toEqual(cadetUser.role);
     });
   });
 });
