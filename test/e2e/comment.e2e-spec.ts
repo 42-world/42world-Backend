@@ -218,16 +218,16 @@ describe('Comments', () => {
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
-    // test('[실패] DELETE - 삭제된 것을 또 삭제', async () => {
-    //   await request(httpServer)
-    //     .delete(`/comments/${comment.id}`)
-    //     .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+    test.skip('[실패] DELETE - 삭제된 것을 또 삭제', async () => {
+      await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-    //   const response = await request(httpServer)
-    //     .delete(`/comments/${comment.id}`)
-    //     .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      const response = await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-    //   expect(response.status).toEqual(HttpStatus.NOT_FOUND);
-    // });
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    });
   });
 });
