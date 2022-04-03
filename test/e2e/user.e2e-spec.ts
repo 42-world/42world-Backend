@@ -23,6 +23,7 @@ import { UserModule } from '@user/user.module';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
+import { UserResponseDto } from '@user/dto/response/user-response.dto';
 
 describe('User', () => {
   let userRepository: UserRepository;
@@ -32,7 +33,7 @@ describe('User', () => {
   let reactionArticleRepository: ReactionArticleRepository;
   let authService: AuthService;
   let httpServer: INestApplication;
-  let JWT;
+  let JWT: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -118,8 +119,11 @@ describe('User', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       expect(response.status).toEqual(HttpStatus.OK);
-      expect(response.body.id).toEqual(user.id);
-      expect(response.body.nickname).toEqual(user.nickname);
+      const userResponse = response.body as UserResponseDto;
+      expect(userResponse.id).toEqual(user.id);
+      expect(userResponse.nickname).toEqual(user.nickname);
+      expect(userResponse.role).toEqual(user.role);
+      expect(userResponse.character).toEqual(user.character);
     });
 
     test('[실패] GET - 없는 유저 id를 요청한 경우', async () => {
@@ -127,7 +131,6 @@ describe('User', () => {
         .get(`/users/${999}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      // 404를 던지는게 원래 맞는 건가요
       // TODO - 스웨거에 반영하기
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
@@ -137,6 +140,7 @@ describe('User', () => {
     let user: User;
     let user2: User;
     const updatedNickname = 'updated nickname';
+    const updatedCharacter = 2;
 
     beforeEach(async () => {
       user = dummy.user(
@@ -162,7 +166,7 @@ describe('User', () => {
     test('[성공] PUT - 유저 프로필 변경', async () => {
       const updateData = {
         nickname: updatedNickname,
-        character: 2,
+        character: updatedCharacter,
       } as UpdateUserProfileRequestDto;
       const response = await request(httpServer)
         .put('/users')
@@ -173,14 +177,14 @@ describe('User', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(updatedNickname);
-      expect(updatedUser.character).toEqual(2);
+      expect(updatedUser.character).toEqual(updatedCharacter);
     });
 
     test('[성공] PUT - 중복된 닉네임인 경우', async () => {
       // nickname2는 유저2의 닉네임이다
       const updateData = {
         nickname: user2.nickname,
-        character: 2,
+        character: updatedCharacter,
       } as UpdateUserProfileRequestDto;
       const response = await request(httpServer)
         .put('/users')
@@ -191,25 +195,21 @@ describe('User', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user2.nickname);
-      expect(updatedUser.character).toEqual(2);
+      expect(updatedUser.character).toEqual(updatedCharacter);
     });
 
-    // TODO - 이게 올바른 동작인지 확인
-    test('[성공] PUT - 닉네임 길이가 0인 경우', async () => {
+    // TODO - 로직 수정
+    test.skip('[성공] PUT - 닉네임 길이가 0인 경우', async () => {
       const updateData = {
         nickname: '',
-        character: 2,
+        character: updatedCharacter,
       } as UpdateUserProfileRequestDto;
       const response = await request(httpServer)
         .put('/users')
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.OK);
-
-      const updatedUser = await userRepository.findOne(user.id);
-      expect(updatedUser.nickname).toEqual('');
-      expect(updatedUser.character).toEqual(2);
+      expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
     test('[성공] PUT - 닉네임만 변경하는 경우', async () => {
@@ -230,7 +230,7 @@ describe('User', () => {
 
     test('[성공] PUT - 캐릭터만 변경하는 경우', async () => {
       const updateData = {
-        character: 2,
+        character: updatedCharacter,
       } as UpdateUserProfileRequestDto;
       const response = await request(httpServer)
         .put('/users')
@@ -241,7 +241,7 @@ describe('User', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user.nickname);
-      expect(updatedUser.character).toEqual(2);
+      expect(updatedUser.character).toEqual(updatedCharacter);
     });
 
     test('[실패] PUT - 없는 캐릭터 번호', async () => {
@@ -259,7 +259,7 @@ describe('User', () => {
 
       const updatedUser = await userRepository.findOne(user.id);
       expect(updatedUser.nickname).toEqual(user.nickname);
-      expect(updatedUser.character).toEqual(0);
+      expect(updatedUser.character).toEqual(user.character);
     });
 
     test('[성공] DELETE - 유저 삭제하기', async () => {
@@ -297,7 +297,7 @@ describe('User', () => {
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'a', 'bb');
+      article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
     });
 
@@ -311,6 +311,9 @@ describe('User', () => {
       const articles = response.body.data as Article[];
 
       expect(articles[0].title).toEqual(article.title);
+      // expect(articles[0].category.id).toEqual(article.category.id);
+      // expect(articles[0].writer.id).toEqual(article.writer.id);
+      // expect(articles[0].writer.nickname).toEqual(article.writer.nickname);
     });
   });
 
@@ -335,9 +338,9 @@ describe('User', () => {
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'a', 'bb');
+      article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'cc');
+      comment = dummy.comment(user.id, user.id, 'content');
       await commentRepository.save(comment);
     });
 

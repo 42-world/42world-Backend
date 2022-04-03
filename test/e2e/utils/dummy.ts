@@ -12,11 +12,13 @@ export const user = (
   nickname: string,
   githubUsername: string,
   role: UserRole,
+  character = 0,
 ): User => {
   const user = new User();
   user.githubUid = githubUid;
   user.nickname = nickname;
   user.githubUsername = githubUsername;
+  user.character = character;
   user.role = role;
   return user;
 };
@@ -32,8 +34,9 @@ export const jwt = (
   } as JWTPayload);
 };
 
-export const category = (name: string) => {
+export const category = (name: string, id = 1) => {
   const category = new Category();
+  category.id = id;
   category.name = name;
   return category;
 };
