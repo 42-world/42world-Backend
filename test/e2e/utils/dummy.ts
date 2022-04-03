@@ -3,6 +3,8 @@ import { AuthService } from '@auth/auth.service';
 import { JWTPayload } from '@auth/interfaces/jwt-payload.interface';
 import { Category } from '@category/entities/category.entity';
 import { Comment } from '@comment/entities/comment.entity';
+import { Notification } from '@root/notification/entities/notification.entity';
+import { NotificationType } from '@root/notification/interfaces/notifiaction.interface';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { User } from '@user/entities/user.entity';
 import { ReactionArticle } from '@root/reaction/entities/reaction-article.entity';
@@ -86,6 +88,20 @@ export const reactionArticle = (
   reactionArticle.articleId = articleId;
   reactionArticle.userId = userId;
   return reactionArticle;
+};
+
+export const notification = (
+  type: NotificationType,
+  userId: number,
+  articleId: number,
+  content: string,
+): Notification => {
+  const notification = new Notification();
+  notification.type = type;
+  notification.content = content;
+  notification.userId = userId;
+  notification.articleId = articleId;
+  return notification;
 };
 
 export type DummyUsers = {
