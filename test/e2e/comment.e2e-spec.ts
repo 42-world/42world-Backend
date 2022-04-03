@@ -1,3 +1,5 @@
+import { Article } from './../../src/article/entities/article.entity';
+import { User } from './../../src/user/entities/user.entity';
 import { CommentRepository } from './../../src/comment/repositories/comment.repository';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -26,19 +28,19 @@ describe('Comments', () => {
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
 
-  let JWT;
-  let anotherJWT;
-  let noviceJWT;
+  let JWT: string;
+  let anotherJWT: string;
+  let noviceJWT: string;
 
   const categoryName = '자유게시판';
   const articleTitle = '제목';
   const articleContent = '본문';
-  const commentContent = '재밌다';
-  let category;
-  let cadetUser;
-  let anotherCadetUser;
-  let noviceUser;
-  let targetArticle;
+  const commentContent = '댓글 내용';
+  let category: string;
+  let cadetUser: User;
+  let anotherCadetUser: User;
+  let noviceUser: User;
+  let targetArticle: Article;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
