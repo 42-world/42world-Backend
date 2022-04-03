@@ -34,9 +34,8 @@ export const jwt = (
   } as JWTPayload);
 };
 
-export const category = (name: string, id = 1) => {
+export const category = (name: string) => {
   const category = new Category();
-  category.id = id;
   category.name = name;
   return category;
 };
