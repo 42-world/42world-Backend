@@ -202,5 +202,32 @@ describe('Comments', () => {
 
       expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
+
+    test('[실패] PUT - 삭제된 댓글 수정', async () => {
+      await request(httpServer)
+        .delete(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      const updateContent = '수정된 댓글 내용';
+
+      const response = await request(httpServer)
+        .put(`/comments/${comment.id}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
+        .send({ content: updateContent });
+
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    });
+
+    // test('[실패] DELETE - 삭제된 것을 또 삭제', async () => {
+    //   await request(httpServer)
+    //     .delete(`/comments/${comment.id}`)
+    //     .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+    //   const response = await request(httpServer)
+    //     .delete(`/comments/${comment.id}`)
+    //     .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+    //   expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    // });
   });
 });
