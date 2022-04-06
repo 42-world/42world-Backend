@@ -78,7 +78,7 @@ describe('Image', () => {
 
       const result = response.body as UploadImageUrlResponseDto;
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(200);
       expect(result.uploadUrl).toBeTruthy();
     });
 
