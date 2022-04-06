@@ -110,7 +110,7 @@ describe('IntraAuth', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`)
         .send({ intraId });
 
-      expect(response.status).toEqual(HttpStatus.CREATED);
+      expect(response.status).toEqual(HttpStatus.OK);
     });
 
     test('[실패] POST - user role이 NOVICE가 아닌 경우', async () => {
