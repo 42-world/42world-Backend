@@ -3,12 +3,14 @@ COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 
 .PHONY: test
 test:
+	./run_test_db.sh
 	yarn test:e2e ./test/e2e/*.e2e-spec.ts
 
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db redis
-	./wait-for-it.sh localhost:2345 -- yarn start:dev
+	./wait-for-healthy.sh 42world-backend-db-1
+	yarn start:dev
 
 alpha:
 	cp ./config/.env.alpha ./config/.env
