@@ -1,4 +1,10 @@
-import { Controller, Post, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  ParseIntPipe,
+  HttpCode,
+} from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiNotFoundResponse,
@@ -21,6 +27,7 @@ export class ReactionController {
   constructor(private readonly reactionService: ReactionService) {}
 
   @Post('articles/:id')
+  @HttpCode(200)
   @ApiOperation({ summary: '게시글 좋아요 버튼' })
   @ApiOkResponse({
     description: '게시글 좋아요 버튼 누름',
@@ -38,6 +45,7 @@ export class ReactionController {
   }
 
   @Post('articles/:articleId/comments/:commentId')
+  @HttpCode(200)
   @ApiOperation({ summary: '댓글 좋아요 버튼' })
   @ApiOkResponse({
     description: '댓글 좋아요 버튼 누름',

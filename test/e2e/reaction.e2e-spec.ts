@@ -102,7 +102,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(200);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
@@ -116,7 +116,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(201);
+      expect(response2.status).toEqual(200);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
@@ -161,7 +161,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(200);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
@@ -175,7 +175,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(201);
+      expect(response2.status).toEqual(200);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
@@ -195,7 +195,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201); // TODO - 코드가 이상하다 201을 돌려준다
+      expect(response.status).toEqual(200); // TODO - 코드가 이상하다 200을 돌려준다
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {
