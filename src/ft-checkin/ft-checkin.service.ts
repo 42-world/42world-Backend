@@ -1,12 +1,7 @@
-import {
-  CACHE_MANAGER,
-  Injectable,
-  Inject,
-  NotFoundException,
-} from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { ApiProperty } from '@nestjs/swagger';
+import { CacheService } from '@cache/cache.service';
 
 const GAEPO = 'gaepo';
 const SEOCHO = 'seocho';
@@ -21,14 +16,14 @@ export class GetFtCheckinDto {
 
 @Injectable()
 export class FtCheckinService {
-  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
+  constructor(private readonly cacheService: CacheService) {}
 
   async fetchData(
     cacheKey: string,
     cacheTTL: number,
     endpoint: string,
   ): Promise<GetFtCheckinDto> {
-    const ftCheckinData = await this.cacheManager.get<GetFtCheckinDto>(
+    const ftCheckinData = await this.cacheService.get<GetFtCheckinDto>(
       cacheKey,
     );
 
@@ -40,7 +35,7 @@ export class FtCheckinService {
           gaepo: data[GAEPO] || 0,
         };
 
-        await this.cacheManager.set(cacheKey, realData, {
+        await this.cacheService.set(cacheKey, realData, {
           ttl: cacheTTL,
         });
         return realData;
