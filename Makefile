@@ -7,7 +7,7 @@ test:
 
 dev:
 	cp ./config/.env.dev ./config/.env
-	make db redis
+	make db
 	yarn start:dev
 
 alpha:
@@ -28,17 +28,6 @@ db: db-dev
 
 db-down:
 	${COMPOSE} down db
-
-redis: redis-dev
-
-redis-down:
-	${COMPOSE} down redis
-
-redis-dev:
-	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
-
-redis-alpha:
-	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d redis
 
 api:
 	api-dev
