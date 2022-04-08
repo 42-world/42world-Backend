@@ -6,30 +6,26 @@ import { CategoryModule } from '@category/category.module';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ReactionModule } from '@root/reaction/reaction.module';
-import { ReactionArticleRepository } from '@root/reaction/repositories/reaction-article.repository';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
 import { UserRepository } from '@user/repositories/user.repository';
 import { UserModule } from '@user/user.module';
-import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB } from './utils/utils';
+import { clearDB, createTestApp } from './utils/utils';
 
 describe('Reaction', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
-  let reactionArticleRepository: ReactionArticleRepository;
   let authService: AuthService;
-  let JWT;
+  let JWT: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -44,37 +40,22 @@ describe('Reaction', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    const app = createTestApp(moduleFixture);
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
-    commentRepository = moduleFixture.get<CommentRepository>(CommentRepository);
-    reactionArticleRepository = moduleFixture.get<ReactionArticleRepository>(
-      ReactionArticleRepository,
-    );
+    userRepository = moduleFixture.get(UserRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
+    commentRepository = moduleFixture.get(CommentRepository);
+    authService = moduleFixture.get(AuthService);
 
-    authService = moduleFixture.get<AuthService>(AuthService);
-
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   beforeEach(async () => {
@@ -98,43 +79,43 @@ describe('Reaction', () => {
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(HttpStatus.CREATED);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
 
     test('[성공] POST - 좋아요가 있는 경우', async () => {
-      await request(app)
+      await request(httpServer)
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      const response2 = await request(app)
+      const response2 = await request(httpServer)
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(201);
+      expect(response2.status).toEqual(HttpStatus.CREATED);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
 
     test('[실패] POST - unauthorize', async () => {
-      const response = await request(app).post('/reactions/articles/1');
+      const response = await request(httpServer).post('/reactions/articles/1');
 
-      expect(response.status).toEqual(401);
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
       const notExistId = 0;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/reactions/articles/' + notExistId)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 
@@ -157,55 +138,55 @@ describe('Reaction', () => {
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201);
+      expect(response.status).toEqual(HttpStatus.CREATED);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
 
     test('[성공] POST - 좋아요가 있는 경우', async () => {
-      await request(app)
+      await request(httpServer)
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      const response2 = await request(app)
+      const response2 = await request(httpServer)
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(201);
+      expect(response2.status).toEqual(HttpStatus.CREATED);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
 
     test('[실패] POST - unauthorize', async () => {
-      const response = await request(app).post(
+      const response = await request(httpServer).post(
         '/reactions/articles/1/comments/1',
       );
 
-      expect(response.status).toEqual(401);
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
       const notExistId = 999;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(201); // TODO - 코드가 이상하다 201을 돌려준다
+      expect(response.status).toEqual(HttpStatus.CREATED); // TODO - 코드가 이상하다 HttpStatus.CREATED을 돌려준다
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {
       const notExistId = 0;
 
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/reactions/articles/1/comments/' + notExistId)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 });

@@ -19,6 +19,7 @@ import { AlsoNovice, GetUser } from '@root/auth/auth.decorator';
 import { CommentService } from '@root/comment/comment.service';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -54,7 +55,7 @@ export class ArticleController {
   @Post()
   @AlsoNovice()
   @ApiOperation({ summary: '게시글 업로드' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: '업로드된 게시글',
     type: CreateArticleResponseDto,
   })

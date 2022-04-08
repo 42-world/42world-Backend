@@ -17,8 +17,8 @@ services:
       test: 'mysqladmin ping -h localhost -u ${DB_USER_NAME} --password=${DB_USER_PASSWORD}'
       interval: 5s
       timeout: 1s
-      retries: 10
-      start_period: 10s
+      retries: 20
+      start_period: 0s
     volumes:
       - ./db:/var/lib/mysql
   api:
