@@ -114,6 +114,11 @@ describe('Notification', () => {
       expect(res.body[0].type).toEqual(dummyNotification.type);
       expect(res.body[0].content).toEqual(dummyNotification.content);
     });
+
+    test('[실패] GET - 로그인하지 않고 호출', async () => {
+      const res = await request(app).get('/notifications');
+      expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
   });
 
   describe('/notifications/readall', () => {
@@ -168,6 +173,11 @@ describe('Notification', () => {
       expect(readNotifications.length).toEqual(2);
       expect(readNotifications[0].isRead).toEqual(true);
       expect(readNotifications[1].isRead).toEqual(true);
+    });
+
+    test('[실패] PATCH - 로그인하지 않고 호출', async () => {
+      const res = await request(app).patch('/notifications/readall');
+      expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 });
