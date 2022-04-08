@@ -3,6 +3,7 @@ services:
   db:
     image: mysql:5.7
     platform: linux/x86_64
+    container_name: 42world-backend-db
     ports:
       - '${DB_PORT:-2345}:3306'
     environment:

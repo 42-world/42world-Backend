@@ -10,7 +10,7 @@ test:
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db
-	./wait-for-healthy.sh 42world-backend-db-1
+	./wait-for-healthy.sh 42world-backend-db
 	yarn start:dev
 
 alpha:
