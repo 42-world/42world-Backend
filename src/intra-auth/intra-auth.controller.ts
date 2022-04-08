@@ -6,6 +6,7 @@ import {
   Query,
   Render,
   UseFilters,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -28,6 +29,7 @@ export class IntraAuthController {
   constructor(private readonly intraAuthService: IntraAuthService) {}
 
   @Post()
+  @HttpCode(200)
   @OnlyNovice()
   @ApiCookieAuth()
   @UseFilters(AllExceptionsFilter)

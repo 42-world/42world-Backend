@@ -6,7 +6,7 @@ import { CategoryModule } from '@category/category.module';
 import { CategoryRepository } from '@category/repositories/category.repository';
 import { CommentModule } from '@comment/comment.module';
 import { CommentRepository } from '@comment/repositories/comment.repository';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReactionModule } from '@root/reaction/reaction.module';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
@@ -83,7 +83,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.CREATED);
+      expect(response.status).toEqual(HttpStatus.OK);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
@@ -97,7 +97,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(HttpStatus.CREATED);
+      expect(response2.status).toEqual(HttpStatus.OK);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
@@ -142,7 +142,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.CREATED);
+      expect(response.status).toEqual(HttpStatus.OK);
       expect(response.body.isLike).toEqual(true);
       expect(response.body.likeCount).toEqual(1);
     });
@@ -156,7 +156,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response2.status).toEqual(HttpStatus.CREATED);
+      expect(response2.status).toEqual(HttpStatus.OK);
       expect(response2.body.isLike).toEqual(false);
       expect(response2.body.likeCount).toEqual(0);
     });
@@ -176,7 +176,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.CREATED); // TODO - 코드가 이상하다 HttpStatus.CREATED을 돌려준다
+      expect(response.status).toEqual(HttpStatus.OK); // TODO - 코드가 이상하다 HttpStatus.OK을 돌려준다
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {

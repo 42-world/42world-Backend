@@ -1,4 +1,4 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
@@ -63,7 +63,7 @@ describe('Image', () => {
 
       const result = response.body as UploadImageUrlResponseDto;
 
-      expect(response.status).toEqual(HttpStatus.CREATED);
+      expect(response.status).toEqual(HttpStatus.OK);
       expect(result.uploadUrl).toBeTruthy();
     });
 

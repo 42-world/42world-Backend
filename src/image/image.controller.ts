@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, HttpCode, Post } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -17,6 +17,7 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @Post()
+  @HttpCode(200)
   @ApiOperation({ summary: '이미지 업로드 URL 생성' })
   @ApiCreatedResponse({
     description: '생성된 업로드 URL',
