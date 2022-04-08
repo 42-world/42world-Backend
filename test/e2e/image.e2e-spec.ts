@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
 
@@ -78,7 +78,7 @@ describe('Image', () => {
 
       const result = response.body as UploadImageUrlResponseDto;
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(HttpStatus.OK);
       expect(result.uploadUrl).toBeTruthy();
     });
 
