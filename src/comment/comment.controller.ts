@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -31,7 +32,7 @@ export class CommentController {
 
   @Post()
   @ApiOperation({ summary: '댓글 생성' })
-  @ApiOkResponse({ description: '생성된 댓글', type: CreateCommentRequestDto })
+  @ApiCreatedResponse({ description: '생성된 댓글', type: CreateCommentRequestDto })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async create(
     @GetUser() writer: User,

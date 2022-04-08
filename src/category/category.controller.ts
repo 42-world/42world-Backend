@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -33,7 +34,7 @@ export class CategoryController {
   @Post()
   @Admin()
   @ApiOperation({ summary: '카테고리 생성하기 (관리자)' })
-  @ApiOkResponse({ description: '카테고리', type: CategoryResponseDto })
+  @ApiCreatedResponse({ description: '카테고리', type: CategoryResponseDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   async create(
     @GetUser() user: User,

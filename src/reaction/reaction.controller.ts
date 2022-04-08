@@ -1,8 +1,8 @@
 import { Controller, Post, Param, ParseIntPipe } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -22,7 +22,7 @@ export class ReactionController {
 
   @Post('articles/:id')
   @ApiOperation({ summary: '게시글 좋아요 버튼' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: '게시글 좋아요 버튼 누름',
     type: ReactionResponseDto,
   })
@@ -39,7 +39,7 @@ export class ReactionController {
 
   @Post('articles/:articleId/comments/:commentId')
   @ApiOperation({ summary: '댓글 좋아요 버튼' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: '댓글 좋아요 버튼 누름',
     type: ReactionResponseDto,
   })
