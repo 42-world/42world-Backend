@@ -54,9 +54,6 @@ import { UserModule } from './user/user.module';
     }),
     DatabaseModule.register(),
     CacheModule.register({
-      store: redisStore,
-      host: process.env.REDIS_HOST ?? 'localhost',
-      port: process.env.REDIS_PORT ?? 6379,
       isGlobal: true,
     }),
     AwsSdkModule.forRootAsync({
