@@ -124,7 +124,7 @@ describe('Reaction', () => {
     test('[실패] POST - unauthorize', async () => {
       const response = await request(app).post('/reactions/articles/1');
 
-      expect(response.status).toEqual(401);
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
@@ -134,7 +134,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 
@@ -185,7 +185,7 @@ describe('Reaction', () => {
         '/reactions/articles/1/comments/1',
       );
 
-      expect(response.status).toEqual(401);
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
@@ -205,7 +205,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/1/comments/' + notExistId)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 });

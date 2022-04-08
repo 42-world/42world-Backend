@@ -85,7 +85,7 @@ describe('Image', () => {
     test('[실패] POST - unauthorized', async () => {
       const response = await request(app).post('/image');
 
-      expect(response.status).toEqual(401);
+      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 });
