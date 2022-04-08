@@ -1,57 +1,42 @@
 import { INestApplication, ValidationPipe, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
-
 import { UserRepository } from '@user/repositories/user.repository';
 import { AuthService } from '@auth/auth.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
-import { TypeormExceptionFilter } from '@root/filters/typeorm-exception.filter';
 import { ImageModule } from '@image/image.module';
 import { getConnection } from 'typeorm';
 import { UploadImageUrlResponseDto } from '@image/dto/upload-image-url-response.dto';
 import { TestBaseModule } from '@test/e2e/test.base.module';
-import { clearDB } from '@test/e2e/utils/utils';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
 import { UserRole } from '@root/user/interfaces/userrole.interface';
-import { InternalServerErrorExceptionFilter } from '@root/filters/internal-server-error-exception.filter';
 
 describe('Image', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let authService: AuthService;
-  let JWT;
+  let JWT: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [TestBaseModule, UserModule, AuthModule, ImageModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app.useGlobalFilters(new InternalServerErrorExceptionFilter());
-    app.useGlobalFilters(new TypeormExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    const app = createTestApp(moduleFixture);
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    authService = moduleFixture.get<AuthService>(AuthService);
+    userRepository = moduleFixture.get(UserRepository);
+    authService = moduleFixture.get(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   describe('/image', () => {
@@ -72,7 +57,7 @@ describe('Image', () => {
     });
 
     test('[성공] POST', async () => {
-      const response = await request(app)
+      const response = await request(httpServer)
         .post('/image')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
@@ -83,7 +68,7 @@ describe('Image', () => {
     });
 
     test('[실패] POST - unauthorized', async () => {
-      const response = await request(app).post('/image');
+      const response = await request(httpServer).post('/image');
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });

@@ -1,7 +1,7 @@
 import { Controller, HttpCode, Post } from '@nestjs/common';
 import {
   ApiCookieAuth,
-  ApiOkResponse,
+  ApiCreatedResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -19,7 +19,7 @@ export class ImageController {
   @Post()
   @HttpCode(200)
   @ApiOperation({ summary: '이미지 업로드 URL 생성' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: '생성된 업로드 URL',
     type: UploadImageUrlResponseDto,
   })
