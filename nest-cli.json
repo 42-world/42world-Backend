@@ -1,8 +1,36 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "",
+  "sourceRoot": "apps/api/src",
   "compilerOptions": {
-    "assets": [{ "include": "views/**/*.ejs" }],
-    "watchAssets": true
+    "webpack": false,
+    "tsConfigPath": "./tsconfig.json"
+  },
+  "monorepo": true,
+  "root": "apps/api",
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "main",
+      "sourceRoot": "apps/api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "views/**/*.ejs"
+          }
+        ],
+        "watchAssets": true
+      }
+    },
+    "scheduler": {
+      "type": "application",
+      "root": "apps/scheduler",
+      "entryFile": "main",
+      "sourceRoot": "apps/scheduler/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/scheduler/tsconfig.app.json"
+      }
+    }
   }
 }
