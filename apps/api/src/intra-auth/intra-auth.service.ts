@@ -10,9 +10,9 @@ import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { getEmail, getCode, TITLE } from './intra-auth.utils';
 import { User } from '@api/user/entities/user.entity';
-import { IntraAuthMailDto } from '@api/cache/dto/intra-auth.dto';
+import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
-import { CacheService } from '@api/cache/cache.service';
+import { CacheService } from '@app/common/cache/cache.service';
 import {
   CADET_ALREADY_EXIST_ERROR_MESSAGE,
   NOT_EXIST_TOKEN_ERROR_MESSAGE,

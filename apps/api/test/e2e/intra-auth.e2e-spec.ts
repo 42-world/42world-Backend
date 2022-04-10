@@ -17,10 +17,10 @@ import * as dummy from './utils/dummy';
 import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
 import { IntraAuthController } from '@api/intra-auth/intra-auth.controller';
 import { IntraAuthService } from '@api/intra-auth/intra-auth.service';
-import { CacheService } from '@api/cache/cache.service';
+import { CacheService } from '@app/common/cache/cache.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserRole } from '@api/user/interfaces/userrole.interface';
-import { IntraAuthMailDto } from '@api/cache/dto/intra-auth.dto';
+import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 import { User } from '@api/user/entities/user.entity';
 
 describe('IntraAuth', () => {

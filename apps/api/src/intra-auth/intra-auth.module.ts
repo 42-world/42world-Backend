@@ -4,7 +4,7 @@ import { IntraAuthService } from './intra-auth.service';
 import { IntraAuthController } from './intra-auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
-import { CacheModule } from '@api/cache/cache.module';
+import { CacheModule } from '@app/common/cache/cache.module';
 
 @Module({
   imports: [UserModule, CacheModule, TypeOrmModule.forFeature([IntraAuth])],

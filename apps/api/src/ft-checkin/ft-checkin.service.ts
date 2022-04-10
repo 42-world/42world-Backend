@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { ApiProperty } from '@nestjs/swagger';
-import { CacheService } from '@api/cache/cache.service';
+import { CacheService } from '@app/common/cache/cache.service';
 
 const GAEPO = 'gaepo';
 const SEOCHO = 'seocho';
