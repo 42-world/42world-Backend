@@ -1,21 +1,16 @@
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
 
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { AuthService } from '@api/auth/auth.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '@api/user/user.module';
 import { AuthModule } from '@api/auth/auth.module';
-import { TypeormExceptionFilter } from '@api/filters/typeorm-exception.filter';
-import { ImageModule } from '@api/image/image.module';
 import { getConnection } from 'typeorm';
-import { UploadImageUrlResponseDto } from '@api/image/dto/upload-image-url-response.dto';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as dummy from './utils/dummy';
 import { UserRole } from '@api/user/interfaces/userrole.interface';
-import { InternalServerErrorExceptionFilter } from '@api/filters/internal-server-error-exception.filter';
 import { CategoryModule } from '@api/category/category.module';
 import { User } from '@api/user/entities/user.entity';
 import { Category } from '@api/category/entities/category.entity';

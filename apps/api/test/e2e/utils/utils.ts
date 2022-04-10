@@ -3,8 +3,8 @@ import * as cookieParser from 'cookie-parser';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 
-import { InternalServerErrorExceptionFilter } from '@api/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@api/filters/typeorm-exception.filter';
+import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
+import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
 
 export const clearDB = async () => {
   const entities = getConnection().entityMetadatas;

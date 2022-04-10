@@ -21,7 +21,7 @@ import { IntraAuthService } from './intra-auth.service';
 import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
 import { User } from '@api/user/entities/user.entity';
 import { SigninIntraAuthRequestDto } from './dto/signin-intra-auth-request.dto';
-import { AllExceptionsFilter } from '@api/filters/all-exception.filter';
+import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
 
 @ApiTags('Intra Auth')
 @Controller('intra-auth')

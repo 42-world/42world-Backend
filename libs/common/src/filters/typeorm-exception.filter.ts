@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { TypeORMError } from 'typeorm';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 import { errorHook } from '@api/utils';
-import { INTERNAL_ERROR_MESSAGE } from '@api/filters/constant';
+import { INTERNAL_ERROR_MESSAGE } from './constant';
 
 const FIND_DOUBLE_QUOTE = /\"/g;
 

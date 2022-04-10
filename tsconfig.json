@@ -16,6 +16,9 @@
       ],
       "@test/*": [
         "./apps/api/test/*"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
       ]
     },
     "incremental": true,

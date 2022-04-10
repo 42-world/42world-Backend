@@ -8,6 +8,7 @@
   },
   "moduleNameMapper": {
     "^@api/(.*)$": "<rootDir>/../../src/$1",
-    "^@test/(.*)$": "<rootDir>/../../test/$1"
+    "^@test/(.*)$": "<rootDir>/../../test/$1",
+    "^@app/common/(.*)$": "<rootDir>/../../../../libs/common/src/$1"
   }
 }

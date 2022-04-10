@@ -14,7 +14,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AllExceptionsFilter } from '@api/filters/all-exception.filter';
+import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
 
 import { UserService } from '@api/user/user.service';
 import { AuthService } from './auth.service';
