@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from '@api/app.module';
-import { stream } from '@api/config/logger';
+import { stream } from '@app/utils/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

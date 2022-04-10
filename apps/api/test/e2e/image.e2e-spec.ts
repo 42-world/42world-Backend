@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe, HttpStatus } from '@nestjs/common';
+import { INestApplication, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { AuthService } from '@api/auth/auth.service';

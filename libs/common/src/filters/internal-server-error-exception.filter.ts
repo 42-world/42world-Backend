@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { errorHook } from '@api/utils';
+import { errorHook } from '@app/utils/utils';
 import { INTERNAL_ERROR_MESSAGE } from './filters.constant';
 
 @Catch(InternalServerErrorException)

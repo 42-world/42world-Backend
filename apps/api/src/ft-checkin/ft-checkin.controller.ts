@@ -7,7 +7,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from '@api/auth/auth.decorator';
-import { HOUR } from '@api/utils';
+import { HOUR } from '@app/utils/utils';
 
 const FT_CHECKIN_API = 'FT_CHECKIN_API';
 const FT_CHECKIN_CACHE_TTL = 100;

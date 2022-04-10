@@ -1,5 +1,5 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { getPaginationSkip } from '@api/utils';
+import { getPaginationSkip } from '@app/utils/utils';
 import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,

@@ -2,7 +2,7 @@ import { Catch, ExceptionFilter, ArgumentsHost } from '@nestjs/common';
 import { Response } from 'express';
 import { TypeORMError } from 'typeorm';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
-import { errorHook } from '@api/utils';
+import { errorHook } from '@app/utils/utils';
 import { INTERNAL_ERROR_MESSAGE } from './filters.constant';
 
 const FIND_DOUBLE_QUOTE = /\"/g;

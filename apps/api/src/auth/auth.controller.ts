@@ -22,7 +22,7 @@ import { GithubAuthGuard } from './github-auth.guard';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { GithubProfile } from './interfaces/github-profile.interface';
 import { GetGithubProfile, Public } from './auth.decorator';
-import { getCookieOption } from '@api/utils';
+import { getCookieOption } from '@app/utils/utils';
 
 @ApiTags('Auth')
 @Controller('auth')

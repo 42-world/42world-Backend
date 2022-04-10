@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { getNextMonth } from '@api/utils';
+import { getNextMonth } from '@app/utils/utils';
 import { GithubProfile } from '@api/auth/interfaces/github-profile.interface';
 import { UserRepository } from './repositories/user.repository';
 import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';

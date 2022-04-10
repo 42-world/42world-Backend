@@ -8,7 +8,7 @@ import { Category } from './entities/category.entity';
 import { User } from '@api/user/entities/user.entity';
 import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
-import { compareRole } from '@api/utils';
+import { compareRole } from '@app/utils/utils';
 
 @Injectable()
 export class CategoryService {

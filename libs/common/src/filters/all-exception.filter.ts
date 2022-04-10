@@ -1,8 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { INTERNAL_ERROR_MESSAGE } from './filters.constant';
-import { errorHook } from '@api/utils';
+import { errorHook } from '@app/utils/utils';
 import { Response } from 'express';
-import { logger } from '@api/config/logger';
+import { logger } from '@app/utils/logger';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
