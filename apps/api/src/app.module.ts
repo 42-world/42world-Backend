@@ -9,7 +9,7 @@ import {
   AWS_ACCESS_KEY,
   AWS_REGION,
   AWS_SECRET_KEY,
-} from '@api/config/constants';
+} from '@api/image/image.constant';
 import { ImageModule } from '@api/image/image.module';
 import { ArticleModule } from '@api/article/article.module';
 import { AuthModule } from '@api/auth/auth.module';
@@ -25,7 +25,7 @@ import { DatabaseModule } from '@app/common/database/database.module';
 import { AppController } from '@api/app.controller';
 import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
 import { ormconfig } from '@app/common/database/ormconfig';
-import configEmail from '@api/config/mail.config';
+import configEmail from '@api/intra-auth/intra-auth.config';
 
 @Module({
   imports: [

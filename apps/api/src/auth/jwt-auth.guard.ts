@@ -7,8 +7,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { User } from '@api/user/entities/user.entity';
 import { UserRole } from '@api/user/interfaces/userrole.interface';
-import { IS_PUBLIC_KEY, ROLE_KEY } from './constants/metadata-keys';
-import { FORBIDDEN_USER_ROLE } from '@api/auth/constant';
+import { IS_PUBLIC_KEY, ROLE_KEY } from './auth.constant';
+import { FORBIDDEN_USER_ROLE } from '@api/auth/auth.constant';
 
 /**
  * Custom AuthGuard to check public handler and user roles

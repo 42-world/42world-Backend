@@ -5,13 +5,13 @@ import * as path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
-import configEmail from '@api/config/mail.config';
+import configEmail from '@api/intra-auth/intra-auth.config';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import {
   AWS_ACCESS_KEY,
   AWS_REGION,
   AWS_SECRET_KEY,
-} from '@api/config/constants';
+} from '@api/image/image.constant';
 
 @Module({
   imports: [

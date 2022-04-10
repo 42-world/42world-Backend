@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { MailerService } from '@nestjs-modules/mailer';
-import { getEmail, getCode, TITLE } from './intra-auth.utils';
+import { getEmail, getCode } from './intra-auth.utils';
 import { User } from '@api/user/entities/user.entity';
 import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
@@ -17,7 +17,8 @@ import {
   CADET_ALREADY_EXIST_ERROR_MESSAGE,
   NOT_EXIST_TOKEN_ERROR_MESSAGE,
   SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
-} from '@api/intra-auth/constant';
+  TITLE,
+} from '@api/intra-auth/intra-auth.constant';
 import { UserRole } from '@api/user/interfaces/userrole.interface';
 
 @Injectable()

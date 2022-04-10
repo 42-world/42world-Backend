@@ -1,5 +1,5 @@
 import { UserService } from '@api/user/user.service';
-import { jwtConstants } from './constant';
+import { jwtConstants } from './auth.constant';
 import {
   Injectable,
   NotFoundException,

@@ -1,5 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { INTERNAL_ERROR_MESSAGE } from './constant';
+import { INTERNAL_ERROR_MESSAGE } from './filters.constant';
 import { errorHook } from '@api/utils';
 import { Response } from 'express';
 import { logger } from '@api/config/logger';

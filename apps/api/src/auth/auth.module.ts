@@ -1,5 +1,5 @@
 import { JwtStrategy } from './jwt.strategy';
-import { jwtConstants } from './constant';
+import { jwtConstants } from './auth.constant';
 import { GithubStrategy } from './github.strategy';
 import { UserModule } from '@api/user/user.module';
 import { Module } from '@nestjs/common';
