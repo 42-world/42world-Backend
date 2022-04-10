@@ -18,7 +18,7 @@
         "./apps/api/test/*"
       ],
       "@app/common/*": [
-        "libs/common/src/*"
+        "./libs/common/src/*"
       ]
     },
     "incremental": true,

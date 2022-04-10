@@ -59,6 +59,6 @@ export const stream = {
   },
 };
 
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test') {
   logger.add(new transports.Console(options.console));
 }

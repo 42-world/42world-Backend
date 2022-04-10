@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { InternalServerErrorExceptionFilter } from '@api/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@api/filters/typeorm-exception.filter';
+import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
+import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
@@ -47,7 +47,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
   app.use(cookieParser());

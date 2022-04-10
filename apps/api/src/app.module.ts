@@ -42,7 +42,7 @@ import configEmail from '@api/config/mail.config';
         return {
           ...config.get('email'),
           template: {
-            dir: path.join(__dirname, '/views/intra-auth/'),
+            dir: path.join(__dirname, '../views/intra-auth/'),
             adapter: new EjsAdapter(),
             options: {
               strict: true,

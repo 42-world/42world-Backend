@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/api/src",
+  "sourceRoot": "apps/api",
   "compilerOptions": {
     "webpack": false,
     "tsConfigPath": "./tsconfig.json"
@@ -11,13 +11,14 @@
     "api": {
       "type": "application",
       "root": "apps/api",
-      "entryFile": "main",
-      "sourceRoot": "apps/api/src",
+      "entryFile": "src/main",
+      "sourceRoot": "apps/api",
       "compilerOptions": {
         "tsConfigPath": "apps/api/tsconfig.app.json",
         "assets": [
           {
-            "include": "views/**/*.ejs"
+            "include": "views/**/*.ejs",
+            "outDir": "dist/apps/api"
           }
         ],
         "watchAssets": true

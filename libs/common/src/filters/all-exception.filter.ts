@@ -2,6 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { INTERNAL_ERROR_MESSAGE } from './constant';
 import { errorHook } from '@api/utils';
 import { Response } from 'express';
+import { logger } from '@api/config/logger';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -9,6 +10,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    logger.error(exception.message);
     errorHook('Unknown Error', exception.message);
 
     return response.status(500).json({

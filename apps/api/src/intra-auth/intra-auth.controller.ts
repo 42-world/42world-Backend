@@ -22,6 +22,7 @@ import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
 import { User } from '@api/user/entities/user.entity';
 import { SigninIntraAuthRequestDto } from './dto/signin-intra-auth-request.dto';
 import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
+import { logger } from '@api/config/logger';
 
 @ApiTags('Intra Auth')
 @Controller('intra-auth')
@@ -62,6 +63,7 @@ export class IntraAuthController {
         endpoint: process.env.FRONT_URL,
       };
     } catch (e) {
+      logger.error(e);
       return {
         title: 'Oops! There is an error ...',
         message: '인증에 실패했습니다 😭',
