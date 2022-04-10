@@ -21,10 +21,10 @@ import { FtCheckinModule } from '@api/ft-checkin/ft-checkin.module';
 import { NotificationModule } from '@api/notification/notification.module';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { UserModule } from '@api/user/user.module';
-import { DatabaseModule } from '@api/database/database.module';
+import { DatabaseModule } from '@app/common/database/database.module';
 import { AppController } from '@api/app.controller';
 import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
-import { ormconfig } from '@api/database/ormconfig';
+import { ormconfig } from '@app/common/database/ormconfig';
 import configEmail from '@api/config/mail.config';
 
 @Module({
