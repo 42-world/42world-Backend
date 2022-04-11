@@ -1,9 +1,12 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { User } from '@api/user/entities/user.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
-import { GithubProfile } from './interfaces/github-profile.interface';
-import { SetMetadata } from '@nestjs/common';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  SetMetadata,
+} from '@nestjs/common';
 import { IS_PUBLIC_KEY, ROLE_KEY } from './auth.constant';
+import { GithubProfile } from './interfaces/github-profile.interface';
 
 export const GetUser = createParamDecorator(
   (data: 'id' | null, ctx: ExecutionContext): User => {

@@ -1,3 +1,8 @@
+import { ArticleService } from '@api/article/article.service';
+import { CommentRepository } from '@api/comment/repositories/comment.repository';
+import { NotificationService } from '@api/notification/notification.service';
+import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Comment } from '@app/entity/comment/comment.entity';
 import {
   forwardRef,
   Inject,
@@ -5,12 +10,7 @@ import {
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { ArticleService } from '@api/article/article.service';
-import { NotificationService } from '@api/notification/notification.service';
 import { FindOneOptions } from 'typeorm';
-import { Comment } from './entities/comment.entity';
-import { CommentRepository } from '@api/comment/repositories/comment.repository';
-import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 

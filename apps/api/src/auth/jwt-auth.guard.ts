@@ -1,14 +1,14 @@
-import { AuthGuard } from '@nestjs/passport';
+import { FORBIDDEN_USER_ROLE } from '@api/auth/auth.constant';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
 import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { User } from '@api/user/entities/user.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY, ROLE_KEY } from './auth.constant';
-import { FORBIDDEN_USER_ROLE } from '@api/auth/auth.constant';
 
 /**
  * Custom AuthGuard to check public handler and user roles

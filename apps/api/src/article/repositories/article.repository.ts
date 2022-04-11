@@ -1,9 +1,9 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { Article } from '@api/article/entities/article.entity';
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
-import { NotFoundException } from '@nestjs/common';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Article } from '@app/entity/article/article.entity';
 import { getPaginationSkip } from '@app/utils/utils';
+import { NotFoundException } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {

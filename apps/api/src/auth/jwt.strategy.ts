@@ -1,5 +1,5 @@
 import { UserService } from '@api/user/user.service';
-import { jwtConstants } from './auth.constant';
+import { User } from '@app/entity/user/user.entity';
 import {
   Injectable,
   NotFoundException,
@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { jwtConstants } from './auth.constant';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
-import { User } from '@api/user/entities/user.entity';
 
 const getAccessToken = (request: any): string => {
   if (process.env.NODE_ENV !== 'prod' && request.headers.authorization) {

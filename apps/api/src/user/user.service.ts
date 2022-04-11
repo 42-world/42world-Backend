@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { getNextMonth } from '@app/utils/utils';
 import { GithubProfile } from '@api/auth/interfaces/github-profile.interface';
-import { UserRepository } from './repositories/user.repository';
-import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';
-import { User } from './entities/user.entity';
+import { User } from '@app/entity/user/user.entity';
+import { getNextMonth } from '@app/utils/utils';
+import { Injectable } from '@nestjs/common';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
+import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';
+import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
 export class UserService {

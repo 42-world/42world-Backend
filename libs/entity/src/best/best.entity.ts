@@ -1,3 +1,4 @@
+import { Article } from '@app/entity/article/article.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,27 +9,22 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '@api/user/entities/user.entity';
 
-@Entity('intra_auth')
-export class IntraAuth {
+@Entity('best')
+export class Best {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index('ix_intra_id')
-  @Column({ type: 'varchar', length: 20, nullable: false })
-  intraId?: string;
-
   @Column({ nullable: false, unique: true })
-  @Index('ix_user_id')
-  userId!: number;
+  @Index('ix_article_id')
+  articleId!: number;
 
-  @OneToOne(() => User, (user) => user.intraAuth, {
+  @OneToOne(() => Article, (article) => article.best, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article?: Article;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;

@@ -1,10 +1,9 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
+import { User } from '@app/entity/user/user.entity';
 import { Module } from '@nestjs/common';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleSeederService } from './article-seeder.service';
-import { Article } from '@api/article/entities/article.entity';
-import { User } from '@api/user/entities/user.entity';
-import { Category } from '@api/category/entities/category.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Article, User, Category])],

@@ -12,7 +12,7 @@ export const ormconfig = (): IOrmconfig => ({
     username: process.env.DB_USER_NAME ?? 'ft_world',
     password: process.env.DB_USER_PASSWORD ?? 'ft_world',
     database: process.env.DB_NAME ?? 'ft_world',
-    entities: [__dirname + '../../../../../**/*.entity{.ts,.js}'],
+    entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
     namingStrategy: new SnakeNamingStrategy(),
 
     timezone: '+09:00', // KST

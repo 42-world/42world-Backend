@@ -1,14 +1,14 @@
-import { Article } from '@api/article/entities/article.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { Article } from '@app/entity/article/article.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
-  UpdateDateColumn,
   DeleteDateColumn,
+  Entity,
   Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('category')

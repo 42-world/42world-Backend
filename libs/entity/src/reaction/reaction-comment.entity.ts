@@ -1,16 +1,16 @@
-import { User } from '@api/user/entities/user.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
+  Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Article } from '@api/article/entities/article.entity';
 
 export enum ReactionCommentType {
   LIKE = 'LIKE',

@@ -1,33 +1,33 @@
+import { ArticleService } from '@api/article/article.service';
+import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
+import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { CommentService } from '@api/comment/comment.service';
+import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
+import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
+import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
+import { ReactionService } from '@api/reaction/reaction.service';
+import { User } from '@app/entity/user/user.entity';
 import {
-  Controller,
-  Get,
-  Put,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
+  ApiCookieAuth,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
-  ApiCookieAuth,
   ApiUnauthorizedResponse,
-  ApiOkResponse,
 } from '@nestjs/swagger';
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
-import { UserService } from './user.service';
-import { User } from './entities/user.entity';
-import { ReactionService } from '@api/reaction/reaction.service';
-import { ArticleService } from '@api/article/article.service';
-import { CommentService } from '@api/comment/comment.service';
-import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
-import { UserResponseDto } from './dto/response/user-response.dto';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
-import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
-import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
-import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
+import { UserResponseDto } from './dto/response/user-response.dto';
+import { UserService } from './user.service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })

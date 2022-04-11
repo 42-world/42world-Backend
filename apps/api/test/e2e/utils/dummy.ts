@@ -1,15 +1,15 @@
-import { Article } from '@api/article/entities/article.entity';
 import { AuthService } from '@api/auth/auth.service';
 import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
-import { Category } from '@api/category/entities/category.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { Notification } from '@api/notification/entities/notification.entity';
-import { NotificationType } from '@api/notification/interfaces/notifiaction.interface';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
-import { User } from '@api/user/entities/user.entity';
-import { ReactionArticle } from '@api/reaction/entities/reaction-article.entity';
-import { UserRepository } from '@api/user/repositories/user.repository';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
+import { UserRepository } from '@api/user/repositories/user.repository';
+import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
+import { Notification } from '@app/entity/notification/notification.entity';
+import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
 
 export const user = (
   githubUid: string,

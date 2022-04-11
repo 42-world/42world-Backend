@@ -1,8 +1,8 @@
-import { PickType } from '@nestjs/swagger';
 import { BaseArticleDto } from '@api/article/dto/base-article.dto';
-import { Article } from '@api/article/entities/article.entity';
-import { User } from '@api/user/entities/user.entity';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
+import { Article } from '@app/entity/article/article.entity';
+import { User } from '@app/entity/user/user.entity';
+import { PickType } from '@nestjs/swagger';
 
 export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
   'id',

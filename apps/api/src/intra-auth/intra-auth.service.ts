@@ -1,4 +1,16 @@
+import {
+  CADET_ALREADY_EXIST_ERROR_MESSAGE,
+  NOT_EXIST_TOKEN_ERROR_MESSAGE,
+  SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
+  TITLE,
+} from '@api/intra-auth/intra-auth.constant';
 import { UserService } from '@api/user/user.service';
+import { CacheService } from '@app/common/cache/cache.service';
+import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
+import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   ForbiddenException,
   Injectable,
@@ -6,20 +18,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { MailerService } from '@nestjs-modules/mailer';
-import { getEmail, getCode } from './intra-auth.utils';
-import { User } from '@api/user/entities/user.entity';
-import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
-import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
-import { CacheService } from '@app/common/cache/cache.service';
-import {
-  CADET_ALREADY_EXIST_ERROR_MESSAGE,
-  NOT_EXIST_TOKEN_ERROR_MESSAGE,
-  SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
-  TITLE,
-} from '@api/intra-auth/intra-auth.constant';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { getCode, getEmail } from './intra-auth.utils';
 
 @Injectable()
 export class IntraAuthService {

@@ -1,16 +1,16 @@
-import { Article } from '@api/article/entities/article.entity';
-import { User } from '@api/user/entities/user.entity';
-import { NotificationType } from '../interfaces/notifiaction.interface';
+import { Article } from '@app/entity/article/article.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
+  Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { NotificationType } from './interfaces/notifiaction.interface';
 
 @Entity('notification')
 export class Notification {

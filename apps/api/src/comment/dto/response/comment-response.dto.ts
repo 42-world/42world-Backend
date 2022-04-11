@@ -1,9 +1,9 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseCommentDto } from '@api/comment/dto/base-comment.dto';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { ReactionComment } from '@api/reaction/entities/reaction-comment.entity';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
-import { User } from '@api/user/entities/user.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { User } from '@app/entity/user/user.entity';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 
 export class CommentResponseDto extends PickType(BaseCommentDto, [
   'id',

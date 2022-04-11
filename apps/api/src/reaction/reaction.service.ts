@@ -1,19 +1,19 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleService } from '@api/article/article.service';
-import { Article } from '@api/article/entities/article.entity';
 import { CommentService } from '@api/comment/comment.service';
-import { Comment } from '@api/comment/entities/comment.entity';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { Repository } from 'typeorm';
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
 import {
   ReactionArticle,
   ReactionArticleType,
-} from './entities/reaction-article.entity';
+} from '@app/entity/reaction/reaction-article.entity';
 import {
   ReactionComment,
   ReactionCommentType,
-} from './entities/reaction-comment.entity';
+} from '@app/entity/reaction/reaction-comment.entity';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { ReactionArticleRepository } from './repositories/reaction-article.repository';
 
 @Injectable()

@@ -1,23 +1,23 @@
+import { Best } from '@app/entity/best/best.entity';
+import { Category } from '@app/entity/category/category.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { Notification } from '@app/entity/notification/notification.entity';
+import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
+import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
-  Index,
-  DeleteDateColumn,
   OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { User } from '@api/user/entities/user.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { Category } from '@api/category/entities/category.entity';
-import { Best } from '@api/best/entities/best.entity';
-import { ReactionArticle } from '@api/reaction/entities/reaction-article.entity';
-import { ReactionComment } from '@api/reaction/entities/reaction-comment.entity';
-import { Notification } from '@api/notification/entities/notification.entity';
 
 @Entity('article')
 export class Article {

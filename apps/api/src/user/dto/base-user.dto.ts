@@ -1,6 +1,6 @@
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Max, Min } from 'class-validator';
-import { UserRole } from '../interfaces/userrole.interface';
 
 export class BaseUserDto {
   @ApiProperty()

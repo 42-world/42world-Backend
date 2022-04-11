@@ -1,14 +1,14 @@
-import { CategoryRepository } from './repositories/category.repository';
+import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { compareRole } from '@app/utils/utils';
 import {
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { Category } from './entities/category.entity';
-import { User } from '@api/user/entities/user.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
-import { compareRole } from '@app/utils/utils';
+import { CategoryRepository } from './repositories/category.repository';
 
 @Injectable()
 export class CategoryService {

@@ -1,10 +1,10 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { ReactionService } from './reaction.service';
-import { ReactionController } from './reaction.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ReactionComment } from './entities/reaction-comment.entity';
 import { ArticleModule } from '@api/article/article.module';
 import { CommentModule } from '@api/comment/comment.module';
+import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ReactionController } from './reaction.controller';
+import { ReactionService } from './reaction.service';
 import { ReactionArticleRepository } from './repositories/reaction-article.repository';
 
 @Module({

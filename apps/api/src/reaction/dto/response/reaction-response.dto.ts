@@ -1,6 +1,6 @@
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Article } from '@api/article/entities/article.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
 
 export class ReactionResponseDto {
   @ApiProperty()

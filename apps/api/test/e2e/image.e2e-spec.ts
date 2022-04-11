@@ -1,17 +1,17 @@
-import { INestApplication, HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
-import { UserRepository } from '@api/user/repositories/user.repository';
-import { AuthService } from '@api/auth/auth.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserModule } from '@api/user/user.module';
 import { AuthModule } from '@api/auth/auth.module';
-import { ImageModule } from '@api/image/image.module';
-import { getConnection } from 'typeorm';
+import { AuthService } from '@api/auth/auth.service';
 import { UploadImageUrlResponseDto } from '@api/image/dto/upload-image-url-response.dto';
+import { ImageModule } from '@api/image/image.module';
+import { UserRepository } from '@api/user/repositories/user.repository';
+import { UserModule } from '@api/user/user.module';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { TestBaseModule } from '@test/e2e/test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
+import * as request from 'supertest';
+import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 
 describe('Image', () => {
   let httpServer: INestApplication;

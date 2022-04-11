@@ -1,12 +1,16 @@
+import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
+import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
+import { User } from '@app/entity/user/user.entity';
+import { logger } from '@app/utils/logger';
 import {
   Body,
   Controller,
-  Post,
   Get,
+  HttpCode,
+  Post,
   Query,
   Render,
   UseFilters,
-  HttpCode,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -16,13 +20,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-
-import { IntraAuthService } from './intra-auth.service';
-import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
-import { User } from '@api/user/entities/user.entity';
 import { SigninIntraAuthRequestDto } from './dto/signin-intra-auth-request.dto';
-import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
-import { logger } from '@app/utils/logger';
+import { IntraAuthService } from './intra-auth.service';
 
 @ApiTags('Intra Auth')
 @Controller('intra-auth')

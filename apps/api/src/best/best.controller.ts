@@ -1,12 +1,16 @@
+import { Admin } from '@api/auth/auth.decorator';
+import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Article } from '@app/entity/article/article.entity';
+import { Best } from '@app/entity/best/best.entity';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
-  Delete,
-  Query,
   ConflictException,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -18,12 +22,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Article } from '@api/article/entities/article.entity';
-import { Admin } from '@api/auth/auth.decorator';
-import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { BestService } from './best.service';
 import { CreateBestRequestDto } from './dto/request/create-best-request.dto';
-import { Best } from './entities/best.entity';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })

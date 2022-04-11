@@ -1,11 +1,11 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseArticleDto } from '@api/article/dto/base-article.dto';
-import { Article } from '@api/article/entities/article.entity';
 import { CategoryResponseDto } from '@api/category/dto/response/category-response.dto';
-import { Category } from '@api/category/entities/category.entity';
 import { BaseCommentDto } from '@api/comment/dto/base-comment.dto';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { User } from '@api/user/entities/user.entity';
+import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { User } from '@app/entity/user/user.entity';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 
 class InnerArticleDto extends PickType(BaseArticleDto, [
   'id',

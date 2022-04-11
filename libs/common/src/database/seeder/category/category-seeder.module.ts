@@ -1,8 +1,7 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Category } from '@app/entity/category/category.entity';
 import { Module } from '@nestjs/common';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategorySeederService } from './category-seeder.service';
-import { Category } from '@api/category/entities/category.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Category])],

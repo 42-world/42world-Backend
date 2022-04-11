@@ -1,7 +1,7 @@
-import { CookieOptions } from 'express';
-import axios from 'axios';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import axios from 'axios';
+import { CookieOptions } from 'express';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;

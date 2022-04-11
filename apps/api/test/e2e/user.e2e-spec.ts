@@ -1,5 +1,4 @@
 import { ArticleModule } from '@api/article/article.module';
-import { Article } from '@api/article/entities/article.entity';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
@@ -7,23 +6,24 @@ import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentModule } from '@api/comment/comment.module';
-import { Comment } from '@api/comment/entities/comment.entity';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
 import { UpdateUserProfileRequestDto } from '@api/user/dto/request/update-user-profile-request.dto';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
-import * as dummy from '@test/e2e/utils/dummy';
-import { clearDB, createTestApp } from '@test/e2e/utils/utils';
-import { User } from '@api/user/entities/user.entity';
+import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as dummy from '@test/e2e/utils/dummy';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
-import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 
 describe('User', () => {
   let userRepository: UserRepository;

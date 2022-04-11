@@ -1,9 +1,12 @@
+import { GetUser } from '@api/auth/auth.decorator';
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
 import {
   Controller,
-  Post,
+  HttpCode,
   Param,
   ParseIntPipe,
-  HttpCode,
+  Post,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -13,9 +16,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Article } from '@api/article/entities/article.entity';
-import { GetUser } from '@api/auth/auth.decorator';
-import { Comment } from '@api/comment/entities/comment.entity';
 import { ReactionResponseDto } from './dto/response/reaction-response.dto';
 import { ReactionService } from './reaction.service';
 

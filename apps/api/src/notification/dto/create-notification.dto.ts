@@ -1,5 +1,5 @@
+import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
 import { PickType } from '@nestjs/swagger';
-import { NotificationType } from '../interfaces/notifiaction.interface';
 import { BaseNotificationDto } from './base-notification.dto';
 
 export class CreateNotificationDto extends PickType(BaseNotificationDto, [

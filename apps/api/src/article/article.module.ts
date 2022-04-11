@@ -1,11 +1,11 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { forwardRef, Module } from '@nestjs/common';
-import { ArticleService } from './article.service';
-import { ArticleController } from './article.controller';
-import { ArticleRepository } from './repositories/article.repository';
 import { CategoryModule } from '@api/category/category.module';
-import { ReactionModule } from '@api/reaction/reaction.module';
 import { CommentModule } from '@api/comment/comment.module';
+import { ReactionModule } from '@api/reaction/reaction.module';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ArticleController } from './article.controller';
+import { ArticleService } from './article.service';
+import { ArticleRepository } from './repositories/article.repository';
 
 @Module({
   imports: [

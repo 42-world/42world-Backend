@@ -1,8 +1,8 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { Category } from '@api/category/entities/category.entity';
-import { User } from '@api/user/entities/user.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
 import { compareRole } from '@app/utils/utils';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseCategoryDto } from '../base-category.dto';
 
 export class CategoryResponseDto extends PickType(BaseCategoryDto, [

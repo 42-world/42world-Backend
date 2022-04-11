@@ -1,5 +1,5 @@
+import { Article } from '@app/entity/article/article.entity';
 import { PartialType } from '@nestjs/mapped-types';
-import { Article } from '@api/article/entities/article.entity';
 
 export class SeederDataArticle extends PartialType(Article) {
   categoryId?: number;

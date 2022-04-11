@@ -1,22 +1,21 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-
-import { UserRepository } from '@api/user/repositories/user.repository';
-import { AuthService } from '@api/auth/auth.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserModule } from '@api/user/user.module';
 import { AuthModule } from '@api/auth/auth.module';
-import { getConnection } from 'typeorm';
-import { TestBaseModule } from '@test/e2e/test.base.module';
-import { clearDB, createTestApp } from '@test/e2e/utils/utils';
-import * as dummy from './utils/dummy';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
-import { User } from '@api/user/entities/user.entity';
-import { Category } from '@api/category/entities/category.entity';
 import { CreateCategoryRequestDto } from '@api/category/dto/request/create-category-request.dto';
 import { CategoryResponseDto } from '@api/category/dto/response/category-response.dto';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
+import { UserRepository } from '@api/user/repositories/user.repository';
+import { UserModule } from '@api/user/user.module';
+import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TestBaseModule } from '@test/e2e/test.base.module';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
+import * as request from 'supertest';
+import { getConnection } from 'typeorm';
+import * as dummy from './utils/dummy';
 
 describe('Category', () => {
   let app: INestApplication;

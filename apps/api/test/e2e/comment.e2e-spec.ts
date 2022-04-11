@@ -1,24 +1,23 @@
-import { Category } from './../../src/category/entities/category.entity';
-import { Article } from './../../src/article/entities/article.entity';
-import { User } from './../../src/user/entities/user.entity';
-import { CommentRepository } from './../../src/comment/repositories/comment.repository';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getConnection } from 'typeorm';
-
-import { CategoryModule } from '@api/category/category.module';
-import { AuthModule } from '@api/auth/auth.module';
 import { ArticleModule } from '@api/article/article.module';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { AuthModule } from '@api/auth/auth.module';
+import { AuthService } from '@api/auth/auth.service';
+import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentModule } from '@api/comment/comment.module';
-import { TestBaseModule } from '@test/e2e/test.base.module';
-import { UserModule } from '@api/user/user.module';
-import { clearDB, createTestApp } from '@test/e2e/utils/utils';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { AuthService } from '@api/auth/auth.service';
+import { UserModule } from '@api/user/user.module';
+import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TestBaseModule } from '@test/e2e/test.base.module';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
+import * as request from 'supertest';
+import { getConnection } from 'typeorm';
+import { CommentRepository } from './../../src/comment/repositories/comment.repository';
 import * as dummy from './utils/dummy';
 
 describe('Comments', () => {

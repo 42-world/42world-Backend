@@ -1,5 +1,5 @@
+import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
 import { ApiProperty } from '@nestjs/swagger';
-import { NotificationType } from '../interfaces/notifiaction.interface';
 
 export class BaseNotificationDto {
   @ApiProperty()

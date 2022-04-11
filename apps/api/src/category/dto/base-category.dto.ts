@@ -1,6 +1,6 @@
-import { IsString, MaxLength } from 'class-validator';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { IsString, MaxLength } from 'class-validator';
 
 export class BaseCategoryDto {
   @ApiProperty()

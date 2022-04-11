@@ -1,17 +1,17 @@
-import { Article } from '@api/article/entities/article.entity';
-import { ReactionComment } from '@api/reaction/entities/reaction-comment.entity';
-import { User } from '@api/user/entities/user.entity';
+import { Article } from '@app/entity/article/article.entity';
+import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-  Index,
   DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('comment')

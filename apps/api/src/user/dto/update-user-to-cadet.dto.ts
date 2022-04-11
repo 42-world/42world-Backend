@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty } from 'class-validator';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateToCadetDto {
   @IsString()

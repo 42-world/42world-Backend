@@ -1,11 +1,11 @@
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
+import { Notification } from '@app/entity/notification/notification.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Article } from '@api/article/entities/article.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
 import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { Notification } from './entities/notification.entity';
-import { NotificationType } from './interfaces/notifiaction.interface';
 
 @Injectable()
 export class NotificationService {

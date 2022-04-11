@@ -1,10 +1,10 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { getPaginationSkip } from '@app/utils/utils';
-import { EntityRepository, Repository } from 'typeorm';
 import {
   ReactionArticle,
   ReactionArticleType,
-} from '../entities/reaction-article.entity';
+} from '@app/entity/reaction/reaction-article.entity';
+import { getPaginationSkip } from '@app/utils/utils';
+import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(ReactionArticle)
 export class ReactionArticleRepository extends Repository<ReactionArticle> {

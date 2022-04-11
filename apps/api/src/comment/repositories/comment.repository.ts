@@ -1,8 +1,8 @@
+import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { getPaginationSkip } from '@app/utils/utils';
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { getPaginationSkip } from '@app/utils/utils';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {

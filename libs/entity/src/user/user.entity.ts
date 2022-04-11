@@ -1,21 +1,21 @@
-import { Article } from '@api/article/entities/article.entity';
-import { Comment } from '@api/comment/entities/comment.entity';
-import { Notification } from '@api/notification/entities/notification.entity';
+import { Article } from '@app/entity/article/article.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
+import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
+import { Notification } from '@app/entity/notification/notification.entity';
+import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
+import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
   DeleteDateColumn,
+  Entity,
   Index,
+  OneToMany,
   OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { ReactionArticle } from '@api/reaction/entities/reaction-article.entity';
-import { ReactionComment } from '@api/reaction/entities/reaction-comment.entity';
-import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 
 @Entity('user')
 export class User {

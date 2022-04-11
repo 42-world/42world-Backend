@@ -1,6 +1,6 @@
+import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { PartialType } from '@nestjs/mapped-types';
-import { Category } from '@api/category/entities/category.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 
 export class SeederDataCategory extends PartialType(Category) {
   id: number;

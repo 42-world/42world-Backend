@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { ArticleService } from '@api/article/article.service';
-import { Article } from '@api/article/entities/article.entity';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Article } from '@app/entity/article/article.entity';
+import { Best } from '@app/entity/best/best.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { CreateBestRequestDto } from './dto/request/create-best-request.dto';
-import { Best } from './entities/best.entity';
 import { BestRepository } from './repositories/best.repository';
 
 @Injectable()

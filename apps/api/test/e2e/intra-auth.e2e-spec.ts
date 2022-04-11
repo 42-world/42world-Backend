@@ -1,27 +1,26 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getConnection, Repository } from 'typeorm';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { instance, mock, when } from 'ts-mockito';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
-import { UserRepository } from '@api/user/repositories/user.repository';
-import { AuthService } from '@api/auth/auth.service';
-import { UserModule } from '@api/user/user.module';
 import { AuthModule } from '@api/auth/auth.module';
-import { TestBaseModule } from '@test/e2e/test.base.module';
-import { clearDB, createTestApp } from '@test/e2e/utils/utils';
-import * as dummy from './utils/dummy';
-import { IntraAuth } from '@api/intra-auth/entities/intra-auth.entity';
+import { AuthService } from '@api/auth/auth.service';
 import { IntraAuthController } from '@api/intra-auth/intra-auth.controller';
 import { IntraAuthService } from '@api/intra-auth/intra-auth.service';
+import { UserRepository } from '@api/user/repositories/user.repository';
+import { UserModule } from '@api/user/user.module';
 import { CacheService } from '@app/common/cache/cache.service';
-import { MailerService } from '@nestjs-modules/mailer';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
-import { User } from '@api/user/entities/user.entity';
+import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
+import { MailerService } from '@nestjs-modules/mailer';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { TestBaseModule } from '@test/e2e/test.base.module';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import * as request from 'supertest';
+import { instance, mock, when } from 'ts-mockito';
+import { getConnection, Repository } from 'typeorm';
+import * as dummy from './utils/dummy';
 
 describe('IntraAuth', () => {
   let httpServer: INestApplication;

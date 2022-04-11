@@ -1,6 +1,6 @@
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { User } from '@app/entity/user/user.entity';
 import { PickType } from '@nestjs/swagger';
-import { User } from '@api/user/entities/user.entity';
-import { UserRole } from '@api/user/interfaces/userrole.interface';
 import { BaseUserDto } from '../base-user.dto';
 
 export class UserResponseDto extends PickType(BaseUserDto, [
