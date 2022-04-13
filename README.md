@@ -12,22 +12,21 @@ https://www.42world.kr/
 ## 저장소 구조
 
 ```
+.
+├── apps
+│   ├── api
+│   │   ├── src
+│   │   ├── test
+│   │   └── views
+│   └── scheduler
+│       ├── src
+│       └── test
 ├── config
-│    └── .env.dev
-├── src
-│    ├── article
-│    ├── auth
-│    ├── best
-│    ├── category
-│    ├── comment
-│    ├── config
-│    ├── database
-│    ├── filters
-│    ├── intra-auth
-│    ├── notification
-│    ├── reaction
-│    └── user
-└── test
+├── libs
+│   ├── common
+│   ├── entity
+│   └── utils
+└── logs
 ```
 
 ## 기술스택
@@ -41,7 +40,12 @@ https://www.42world.kr/
 # 프로젝트
 **! Docker 가 설치되어 있어야 합니다.**
 ## 설치하기
-0. yarn 버전을 확인해주세요.
+1. node 버전을 확인해주세요.
+    ```
+    node -v
+    ```
+    - 명령어를 입력했을 때 **16.13.0** 이 아니라면 버전을 맞춰주세요
+2. yarn 버전을 확인해주세요.
     ```
     yarn -v
     ```
@@ -49,11 +53,11 @@ https://www.42world.kr/
         ```
         yarn set version 1.22.10
         ```
-1. 백엔드 저장소를 클론해주세요.
+3. 백엔드 저장소를 클론해주세요.
     ```
     git clone https://github.com/42-world/42world-Backend.git
     ```
-2. yarn으로 패키지를 설치해주세요.
+4. yarn으로 패키지를 설치해주세요.
     ```
     yarn install
     ```
@@ -73,7 +77,6 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 - 아래 명령어를 입력하여 실행해주세요.
     ```
     make dev
-    yarn start:dev
     ```
     - 명령어는 디렉토리 최상단에서 실행해주세요.
 
@@ -83,9 +86,7 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 다른 테스트 및 유닛테스트는 추후 보강 예정입니다.
 
 ```
-./run_test_db.sh
-
-yarn test:e2e ./test/app.e2e-spec.ts
+make test
 ```
 
 # 기여하기
