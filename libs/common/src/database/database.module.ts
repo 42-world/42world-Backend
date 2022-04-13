@@ -1,5 +1,5 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DynamicModule } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 export class DatabaseModule {

@@ -1,12 +1,11 @@
-import { Module, Logger } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-
 import { DatabaseModule } from '@app/common/database/database.module';
+import { ormconfig } from '@app/common/database/ormconfig';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ArticleSeederModule } from './article/article-seeder.module';
+import { CategorySeederModule } from './category/category-seeder.module';
 import { Seeder } from './seeder';
 import { UserSeederModule } from './user/user-seeder.module';
-import { CategorySeederModule } from './category/category-seeder.module';
-import { ArticleSeederModule } from './article/article-seeder.module';
-import { ormconfig } from '@app/common/database/ormconfig';
 
 @Module({
   imports: [

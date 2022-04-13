@@ -1,3 +1,6 @@
+import { UserService } from '@api/user/user.service';
+import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
+import { getCookieOption } from '@app/utils/utils';
 import {
   Controller,
   Delete,
@@ -6,7 +9,6 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 import {
   ApiCookieAuth,
   ApiOkResponse,
@@ -14,15 +16,12 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
-
-import { UserService } from '@api/user/user.service';
+import { Response } from 'express';
+import { GetGithubProfile, Public } from './auth.decorator';
 import { AuthService } from './auth.service';
 import { GithubAuthGuard } from './github-auth.guard';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { GithubProfile } from './interfaces/github-profile.interface';
-import { GetGithubProfile, Public } from './auth.decorator';
-import { getCookieOption } from '@app/utils/utils';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
 
 @ApiTags('Auth')
 @Controller('auth')

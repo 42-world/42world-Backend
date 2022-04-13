@@ -1,8 +1,7 @@
+import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
+import { TIME2LIVE } from '@app/utils/utils';
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache, CachingConfig } from 'cache-manager';
-
-import { TIME2LIVE } from '@app/utils/utils';
-import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 
 @Injectable()
 export class CacheService {

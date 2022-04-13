@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { FtCheckinService } from './ft-checkin.service';
-import { FtCheckinController } from './ft-checkin.controller';
 import { CacheModule } from '@app/common/cache/cache.module';
+import { Module } from '@nestjs/common';
+import { FtCheckinController } from './ft-checkin.controller';
+import { FtCheckinService } from './ft-checkin.service';
 
 @Module({
   imports: [CacheModule],

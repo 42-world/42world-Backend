@@ -1,15 +1,15 @@
+import { AppModule } from '@api/app.module';
+import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
+import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
+import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
-import { AppModule } from '@api/app.module';
-import { stream } from '@app/utils/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectAwsService } from 'nest-aws-sdk';
 import { S3 } from 'aws-sdk';
+import { InjectAwsService } from 'nest-aws-sdk';
 import { S3_URL_EXPIRATION_SECONDS } from './image.constant';
 import { S3Param } from './interfaces/s3-param.interface';
 

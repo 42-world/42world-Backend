@@ -1,6 +1,5 @@
-import { Controller, Get, Patch } from '@nestjs/common';
-import { NotificationService } from './notification.service';
 import { GetUser } from '@api/auth/auth.decorator';
+import { Controller, Get, Patch } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOkResponse,
@@ -9,6 +8,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dto/response/notification-response.dto';
+import { NotificationService } from './notification.service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })

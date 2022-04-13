@@ -1,4 +1,5 @@
-import { FtCheckinService, GetFtCheckinDto } from './ft-checkin.service';
+import { Public } from '@api/auth/auth.decorator';
+import { HOUR } from '@app/utils/utils';
 import { Controller, Get, NotFoundException } from '@nestjs/common';
 import {
   ApiOkResponse,
@@ -6,8 +7,7 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { Public } from '@api/auth/auth.decorator';
-import { HOUR } from '@app/utils/utils';
+import { FtCheckinService, GetFtCheckinDto } from './ft-checkin.service';
 
 const FT_CHECKIN_API = 'FT_CHECKIN_API';
 const FT_CHECKIN_CACHE_TTL = 100;

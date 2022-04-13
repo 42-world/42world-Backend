@@ -1,11 +1,11 @@
+import { errorHook } from '@app/utils/utils';
 import {
+  ArgumentsHost,
   Catch,
   ExceptionFilter,
-  ArgumentsHost,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { errorHook } from '@app/utils/utils';
 import { INTERNAL_ERROR_MESSAGE } from './filters.constant';
 
 @Catch(InternalServerErrorException)

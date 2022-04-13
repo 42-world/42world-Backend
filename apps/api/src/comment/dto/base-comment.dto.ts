@@ -1,7 +1,7 @@
-import { IsString, IsInt, IsNotEmpty, Min, MaxLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
+import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty, IsString, MaxLength, Min } from 'class-validator';
 
 export class BaseCommentDto {
   @ApiProperty()

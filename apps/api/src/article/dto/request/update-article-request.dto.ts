@@ -1,6 +1,6 @@
+import { BaseArticleDto } from '@api/article/dto/base-article.dto';
 import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
-import { BaseArticleDto } from '@api/article/dto/base-article.dto';
 
 export class UpdateArticleRequestDto extends PickType(
   PartialType(BaseArticleDto),

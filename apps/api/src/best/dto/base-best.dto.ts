@@ -1,6 +1,6 @@
-import { IsInt, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, Min } from 'class-validator';
 
 export class BaseBestDto {
   @ApiProperty()

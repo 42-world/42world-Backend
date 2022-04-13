@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
-import { UserSeederService } from './user/user-seeder.service';
-import { CategorySeederService } from './category/category-seeder.service';
 import { ArticleSeederService } from './article/article-seeder.service';
+import { CategorySeederService } from './category/category-seeder.service';
+import { UserSeederService } from './user/user-seeder.service';
 
 @Injectable()
 export class Seeder {
