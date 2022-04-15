@@ -5,13 +5,13 @@ COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 test:
 	./run_test_db.sh
 	./wait-for-healthy.sh ft_world-mysql-test
-	yarn test:e2e ./test/e2e/*.e2e-spec.ts
+	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db
 	./wait-for-healthy.sh 42world-backend-db
-	yarn start:dev
+	yarn start:dev api
 
 alpha:
 	cp ./config/.env.alpha ./config/.env
