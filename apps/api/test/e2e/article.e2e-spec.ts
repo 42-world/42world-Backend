@@ -314,10 +314,13 @@ describe('Article', () => {
       categories = await dummy.createDummyCategories(categoryRepository);
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl2', 'text2'),
       ]);
       comments = await commentRepository.save([
         dummy.comment(users.cadet[0].id, articles[0].id, 'comment1'),
         dummy.comment(users.cadet[0].id, articles[0].id, 'comment2'),
+        dummy.comment(users.cadet[0].id, articles[1].id, 'comment3'),
+        dummy.comment(users.cadet[0].id, articles[1].id, 'comment4'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -337,6 +340,27 @@ describe('Article', () => {
       expect(responseComments[0].writerId).toBe(comments[1].writerId);
       expect(responseComments[0].writer.id).toBe(comments[1].writerId);
       expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
+      expect(responseComments[0].articleId).toBe(comments[1].articleId);
+      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
+      expect(responseComments[1].id).toBe(comments[0].id);
+    });
+
+    test.skip('[성공] GET - 익명 게시글 댓글 목록 조희', async () => {
+      const articleId = articles[1].id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+      expect(responseComments.length).toBe(2);
+      expect(responseComments[0].id).toBe(comments[1].id);
+      expect(responseComments[0].content).toBe(comments[1].content);
+      expect(responseComments[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseComments[0].writer.character).toBe(ANONY_USER_CHARACTER);
       expect(responseComments[0].articleId).toBe(comments[1].articleId);
       expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
       expect(responseComments[1].id).toBe(comments[0].id);
