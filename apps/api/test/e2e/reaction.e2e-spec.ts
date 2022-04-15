@@ -108,6 +108,14 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
       const notExistId = 0;
 
@@ -167,6 +175,14 @@ describe('Reaction', () => {
       );
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
     });
 
     test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
