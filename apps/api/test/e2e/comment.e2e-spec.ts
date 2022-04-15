@@ -193,14 +193,6 @@ describe('Comments', () => {
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
-    test('[실패] PUT - 권한 없는 유저가 댓글 수정', async () => {
-      const response = await request(httpServer)
-        .delete(`/comments/${comment.id}`)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
-
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
-    });
-
     test('[성공] DELETE - 댓글 삭제', async () => {
       const response = await request(httpServer)
         .delete(`/comments/${comment.id}`)
@@ -215,14 +207,6 @@ describe('Comments', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${anotherJWT}`);
 
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
-    });
-
-    test('[성공] DELETE - 권한 없는 유저가 댓글 삭제', async () => {
-      const response = await request(httpServer)
-        .delete(`/comments/${comment.id}`)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
-
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] DELETE & PUT - 삭제된 댓글 수정', async () => {
