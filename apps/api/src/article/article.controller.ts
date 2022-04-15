@@ -139,6 +139,7 @@ export class ArticleController {
         comments,
         reactionComments,
         userId,
+        isAnonymous: false, // TODO: 나중에 카테고리 가져와서 적용할것
       }),
       options,
       totalCount,
