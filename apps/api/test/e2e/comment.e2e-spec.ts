@@ -30,6 +30,7 @@ describe('Comments', () => {
 
   let JWT: string;
   let anotherJWT: string;
+  let adminJWT: string;
   let noviceJWT: string;
 
   const categoryName = '자유게시판';
@@ -39,6 +40,7 @@ describe('Comments', () => {
   let category: Category;
   let cadetUser: User;
   let anotherCadetUser: User;
+  let adminUser: User;
   let noviceUser: User;
   let targetArticle: Article;
 
@@ -99,6 +101,15 @@ describe('Comments', () => {
       authService,
     );
 
+    adminUser = dummy.user(
+      'admingithubUid',
+      'nickname',
+      'adminGHUsername',
+      UserRole.ADMIN,
+    );
+    await userRepository.save(adminUser);
+    adminJWT = dummy.jwt(adminUser.id, adminUser.role, authService);
+
     noviceUser = dummy.user(
       'novicegithubUid',
       'nickname',
@@ -136,13 +147,22 @@ describe('Comments', () => {
       expect(result.writer.role).toEqual(cadetUser.role);
     });
 
-    test('[실패] POST - 권한 없는 유저가 댓글 생성', async () => {
+    test('[성공] POST - 권한 높은 유저가 댓글 생성', async () => {
+      const response = await request(httpServer)
+        .post('/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${adminJWT}`)
+        .send({ content: commentContent, articleId: targetArticle.id });
+
+      expect(response.status).toEqual(HttpStatus.CREATED);
+    });
+
+    test('[실패] POST - 권한 낮은 유저가 댓글 생성', async () => {
       const response = await request(httpServer)
         .post('/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`)
         .send({ content: commentContent, articleId: targetArticle.id });
 
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
   });
 
