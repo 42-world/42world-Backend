@@ -1,8 +1,10 @@
 import { ArticleService } from '@api/article/article.service';
+import { CategoryService } from '@api/category/category.service';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { NotificationService } from '@api/notification/notification.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
   forwardRef,
   Inject,
@@ -13,8 +15,6 @@ import {
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
-import { User } from '@root/user/entities/user.entity';
-import { CategoryService } from '@root/category/category.service';
 
 @Injectable()
 export class CommentService {
