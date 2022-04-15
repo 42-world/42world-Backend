@@ -1,4 +1,4 @@
-import { GetUser } from '@api/auth/auth.decorator';
+import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import {
   Body,
@@ -32,6 +32,7 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 생성' })
   @ApiCreatedResponse({
     description: '생성된 댓글',
@@ -54,6 +55,7 @@ export class CommentController {
   }
 
   @Put(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
@@ -66,6 +68,7 @@ export class CommentController {
   }
 
   @Delete(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
