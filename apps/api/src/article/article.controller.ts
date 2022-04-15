@@ -124,6 +124,7 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
@@ -148,6 +149,7 @@ export class ArticleController {
   }
 
   @Put(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
@@ -160,6 +162,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
