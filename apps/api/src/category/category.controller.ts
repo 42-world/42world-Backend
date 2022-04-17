@@ -1,4 +1,4 @@
-import { Admin, GetUser } from '@api/auth/auth.decorator';
+import { Admin, AlsoNovice, GetUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import {
   Body,
@@ -46,6 +46,7 @@ export class CategoryController {
   }
 
   @Get()
+  @AlsoNovice()
   @ApiOperation({ summary: '카테고리 종류 가져오기' })
   @ApiOkResponse({
     description: '카테고리 종류',
