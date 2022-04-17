@@ -130,8 +130,8 @@ make test
 
 ## 기여한 사람들
 
-| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🥑 klim](https://github.com/PIut0) | [🥝 hyeonkim](https://github.com/hyongti) | [🍋 suhshin](https://github.com/rkskekzzz) | [🍍 sham](https://github.com/GulSam00) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) | [🍏 sikang](https://github.com/Yaminyam) | [👻 seongpar](https://github.com/mimseong) | [🍌 juchoi](https://github.com/raejun92)
-| ---------------------------------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------ | -------------------------------------- | -------------------------------------------- | --------------------------------------- | -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) | [🍏 sikang](https://github.com/Yaminyam) | [👻 seongpar](https://github.com/mimseong) | [🍌 juchoi](https://github.com/raejun92)
+| ---------------------------------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------ | -------------------------------------- | -------------------------------------------- |
 
 ## 개발노트
 
