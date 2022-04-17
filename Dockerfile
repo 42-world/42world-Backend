@@ -5,9 +5,8 @@ RUN mkdir ft-world
 
 WORKDIR ft-world
 
-COPY ./src ./src
-COPY ./test ./test
-COPY ./views ./views
+COPY apps apps
+COPY libs libs
 
 COPY nest-cli.json .
 COPY tsconfig.build.json .
@@ -18,6 +17,4 @@ COPY yarn.lock .
 RUN yarn install
 RUN yarn build
 
-COPY ./views ./dist/views
-
-ENTRYPOINT ["node", "dist/main.js"]
+ENTRYPOINT ["node", "dist/apps/api/src/main.js"]
