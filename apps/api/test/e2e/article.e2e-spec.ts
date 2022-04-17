@@ -345,6 +345,7 @@ describe('Article', () => {
       expect(responseComments[1].id).toBe(comments[0].id);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
     test.skip('[성공] GET - 익명 게시글 댓글 목록 조희', async () => {
       const articleId = articles[1].id;
 
