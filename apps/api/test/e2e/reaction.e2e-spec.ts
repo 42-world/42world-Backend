@@ -108,10 +108,12 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
     test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
       expect(1).toEqual(1);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
     test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
       expect(1).toEqual(1);
     });
@@ -177,10 +179,12 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
     test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
       expect(1).toEqual(1);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
     test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
       expect(1).toEqual(1);
     });
