@@ -87,13 +87,11 @@ export class ArticleController {
     @GetUser() user: User,
     @Query() options: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<FindAllArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.findAll(
-      user,
-      options,
-    );
+    const { articles, category, totalCount } =
+      await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
-      data: FindAllArticleResponseDto.of({ articles, user }),
+      data: FindAllArticleResponseDto.of({ articles, category, user }),
       options,
       totalCount,
     });
@@ -154,6 +152,7 @@ export class ArticleController {
         comments,
         reactionComments,
         userId: user.id,
+        isAnonymous: category.anonymity,
       }),
       options,
       totalCount,

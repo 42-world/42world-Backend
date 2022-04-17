@@ -12,6 +12,11 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
+import {
+  ANONY_USER_CHARACTER,
+  ANONY_USER_ID,
+  ANONY_USER_NICKNAME,
+} from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -80,6 +85,7 @@ describe('Article', () => {
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
         dummy.article(categories.free.id, users.cadet[0].id, 'title2', 'text2'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl3', 'text3'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -220,6 +226,30 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    test('[성공] GET - 익명 게시글 목록 조회', async () => {
+      const findArticleRequestDto = {
+        categoryId: categories.anony.id,
+      };
+
+      const response = await request(httpServer)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles[0].id).toBe(articles[2].id);
+      expect(responseArticles[0].title).toBe(articles[2].title);
+      expect(responseArticles[0].content).toBe(articles[2].content);
+      expect(responseArticles[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.role).toBeUndefined();
+      expect(responseArticles[0].writer.createdAt).toBeUndefined();
+      expect(responseArticles[0].writer.updatedAt).toBeUndefined();
+      expect(responseArticles[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseArticles[0].writer.character).toBe(ANONY_USER_CHARACTER);
+    });
+
     test('[성공] GET - 게시글 목록 조회 권한 높은사람', async () => {
       const findArticleRequestDto = {
         categoryId: categories.free.id,
@@ -284,10 +314,13 @@ describe('Article', () => {
       categories = await dummy.createDummyCategories(categoryRepository);
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl2', 'text2'),
       ]);
       comments = await commentRepository.save([
         dummy.comment(users.cadet[0].id, articles[0].id, 'comment1'),
         dummy.comment(users.cadet[0].id, articles[0].id, 'comment2'),
+        dummy.comment(users.cadet[0].id, articles[1].id, 'comment3'),
+        dummy.comment(users.cadet[0].id, articles[1].id, 'comment4'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -307,6 +340,28 @@ describe('Article', () => {
       expect(responseComments[0].writerId).toBe(comments[1].writerId);
       expect(responseComments[0].writer.id).toBe(comments[1].writerId);
       expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
+      expect(responseComments[0].articleId).toBe(comments[1].articleId);
+      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
+      expect(responseComments[1].id).toBe(comments[0].id);
+    });
+
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] GET - 익명 게시글 댓글 목록 조희', async () => {
+      const articleId = articles[1].id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+      expect(responseComments.length).toBe(2);
+      expect(responseComments[0].id).toBe(comments[1].id);
+      expect(responseComments[0].content).toBe(comments[1].content);
+      expect(responseComments[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseComments[0].writer.character).toBe(ANONY_USER_CHARACTER);
       expect(responseComments[0].articleId).toBe(comments[1].articleId);
       expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
       expect(responseComments[1].id).toBe(comments[0].id);
@@ -375,6 +430,7 @@ describe('Article', () => {
       articles = await articleRepository.save([
         dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
         dummy.article(categories.free.id, users.cadet[1].id, 'title1', 'text1'),
+        dummy.article(categories.anony.id, users.cadet[0].id, 'titl1', 'text1'),
       ]);
       JWT = dummy.jwt2(users.cadet[0], authService);
     });
@@ -408,6 +464,28 @@ describe('Article', () => {
       const response = await request(httpServer).get(`/articles/${articleId}`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
+    test('[성공] GET - 익명 게시글 상세 조회', async () => {
+      const articleId = articles[2].id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const result = response.body;
+      expect(result.title).toBe(articles[2].title);
+      expect(result.content).toBe(articles[2].content);
+      expect(result.categoryId).toBe(articles[2].categoryId);
+      expect(result.writerId).toBe(ANONY_USER_ID);
+      expect(result.category.id).toBe(categories.anony.id);
+      expect(result.writer.id).toBe(ANONY_USER_ID);
+      expect(result.writer.role).toBeUndefined();
+      expect(result.writer.createdAt).toBeUndefined();
+      expect(result.writer.updatedAt).toBeUndefined();
+      expect(result.writer.nickname).toContain(ANONY_USER_NICKNAME);
+      expect(result.writer.character).toBe(ANONY_USER_CHARACTER);
     });
 
     test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {

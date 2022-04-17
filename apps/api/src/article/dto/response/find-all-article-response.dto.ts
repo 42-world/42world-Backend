@@ -1,6 +1,9 @@
 import { BaseArticleDto } from '@api/article/dto/base-article.dto';
+import { AnonyUserResponseDto } from '@api/user/dto/response/anony-user-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
+import { ANONY_USER_ID } from '@api/user/user.constant';
 import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
 import { PickType } from '@nestjs/swagger';
 
@@ -24,7 +27,7 @@ export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
     viewCount: number;
     categoryId: number;
     writerId: number;
-    writer: UserResponseDto;
+    writer: UserResponseDto | AnonyUserResponseDto;
     commentCount: number;
     likeCount: number;
     createdAt: Date;
@@ -47,14 +50,22 @@ export class FindAllArticleResponseDto extends PickType(BaseArticleDto, [
 
   static of(config: {
     articles: Article[];
+    category: Category;
     user: User;
   }): FindAllArticleResponseDto[] {
-    return config.articles.map(
-      (article) =>
-        new FindAllArticleResponseDto({
-          ...article,
-          writer: UserResponseDto.of({ user: article.writer }),
-        }),
-    );
+    return config.articles.map((article) => {
+      const writer = config.category.anonymity
+        ? AnonyUserResponseDto.of()
+        : UserResponseDto.of({ user: article.writer });
+      const writerId = config.category.anonymity
+        ? ANONY_USER_ID
+        : article.writerId;
+
+      return new FindAllArticleResponseDto({
+        ...article,
+        writer,
+        writerId,
+      });
+    });
   }
 }

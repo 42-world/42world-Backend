@@ -51,6 +51,7 @@ export class CommentController {
       writer,
       isLike: false,
       isSelf: true,
+      isAnonymous: false,
     });
   }
 
