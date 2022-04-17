@@ -46,14 +46,13 @@ describe('Notification', () => {
     const app = createTestApp(moduleFixture);
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    notificationRepository = moduleFixture.get<Repository<Notification>>(
+    userRepository = moduleFixture.get(UserRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    notificationRepository = moduleFixture.get(
       getRepositoryToken(Notification),
     );
-    authService = moduleFixture.get<AuthService>(AuthService);
+    authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
   });
