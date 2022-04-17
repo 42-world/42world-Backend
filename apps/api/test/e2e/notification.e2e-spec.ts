@@ -16,7 +16,6 @@ import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
@@ -24,7 +23,7 @@ import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let articleRepository: ArticleRepository;
@@ -44,10 +43,7 @@ describe('Notification', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app = createTestApp(moduleFixture);
+    const app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get<UserRepository>(UserRepository);
@@ -59,13 +55,13 @@ describe('Notification', () => {
     );
     authService = moduleFixture.get<AuthService>(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   beforeEach(async () => {
@@ -106,7 +102,7 @@ describe('Notification', () => {
     });
 
     test('[성공] GET - 알람 가져오기', async () => {
-      const res = await request(app)
+      const res = await request(httpServer)
         .get('/notifications')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
@@ -116,7 +112,7 @@ describe('Notification', () => {
     });
 
     test('[실패] GET - 로그인하지 않고 호출', async () => {
-      const res = await request(app).get('/notifications');
+      const res = await request(httpServer).get('/notifications');
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
@@ -163,7 +159,7 @@ describe('Notification', () => {
     });
 
     test('[성공] PATCH - 알림 다 읽기', async () => {
-      const res = await request(app)
+      const res = await request(httpServer)
         .patch('/notifications/readall')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
@@ -176,7 +172,7 @@ describe('Notification', () => {
     });
 
     test('[실패] PATCH - 로그인하지 않고 호출', async () => {
-      const res = await request(app).patch('/notifications/readall');
+      const res = await request(httpServer).patch('/notifications/readall');
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
