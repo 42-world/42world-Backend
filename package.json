@@ -24,7 +24,7 @@
     "typeorm:migrate": "yarn typeorm migration:generate -n",
     "typeorm:run": "yarn typeorm migration:run",
     "typeorm:revert": "yarn typeorm migration:revert",
-    "seed": "ts-node -r tsconfig-paths/register src/database/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register libs/common/src/database/seed.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.1",
