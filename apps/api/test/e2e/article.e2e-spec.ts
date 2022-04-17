@@ -322,6 +322,26 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    test('[성공] GET - 게시글 댓글 목록 조회 권한 높은사람', async () => {
+      const articleId = articles[0].id;
+
+      JWT = dummy.jwt2(users.admin[0], authService);
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+    });
+
+    test('[실패] GET - 게시글 댓글 목록 조회 권한 낮은사람', async () => {
+      const articleId = articles[0].id;
+
+      JWT = dummy.jwt2(users.novice[0], authService);
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.NOT_ACCEPTABLE);
+    });
+
     test('[실패] GET - 게시글 댓글 목록 존재하지 않는 게시글', async () => {
       const articleId = 99;
 

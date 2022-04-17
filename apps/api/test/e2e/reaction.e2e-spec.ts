@@ -108,6 +108,16 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
       const notExistId = 0;
 
@@ -169,6 +179,16 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
     test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
       const notExistId = 999;
 
@@ -176,7 +196,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.OK); // TODO - 코드가 이상하다 HttpStatus.OK을 돌려준다
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {
