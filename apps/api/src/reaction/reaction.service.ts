@@ -1,4 +1,5 @@
 import { ArticleService } from '@api/article/article.service';
+import { CategoryService } from '@api/category/category.service';
 import { CommentService } from '@api/comment/comment.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
@@ -11,6 +12,7 @@ import {
   ReactionComment,
   ReactionCommentType,
 } from '@app/entity/reaction/reaction-comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -29,10 +31,12 @@ export class ReactionService {
 
     @Inject(forwardRef(() => CommentService))
     private readonly commentService: CommentService,
+
+    private readonly categoryService: CategoryService,
   ) {}
 
   async articleCreateOrDelete(
-    userId: number,
+    user: User,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
   ): Promise<
@@ -42,12 +46,18 @@ export class ReactionService {
       }
     | never
   > {
+    const userId: number = user.id;
+    let article = await this.articleService.findOneByIdOrFail(articleId);
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('reactionable', category, user);
+
     const isReaction = await this.reactionArticleRepository.isExist(
       userId,
       articleId,
       type,
     );
-    let article = await this.articleService.findOneByIdOrFail(articleId);
     let isLike: boolean;
 
     if (isReaction) {
@@ -63,7 +73,7 @@ export class ReactionService {
   }
 
   async commentCreateOrDelete(
-    userId: number,
+    user: User,
     articleId: number,
     commentId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
@@ -74,16 +84,23 @@ export class ReactionService {
       }
     | never
   > {
+    const userId: number = user.id;
+    let comment = await this.commentService.findOneByIdOrFail(commentId);
+    const article = await this.articleService.findOneByIdOrFail(articleId);
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('reactionable', category, user);
+
     const isReaction = await this.reactionCommentRepository.findOne({
       userId,
       commentId,
       type,
     });
-    let comment = await this.commentService.findOneByIdOrFail(commentId);
     let isLike: boolean;
 
     if (isReaction) {
-      this.reactionCommentRepository.delete({
+      await this.reactionCommentRepository.delete({
         userId,
         articleId,
         commentId,
@@ -92,7 +109,7 @@ export class ReactionService {
       comment = await this.commentService.decreaseLikeCount(comment);
       isLike = false;
     } else {
-      this.reactionCommentRepository.save({
+      await this.reactionCommentRepository.save({
         userId,
         articleId,
         commentId,
