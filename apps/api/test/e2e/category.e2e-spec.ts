@@ -37,7 +37,7 @@ describe('Category', () => {
       imports: [TestBaseModule, UserModule, AuthModule, CategoryModule],
     }).compile();
 
-    const app = createTestApp(moduleFixture);
+    app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
