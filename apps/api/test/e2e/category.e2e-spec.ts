@@ -18,7 +18,6 @@ import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
 
 describe('Category', () => {
-  let app: INestApplication;
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let authService: AuthService;
@@ -37,7 +36,7 @@ describe('Category', () => {
       imports: [TestBaseModule, UserModule, AuthModule, CategoryModule],
     }).compile();
 
-    app = createTestApp(moduleFixture);
+    const app = createTestApp(moduleFixture);
     await app.init();
 
     userRepository = moduleFixture.get(UserRepository);
