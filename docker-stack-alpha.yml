@@ -1,0 +1,47 @@
+version: '3.4'
+services:
+  db:
+    image: mysql:5.7
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_DATABASE=ft_world
+      - MYSQL_USER=ft_world
+      - MYSQL_PASSWORD=ft_world
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_INITDB_ARGS=--encoding=UTF-8
+      - TZ=Asia/Seoul
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - overlay
+  api:
+    image: 42world-backend-api
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - ./config/.env.alpha
+    environment:
+      - NODE_ENV=alpha
+    ports:
+      - '8888:8888'
+    networks:
+      - overlay
+  redis:
+    image: redis:6.2.5
+    command: redis-server --port 6379
+    hostname: redis6379
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - '6379:6379'
+    networks:
+      - overlay
+networks:
+  overlay:
