@@ -24,6 +24,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import * as redisStore from 'cache-manager-ioredis';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
 
@@ -53,6 +54,9 @@ import * as path from 'path';
     }),
     DatabaseModule.register(),
     CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST ?? 'localhost',
+      port: process.env.REDIS_PORT ?? 6379,
       isGlobal: true,
     }),
     AwsSdkModule.forRootAsync({
