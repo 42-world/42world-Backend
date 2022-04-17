@@ -2,6 +2,11 @@
 
 # 42WORLD
 
+![issue](https://img.shields.io/github/issues/42-world/42world-Backend)
+![issue](https://img.shields.io/github/issues-closed/42-world/42world-Backend)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/42-world/42world-Backend)
+
+
 ## 소개
 
 42서울 재학생과 졸업생이 교류하는 온라인 커뮤니티 제작 프로젝트입니다.
