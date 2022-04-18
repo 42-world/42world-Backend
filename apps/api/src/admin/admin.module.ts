@@ -18,14 +18,14 @@ export class AdminModule {
     return AdminJsModule.createAdminAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory(configService: ConfigService): AdminModuleOptions {
+      useFactory(): AdminModuleOptions {
         return {
           adminJsOptions: {
             rootPath: '/admin',
             resources: [Category, User, IntraAuth, Notification],
           },
           auth: {
-            authenticate: async (email, password) => ({ email: 'test' }),
+            authenticate: async () => ({ email: 'test' }),
             cookieName: 'test',
             cookiePassword: 'testPass',
           },
