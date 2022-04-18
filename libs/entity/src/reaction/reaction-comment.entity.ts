@@ -2,6 +2,7 @@ import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -17,7 +18,7 @@ export enum ReactionCommentType {
 }
 
 @Entity('reaction_comment')
-export class ReactionComment {
+export class ReactionComment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
