@@ -118,7 +118,7 @@ describe('IntraAuth', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`)
         .send({ intraId });
 
-      expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       // 현재는 구글 계정 에러랑 구분할 방법이 없어서 500에러로 처리
       // expect(response.status).toEqual(HttpStatus.FORBIDDEN);
