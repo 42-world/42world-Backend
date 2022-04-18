@@ -7,13 +7,13 @@ import { SlackService } from './slack.service';
 export class SlackController {
   constructor(private readonly slackService: SlackService) {}
 
-  @Get()
+  @Post()
   @Public()
   challenge(@Body('challenge') challenge: string): string {
     return challenge;
   }
 
-  @Post()
+  @Get()
   @Public()
   event(@Body() payload: string): void {
     logger.info(payload);
