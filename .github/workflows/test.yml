@@ -23,6 +23,7 @@ jobs:
       AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY}}
       AWS_S3_UPLOAD_BUCKET: ${{secrets.AWS_S3_UPLOAD_BUCKET}}
       ACCESS_TOKEN_KEY: ${{secrets.ACCESS_TOKEN_KEY}}
+      FRONT_URL: ${{secrets.FRONT_URL}}
 
     strategy:
       matrix:

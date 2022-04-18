@@ -11,18 +11,11 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@root/*": ["./src/*"],
-      "@user/*": ["./src/user/*"],
-      "@article/*": ["./src/article/*"],
-      "@comment/*": ["./src/comment/*"],
-      "@category/*": ["./src/category/*"],
-      "@notification/*": ["./src/notification/*"],
-      "@auth/*": ["./src/auth/*"],
-      "@intra-auth/*": ["src/intra-auth/*"],
-      "@database/*": ["./src/database/*"],
-      "@test/*": ["./test/*"],
-      "@image/*": ["./src/image/*"],
-      "@cache/*": ["./src/cache/*"]
+      "@api/*": ["./apps/api/src/*"],
+      "@test/*": ["./apps/api/test/*"],
+      "@app/common/*": ["./libs/common/src/*"],
+      "@app/utils/*": ["./libs/utils/src/*"],
+      "@app/entity/*": ["libs/entity/src/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

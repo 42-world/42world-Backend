@@ -3,12 +3,15 @@ COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 
 .PHONY: test
 test:
-	yarn test:e2e ./test/e2e/*.e2e-spec.ts
+	./run_test_db.sh
+	./wait-for-healthy.sh ft_world-mysql-test
+	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 dev:
 	cp ./config/.env.dev ./config/.env
-	make db redis
-	yarn start:dev
+	make db
+	./wait-for-healthy.sh 42world-backend-db
+	yarn start:dev api
 
 alpha:
 	cp ./config/.env.alpha ./config/.env
@@ -28,17 +31,6 @@ db: db-dev
 
 db-down:
 	${COMPOSE} down db
-
-redis: redis-dev
-
-redis-down:
-	${COMPOSE} down redis
-
-redis-dev:
-	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
-
-redis-alpha:
-	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d redis
 
 api:
 	api-dev
