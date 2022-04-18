@@ -315,6 +315,10 @@ describe('User', () => {
       // expect(articles[0].writer.id).toEqual(article.writer.id);
       // expect(articles[0].writer.nickname).toEqual(article.writer.nickname);
     });
+
+    test.skip('[성공] GET - 내가 작성한 글 가져오기 - 익명', async () => {
+      expect(1).toBeTruthy();
+    });
   });
 
   describe('/users/me/comments', () => {
@@ -355,6 +359,10 @@ describe('User', () => {
 
       expect(comments.length).toEqual(1);
       expect(comments[0].content).toEqual(comment.content);
+    });
+
+    test.skip('[성공] GET - 내가 작성한 댓글 가져오기 - 익명', async () => {
+      expect(1).toBeTruthy();
     });
   });
 
@@ -399,6 +407,10 @@ describe('User', () => {
 
       expect(articles.length).toEqual(1);
       expect(articles[0].id).toEqual(reactionArticle.id);
+    });
+
+    test.skip('[성공] GET - 내가 좋아요 누른 게시글 목록 확인 - 익명', async () => {
+      expect(1).toBeTruthy();
     });
   });
 });

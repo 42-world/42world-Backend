@@ -99,7 +99,6 @@ export class ArticleService {
         article: Article;
         category: Category;
         writer: User;
-        isLike: boolean;
       }
     | never
   > {
@@ -111,16 +110,11 @@ export class ArticleService {
       article.category,
       user,
     );
-    const isLike = await this.reactionService.isMyReactionArticle(
-      user.id,
-      article.id,
-    );
 
     return {
       article,
       category: article.category,
       writer: article.writer,
-      isLike,
     };
   }
 
