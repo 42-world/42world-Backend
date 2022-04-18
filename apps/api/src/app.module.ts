@@ -26,6 +26,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
