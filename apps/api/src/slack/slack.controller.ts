@@ -1,4 +1,5 @@
 import { Public } from '@api/auth/auth.decorator';
+import { logger } from '@app/utils/logger';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SlackService } from './slack.service';
 
@@ -15,6 +16,6 @@ export class SlackController {
   @Post()
   @Public()
   event(@Body() payload: string): void {
-    console.log(payload);
+    logger.info(payload);
   }
 }
