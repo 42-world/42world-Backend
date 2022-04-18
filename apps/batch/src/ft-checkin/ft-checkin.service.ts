@@ -4,7 +4,6 @@ import {
   MAX_CHECKIN_KEY,
 } from '@app/common/cache/dto/ft-checkin.constant';
 import { logger } from '@app/utils/logger';
-import { errorHook } from '@app/utils/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
@@ -37,12 +36,7 @@ export class FtCheckinService {
         ttl: cacheTTL,
       });
     } catch (e) {
-      logger.error(`Can't get data from cache with key: ${cacheKey}`);
-      errorHook(
-        'GetCheckInDataFromApiError',
-        `Can't get data from cache with key: ${cacheKey}`,
-      );
-      throw new NotFoundException('데이터를 받아올 수 없습니다.');
+      throw new NotFoundException(`데이터를 받아올 수 없습니다. ${e.message}`);
     }
   }
 
