@@ -1,4 +1,5 @@
 import { CacheService } from '@app/common/cache/cache.service';
+import { logger } from '@app/utils/logger';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import axios from 'axios';
@@ -40,7 +41,7 @@ export class FtCheckinService {
         });
         return realData;
       } catch (e) {
-        console.error(e);
+        logger.error(e);
         throw new NotFoundException('데이터를 받아올 수 없습니다.');
       }
     }
