@@ -1,9 +1,9 @@
 FROM node:16-alpine3.14
 RUN apk add --no-cache 
 
-RUN mkdir ft-world
+RUN mkdir /home/ft-world
 
-WORKDIR ft-world
+WORKDIR /home/ft-world
 
 COPY apps apps
 COPY libs libs
