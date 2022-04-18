@@ -2,6 +2,8 @@
 
 # 42WORLD
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b3a77efc4f694b14953bd35e3ee7327f)](https://www.codacy.com/gh/42-world/42world-Backend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=42-world/42world-Backend&amp;utm_campaign=Badge_Grade)
+
 ## 소개
 
 42서울 재학생과 졸업생이 교류하는 온라인 커뮤니티 제작 프로젝트입니다.
