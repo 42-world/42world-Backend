@@ -22,13 +22,11 @@ export class SlackController {
     eventType: 'message',
   })
   event(
-    @Body() { event: { text } }: IncomingSlackEvent<MessageEvent>,
-    @Body('challenge') challenge?: string,
+    @Body() { event, challenge }: IncomingSlackEvent<MessageEvent>,
   ): string | void {
     if (challenge) {
-      logger.info('Received challenge: %s', challenge);
       return challenge;
     }
-    logger.info(text);
+    logger.info(event.text);
   }
 }
