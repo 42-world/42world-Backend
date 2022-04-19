@@ -23,7 +23,7 @@ export class AdminJsModule {
       useFactory(configService: ConfigService): AdminModuleOptions {
         return {
           adminJsOptions: {
-            rootPath: '/admin',
+            rootPath: configService.get('ADMIN_URL'),
             resources: [
               IntraAuth,
               Best,
