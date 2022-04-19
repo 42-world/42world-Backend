@@ -1,3 +1,4 @@
+import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthService } from '@api/auth/auth.service';
 import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
@@ -10,6 +11,25 @@ import { Notification } from '@app/entity/notification/notification.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
+
+//TODO: jwt2로 통합
+export const jwt = (
+  userId: number,
+  role: string,
+  authService: AuthService,
+): string => {
+  return authService.getJWT({
+    userId: userId,
+    userRole: role,
+  } as JWTPayload);
+};
+
+export const jwt2 = (user: User, authService: AuthService): string => {
+  return authService.getJWT({
+    userId: user.id,
+    userRole: user.role,
+  } as JWTPayload);
+};
 
 export const user = (
   githubUid: string,
@@ -25,17 +45,6 @@ export const user = (
   user.character = character;
   user.role = role;
   return user;
-};
-
-export const jwt = (
-  userId: number,
-  role: string,
-  authService: AuthService,
-): string => {
-  return authService.getJWT({
-    userId: userId,
-    userRole: role,
-  } as JWTPayload);
 };
 
 export const category = (
@@ -59,12 +68,18 @@ export const article = (
   writerId: number,
   title: string,
   content: string,
+  likeCount = 0,
+  createdAt: Date = new Date(),
+  updatedAt: Date = new Date(),
 ): Article => {
   const article = new Article();
   article.title = title;
   article.content = content;
   article.categoryId = categoryId;
   article.writerId = writerId;
+  article.likeCount = likeCount;
+  article.createdAt = createdAt;
+  article.updatedAt = updatedAt;
   return article;
 };
 
@@ -159,9 +174,67 @@ export const createDummyCategories = async (
   return dummyCategories;
 };
 
-export const jwt2 = (user: User, authService: AuthService): string => {
-  return authService.getJWT({
-    userId: user.id,
-    userRole: user.role,
-  } as JWTPayload);
+export type DummmyArticles = {
+  normal: Article[];
+  best: Article;
+  old: Article;
+  anony: Article;
+};
+
+export const createDummyArticles = async (
+  articleRepository: ArticleRepository,
+  dummyUsers: DummyUsers,
+  dummyCategories: DummyCategories,
+): Promise<DummmyArticles> => {
+  const dummmyArticles: DummmyArticles = {
+    normal: await articleRepository.save([
+      article(
+        dummyCategories.free.id,
+        dummyUsers.cadet[0].id,
+        'normal title',
+        'normal content',
+        0,
+        new Date(),
+      ),
+      article(
+        dummyCategories.free.id,
+        dummyUsers.cadet[1].id,
+        'normal title',
+        'normal content',
+        0,
+        new Date(new Date().getTime() - 1000),
+      ),
+    ]),
+    anony: await articleRepository.save(
+      article(
+        dummyCategories.anony.id,
+        dummyUsers.cadet[0].id,
+        'anony title',
+        'anony content',
+        0,
+        new Date(),
+      ),
+    ),
+    best: await articleRepository.save(
+      article(
+        dummyCategories.free.id,
+        dummyUsers.cadet[0].id,
+        'best title',
+        'best content',
+        10,
+        new Date(new Date().getTime() - 2000),
+      ),
+    ),
+    old: await articleRepository.save(
+      article(
+        dummyCategories.free.id,
+        dummyUsers.cadet[0].id,
+        'old title',
+        'old content',
+        10,
+        new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 15),
+      ),
+    ),
+  };
+  return dummmyArticles;
 };
