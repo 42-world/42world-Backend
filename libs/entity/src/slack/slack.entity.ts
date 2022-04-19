@@ -17,7 +17,7 @@ export class Slack extends BaseEntity {
   id!: number;
 
   @Column({ type: 'varchar', length: 64, nullable: false, unique: true })
-  client_msg_id!: string;
+  clientMsgId!: string;
 
   @Column({ type: 'text', nullable: false })
   text!: string;
@@ -26,7 +26,7 @@ export class Slack extends BaseEntity {
   user!: string;
 
   @Column({ type: 'varchar', length: 16, nullable: false })
-  channel_id!: string;
+  channelId!: string; // TODO: id 를 뺄까?
 
   @Column({ type: 'varchar', length: 32, nullable: false })
   ts!: string;
