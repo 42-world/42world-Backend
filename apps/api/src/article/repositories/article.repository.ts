@@ -50,7 +50,11 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .orderBy('article.like_count', 'DESC')
-      .addOrderBy('article.created_at', 'DESC');
+      .addOrderBy('article.created_at', 'DESC')
+      .andWhere('article.deleted_at IS NULL')
+      .andWhere('article.created_at >= :week_2', {
+        week_2: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+      });
 
     if (options.take) {
       query.limit(options.take);
