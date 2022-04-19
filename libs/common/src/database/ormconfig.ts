@@ -33,7 +33,7 @@ export const ormconfig = (): IOrmconfig => ({
 
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
     cli: {
-      migrationsDir: 'src/database/migrations',
+      migrationsDir: 'libs/common/src/database/migrations',
     },
   },
 });
