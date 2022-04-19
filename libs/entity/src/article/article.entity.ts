@@ -4,6 +4,7 @@ import { Comment } from '@app/entity/comment/comment.entity';
 import { Notification } from '@app/entity/notification/notification.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
+import { Slack } from '@app/entity/slack/slack.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
   Column,
@@ -59,6 +60,17 @@ export class Article {
 
   @Column({ default: 0 })
   likeCount!: number;
+
+  @Column({ nullable: true, unique: true, default: null })
+  @Index('ix_slack_id')
+  slackId?: number;
+
+  @OneToOne(() => Slack, (slack) => slack.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'slack_id', referencedColumnName: 'id' })
+  slack?: Slack;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
