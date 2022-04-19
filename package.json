@@ -52,6 +52,7 @@
     "mysql2": "^2.3.3",
     "nest-aws-sdk": "^2.1.0",
     "nest-winston": "^1.6.2",
+    "nestjs-slack-listener": "^1.0.2",
     "nodemailer": "^6.7.2",
     "passport": "^0.5.2",
     "passport-github2": "^0.1.12",
