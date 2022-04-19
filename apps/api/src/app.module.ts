@@ -26,7 +26,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
-import { SlackModule } from './slack/slack.module';
 
 @Module({
   imports: [
@@ -80,7 +79,6 @@ import { SlackModule } from './slack/slack.module';
     ReactionModule,
     FtCheckinModule,
     ImageModule,
-    SlackModule,
   ],
   controllers: [AppController],
   providers: [
