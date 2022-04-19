@@ -12,14 +12,15 @@ import { SlackService } from './slack.service';
 const FTWORLD_RANDOM = 'C03159JLAV7';
 
 @Controller('slack')
-@SlackEventListener(({ event }) => event.channel === FTWORLD_RANDOM)
+@SlackEventListener()
 export class SlackController {
   constructor(private readonly slackService: SlackService) {}
 
   @Post()
   @Public()
   @SlackEventHandler({
-    eventType: 'message',
+    eventType: 'message' || 'message_changed',
+    filter: ({ event }) => event.channel === FTWORLD_RANDOM,
   })
   event(
     @Body() { event, challenge }: IncomingSlackEvent<MessageEvent>,
