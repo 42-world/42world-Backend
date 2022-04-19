@@ -13,6 +13,12 @@ dev:
 	./wait-for-healthy.sh 42world-backend-db
 	yarn start:dev api
 
+dev-webhook:
+	cp ./config/.env.dev ./config/.env
+	make db
+	./wait-for-healthy.sh 42world-backend-db
+	yarn start:dev webhook
+
 alpha:
 	cp ./config/.env.alpha ./config/.env
 	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d
