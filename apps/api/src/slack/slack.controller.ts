@@ -1,6 +1,6 @@
 import { Public } from '@api/auth/auth.decorator';
 import { logger } from '@app/utils/logger';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import {
   IncomingSlackEvent,
   MessageEvent,
@@ -9,20 +9,14 @@ import {
 } from 'nestjs-slack-listener';
 import { SlackService } from './slack.service';
 
-const SHOUT_CHANNEL = 'C02LK2VTAQ4';
+const FTWORLD_RANDOM = 'C03159JLAV7';
 
 @Controller('slack')
-@SlackEventListener(({ event }) => event.channel === SHOUT_CHANNEL)
+@SlackEventListener(({ event }) => event.channel === FTWORLD_RANDOM)
 export class SlackController {
   constructor(private readonly slackService: SlackService) {}
 
   @Post()
-  @Public()
-  challenge(@Body('challenge') challenge: string): string {
-    return challenge;
-  }
-
-  @Get()
   @Public()
   @SlackEventHandler({
     eventType: 'message',
