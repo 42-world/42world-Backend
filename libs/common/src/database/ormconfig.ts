@@ -4,11 +4,13 @@ import { init1643517276502 } from './migrations/1643517276502-init';
 import { addNotificationArticleid1644422087542 } from './migrations/1644422087542-add_notification_articleid';
 import { addCategoryRoles1644473307391 } from './migrations/1644473307391-add_category_roles';
 import { intraAuth1645622620898 } from './migrations/1645622620898-intra-auth';
+import { addSlack1650391149720 } from './migrations/1650391149720-add_slack';
 
 init1643517276502;
 addNotificationArticleid1644422087542;
 addCategoryRoles1644473307391;
 intraAuth1645622620898;
+addSlack1650391149720;
 
 export interface IOrmconfig {
   ormconfig: ConnectionOptions;
