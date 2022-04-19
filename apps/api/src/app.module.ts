@@ -25,7 +25,6 @@ import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
-import { SlackHandlerModule } from 'nestjs-slack-listener';
 import * as path from 'path';
 import { SlackModule } from './slack/slack.module';
 
@@ -69,11 +68,6 @@ import { SlackModule } from './slack/slack.module';
           };
         },
       },
-    }),
-    SlackHandlerModule.forRootAsync({
-      useFactory: async () => ({
-        botToken: 'process.env.SLACK_BOT_TOKEN',
-      }),
     }),
     CommentModule,
     UserModule,
