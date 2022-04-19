@@ -83,6 +83,7 @@ export const article = (
   return article;
 };
 
+//TODO: createDummyComments 추가
 export const comment = (
   userId: number,
   articleId: number,
