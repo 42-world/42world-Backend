@@ -20,10 +20,10 @@ export class SlackService {
 
     logger.info(`Received message from ${event.user} in ${event.channel}`);
     this.slackRepository.save({
-      client_msg_id: (event as any).client_msg_id, // TODO: any 타입 삭제할것
+      clientMsgId: (event as any).client_msg_id, // TODO: any 타입 삭제할것
       text: event.text,
       user: event.user,
-      channelId: event.channel,
+      channel: event.channel,
       ts: event.ts,
     });
   }

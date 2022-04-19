@@ -6,7 +6,7 @@ export class addSlack1650391149720 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // await queryRunner.query(`DROP INDEX \`IDX_77cda6c3364a4de9050c779535\` ON \`intra_auth\``);
     await queryRunner.query(
-      `CREATE TABLE \`slack\` (\`id\` int NOT NULL AUTO_INCREMENT, \`client_msg_id\` varchar(64) NOT NULL, \`text\` text NOT NULL, \`user\` varchar(16) NOT NULL, \`channel_id\` varchar(16) NOT NULL, \`ts\` varchar(32) NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`deleted_at\` timestamp(6) NULL, INDEX \`ix_deleted_at\` (\`deleted_at\`), UNIQUE INDEX \`IDX_8aa3228eec2d1c6361e95fd6f6\` (\`client_msg_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`slack\` (\`id\` int NOT NULL AUTO_INCREMENT, \`client_msg_id\` varchar(64) NOT NULL, \`text\` text NOT NULL, \`user\` varchar(16) NOT NULL, \`channel\` varchar(16) NOT NULL, \`ts\` varchar(32) NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`deleted_at\` timestamp(6) NULL, INDEX \`ix_deleted_at\` (\`deleted_at\`), UNIQUE INDEX \`IDX_8aa3228eec2d1c6361e95fd6f6\` (\`client_msg_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `ALTER TABLE \`article\` ADD \`slack_id\` int NULL`,

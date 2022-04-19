@@ -26,7 +26,7 @@ export class Slack extends BaseEntity {
   user!: string;
 
   @Column({ type: 'varchar', length: 16, nullable: false })
-  channelId!: string; // TODO: id 를 뺄까?
+  channel!: string;
 
   @Column({ type: 'varchar', length: 32, nullable: false })
   ts!: string;
