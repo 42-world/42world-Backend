@@ -20,7 +20,7 @@ export class AdminJsModule {
     return AdminModule.createAdminAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory(): AdminModuleOptions {
+      useFactory(configService: ConfigService): AdminModuleOptions {
         return {
           adminJsOptions: {
             rootPath: '/admin',
@@ -37,9 +37,17 @@ export class AdminJsModule {
             ],
           },
           auth: {
-            authenticate: async () => ({ email: 'test' }),
-            cookieName: 'test',
-            cookiePassword: 'testPass',
+            authenticate: async (email, password) => {
+              if (
+                email === configService.get('ADMIN_EMAIL') &&
+                password === configService.get('ADMIN_PASSWORD')
+              ) {
+                return { email };
+              }
+              return null;
+            },
+            cookieName: configService.get('ADMIN_COOKIE_NAME'),
+            cookiePassword: configService.get('ADMIN_COOKIE_PASSWORD'),
           },
         };
       },
