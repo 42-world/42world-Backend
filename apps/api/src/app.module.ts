@@ -72,7 +72,7 @@ import { SlackModule } from './slack/slack.module';
     }),
     SlackHandlerModule.forRootAsync({
       useFactory: async () => ({
-        botToken: 'nonononono',
+        botToken: 'process.env.SLACK_BOT_TOKEN',
       }),
     }),
     CommentModule,
