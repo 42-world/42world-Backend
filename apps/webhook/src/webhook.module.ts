@@ -1,3 +1,4 @@
+import { DatabaseModule } from '@app/common/database/database.module';
 import { ormconfig } from '@app/common/database/ormconfig';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -13,6 +14,7 @@ import { WebhookService } from './webhook.service';
       cache: true,
       load: [ormconfig],
     }),
+    DatabaseModule.register(),
     SlackModule,
   ],
   controllers: [WebhookController],
