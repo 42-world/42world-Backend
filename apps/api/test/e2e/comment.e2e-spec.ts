@@ -8,7 +8,6 @@ import { CommentModule } from '@api/comment/comment.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
@@ -33,12 +32,10 @@ describe('Comments', () => {
   let adminJWT: string;
   let noviceJWT: string;
 
-  const categoryName = '자유게시판';
-  const articleTitle = '제목';
-  const articleContent = '본문';
   const commentContent = '댓글 내용';
-  let category: Category;
   let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
   let cadetUser: User;
   let anotherCadetUser: User;
   let adminUser: User;
@@ -93,16 +90,14 @@ describe('Comments', () => {
     noviceUser = users.novice[0];
     noviceJWT = dummy.jwt(noviceUser, authService);
 
-    category = dummy.category(categoryName);
-    await categoryRepository.save(category);
+    categories = await dummy.createDummyCategories(categoryRepository);
 
-    targetArticle = dummy.article(
-      category.id,
-      cadetUser.id,
-      articleTitle,
-      articleContent,
+    articles = await dummy.createDummyArticles(
+      articleRepository,
+      users,
+      categories,
     );
-    await articleRepository.save(targetArticle);
+    targetArticle = articles.first;
   });
 
   describe('/comments', () => {
