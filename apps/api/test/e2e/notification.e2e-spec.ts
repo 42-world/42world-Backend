@@ -11,7 +11,6 @@ import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
 import { Notification } from '@app/entity/notification/notification.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -24,12 +23,16 @@ import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let httpServer: INestApplication;
+
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let articleRepository: ArticleRepository;
   let notificationRepository: Repository<Notification>;
+
   let authService: AuthService;
   let JWT: string;
+
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -74,13 +77,8 @@ describe('Notification', () => {
     let dummyNotification: Notification;
 
     beforeEach(async () => {
-      dummyUser = dummy.user(
-        'test github uid',
-        'first nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(dummyUser);
+      users = await dummy.createDummyUsers(userRepository);
+      dummyUser = users.cadet[0];
       dummyCategory = dummy.category('test category');
       await categoryRepository.save(dummyCategory);
       dummyArticle = dummy.article(
@@ -124,13 +122,8 @@ describe('Notification', () => {
     let dummyNotification2: Notification;
 
     beforeEach(async () => {
-      dummyUser = dummy.user(
-        'test github uid',
-        'first nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(dummyUser);
+      users = await dummy.createDummyUsers(userRepository);
+      dummyUser = users.cadet[0];
       dummyCategory = dummy.category('test category');
       await categoryRepository.save(dummyCategory);
       dummyArticle = dummy.article(
