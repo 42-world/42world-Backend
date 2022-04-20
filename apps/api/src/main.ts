@@ -19,7 +19,7 @@ async function bootstrap() {
   const port = configService.get('PORT');
 
   Sentry.init({
-    dsn: 'https://daf619595fcf4a259488d1cb4afd124f@o1210892.ingest.sentry.io/6346771',
+    dsn: configService.get('SENTRY_KEY'),
   });
   app.useGlobalInterceptors(new SentryInterceptor());
   morgan.token('body', (req) => JSON.stringify(req.body));
