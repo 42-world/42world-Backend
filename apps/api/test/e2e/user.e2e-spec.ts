@@ -14,7 +14,9 @@ import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
@@ -279,8 +281,8 @@ describe('User', () => {
 
   describe('/users/me/articles', () => {
     let user: User;
-    let category;
-    let article;
+    let category: Category;
+    let article: Article;
 
     beforeEach(async () => {
       user = dummy.user(
@@ -322,10 +324,10 @@ describe('User', () => {
   });
 
   describe('/users/me/comments', () => {
-    let user;
-    let category;
-    let article;
-    let comment;
+    let user: User;
+    let category: Category;
+    let article: Article;
+    let comment: Comment;
 
     beforeEach(async () => {
       user = dummy.user(
@@ -367,11 +369,11 @@ describe('User', () => {
   });
 
   describe('/users/me/like-articles', () => {
-    let user;
-    let category;
-    let article;
-    let comment;
-    let reactionArticle;
+    let user: User;
+    let category: Category;
+    let article: Article;
+    let comment: Comment;
+    let reactionArticle: ReactionArticle;
 
     beforeEach(async () => {
       user = dummy.user(
