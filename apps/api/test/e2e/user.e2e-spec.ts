@@ -2,7 +2,6 @@ import { ArticleModule } from '@api/article/article.module';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
-import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentModule } from '@api/comment/comment.module';
@@ -28,14 +27,18 @@ import { getConnection } from 'typeorm';
 import { TestBaseModule } from './test.base.module';
 
 describe('User', () => {
+  let httpServer: INestApplication;
+
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
   let reactionArticleRepository: ReactionArticleRepository;
+
   let authService: AuthService;
-  let httpServer: INestApplication;
   let JWT: string;
+
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -97,16 +100,10 @@ describe('User', () => {
 
   describe('/users/{id}', () => {
     let user: User;
-
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      JWT = dummy.jwt(user, authService);
+      users = await dummy.createDummyUsers(userRepository);
+      JWT = dummy.jwt(users.cadet[0], authService);
+      user = users.cadet[0];
     });
 
     test('[성공] GET - 특정 유저 정보 가져오기', async () => {
@@ -139,20 +136,9 @@ describe('User', () => {
     const updatedCharacter = 2;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      user2 = dummy.user(
-        'test github uid2',
-        'test nickname2',
-        'github user name2',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      await userRepository.save(user2);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      user2 = users.cadet[1];
       JWT = dummy.jwt(user, authService);
     });
 
@@ -276,13 +262,8 @@ describe('User', () => {
     let article: Article;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
 
       category = dummy.category('자유게시판');
@@ -318,17 +299,9 @@ describe('User', () => {
     let comment: Comment;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
@@ -364,17 +337,9 @@ describe('User', () => {
     let reactionArticle: ReactionArticle;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
