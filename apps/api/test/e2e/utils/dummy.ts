@@ -188,6 +188,9 @@ export const createDummyArticles = async (
   dummyUsers: DummyUsers,
   dummyCategories: DummyCategories,
 ): Promise<DummmyArticles> => {
+  const WEEK = 7 * 24 * 60 * 60 * 1000;
+  const DAY = 24 * 60 * 60 * 1000;
+  const HOUR = 60 * 60 * 1000;
   const dummmyArticles: DummmyArticles = {
     first: await articleRepository.save(
       article(
@@ -206,7 +209,7 @@ export const createDummyArticles = async (
         'normal title',
         'normal content',
         0,
-        new Date(new Date().getTime() - 1000),
+        new Date(new Date().getTime() - HOUR),
       ),
     ),
     anony: await articleRepository.save(
@@ -226,7 +229,7 @@ export const createDummyArticles = async (
         'best title',
         'best content',
         10,
-        new Date(new Date().getTime() - 2000),
+        new Date(new Date().getTime() - 2 * HOUR),
       ),
     ),
     old_best: await articleRepository.save(
@@ -236,7 +239,7 @@ export const createDummyArticles = async (
         'old title',
         'old content',
         10,
-        new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 15),
+        new Date(new Date().getTime() - 2 * WEEK - DAY),
       ),
     ),
   };
