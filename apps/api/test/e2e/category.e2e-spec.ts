@@ -7,8 +7,6 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Category } from '@app/entity/category/category.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
-import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestBaseModule } from '@test/e2e/test.base.module';
@@ -23,7 +21,7 @@ describe('Category', () => {
   let authService: AuthService;
   let jwt: { admin: string; cadet: string; novice: string };
   let server: INestApplication;
-  let users: { admin: User; cadet: User; novice: User };
+  let users: dummy.DummyUsers;
   let categories: {
     자유게시판: Category;
     익명게시판: Category;
@@ -45,13 +43,7 @@ describe('Category', () => {
 
     server = app.getHttpServer();
 
-    //TODO: createDummyUsers로 대체
-    users = {
-      admin: dummy.user('admin', 'admin', 'admin', UserRole.ADMIN),
-      cadet: dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET),
-      novice: dummy.user('novice', 'novice', 'novice', UserRole.NOVICE),
-    };
-
+    users = await dummy.createDummyUsers(userRepository);
     //TODO: createDummyCategories로 대체
     categories = {
       자유게시판: dummy.category('자유게시판'),
@@ -68,12 +60,11 @@ describe('Category', () => {
 
   describe('/categories', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
       await categoryRepository.save(Object.values(categories));
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
@@ -185,13 +176,12 @@ describe('Category', () => {
 
   describe('/categories/{id}/name', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
       await categoryRepository.save(Object.values(categories));
       paramId = 2;
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
@@ -241,13 +231,12 @@ describe('Category', () => {
 
   describe('/categories/{id}', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
       await categoryRepository.save(Object.values(categories));
       paramId = 1;
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
