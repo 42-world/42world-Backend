@@ -31,8 +31,10 @@ describe('IntraAuth', () => {
   const cacheService: CacheService = mock(CacheService);
   const mailerService: MailerService = mock(MailerService);
 
-  let JWT;
-  let cadetJWT;
+  let JWT: string;
+  let cadetJWT: string;
+
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -79,21 +81,9 @@ describe('IntraAuth', () => {
     const intraId = 'rockpell';
 
     beforeEach(async () => {
-      newUser = dummy.user(
-        'user githubUid',
-        'user',
-        'user githubUsername',
-        UserRole.NOVICE,
-      );
-      await userRepository.save(newUser);
-
-      const cadetUser = dummy.user(
-        'user2 githubUid',
-        'user2',
-        'user2 githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(cadetUser);
+      users = await dummy.createDummyUsers(userRepository);
+      newUser = users.novice[0];
+      const cadetUser = users.cadet[0];
 
       JWT = dummy.jwt(newUser, authService);
       cadetJWT = dummy.jwt(cadetUser, authService);
