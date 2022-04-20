@@ -176,9 +176,10 @@ export const createDummyCategories = async (
 };
 
 export type DummmyArticles = {
-  normal: Article[];
+  first: Article;
+  second: Article;
   best: Article;
-  old: Article;
+  old_best: Article;
   anony: Article;
 };
 
@@ -188,7 +189,7 @@ export const createDummyArticles = async (
   dummyCategories: DummyCategories,
 ): Promise<DummmyArticles> => {
   const dummmyArticles: DummmyArticles = {
-    normal: await articleRepository.save([
+    first: await articleRepository.save(
       article(
         dummyCategories.free.id,
         dummyUsers.cadet[0].id,
@@ -197,6 +198,8 @@ export const createDummyArticles = async (
         0,
         new Date(),
       ),
+    ),
+    second: await articleRepository.save(
       article(
         dummyCategories.free.id,
         dummyUsers.cadet[1].id,
@@ -205,7 +208,7 @@ export const createDummyArticles = async (
         0,
         new Date(new Date().getTime() - 1000),
       ),
-    ]),
+    ),
     anony: await articleRepository.save(
       article(
         dummyCategories.anony.id,
@@ -226,7 +229,7 @@ export const createDummyArticles = async (
         new Date(new Date().getTime() - 2000),
       ),
     ),
-    old: await articleRepository.save(
+    old_best: await articleRepository.save(
       article(
         dummyCategories.free.id,
         dummyUsers.cadet[0].id,
