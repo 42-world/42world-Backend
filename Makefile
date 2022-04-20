@@ -6,7 +6,13 @@ test:
 	cp ./config/.env.test ./config/.env
 	./run_test_db.sh
 	./wait-for-healthy.sh ft_world-mysql-test
-	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
+	yarn test:e2e --config ./apps/api/test/e2e/jest-e2e.json ./apps/api/test/e2e/*.e2e-spec.ts
+
+test-webhook:
+	cp ./config/.env.test ./config/.env
+	./run_test_db.sh
+	./wait-for-healthy.sh ft_world-mysql-test
+	yarn test:e2e --config ./apps/webhook/test/e2e/jest-e2e.json ./apps/webhook/test/e2e/*.e2e-spec.ts
 
 dev:
 	cp ./config/.env.dev ./config/.env
