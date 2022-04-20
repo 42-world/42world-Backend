@@ -27,7 +27,7 @@ describe('Best', () => {
 
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
-  let articles: dummy.DummmyArticles;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
