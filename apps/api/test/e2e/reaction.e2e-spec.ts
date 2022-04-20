@@ -9,7 +9,6 @@ import { CommentRepository } from '@api/comment/repositories/comment.repository'
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
@@ -26,6 +25,7 @@ describe('Reaction', () => {
   let commentRepository: CommentRepository;
   let authService: AuthService;
   let JWT: string;
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -64,13 +64,8 @@ describe('Reaction', () => {
 
   describe('/reactions/articles/{id}', () => {
     beforeEach(async () => {
-      const user = dummy.user(
-        'token',
-        'nickname',
-        'githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      const user = users.cadet[0];
       const category = dummy.category('category');
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
@@ -131,13 +126,8 @@ describe('Reaction', () => {
 
   describe('/reactions/articles/{articleId}/comments/{commentId}', () => {
     beforeEach(async () => {
-      const user = dummy.user(
-        'token',
-        'nickname',
-        'githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      const user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
       const category = dummy.category('category');
       await categoryRepository.save(category);
