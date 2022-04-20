@@ -4,7 +4,6 @@ import { UploadImageUrlResponseDto } from '@api/image/dto/upload-image-url-respo
 import { ImageModule } from '@api/image/image.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestBaseModule } from '@test/e2e/test.base.module';
@@ -18,6 +17,7 @@ describe('Image', () => {
   let userRepository: UserRepository;
   let authService: AuthService;
   let JWT: string;
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -41,15 +41,9 @@ describe('Image', () => {
 
   describe('/image', () => {
     beforeEach(async () => {
-      const newUser = dummy.user(
-        'test1234',
-        'first user',
-        'githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(newUser);
-
-      JWT = dummy.jwt(newUser, authService);
+      users = await dummy.createDummyUsers(userRepository);
+      const user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
     });
 
     afterEach(async () => {
