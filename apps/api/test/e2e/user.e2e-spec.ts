@@ -23,7 +23,7 @@ import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 
 describe('User', () => {
   let userRepository: UserRepository;
@@ -38,7 +38,7 @@ describe('User', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,

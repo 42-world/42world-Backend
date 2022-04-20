@@ -13,7 +13,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -37,7 +37,7 @@ describe('IntraAuth', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         TypeOrmModule.forFeature([IntraAuth]),
