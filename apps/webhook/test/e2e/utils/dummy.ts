@@ -1,0 +1,62 @@
+export const createMessageEvent = (channel: string) => ({
+  token: process.env.SLACK_TOKEN,
+  team_id: process.env.SLACK_TEAM_ID,
+  api_app_id: process.env.SLACK_API_APP_ID,
+  event: {
+    client_msg_id: Math.random().toString(36).substring(2, 15),
+    type: 'message',
+    text: '테스트용 메세지',
+    user: 'ZYXWABC10987',
+    ts: '1650450209.821489',
+    team: process.env.SLACK_TEAM_ID,
+    channel,
+    event_ts: '1650450209.821489',
+    channel_type: 'channel',
+  },
+  type: 'event_callback',
+  event_id: 'ABCDEFG01234',
+  event_time: 1650450209,
+});
+
+export const createMessageChangedEvent = (
+  channel: string,
+  client_msg_id: string,
+) => ({
+  token: process.env.SLACK_TOKEN,
+  team_id: process.env.SLACK_TEAM_ID,
+  api_app_id: process.env.SLACK_API_APP_ID,
+  event: {
+    type: 'message',
+    subtype: 'message_changed',
+    message: {
+      client_msg_id,
+      type: 'message',
+      text: '테스트용 메세지 (수정됨)',
+      user: 'ZYXWABC10987',
+      team: process.env.SLACK_TEAM_ID,
+      edited: {
+        user: 'ZYXWABC10987',
+        ts: '1650450465.000000',
+      },
+      ts: '1650450209.821489',
+      source_team: process.env.SLACK_TEAM_ID,
+      user_team: process.env.SLACK_TEAM_ID,
+    },
+    previous_message: {
+      client_msg_id,
+      type: 'message',
+      text: '테스트용 메세지',
+      user: 'ZYXWABC10987',
+      ts: '1650450209.821489',
+      team: process.env.SLACK_TEAM_ID,
+    },
+    channel,
+    hidden: true,
+    ts: '1650450465.015100',
+    event_ts: '1650450465.015100',
+    channel_type: 'channel',
+  },
+  type: 'event_callback',
+  event_id: 'ABCDEFG01234',
+  event_time: 1650450465,
+});
