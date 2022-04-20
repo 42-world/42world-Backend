@@ -24,6 +24,7 @@
     "typeorm:migrate": "yarn typeorm migration:generate -n",
     "typeorm:run": "yarn typeorm migration:run",
     "typeorm:revert": "yarn typeorm migration:revert",
+    "typeorm:show": "yarn typeorm migration:show",
     "seed": "ts-node -r tsconfig-paths/register libs/common/src/database/seed.ts"
   },
   "dependencies": {
