@@ -176,9 +176,9 @@ export const createDummyArticles = async (
   dummyUsers: DummyUsers,
   dummyCategories: DummyCategories,
 ): Promise<DummmyArticles> => {
-  const WEEK = 7 * 24 * 60 * 60 * 1000;
-  const DAY = 24 * 60 * 60 * 1000;
   const HOUR = 60 * 60 * 1000;
+  const DAY = 24 * HOUR;
+  const WEEK = 7 * DAY;
   const dummmyArticles: DummmyArticles = {
     first: await articleRepository.save(
       article(
