@@ -125,9 +125,10 @@ describe('Category', () => {
       const responseCategories = response.body as CategoryResponseDto[];
 
       expect(responseCategories).toBeInstanceOf(Array);
-      for (let i = 0; i < Object.keys(categories).length; i++) {
-        expect(responseCategories[i].name).toBe(categories[i].name);
-      }
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[성공] GET - CADET이 카테고리 종류 가져오기', async () => {
@@ -139,9 +140,10 @@ describe('Category', () => {
       const responseCategories = response.body as CategoryResponseDto[];
 
       expect(responseCategories).toBeInstanceOf(Array);
-      for (let i = 0; i < Object.keys(categories).length; i++) {
-        expect(responseCategories[i].name).toBe(categories[i].name);
-      }
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[성공] GET - NOVICE가 카테고리 종류 가져오기', async () => {
@@ -153,9 +155,10 @@ describe('Category', () => {
       const responseCategories = response.body as CategoryResponseDto[];
 
       expect(responseCategories).toBeInstanceOf(Array);
-      for (let i = 0; i < Object.keys(categories).length; i++) {
-        expect(responseCategories[i].name).toBe(categories[i].name);
-      }
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[실패] GET - unauthorized', async () => {
