@@ -9,7 +9,6 @@ import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -38,6 +37,7 @@ describe('Comments', () => {
   const articleContent = '본문';
   const commentContent = '댓글 내용';
   let category: Category;
+  let users: dummy.DummyUsers;
   let cadetUser: User;
   let anotherCadetUser: User;
   let adminUser: User;
@@ -66,6 +66,8 @@ describe('Comments', () => {
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
+
+    users = await dummy.createDummyUsers(userRepository);
   });
 
   afterAll(async () => {
@@ -79,40 +81,17 @@ describe('Comments', () => {
   });
 
   beforeEach(async () => {
-    cadetUser = dummy.user(
-      'githubUid',
-      'nickname',
-      'githubUsername',
-      UserRole.CADET,
-    );
-    await userRepository.save(cadetUser);
+    users = await dummy.createDummyUsers(userRepository);
+    cadetUser = users.cadet[0];
     JWT = dummy.jwt(cadetUser, authService);
 
-    anotherCadetUser = dummy.user(
-      'anothergithubUid',
-      'nickname',
-      'anotherGHusername',
-      UserRole.CADET,
-    );
-    await userRepository.save(anotherCadetUser);
+    anotherCadetUser = users.cadet[1];
     anotherJWT = dummy.jwt(anotherCadetUser, authService);
 
-    adminUser = dummy.user(
-      'admingithubUid',
-      'nickname',
-      'adminGHUsername',
-      UserRole.ADMIN,
-    );
-    await userRepository.save(adminUser);
+    adminUser = users.admin[0];
     adminJWT = dummy.jwt(adminUser, authService);
 
-    noviceUser = dummy.user(
-      'novicegithubUid',
-      'nickname',
-      'noviceGHUsername',
-      UserRole.NOVICE,
-    );
-    await userRepository.save(noviceUser);
+    noviceUser = users.novice[0];
     noviceJWT = dummy.jwt(noviceUser, authService);
 
     category = dummy.category(categoryName);
