@@ -2,6 +2,7 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import axios from 'axios';
 import { CookieOptions } from 'express';
+import { logger } from './logger';
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -42,7 +43,7 @@ export const errorHook = async (
       await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
     }
   } catch (e) {
-    console.error(e);
+    logger.error(e);
   }
 };
 
