@@ -12,19 +12,7 @@ import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 
-//TODO: jwt2로 통합
-export const jwt = (
-  userId: number,
-  role: string,
-  authService: AuthService,
-): string => {
-  return authService.getJWT({
-    userId: userId,
-    userRole: role,
-  } as JWTPayload);
-};
-
-export const jwt2 = (user: User, authService: AuthService): string => {
+export const jwt = (user: User, authService: AuthService): string => {
   return authService.getJWT({
     userId: user.id,
     userRole: user.role,
