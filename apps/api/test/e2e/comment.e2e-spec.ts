@@ -9,6 +9,7 @@ import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
+import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -66,8 +67,6 @@ describe('Comments', () => {
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
-
-    users = await dummy.createDummyUsers(userRepository);
   });
 
   afterAll(async () => {
@@ -142,7 +141,7 @@ describe('Comments', () => {
   });
 
   describe('/comments/:id', () => {
-    let comment;
+    let comment: Comment;
 
     beforeEach(async () => {
       comment = dummy.comment(cadetUser.id, targetArticle.id, commentContent);
