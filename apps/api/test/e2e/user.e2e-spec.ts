@@ -16,7 +16,6 @@ import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -77,18 +76,14 @@ describe('User', () => {
   });
 
   describe('/users/me', () => {
+    let user: User;
     beforeEach(async () => {
-      const user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
     });
 
+    //TODO: user 정보 확인 추가
     test('[성공] GET - 내 정보 가져오기', async () => {
       const response = await request(httpServer)
         .get('/users/me')
