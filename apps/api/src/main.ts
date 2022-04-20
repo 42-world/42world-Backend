@@ -1,6 +1,5 @@
 import { AppModule } from '@api/app.module';
-import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
+import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
 import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -38,8 +37,7 @@ async function bootstrap() {
     origin: originList.split(',').map((item) => item.trim()),
     credentials: true,
   });
-  app.useGlobalFilters(new TypeormExceptionFilter());
-  app.useGlobalFilters(new InternalServerErrorExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
