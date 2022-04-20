@@ -95,8 +95,8 @@ describe('IntraAuth', () => {
       );
       await userRepository.save(cadetUser);
 
-      JWT = dummy.jwt(newUser.id, newUser.role, authService);
-      cadetJWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+      JWT = dummy.jwt(newUser, authService);
+      cadetJWT = dummy.jwt(cadetUser, authService);
     });
 
     afterEach(async () => {

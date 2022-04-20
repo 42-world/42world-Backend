@@ -71,7 +71,7 @@ describe('Best', () => {
         users,
         categories,
       );
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] GET - 인기글 가져오기', async () => {

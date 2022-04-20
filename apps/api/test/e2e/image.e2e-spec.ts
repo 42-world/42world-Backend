@@ -49,7 +49,7 @@ describe('Image', () => {
       );
       await userRepository.save(newUser);
 
-      JWT = dummy.jwt(newUser.id, newUser.role, authService);
+      JWT = dummy.jwt(newUser, authService);
     });
 
     afterEach(async () => {

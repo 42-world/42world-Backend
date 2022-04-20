@@ -45,12 +45,14 @@ describe('Category', () => {
 
     server = app.getHttpServer();
 
+    //TODO: createDummyUsers로 대체
     users = {
       admin: dummy.user('admin', 'admin', 'admin', UserRole.ADMIN),
       cadet: dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET),
       novice: dummy.user('novice', 'novice', 'novice', UserRole.NOVICE),
     };
 
+    //TODO: createDummyCategories로 대체
     categories = {
       자유게시판: dummy.category('자유게시판'),
       익명게시판: dummy.category('익명게시판'),
@@ -69,9 +71,9 @@ describe('Category', () => {
       await userRepository.save(Object.values(users));
       await categoryRepository.save(Object.values(categories));
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 
@@ -187,9 +189,9 @@ describe('Category', () => {
       await categoryRepository.save(Object.values(categories));
       paramId = 2;
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 
@@ -243,9 +245,9 @@ describe('Category', () => {
       await categoryRepository.save(Object.values(categories));
       paramId = 1;
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 

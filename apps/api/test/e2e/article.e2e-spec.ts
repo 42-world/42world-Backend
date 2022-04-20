@@ -87,7 +87,7 @@ describe('Article', () => {
         users,
         categories,
       );
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] POST - 글쓰기', async () => {
@@ -126,7 +126,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
@@ -141,7 +141,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
@@ -257,7 +257,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
@@ -270,7 +270,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
@@ -325,7 +325,7 @@ describe('Article', () => {
         dummy.comment(users.cadet[0].id, articles.second.id, 'comment3'),
         dummy.comment(users.cadet[0].id, articles.second.id, 'comment4'),
       ]);
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] GET - 게시글 댓글 목록 조회', async () => {
@@ -383,7 +383,7 @@ describe('Article', () => {
     test('[성공] GET - 게시글 댓글 목록 조회 권한 높은사람', async () => {
       const articleId = articles.first.id;
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}/comments`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -393,7 +393,7 @@ describe('Article', () => {
     test('[실패] GET - 게시글 댓글 목록 조회 권한 낮은사람', async () => {
       const articleId = articles.first.id;
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}/comments`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -435,7 +435,7 @@ describe('Article', () => {
         users,
         categories,
       );
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] GET - 게시글 상세 조회', async () => {
@@ -494,7 +494,7 @@ describe('Article', () => {
     test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
       const articleId = articles.first.id;
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -504,7 +504,7 @@ describe('Article', () => {
     test('[실패] GET - 게시글 상세 조회 권한 낮은사람', async () => {
       const articleId = articles.first.id;
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
