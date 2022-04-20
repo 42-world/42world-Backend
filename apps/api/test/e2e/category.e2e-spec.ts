@@ -43,7 +43,6 @@ describe('Category', () => {
 
     server = app.getHttpServer();
 
-    users = await dummy.createDummyUsers(userRepository);
     //TODO: createDummyCategories로 대체
     categories = {
       자유게시판: dummy.category('자유게시판'),
@@ -58,8 +57,13 @@ describe('Category', () => {
     await server.close();
   });
 
+  beforeEach(async () => {
+    await clearDB();
+  });
+
   describe('/categories', () => {
     beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
       await categoryRepository.save(Object.values(categories));
       jwt = {
         admin: dummy.jwt(users.admin[0], authService),
@@ -72,7 +76,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] POST - ADMIN이 카테고리 생성', async () => {
@@ -176,6 +179,7 @@ describe('Category', () => {
 
   describe('/categories/{id}/name', () => {
     beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
       await categoryRepository.save(Object.values(categories));
       paramId = 2;
       jwt = {
@@ -189,7 +193,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] PUT - ADMIN이 카테고리 이름 수정', async () => {
@@ -231,6 +234,7 @@ describe('Category', () => {
 
   describe('/categories/{id}', () => {
     beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
       await categoryRepository.save(Object.values(categories));
       paramId = 1;
       jwt = {
@@ -244,7 +248,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] DELETE - ADMIN이 카테고리 삭제', async () => {
