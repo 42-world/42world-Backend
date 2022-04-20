@@ -83,10 +83,7 @@ describe('User', () => {
       );
       await userRepository.save(user);
 
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] GET - 내 정보 가져오기', async () => {
@@ -109,10 +106,7 @@ describe('User', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] GET - 특정 유저 정보 가져오기', async () => {
@@ -159,10 +153,7 @@ describe('User', () => {
       );
       await userRepository.save(user);
       await userRepository.save(user2);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] PUT - 유저 프로필 변경', async () => {
@@ -292,10 +283,7 @@ describe('User', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
