@@ -207,7 +207,7 @@ export const createDummyArticles = async (
         'anony title',
         'anony content',
         0,
-        new Date(),
+        new Date(new Date().getTime() - 2 * HOUR),
       ),
     ),
     best: await articleRepository.save(
@@ -217,7 +217,7 @@ export const createDummyArticles = async (
         'best title',
         'best content',
         10,
-        new Date(new Date().getTime() - 2 * HOUR),
+        new Date(new Date().getTime() - 3 * HOUR),
       ),
     ),
     old_best: await articleRepository.save(
