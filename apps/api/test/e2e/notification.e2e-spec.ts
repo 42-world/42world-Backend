@@ -8,7 +8,6 @@ import { NotificationModule } from '@api/notification/notification.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
 import { Notification } from '@app/entity/notification/notification.entity';
 import { User } from '@app/entity/user/user.entity';
@@ -33,6 +32,8 @@ describe('Notification', () => {
   let JWT: string;
 
   let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -72,22 +73,19 @@ describe('Notification', () => {
 
   describe('/notifications', () => {
     let dummyUser: User;
-    let dummyCategory: Category;
     let dummyArticle: Article;
     let dummyNotification: Notification;
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       dummyUser = users.cadet[0];
-      dummyCategory = dummy.category('test category');
-      await categoryRepository.save(dummyCategory);
-      dummyArticle = dummy.article(
-        dummyCategory.id,
-        dummyUser.id,
-        'title',
-        'content',
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
       );
-      await articleRepository.save(dummyArticle);
+      dummyArticle = articles.first;
       dummyNotification = dummy.notification(
         NotificationType.NEW_COMMENT,
         dummyUser.id,
@@ -116,7 +114,6 @@ describe('Notification', () => {
 
   describe('/notifications/readall', () => {
     let dummyUser: User;
-    let dummyCategory: Category;
     let dummyArticle: Article;
     let dummyNotification1: Notification;
     let dummyNotification2: Notification;
@@ -124,15 +121,13 @@ describe('Notification', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       dummyUser = users.cadet[0];
-      dummyCategory = dummy.category('test category');
-      await categoryRepository.save(dummyCategory);
-      dummyArticle = dummy.article(
-        dummyCategory.id,
-        dummyUser.id,
-        'title',
-        'content',
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
       );
-      await articleRepository.save(dummyArticle);
+      dummyArticle = articles.first;
       dummyNotification1 = dummy.notification(
         NotificationType.NEW_COMMENT,
         dummyUser.id,
