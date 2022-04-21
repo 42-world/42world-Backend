@@ -3,6 +3,8 @@ name: Test CI
 on:
   pull_request:
     branches: ['**']
+    paths-ignore:
+        - "README.md"
 
 jobs:
   test:

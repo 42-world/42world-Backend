@@ -1,5 +1,4 @@
 import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
-import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
 import { User } from '@app/entity/user/user.entity';
 import { logger } from '@app/utils/logger';
 import {
@@ -10,7 +9,6 @@ import {
   Post,
   Query,
   Render,
-  UseFilters,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -32,7 +30,6 @@ export class IntraAuthController {
   @HttpCode(200)
   @OnlyNovice()
   @ApiCookieAuth()
-  @UseFilters(AllExceptionsFilter)
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
   @ApiUnauthorizedResponse({ description: '인증 실패' })
