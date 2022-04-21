@@ -26,6 +26,8 @@ describe('Reaction', () => {
   let authService: AuthService;
   let JWT: string;
   let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -66,11 +68,9 @@ describe('Reaction', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       const user = users.cadet[0];
-      const category = dummy.category('category');
-      await categoryRepository.save(category);
-      const article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
       JWT = dummy.jwt(user, authService);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      await dummy.createDummyArticles(articleRepository, users, categories);
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
@@ -129,10 +129,13 @@ describe('Reaction', () => {
       users = await dummy.createDummyUsers(userRepository);
       const user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
-      const category = dummy.category('category');
-      await categoryRepository.save(category);
-      const article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      const article = articles.first;
       const comment = dummy.comment(user.id, article.id, 'content');
       await commentRepository.save(comment);
     });
