@@ -13,7 +13,6 @@ import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { User } from '@app/entity/user/user.entity';
@@ -38,6 +37,8 @@ describe('User', () => {
   let JWT: string;
 
   let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -253,7 +254,6 @@ describe('User', () => {
 
   describe('/users/me/articles', () => {
     let user: User;
-    let category: Category;
     let article: Article;
 
     beforeEach(async () => {
@@ -261,10 +261,13 @@ describe('User', () => {
       user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      article = articles.first;
     });
 
     test('[성공] GET - 내가 작성한 글 가져오기', async () => {
@@ -289,7 +292,6 @@ describe('User', () => {
 
   describe('/users/me/comments', () => {
     let user: User;
-    let category: Category;
     let article: Article;
     let comment: Comment;
 
@@ -298,11 +300,14 @@ describe('User', () => {
       user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'content');
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      article = articles.first;
+      comment = dummy.comment(user.id, article.id, 'content');
       await commentRepository.save(comment);
     });
 
@@ -326,7 +331,6 @@ describe('User', () => {
 
   describe('/users/me/like-articles', () => {
     let user: User;
-    let category: Category;
     let article: Article;
     let comment: Comment;
     let reactionArticle: ReactionArticle;
@@ -336,11 +340,14 @@ describe('User', () => {
       user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'content');
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      article = articles.first;
+      comment = dummy.comment(user.id, article.id, 'content');
       await commentRepository.save(comment);
       reactionArticle = dummy.reactionArticle(article.id, user.id);
       await reactionArticleRepository.save(reactionArticle);
