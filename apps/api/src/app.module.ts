@@ -21,11 +21,10 @@ import { DatabaseModule } from '@app/common/database/database.module';
 import { ormconfig } from '@app/common/database/ormconfig';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { CacheModule, HttpException, Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
-import { RavenInterceptor, RavenModule } from 'nest-raven';
 import * as path from 'path';
 
 @Module({
@@ -80,23 +79,12 @@ import * as path from 'path';
     ReactionModule,
     FtCheckinModule,
     ImageModule,
-    RavenModule,
   ],
   controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-      useValue: new RavenInterceptor({
-        filters: [
-          // Filter exceptions of type HttpException. Ignore those that
-          // have status code of less than 500
-          {
-            type: HttpException,
-            filter: (exception: HttpException) => 500 > exception.getStatus(),
-          },
-        ],
-      }),
     },
   ],
 })
