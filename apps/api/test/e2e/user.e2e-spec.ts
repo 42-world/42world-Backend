@@ -229,7 +229,6 @@ describe('User', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      // TODO - 스웨거에 반영하기
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
 
       const updatedUser = await userRepository.findOne(user.id);

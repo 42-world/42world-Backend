@@ -19,6 +19,7 @@ import {
   Query,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
@@ -71,6 +72,7 @@ export class UserController {
   @Put()
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: UserResponseDto })
+  @ApiBadRequestResponse({ description: '없는 캐릭터 번호' })
   async update(
     @GetUser() user: User,
     @Body() updateUserProfileDto: UpdateUserProfileRequestDto,
