@@ -98,8 +98,8 @@ describe('User', () => {
     let user: User;
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
-      JWT = dummy.jwt(users.cadet[0], authService);
       user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] GET - 특정 유저 정보 가져오기', async () => {
