@@ -131,8 +131,25 @@ export const createDummyUsers = async (
       user('uid6', 'name6', 'githubName6', UserRole.NOVICE),
     ]),
   };
-
   return dummyUsers;
+};
+
+export type DummmyJWT = {
+  cadet: string[];
+  admin: string[];
+  novice: string[];
+};
+
+export const createDummyJWT = (
+  dummyUsers: DummyUsers,
+  authService: AuthService,
+): DummmyJWT => {
+  const dummyJWT: DummmyJWT = {
+    cadet: [jwt(dummyUsers.cadet[0], authService)],
+    admin: [jwt(dummyUsers.admin[0], authService)],
+    novice: [jwt(dummyUsers.novice[0], authService)],
+  };
+  return dummyJWT;
 };
 
 export type DummyCategories = {
@@ -159,7 +176,6 @@ export const createDummyCategories = async (
       category('anony category', UserRole.CADET, true),
     ),
   };
-
   return dummyCategories;
 };
 
