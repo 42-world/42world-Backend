@@ -4,7 +4,7 @@ import { ArticleRepository } from './repositories/article.repository';
 import { SlackRepository } from './repositories/slack.repository';
 import { parseMessage } from './slack.utils';
 
-const CATEGORY_NOTICE_ID = 3;
+export const CATEGORY_NOTICE_ID = 3;
 
 @Injectable()
 export class SlackService {

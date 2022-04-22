@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ArticleRepository } from '@webhook/slack/repositories/article.repository';
 import { SlackRepository } from '@webhook/slack/repositories/slack.repository';
 import { SlackModule } from '@webhook/slack/slack.module';
+import { CATEGORY_NOTICE_ID } from '@webhook/slack/slack.service';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
@@ -81,6 +82,8 @@ describe('Slack', () => {
       expect(article).toBeDefined();
       expect(article.title).toBeDefined(); //TODO: 실제 값 비교
       expect(article.content).toBeDefined();
+      expect(article.categoryId).toBe(CATEGORY_NOTICE_ID);
+      expect(article.writerId).toBe(process.env.SLACK_WRITER_ID);
     });
 
     // [실패] 새로운 메세지가 있는데 또 만들라고 하는경우
