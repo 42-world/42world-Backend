@@ -134,24 +134,6 @@ export const createDummyUsers = async (
   return dummyUsers;
 };
 
-export type DummmyJWT = {
-  cadet: string[];
-  admin: string[];
-  novice: string[];
-};
-
-export const createDummyJWT = (
-  dummyUsers: DummyUsers,
-  authService: AuthService,
-): DummmyJWT => {
-  const dummyJWT: DummmyJWT = {
-    cadet: [jwt(dummyUsers.cadet[0], authService)],
-    admin: [jwt(dummyUsers.admin[0], authService)],
-    novice: [jwt(dummyUsers.novice[0], authService)],
-  };
-  return dummyJWT;
-};
-
 export type DummyCategories = {
   free: Category;
   notice: Category;
