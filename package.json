@@ -13,6 +13,7 @@
     "start:dev": "NODE_ENV=dev nest start api --watch",
     "start:debug": "NODE_ENV=dev nest start api --debug --watch",
     "start:prod": "NODE_ENV=prod node dist/apps/api/main",
+    "admin": "NODE_ENV=dev nest start admin",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prettier": "prettier --write ./**/*.ts",
     "test": "jest",
