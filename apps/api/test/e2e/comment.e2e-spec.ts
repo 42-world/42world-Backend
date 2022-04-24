@@ -86,7 +86,7 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(cadetUser);
-    JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+    JWT = dummy.jwt(cadetUser, authService);
 
     anotherCadetUser = dummy.user(
       'anothergithubUid',
@@ -95,11 +95,7 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(anotherCadetUser);
-    anotherJWT = dummy.jwt(
-      anotherCadetUser.id,
-      anotherCadetUser.role,
-      authService,
-    );
+    anotherJWT = dummy.jwt(anotherCadetUser, authService);
 
     adminUser = dummy.user(
       'admingithubUid',
@@ -108,7 +104,7 @@ describe('Comments', () => {
       UserRole.ADMIN,
     );
     await userRepository.save(adminUser);
-    adminJWT = dummy.jwt(adminUser.id, adminUser.role, authService);
+    adminJWT = dummy.jwt(adminUser, authService);
 
     noviceUser = dummy.user(
       'novicegithubUid',
@@ -117,7 +113,7 @@ describe('Comments', () => {
       UserRole.NOVICE,
     );
     await userRepository.save(noviceUser);
-    noviceJWT = dummy.jwt(noviceUser.id, noviceUser.role, authService);
+    noviceJWT = dummy.jwt(noviceUser, authService);
 
     category = dummy.category(categoryName);
     await categoryRepository.save(category);

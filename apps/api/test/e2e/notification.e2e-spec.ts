@@ -97,7 +97,7 @@ describe('Notification', () => {
         'notification content',
       );
       await notificationRepository.save(dummyNotification);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] GET - 알람 가져오기', async () => {
@@ -154,7 +154,7 @@ describe('Notification', () => {
       );
       await notificationRepository.save(dummyNotification1);
       await notificationRepository.save(dummyNotification2);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] PATCH - 알림 다 읽기', async () => {

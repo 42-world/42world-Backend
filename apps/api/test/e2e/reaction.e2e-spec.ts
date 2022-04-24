@@ -75,7 +75,7 @@ describe('Reaction', () => {
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
-      JWT = dummy.jwt(user.id, user.role, authService);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
@@ -138,7 +138,7 @@ describe('Reaction', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = dummy.jwt(user.id, user.role, authService);
+      JWT = dummy.jwt(user, authService);
       const category = dummy.category('category');
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
