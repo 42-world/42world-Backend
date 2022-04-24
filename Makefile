@@ -2,6 +2,10 @@ COMPOSE = docker-compose
 COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 
 .PHONY: test
+
+init:
+	sudo docker swarm init
+
 test:
 	cp ./config/.env.test ./config/.env
 	./run_test_db.sh
@@ -10,23 +14,27 @@ test:
 
 dev:
 	cp ./config/.env.dev ./config/.env
-	make db
+	make db redis
 	./wait-for-healthy.sh 42world-backend-db
 	yarn start:dev api
 
+dev-batch:
+	cp ./config/.env.dev ./config/.env
+	make db redis
+	./wait-for-healthy.sh 42world-backend-db
+	yarn start:dev batch
+
 alpha:
-	cp ./config/.env.alpha ./config/.env
-	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d
+	sudo docker stack deploy --compose-file docker-stack-alpha.yml alpha-stack
 
 prod:
-	cp ./config/.env.prod ./config/.env
-	make api-prod
+	docker stack deploy --compose-file docker-stack-prod.yml prod-stack
 
 db-dev:
 	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d db
 
 db-alpha:
-	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build -d db
+	sudo docker service update alpha-stack_db
 
 db: db-dev
 
@@ -40,11 +48,10 @@ api-dev:
 	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build --no-deps -d api
 
 api-alpha:
-	export NODE_ENV=alpha && sudo $(call COMPOSE_ENV) up --build --no-deps -d api
+	sudo docker service update alpha-stack_api
 
 api-prod:
-	sudo docker build -t ft-world-api .
-	sudo docker run -d -p 80:80 --env-file config/.env ft-world-api
+	sudo docker service update prod-stack_api
 
 api-build:
 	sudo docker build -t ft-world-api .
@@ -54,6 +61,14 @@ api-build:
 db-init:
 	sudo yarn typeorm:run
 	sudo yarn seed
+
+redis: redis-dev
+
+redis-down:
+	${COMPOSE} down redis
+
+redis-dev:
+	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
 
 clean:
 	${COMPOSE} down

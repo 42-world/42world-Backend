@@ -24,13 +24,13 @@
         "watchAssets": true
       }
     },
-    "scheduler": {
+    "batch": {
       "type": "application",
-      "root": "apps/scheduler",
+      "root": "apps/batch",
       "entryFile": "main",
-      "sourceRoot": "apps/scheduler/src",
+      "sourceRoot": "apps/batch/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/scheduler/tsconfig.app.json"
+        "tsConfigPath": "apps/batch/tsconfig.app.json"
       }
     },
     "common": {

@@ -21,7 +21,7 @@ import { DatabaseModule } from '@app/common/database/database.module';
 import { ormconfig } from '@app/common/database/ormconfig';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
@@ -52,9 +52,6 @@ import * as path from 'path';
       },
     }),
     DatabaseModule.register(),
-    CacheModule.register({
-      isGlobal: true,
-    }),
     AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         imports: [ConfigModule],
