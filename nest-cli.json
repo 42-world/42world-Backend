@@ -59,6 +59,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/entity/tsconfig.lib.json"
       }
+    },
+    "admin": {
+      "type": "application",
+      "root": "apps/admin",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin/tsconfig.app.json"
+      }
     }
   }
 }
