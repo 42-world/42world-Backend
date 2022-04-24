@@ -13,7 +13,7 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
@@ -30,6 +30,7 @@ describe('Comments', () => {
 
   let JWT: string;
   let anotherJWT: string;
+  let adminJWT: string;
   let noviceJWT: string;
 
   const categoryName = '자유게시판';
@@ -39,13 +40,14 @@ describe('Comments', () => {
   let category: Category;
   let cadetUser: User;
   let anotherCadetUser: User;
+  let adminUser: User;
   let noviceUser: User;
   let targetArticle: Article;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
@@ -84,7 +86,7 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(cadetUser);
-    JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+    JWT = dummy.jwt(cadetUser, authService);
 
     anotherCadetUser = dummy.user(
       'anothergithubUid',
@@ -93,11 +95,16 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(anotherCadetUser);
-    anotherJWT = dummy.jwt(
-      anotherCadetUser.id,
-      anotherCadetUser.role,
-      authService,
+    anotherJWT = dummy.jwt(anotherCadetUser, authService);
+
+    adminUser = dummy.user(
+      'admingithubUid',
+      'nickname',
+      'adminGHUsername',
+      UserRole.ADMIN,
     );
+    await userRepository.save(adminUser);
+    adminJWT = dummy.jwt(adminUser, authService);
 
     noviceUser = dummy.user(
       'novicegithubUid',
@@ -106,7 +113,7 @@ describe('Comments', () => {
       UserRole.NOVICE,
     );
     await userRepository.save(noviceUser);
-    noviceJWT = dummy.jwt(noviceUser.id, noviceUser.role, authService);
+    noviceJWT = dummy.jwt(noviceUser, authService);
 
     category = dummy.category(categoryName);
     await categoryRepository.save(category);
@@ -136,13 +143,22 @@ describe('Comments', () => {
       expect(result.writer.role).toEqual(cadetUser.role);
     });
 
-    test('[실패] POST - 권한 없는 유저가 댓글 생성', async () => {
+    test('[성공] POST - 권한 높은 유저가 댓글 생성', async () => {
+      const response = await request(httpServer)
+        .post('/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${adminJWT}`)
+        .send({ content: commentContent, articleId: targetArticle.id });
+
+      expect(response.status).toEqual(HttpStatus.CREATED);
+    });
+
+    test('[실패] POST - 권한 낮은 유저가 댓글 생성', async () => {
       const response = await request(httpServer)
         .post('/comments')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`)
         .send({ content: commentContent, articleId: targetArticle.id });
 
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
   });
 
@@ -173,14 +189,6 @@ describe('Comments', () => {
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
-    test('[실패] PUT - 권한 없는 유저가 댓글 수정', async () => {
-      const response = await request(httpServer)
-        .delete(`/comments/${comment.id}`)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
-
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
-    });
-
     test('[성공] DELETE - 댓글 삭제', async () => {
       const response = await request(httpServer)
         .delete(`/comments/${comment.id}`)
@@ -195,14 +203,6 @@ describe('Comments', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${anotherJWT}`);
 
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
-    });
-
-    test('[성공] DELETE - 권한 없는 유저가 댓글 삭제', async () => {
-      const response = await request(httpServer)
-        .delete(`/comments/${comment.id}`)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
-
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] DELETE & PUT - 삭제된 댓글 수정', async () => {

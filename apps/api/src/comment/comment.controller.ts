@@ -1,4 +1,4 @@
-import { GetUser } from '@api/auth/auth.decorator';
+import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import {
   Body,
@@ -12,6 +12,7 @@ import {
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -31,30 +32,31 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 생성' })
   @ApiCreatedResponse({
     description: '생성된 댓글',
     type: CreateCommentRequestDto,
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
+  @ApiNotAcceptableResponse({ description: '댓글을 쓸수없는 게시글' })
   async create(
     @GetUser() writer: User,
     @Body() createCommentDto: CreateCommentRequestDto,
   ): Promise<CommentResponseDto | never> {
-    const comment = await this.commentService.create(
-      writer.id,
-      createCommentDto,
-    );
+    const comment = await this.commentService.create(writer, createCommentDto);
 
     return CommentResponseDto.of({
       comment,
       writer,
       isLike: false,
       isSelf: true,
+      isAnonymous: false,
     });
   }
 
   @Put(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
@@ -67,6 +69,7 @@ export class CommentController {
   }
 
   @Delete(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })

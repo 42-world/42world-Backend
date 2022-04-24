@@ -99,7 +99,6 @@ export class ArticleService {
         article: Article;
         category: Category;
         writer: User;
-        isLike: boolean;
       }
     | never
   > {
@@ -111,16 +110,11 @@ export class ArticleService {
       article.category,
       user,
     );
-    const isLike = await this.reactionService.isMyReactionArticle(
-      user.id,
-      article.id,
-    );
 
     return {
       article,
       category: article.category,
       writer: article.writer,
-      isLike,
     };
   }
 
@@ -172,7 +166,8 @@ export class ArticleService {
 
   async increaseLikeCount(article: Article): Promise<Article> {
     await this.articleRepository.increaseLikeCount(article.id);
-    return { ...article, likeCount: article.likeCount + 1 };
+    article.likeCount += 1;
+    return article;
   }
 
   async decreaseLikeCount(article: Article): Promise<Article | never> {
@@ -180,6 +175,7 @@ export class ArticleService {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.articleRepository.decreaseLikeCount(article.id);
-    return { ...article, likeCount: article.likeCount - 1 };
+    article.likeCount -= 1;
+    return article;
   }
 }

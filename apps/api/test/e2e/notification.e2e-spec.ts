@@ -16,15 +16,14 @@ import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
-  let app: INestApplication;
+  let httpServer: INestApplication;
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let articleRepository: ArticleRepository;
@@ -35,7 +34,7 @@ describe('Notification', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         CategoryModule,
         ArticleModule,
@@ -44,28 +43,24 @@ describe('Notification', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(cookieParser());
-
-    app = createTestApp(moduleFixture);
+    const app = createTestApp(moduleFixture);
     await app.init();
 
-    userRepository = moduleFixture.get<UserRepository>(UserRepository);
-    categoryRepository =
-      moduleFixture.get<CategoryRepository>(CategoryRepository);
-    articleRepository = moduleFixture.get<ArticleRepository>(ArticleRepository);
-    notificationRepository = moduleFixture.get<Repository<Notification>>(
+    userRepository = moduleFixture.get(UserRepository);
+    categoryRepository = moduleFixture.get(CategoryRepository);
+    articleRepository = moduleFixture.get(ArticleRepository);
+    notificationRepository = moduleFixture.get(
       getRepositoryToken(Notification),
     );
-    authService = moduleFixture.get<AuthService>(AuthService);
+    authService = moduleFixture.get(AuthService);
 
-    app = app.getHttpServer();
+    httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
     await getConnection().dropDatabase();
     await getConnection().close();
-    await app.close();
+    await httpServer.close();
   });
 
   beforeEach(async () => {
@@ -102,11 +97,11 @@ describe('Notification', () => {
         'notification content',
       );
       await notificationRepository.save(dummyNotification);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] GET - 알람 가져오기', async () => {
-      const res = await request(app)
+      const res = await request(httpServer)
         .get('/notifications')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
@@ -116,7 +111,7 @@ describe('Notification', () => {
     });
 
     test('[실패] GET - 로그인하지 않고 호출', async () => {
-      const res = await request(app).get('/notifications');
+      const res = await request(httpServer).get('/notifications');
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
@@ -159,11 +154,11 @@ describe('Notification', () => {
       );
       await notificationRepository.save(dummyNotification1);
       await notificationRepository.save(dummyNotification2);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] PATCH - 알림 다 읽기', async () => {
-      const res = await request(app)
+      const res = await request(httpServer)
         .patch('/notifications/readall')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
@@ -176,7 +171,7 @@ describe('Notification', () => {
     });
 
     test('[실패] PATCH - 로그인하지 않고 호출', async () => {
-      const res = await request(app).patch('/notifications/readall');
+      const res = await request(httpServer).patch('/notifications/readall');
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });

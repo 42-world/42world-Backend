@@ -13,7 +13,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -37,7 +37,7 @@ describe('IntraAuth', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         TypeOrmModule.forFeature([IntraAuth]),
@@ -95,8 +95,8 @@ describe('IntraAuth', () => {
       );
       await userRepository.save(cadetUser);
 
-      JWT = dummy.jwt(newUser.id, newUser.role, authService);
-      cadetJWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+      JWT = dummy.jwt(newUser, authService);
+      cadetJWT = dummy.jwt(cadetUser, authService);
     });
 
     afterEach(async () => {
@@ -118,7 +118,7 @@ describe('IntraAuth', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`)
         .send({ intraId });
 
-      expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       // 현재는 구글 계정 에러랑 구분할 방법이 없어서 500에러로 처리
       // expect(response.status).toEqual(HttpStatus.FORBIDDEN);

@@ -12,6 +12,11 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
+import {
+  ANONY_USER_CHARACTER,
+  ANONY_USER_ID,
+  ANONY_USER_NICKNAME,
+} from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -19,7 +24,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
@@ -37,12 +42,12 @@ describe('Article', () => {
 
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
-  let articles: Article[];
+  let articles: dummy.DummmyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
@@ -77,11 +82,12 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await articleRepository.save([
-        dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
-        dummy.article(categories.free.id, users.cadet[0].id, 'title2', 'text2'),
-      ]);
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] POST - 글쓰기', async () => {
@@ -120,7 +126,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
@@ -135,7 +141,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .post('/articles')
         .send(createArticlRequesteDto)
@@ -195,20 +201,22 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.OK);
 
       const responseArticles = response.body.data as Article[];
-      expect(responseArticles.length).toBe(2);
-      expect(responseArticles[0].id).toBe(articles[1].id);
-      expect(responseArticles[0].title).toBe(articles[1].title);
-      expect(responseArticles[0].content).toBe(articles[1].content);
-      expect(responseArticles[0].writerId).toBe(articles[1].writerId);
-      expect(responseArticles[0].writer.id).toBe(articles[1].writerId);
+      expect(responseArticles.length).toBe(4);
+      expect(responseArticles[0].id).toBe(articles.first.id);
+      expect(responseArticles[0].title).toBe(articles.first.title);
+      expect(responseArticles[0].content).toBe(articles.first.content);
+      expect(responseArticles[0].writerId).toBe(articles.first.writerId);
+      expect(responseArticles[0].writer.id).toBe(articles.first.writerId);
       expect(responseArticles[0].writer.nickname).toBe(users.cadet[0].nickname);
-      expect(responseArticles[0].viewCount).toBe(articles[1].viewCount);
-      expect(responseArticles[0].likeCount).toBe(articles[1].likeCount);
-      expect(responseArticles[0].commentCount).toBe(articles[1].commentCount);
+      expect(responseArticles[0].viewCount).toBe(articles.first.viewCount);
+      expect(responseArticles[0].likeCount).toBe(articles.first.likeCount);
+      expect(responseArticles[0].commentCount).toBe(
+        articles.first.commentCount,
+      );
       expect(responseArticles[0].categoryId).toBe(
         findArticleRequestDto.categoryId,
       );
-      expect(responseArticles[1].id).toBe(articles[0].id);
+      expect(responseArticles[1].id).toBe(articles.second.id);
       expect(responseArticles[1].categoryId).toBe(
         findArticleRequestDto.categoryId,
       );
@@ -220,12 +228,36 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    test('[성공] GET - 익명 게시글 목록 조회', async () => {
+      const findArticleRequestDto = {
+        categoryId: categories.anony.id,
+      };
+
+      const response = await request(httpServer)
+        .get('/articles')
+        .query(findArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles[0].id).toBe(articles.anony.id);
+      expect(responseArticles[0].title).toBe(articles.anony.title);
+      expect(responseArticles[0].content).toBe(articles.anony.content);
+      expect(responseArticles[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseArticles[0].writer.role).toBeUndefined();
+      expect(responseArticles[0].writer.createdAt).toBeUndefined();
+      expect(responseArticles[0].writer.updatedAt).toBeUndefined();
+      expect(responseArticles[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseArticles[0].writer.character).toBe(ANONY_USER_CHARACTER);
+    });
+
     test('[성공] GET - 게시글 목록 조회 권한 높은사람', async () => {
       const findArticleRequestDto = {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
@@ -238,7 +270,7 @@ describe('Article', () => {
         categoryId: categories.free.id,
       };
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .get('/articles')
         .query(findArticleRequestDto)
@@ -282,18 +314,22 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await articleRepository.save([
-        dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
-      ]);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
       comments = await commentRepository.save([
-        dummy.comment(users.cadet[0].id, articles[0].id, 'comment1'),
-        dummy.comment(users.cadet[0].id, articles[0].id, 'comment2'),
+        dummy.comment(users.cadet[0].id, articles.first.id, 'comment1'),
+        dummy.comment(users.cadet[0].id, articles.first.id, 'comment2'),
+        dummy.comment(users.cadet[0].id, articles.second.id, 'comment3'),
+        dummy.comment(users.cadet[0].id, articles.second.id, 'comment4'),
       ]);
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] GET - 게시글 댓글 목록 조회', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer)
         .get(`/articles/${articleId}/comments`)
@@ -312,14 +348,56 @@ describe('Article', () => {
       expect(responseComments[1].id).toBe(comments[0].id);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] GET - 익명 게시글 댓글 목록 조희', async () => {
+      const articleId = articles.second.id;
+
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+      expect(responseComments.length).toBe(2);
+      expect(responseComments[0].id).toBe(comments[1].id);
+      expect(responseComments[0].content).toBe(comments[1].content);
+      expect(responseComments[0].writerId).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.id).toBe(ANONY_USER_ID);
+      expect(responseComments[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
+      expect(responseComments[0].writer.character).toBe(ANONY_USER_CHARACTER);
+      expect(responseComments[0].articleId).toBe(comments[1].articleId);
+      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
+      expect(responseComments[1].id).toBe(comments[0].id);
+    });
+
     test('[실패] GET - unauthorized', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer).get(
         `/articles/${articleId}/comments`,
       );
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+    });
+
+    test('[성공] GET - 게시글 댓글 목록 조회 권한 높은사람', async () => {
+      const articleId = articles.first.id;
+
+      JWT = dummy.jwt(users.admin[0], authService);
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.OK);
+    });
+
+    test('[실패] GET - 게시글 댓글 목록 조회 권한 낮은사람', async () => {
+      const articleId = articles.first.id;
+
+      JWT = dummy.jwt(users.novice[0], authService);
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}/comments`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toBe(HttpStatus.NOT_ACCEPTABLE);
     });
 
     test('[실패] GET - 게시글 댓글 목록 존재하지 않는 게시글', async () => {
@@ -337,7 +415,7 @@ describe('Article', () => {
       ['articleId', 'abc'],
     ])('[실패] GET - 게시글 댓글 목록 %s인 경우', async (_, buildDto) => {
       const articleId = buildDto({
-        articleId: articles[0].id,
+        articleId: articles.first.id,
       }).articleId;
 
       const response = await request(httpServer)
@@ -352,15 +430,16 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await articleRepository.save([
-        dummy.article(categories.free.id, users.cadet[0].id, 'title1', 'text1'),
-        dummy.article(categories.free.id, users.cadet[1].id, 'title1', 'text1'),
-      ]);
-      JWT = dummy.jwt2(users.cadet[0], authService);
+      articles = await dummy.createDummyArticles(
+        articleRepository,
+        users,
+        categories,
+      );
+      JWT = dummy.jwt(users.cadet[0], authService);
     });
 
     test('[성공] GET - 게시글 상세 조회', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
@@ -368,10 +447,10 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.OK);
 
       const result = response.body as FindOneArticleResponseDto;
-      expect(result.title).toBe(articles[0].title);
-      expect(result.content).toBe(articles[0].content);
-      expect(result.categoryId).toBe(articles[0].categoryId);
-      expect(result.writerId).toBe(articles[0].writerId);
+      expect(result.title).toBe(articles.first.title);
+      expect(result.content).toBe(articles.first.content);
+      expect(result.categoryId).toBe(articles.first.categoryId);
+      expect(result.writerId).toBe(articles.first.writerId);
       expect(result.viewCount).toBe(0);
       expect(result.likeCount).toBe(0);
       expect(result.commentCount).toBe(0);
@@ -383,17 +462,39 @@ describe('Article', () => {
     });
 
     test('[실패] GET - unauthorized', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer).get(`/articles/${articleId}`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
-    test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
-      const articleId = articles[0].id;
+    test('[성공] GET - 익명 게시글 상세 조회', async () => {
+      const articleId = articles.anony.id;
 
-      JWT = dummy.jwt2(users.admin[0], authService);
+      const response = await request(httpServer)
+        .get(`/articles/${articleId}`)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const result = response.body;
+      expect(result.title).toBe(articles.anony.title);
+      expect(result.content).toBe(articles.anony.content);
+      expect(result.categoryId).toBe(articles.anony.categoryId);
+      expect(result.writerId).toBe(ANONY_USER_ID);
+      expect(result.category.id).toBe(categories.anony.id);
+      expect(result.writer.id).toBe(ANONY_USER_ID);
+      expect(result.writer.role).toBeUndefined();
+      expect(result.writer.createdAt).toBeUndefined();
+      expect(result.writer.updatedAt).toBeUndefined();
+      expect(result.writer.nickname).toContain(ANONY_USER_NICKNAME);
+      expect(result.writer.character).toBe(ANONY_USER_CHARACTER);
+    });
+
+    test('[성공] GET - 게시글 상세 조회 권한 높은사람', async () => {
+      const articleId = articles.first.id;
+
+      JWT = dummy.jwt(users.admin[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -401,9 +502,9 @@ describe('Article', () => {
     });
 
     test('[실패] GET - 게시글 상세 조회 권한 낮은사람', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
-      JWT = dummy.jwt2(users.novice[0], authService);
+      JWT = dummy.jwt(users.novice[0], authService);
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
@@ -425,7 +526,7 @@ describe('Article', () => {
       ['articleId', 'abc'],
     ])('[실패] GET - 게시글 상세 조회 %s인 경우', async (_, buildDto) => {
       const articleId = buildDto({
-        articleId: articles[0].id,
+        articleId: articles.first.id,
       }).articleId;
 
       const response = await request(httpServer)
@@ -437,7 +538,7 @@ describe('Article', () => {
 
     // TODO: novice 도 게시글 수정/삭제 가능한지 추가
     test('[성공] PUT - 게시글 수정', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
@@ -458,7 +559,7 @@ describe('Article', () => {
     });
 
     test('[실패] PUT - unauthorized', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer).put(`/articles/${articleId}`);
 
@@ -466,7 +567,7 @@ describe('Article', () => {
     });
 
     test('[실패] PUT - 게시글 수정 내가 쓴글이 아닌경우', async () => {
-      const articleId = articles[1].id;
+      const articleId = articles.second.id;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
@@ -480,9 +581,9 @@ describe('Article', () => {
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
       const result = await articleRepository.findOne(articleId);
-      expect(result.title).toBe(articles[1].title);
-      expect(result.content).toBe(articles[1].content);
-      expect(result.categoryId).toBe(articles[1].categoryId);
+      expect(result.title).toBe(articles.second.title);
+      expect(result.content).toBe(articles.second.content);
+      expect(result.categoryId).toBe(articles.second.categoryId);
     });
 
     test('[실패] PUT - 게시글 수정 존재하지 않는 게시글', async () => {
@@ -502,7 +603,7 @@ describe('Article', () => {
     });
 
     test('[실패] PUT - 게시글 수정 존재하지 않는 카테고리', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
@@ -522,7 +623,7 @@ describe('Article', () => {
       ['articleId', 'abc'],
     ])('[실패] PUT - 게시글 수정 게시글id가 %s인 경우', async (_, buildDto) => {
       const articleId = buildDto({
-        articleId: articles[0].id,
+        articleId: articles.first.id,
       }).articleId;
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
@@ -546,7 +647,7 @@ describe('Article', () => {
       ['categoryId', 'abc'],
       ['categoryId', -1],
     ])('[실패] PUT - 게시글 수정 dto가 %s인 경우', async (_, buildDto) => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
       const updateArticleRequestDto = buildDto({
         title: 'title2',
         content: 'content2',
@@ -562,7 +663,7 @@ describe('Article', () => {
     });
 
     test('[성공] DELETE - 게시글 삭제', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
@@ -574,7 +675,7 @@ describe('Article', () => {
     });
 
     test('[실패] DELETE - unauthorized', async () => {
-      const articleId = articles[0].id;
+      const articleId = articles.first.id;
 
       const response = await request(httpServer).delete(
         `/articles/${articleId}`,
@@ -584,7 +685,7 @@ describe('Article', () => {
     });
 
     test('[실패] DELETE - 게시글 삭제 내가 쓴글이 아닌경우', async () => {
-      const articleId = articles[1].id;
+      const articleId = articles.second.id;
 
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
@@ -612,7 +713,7 @@ describe('Article', () => {
       ['articleId', 'abc'],
     ])('[실패] DELETE - 게시글 삭제 dto가 %s인 경우', async (_, buildDto) => {
       const articleId = buildDto({
-        articleId: articles[0].id,
+        articleId: articles.first.id,
       }).articleId;
 
       const response = await request(httpServer)

@@ -11,14 +11,13 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
 
 describe('Category', () => {
-  let app: INestApplication;
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let authService: AuthService;
@@ -34,7 +33,7 @@ describe('Category', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestBaseModule, UserModule, AuthModule, CategoryModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, CategoryModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -46,12 +45,14 @@ describe('Category', () => {
 
     server = app.getHttpServer();
 
+    //TODO: createDummyUsers로 대체
     users = {
       admin: dummy.user('admin', 'admin', 'admin', UserRole.ADMIN),
       cadet: dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET),
       novice: dummy.user('novice', 'novice', 'novice', UserRole.NOVICE),
     };
 
+    //TODO: createDummyCategories로 대체
     categories = {
       자유게시판: dummy.category('자유게시판'),
       익명게시판: dummy.category('익명게시판'),
@@ -70,9 +71,9 @@ describe('Category', () => {
       await userRepository.save(Object.values(users));
       await categoryRepository.save(Object.values(categories));
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 
@@ -161,11 +162,18 @@ describe('Category', () => {
       expect(categories[2].name).toBe('유머게시판');
     });
 
-    test('[실패] GET - NOVICE가 카테고리 종류 가져오기', async () => {
+    test('[성공] GET - NOVICE가 카테고리 종류 가져오기', async () => {
       const response = await request(server)
         .get('/categories')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.novice}`);
-      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const categories = response.body as CategoryResponseDto[];
+
+      expect(categories).toBeInstanceOf(Array);
+      expect(categories[0].name).toBe('자유게시판');
+      expect(categories[1].name).toBe('익명게시판');
+      expect(categories[2].name).toBe('유머게시판');
     });
 
     test('[실패] GET - unauthorized', async () => {
@@ -181,9 +189,9 @@ describe('Category', () => {
       await categoryRepository.save(Object.values(categories));
       paramId = 2;
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 
@@ -237,9 +245,9 @@ describe('Category', () => {
       await categoryRepository.save(Object.values(categories));
       paramId = 1;
       jwt = {
-        admin: dummy.jwt(users.admin.id, users.admin.role, authService),
-        cadet: dummy.jwt(users.cadet.id, users.cadet.role, authService),
-        novice: dummy.jwt(users.novice.id, users.novice.role, authService),
+        admin: dummy.jwt(users.admin, authService),
+        cadet: dummy.jwt(users.cadet, authService),
+        novice: dummy.jwt(users.novice, authService),
       };
     });
 

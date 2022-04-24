@@ -1,4 +1,5 @@
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
+import { AnonyUserResponseDto } from '@api/user/dto/response/anony-user-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsString, MaxLength, Min } from 'class-validator';
@@ -32,7 +33,7 @@ export class BaseCommentDto {
   writerId!: number;
 
   @ApiProperty({ type: () => UserResponseDto })
-  writer?: UserResponseDto;
+  writer?: UserResponseDto | AnonyUserResponseDto;
 
   @ApiProperty()
   createdAt!: Date;

@@ -7,6 +7,7 @@ init:
 	sudo docker swarm init
 
 test:
+	cp ./config/.env.test ./config/.env
 	./run_test_db.sh
 	./wait-for-healthy.sh ft_world-mysql-test
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
@@ -17,6 +18,12 @@ dev:
 	mkdir -p db
 	./wait-for-healthy.sh 42world-backend-db
 	yarn start:dev api
+
+dev-batch:
+	cp ./config/.env.dev ./config/.env
+	make db redis
+	./wait-for-healthy.sh 42world-backend-db
+	yarn start:dev batch
 
 alpha:
 	cp ./config/.env.alpha ./config/.env

@@ -45,7 +45,7 @@ export class IntraAuthService {
         context,
       });
     } catch (e: any) {
-      throw new InternalServerErrorException(e);
+      throw new InternalServerErrorException(e.message);
     }
     return true;
   }

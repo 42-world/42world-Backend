@@ -14,7 +14,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
@@ -30,7 +30,7 @@ describe('Reaction', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
@@ -75,7 +75,7 @@ describe('Reaction', () => {
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
       await articleRepository.save(article);
-      JWT = dummy.jwt(user.id, user.role, authService);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {
@@ -108,6 +108,16 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
     test('[실패] POST - 없는 id를 보내는 경우', async () => {
       const notExistId = 0;
 
@@ -128,7 +138,7 @@ describe('Reaction', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = dummy.jwt(user.id, user.role, authService);
+      JWT = dummy.jwt(user, authService);
       const category = dummy.category('category');
       await categoryRepository.save(category);
       const article = dummy.article(category.id, user.id, 'title', 'content');
@@ -169,6 +179,16 @@ describe('Reaction', () => {
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[성공] POST - 권한 높은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
+    // TODO: 여기 테스트 기능 구현할것
+    test.skip('[실패] POST - 권한 낮은 유저가 좋아요 하는 경우', async () => {
+      expect(1).toEqual(1);
+    });
+
     test('[실패] POST - 없는 articleId를 보내는 경우', async () => {
       const notExistId = 999;
 
@@ -176,7 +196,7 @@ describe('Reaction', () => {
         .post('/reactions/articles/' + notExistId + '/comments/1')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      expect(response.status).toEqual(HttpStatus.OK); // TODO - 코드가 이상하다 HttpStatus.OK을 돌려준다
+      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
     test('[실패] POST - 없는 commentId를 보내는 경우', async () => {

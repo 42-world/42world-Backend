@@ -1,5 +1,4 @@
-import { InternalServerErrorExceptionFilter } from '@app/common/filters/internal-server-error-exception.filter';
-import { TypeormExceptionFilter } from '@app/common/filters/typeorm-exception.filter';
+import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import * as cookieParser from 'cookie-parser';
@@ -19,8 +18,7 @@ export const createTestApp = (
   const app = moduleFixture.createNestApplication();
 
   app.use(cookieParser());
-  app.useGlobalFilters(new InternalServerErrorExceptionFilter());
-  app.useGlobalFilters(new TypeormExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

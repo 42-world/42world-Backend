@@ -1,8 +1,11 @@
 import { ArticleService } from '@api/article/article.service';
+import { CategoryService } from '@api/category/category.service';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { NotificationService } from '@api/notification/notification.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
+import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { User } from '@app/entity/user/user.entity';
 import {
   forwardRef,
   Inject,
@@ -21,36 +24,52 @@ export class CommentService {
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
     private readonly notificationService: NotificationService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(
-    writerId: number,
+    writer: User,
     createCommentDto: CreateCommentRequestDto,
   ): Promise<Comment | never> {
     const article = await this.articleService.findOneByIdOrFail(
       createCommentDto.articleId,
     );
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('writableComment', category, writer);
     const comment = await this.commentRepository.save({
       ...createCommentDto,
-      writerId,
+      writerId: writer.id,
     });
-    this.notificationService.createNewComment(article, comment);
+
+    if (writer.id !== article.writerId) {
+      this.notificationService.createNewComment(article, comment);
+    }
     this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
   async findAllByArticleId(
+    user: User,
     articleId: number,
     options: PaginationRequestDto,
   ): Promise<
     | {
         comments: Comment[];
+        category: Category;
         totalCount: number;
       }
     | never
   > {
-    await this.articleService.existOrFail(articleId);
-    return this.commentRepository.findAllByArticleId(articleId, options);
+    const article = await this.articleService.findOneByIdOrFail(articleId);
+    const category = await this.categoryService.findOneOrFail(
+      article.categoryId,
+    );
+    this.categoryService.checkAvailable('readableComment', category, user);
+    const { comments, totalCount } =
+      await this.commentRepository.findAllByArticleId(articleId, options);
+    return { comments, category, totalCount };
   }
 
   findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {

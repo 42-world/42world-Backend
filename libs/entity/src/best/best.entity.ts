@@ -1,5 +1,6 @@
 import { Article } from '@app/entity/article/article.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,7 +12,7 @@ import {
 } from 'typeorm';
 
 @Entity('best')
-export class Best {
+export class Best extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

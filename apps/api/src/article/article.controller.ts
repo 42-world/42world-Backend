@@ -5,7 +5,9 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
 import { ReactionService } from '@api/reaction/reaction.service';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
+import { compareRole } from '@app/utils/utils';
 import {
   Body,
   Controller,
@@ -85,13 +87,11 @@ export class ArticleController {
     @GetUser() user: User,
     @Query() options: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<FindAllArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.findAll(
-      user,
-      options,
-    );
+    const { articles, category, totalCount } =
+      await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
-      data: FindAllArticleResponseDto.of({ articles, user }),
+      data: FindAllArticleResponseDto.of({ articles, category, user }),
       options,
       totalCount,
     });
@@ -109,8 +109,14 @@ export class ArticleController {
     @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<FindOneArticleResponseDto | never> {
-    const { article, category, writer, isLike } =
+    const { article, category, writer } =
       await this.articleService.findOneOrFail(articleId, user);
+    let isLike = false;
+    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
+      isLike = await this.reactionService.isMyReactionArticle(
+        user.id,
+        article.id,
+      );
 
     if (article.writerId !== user.id)
       this.articleService.increaseViewCount(article.id);
@@ -124,23 +130,29 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
-    @GetUser('id') userId: number,
+    @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
-    const { comments, totalCount } =
-      await this.commentService.findAllByArticleId(articleId, options);
-    const reactionComments =
-      await this.reactionService.findAllMyReactionComment(userId, articleId);
+    const { comments, category, totalCount } =
+      await this.commentService.findAllByArticleId(user, articleId, options);
+    let reactionComments = [];
+    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
+      reactionComments = await this.reactionService.findAllMyReactionComment(
+        user.id,
+        articleId,
+      );
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
         comments,
         reactionComments,
-        userId,
+        userId: user.id,
+        isAnonymous: category.anonymity,
       }),
       options,
       totalCount,
@@ -148,6 +160,7 @@ export class ArticleController {
   }
 
   @Put(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
@@ -160,6 +173,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
+  @AlsoNovice()
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })

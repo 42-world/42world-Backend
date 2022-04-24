@@ -1,5 +1,9 @@
 import { Public } from '@api/auth/auth.decorator';
-import { HOUR } from '@app/utils/utils';
+import {
+  FT_CHECKIN_KEY,
+  MAX_CHECKIN_KEY,
+} from '@app/common/cache/dto/ft-checkin.constant';
+import { FtCheckinDto } from '@app/common/cache/dto/ft-checkin.dto';
 import { Controller, Get, NotFoundException } from '@nestjs/common';
 import {
   ApiOkResponse,
@@ -7,21 +11,13 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { FtCheckinService, GetFtCheckinDto } from './ft-checkin.service';
-
-const FT_CHECKIN_API = 'FT_CHECKIN_API';
-const FT_CHECKIN_CACHE_TTL = 100;
-const FT_CHECKIN_END_POINT = 'https://api.checkin.42seoul.io/user/using';
-
-const MAX_CHECKIN_API = 'MAX_CHECKIN_API';
-const MAX_CHECKIN_CACHE_TTL = HOUR * 6;
-const MAX_CHECKIN_END_POINT = 'https://api.checkin.42seoul.io/config';
+import { FtCheckinService } from './ft-checkin.service';
 
 class FtCheckData {
   @ApiProperty()
-  now: GetFtCheckinDto;
+  now: FtCheckinDto;
   @ApiProperty()
-  max: GetFtCheckinDto;
+  max: FtCheckinDto;
 }
 
 @ApiTags('ft-checkin')
@@ -38,16 +34,10 @@ export class FtCheckinController {
   })
   async getFtCheckin(): Promise<FtCheckData> {
     try {
-      const checkinData = await this.ftCheckinService.fetchData(
-        FT_CHECKIN_API,
-        FT_CHECKIN_CACHE_TTL,
-        FT_CHECKIN_END_POINT,
-      );
+      const checkinData = await this.ftCheckinService.fetchData(FT_CHECKIN_KEY);
 
       const checkinInfo = await this.ftCheckinService.fetchData(
-        MAX_CHECKIN_API,
-        MAX_CHECKIN_CACHE_TTL,
-        MAX_CHECKIN_END_POINT,
+        MAX_CHECKIN_KEY,
       );
 
       const data = {
