@@ -9,9 +9,9 @@ import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
@@ -32,7 +32,7 @@ describe('Best', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
