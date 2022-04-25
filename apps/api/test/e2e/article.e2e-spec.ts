@@ -337,13 +337,14 @@ describe('Article', () => {
 
       const responseComments = response.body.data as Comment[];
       expect(responseComments.length).toBe(2);
-      expect(responseComments[0].content).toBe(comments[1].content);
-      expect(responseComments[0].writerId).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.id).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
-      expect(responseComments[0].articleId).toBe(comments[1].articleId);
-      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
-      expect(responseComments[1].id).toBe(comments[0].id);
+      expect(responseComments[0].id).toBe(comments.second.id);
+      expect(responseComments[0].content).toBe(comments.second.content);
+      expect(responseComments[0].writerId).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.id).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.nickname).toBe(users.cadet[1].nickname);
+      expect(responseComments[0].articleId).toBe(comments.second.articleId);
+      expect(responseComments[0].likeCount).toBe(comments.second.likeCount);
+      expect(responseComments[1].id).toBe(comments.first.id);
     });
 
     // TODO: 여기 테스트 기능 구현할것
