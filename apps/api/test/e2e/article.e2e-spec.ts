@@ -24,7 +24,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
@@ -47,7 +47,7 @@ describe('Article', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,

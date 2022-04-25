@@ -12,7 +12,7 @@ import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
@@ -45,7 +45,7 @@ describe('Comments', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,

@@ -79,7 +79,7 @@ describe('Best', () => {
         .get('/best')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
-      expect(response.body.length).toEqual(4);
+      expect(response.body.length).toEqual(Object.keys(articles).length - 1);
       expect(response.body[0].title).toEqual(articles.best.title);
       expect(response.body[0].content).toEqual(articles.best.content);
     });

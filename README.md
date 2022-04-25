@@ -2,6 +2,9 @@
 
 # 42WORLD
 
+![issue](https://img.shields.io/github/issues/42-world/42world-Backend)
+![issue](https://img.shields.io/github/issues-closed/42-world/42world-Backend)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/42-world/42world-Backend)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b3a77efc4f694b14953bd35e3ee7327f)](https://www.codacy.com/gh/42-world/42world-Backend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=42-world/42world-Backend&amp;utm_campaign=Badge_Grade)
 
 ## 소개
@@ -44,28 +47,21 @@ https://www.42world.kr/
 
 # 프로젝트
 
-**! Docker 가 설치되어 있어야 합니다.**
+## 버전
+
+- node>=16.13.0
+- yarn>=1.22.10
+- docker-compose>=1.29.2
+- docker>=20.10.11
 
 ## 설치하기
 
-1. node 버전을 확인해주세요.
-   ```
-   node -v
-   ```
-   - 명령어를 입력했을 때 **16.13.0** 이 아니라면 버전을 맞춰주세요
-2. yarn 버전을 확인해주세요.
-   ```
-   yarn -v
-   ```
-   - 명령어를 입력했을 때 **1.22.10** 미만이면 아래 명령어를 통해 버전 업그레이드를 진행해주세요.
-     ```
-     yarn set version 1.22.10
-     ```
-3. 백엔드 저장소를 클론해주세요.
+1. 위에 명시된 버전들을 확인해주세요.
+2. 백엔드 저장소를 클론해주세요.
    ```
    git clone https://github.com/42-world/42world-Backend.git
    ```
-4. yarn으로 패키지를 설치해주세요.
+3. yarn으로 패키지를 설치해주세요.
    ```
    yarn install
    ```
@@ -84,11 +80,11 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 
 ## 실행하기
 
-- 아래 명령어를 입력하여 실행해주세요.
+아래 명령어를 입력하여 실행해주세요.
   ```
   make dev
   ```
-  - 명령어는 디렉토리 최상단에서 실행해주세요.
+명령어는 디렉토리 최상단에서 실행해주세요.
 
 ## 테스트 실행하기
 
@@ -96,9 +92,11 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 
 다른 테스트 및 유닛테스트는 추후 보강 예정입니다.
 
-```
-make test
-```
+아래 명령어를 입력하여 테스트를 실행해주세요.
+  ```
+  make test
+  ```
+명령어는 디렉토리 최상단에서 실행해주세요.
 
 # 기여하기
 
@@ -132,8 +130,8 @@ make test
 
 ## 기여한 사람들
 
-| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🥑 klim](https://github.com/PIut0) | [🥝 hyeonkim](https://github.com/hyongti) | [🍋 suhshin](https://github.com/rkskekzzz) | [🍍 sham](https://github.com/GulSam00) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) |
-| ---------------------------------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------ | -------------------------------------- | -------------------------------------------- | --------------------------------------- |
+| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) | [🍏 sikang](https://github.com/Yaminyam) | [👻 seongpar](https://github.com/mimseong) | [🍌 juchoi](https://github.com/raejun92)
+| ---------------------------------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------ | -------------------------------------- | -------------------------------------------- |
 
 ## 개발노트
 

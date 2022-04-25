@@ -46,13 +46,14 @@ export class ArticleRepository extends Repository<Article> {
   }
 
   async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
+    const WEEK = 7 * 24 * 60 * 60 * 1000;
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .orderBy('article.like_count', 'DESC')
       .addOrderBy('article.created_at', 'DESC')
       .andWhere('article.created_at >= :week_2', {
-        week_2: new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000),
+        week_2: new Date(new Date().getTime() - 2 * WEEK),
       });
 
     if (options.take) {

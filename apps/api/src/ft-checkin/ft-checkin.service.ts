@@ -1,4 +1,5 @@
 import { CacheService } from '@app/common/cache/cache.service';
+import { logger } from '@app/utils/logger';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import axios from 'axios';
@@ -18,14 +19,8 @@ export class GetFtCheckinDto {
 export class FtCheckinService {
   constructor(private readonly cacheService: CacheService) {}
 
-  async fetchData(
-    cacheKey: string,
-    cacheTTL: number,
-    endpoint: string,
-  ): Promise<GetFtCheckinDto> {
-    const ftCheckinData = await this.cacheService.get<GetFtCheckinDto>(
-      cacheKey,
-    );
+  async fetchData(cacheKey: string): Promise<FtCheckinDto> {
+    const ftCheckinData = await this.cacheService.get<FtCheckinDto>(cacheKey);
 
     if (!ftCheckinData) {
       try {
@@ -40,7 +35,7 @@ export class FtCheckinService {
         });
         return realData;
       } catch (e) {
-        console.error(e);
+        logger.error(e);
         throw new NotFoundException('데이터를 받아올 수 없습니다.');
       }
     }

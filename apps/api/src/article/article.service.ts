@@ -166,7 +166,8 @@ export class ArticleService {
 
   async increaseLikeCount(article: Article): Promise<Article> {
     await this.articleRepository.increaseLikeCount(article.id);
-    return { ...article, likeCount: article.likeCount + 1 };
+    article.likeCount += 1;
+    return article;
   }
 
   async decreaseLikeCount(article: Article): Promise<Article | never> {
@@ -174,6 +175,7 @@ export class ArticleService {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.articleRepository.decreaseLikeCount(article.id);
-    return { ...article, likeCount: article.likeCount - 1 };
+    article.likeCount -= 1;
+    return article;
   }
 }

@@ -1,0 +1,31 @@
+version: '3.4'
+services:
+  api:
+    image: 42world-backend-api
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - ./config/.env.prod
+    environment:
+      - NODE_ENV=prod
+    ports:
+      - '80:80'
+    networks:
+      - overlay
+  redis:
+    image: redis:6.2.5
+    command: redis-server --port 6379
+    hostname: redis6379
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - '6379:6379'
+    networks:
+      - overlay
+networks:
+  overlay:

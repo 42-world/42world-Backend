@@ -1,14 +1,6 @@
 import { UserService } from '@api/user/user.service';
-import { AllExceptionsFilter } from '@app/common/filters/all-exception.filter';
 import { getCookieOption } from '@app/utils/utils';
-import {
-  Controller,
-  Delete,
-  Get,
-  Res,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Delete, Get, Res, UseGuards } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOkResponse,
@@ -49,7 +41,6 @@ export class AuthController {
   @Get('github/callback')
   @Public()
   @UseGuards(GithubAuthGuard)
-  @UseFilters(AllExceptionsFilter)
   @ApiOperation({
     summary: '깃허브 로그인 콜백',
     description: `

@@ -8,7 +8,7 @@ import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
@@ -26,7 +26,7 @@ describe('Category', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestBaseModule, UserModule, AuthModule, CategoryModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, CategoryModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);

@@ -42,7 +42,10 @@ export class CommentService {
       ...createCommentDto,
       writerId: writer.id,
     });
-    this.notificationService.createNewComment(article, comment);
+
+    if (writer.id !== article.writerId) {
+      this.notificationService.createNewComment(article, comment);
+    }
     this.articleService.increaseCommentCount(article.id);
     return comment;
   }
