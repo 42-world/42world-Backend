@@ -135,9 +135,7 @@ describe('Reaction', () => {
         users,
         categories,
       );
-      const article = articles.first;
-      const comment = dummy.comment(user.id, article.id, 'content');
-      await commentRepository.save(comment);
+      await dummy.createDummyComments(commentRepository, users, articles);
     });
 
     test('[성공] POST - 좋아요가 없는 경우', async () => {

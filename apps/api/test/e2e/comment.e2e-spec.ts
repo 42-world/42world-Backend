@@ -36,6 +36,7 @@ describe('Comments', () => {
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
   let articles: dummy.DummyArticles;
+  let comments: dummy.DummyComments;
   let cadetUser: User;
   let anotherCadetUser: User;
   let adminUser: User;
@@ -139,8 +140,12 @@ describe('Comments', () => {
     let comment: Comment;
 
     beforeEach(async () => {
-      comment = dummy.comment(cadetUser.id, targetArticle.id, commentContent);
-      await commentRepository.save(comment);
+      comments = await dummy.createDummyComments(
+        commentRepository,
+        users,
+        articles,
+      );
+      comment = comments.first;
     });
 
     test('[성공] PUT - 댓글 수정', async () => {

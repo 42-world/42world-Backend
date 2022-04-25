@@ -2,6 +2,7 @@ import { ArticleRepository } from '@api/article/repositories/article.repository'
 import { AuthService } from '@api/auth/auth.service';
 import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
+import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
@@ -230,4 +231,41 @@ export const createDummyArticles = async (
     ),
   };
   return dummyArticles;
+};
+
+export type DummyComments = {
+  first: Comment;
+  second: Comment;
+  anotherFirst: Comment;
+  anotherSecond: Comment;
+};
+
+export const createDummyComments = async (
+  commentRepository: CommentRepository,
+  dummyUsers: DummyUsers,
+  dummyArticles: DummyArticles,
+): Promise<DummyComments> => {
+  const dummyComments: DummyComments = {
+    first: await commentRepository.save(
+      comment(dummyUsers.cadet[0].id, dummyArticles.first.id, 'first comment'),
+    ),
+    second: await commentRepository.save(
+      comment(dummyUsers.cadet[1].id, dummyArticles.first.id, 'second comment'),
+    ),
+    anotherFirst: await commentRepository.save(
+      comment(
+        dummyUsers.cadet[0].id,
+        dummyArticles.second.id,
+        'another first comment',
+      ),
+    ),
+    anotherSecond: await commentRepository.save(
+      comment(
+        dummyUsers.cadet[1].id,
+        dummyArticles.second.id,
+        'another second comment',
+      ),
+    ),
+  };
+  return dummyComments;
 };

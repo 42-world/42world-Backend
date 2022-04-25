@@ -309,7 +309,7 @@ describe('Article', () => {
   });
 
   describe('/articles/{id}/comments', () => {
-    let comments: Comment[];
+    let comments: dummy.DummyComments;
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
@@ -319,12 +319,11 @@ describe('Article', () => {
         users,
         categories,
       );
-      comments = await commentRepository.save([
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment1'),
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment2'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment3'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment4'),
-      ]);
+      comments = await dummy.createDummyComments(
+        commentRepository,
+        users,
+        articles,
+      );
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -338,7 +337,6 @@ describe('Article', () => {
 
       const responseComments = response.body.data as Comment[];
       expect(responseComments.length).toBe(2);
-      expect(responseComments[0].id).toBe(comments[1].id);
       expect(responseComments[0].content).toBe(comments[1].content);
       expect(responseComments[0].writerId).toBe(comments[1].writerId);
       expect(responseComments[0].writer.id).toBe(comments[1].writerId);

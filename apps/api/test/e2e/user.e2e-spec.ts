@@ -39,6 +39,7 @@ describe('User', () => {
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
   let articles: dummy.DummyArticles;
+  let comments: dummy.DummyComments;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -305,9 +306,12 @@ describe('User', () => {
         users,
         categories,
       );
-      article = articles.first;
-      comment = dummy.comment(user.id, article.id, 'content');
-      await commentRepository.save(comment);
+      comments = await dummy.createDummyComments(
+        commentRepository,
+        users,
+        articles,
+      );
+      comment = comments.first;
     });
 
     test('[성공] GET - 내가 작성한 댓글 가져오기', async () => {
@@ -319,7 +323,7 @@ describe('User', () => {
 
       const comments = response.body.data as Comment[];
 
-      expect(comments.length).toEqual(1);
+      expect(comments.length).toEqual(2);
       expect(comments[0].content).toEqual(comment.content);
     });
 
@@ -331,7 +335,6 @@ describe('User', () => {
   describe('/users/me/like-articles', () => {
     let user: User;
     let article: Article;
-    let comment: Comment;
     let reactionArticle: ReactionArticle;
 
     beforeEach(async () => {
@@ -346,8 +349,7 @@ describe('User', () => {
         categories,
       );
       article = articles.first;
-      comment = dummy.comment(user.id, article.id, 'content');
-      await commentRepository.save(comment);
+      await dummy.createDummyComments(commentRepository, users, articles);
       reactionArticle = dummy.reactionArticle(article.id, user.id);
       await reactionArticleRepository.save(reactionArticle);
     });
