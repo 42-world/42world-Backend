@@ -292,7 +292,6 @@ describe('User', () => {
 
   describe('/users/me/comments', () => {
     let user: User;
-    let article: Article;
     let comment: Comment;
 
     beforeEach(async () => {
@@ -324,7 +323,7 @@ describe('User', () => {
       const comments = response.body.data as Comment[];
 
       expect(comments.length).toEqual(2);
-      expect(comments[0].content).toEqual(comment.content);
+      expect(comments[1].content).toEqual(comment.content);
     });
 
     test.skip('[성공] GET - 내가 작성한 댓글 가져오기 - 익명', async () => {
