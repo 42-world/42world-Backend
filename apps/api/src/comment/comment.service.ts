@@ -131,7 +131,7 @@ export class CommentService {
     await this.commentRepository.update(comment.id, {
       likeCount: () => 'like_count - 1',
     });
-    comment.likeCount += 1;
+    comment.likeCount -= 1;
     return comment;
   }
 }
