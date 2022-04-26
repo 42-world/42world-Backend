@@ -71,34 +71,4 @@ export class ArticleRepository extends Repository<Article> {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
   }
-
-  async increaseViewCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET view_count = view_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async increaseCommentCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET comment_count = comment_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async decreaseCommentCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET comment_count = comment_count - 1 WHERE id=${id}`,
-    );
-  }
-
-  async increaseLikeCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET like_count = like_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async decreaseLikeCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET like_count = like_count - 1 WHERE id=${id}`,
-    );
-  }
 }
