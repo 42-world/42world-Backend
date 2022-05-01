@@ -1,7 +1,10 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class SearchAllRequestDto extends PaginationRequestDto {
-  @Type(() => Number)
-  readonly categoryId: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ example: '검색할 단어' })
+  readonly q: string;
 }
