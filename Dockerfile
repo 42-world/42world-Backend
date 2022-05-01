@@ -5,9 +5,6 @@ RUN mkdir /home/ft-world
 
 WORKDIR /home/ft-world
 
-COPY apps apps
-COPY libs libs
-
 COPY nest-cli.json .
 COPY tsconfig.build.json .
 COPY tsconfig.json .
@@ -15,6 +12,10 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN yarn install
+
+COPY libs libs
+COPY apps apps
+
 RUN yarn build
 
 ENTRYPOINT ["node", "dist/apps/api/src/main.js"]
