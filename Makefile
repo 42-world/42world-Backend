@@ -15,6 +15,7 @@ test:
 dev:
 	cp ./config/.env.dev ./config/.env
 	make db redis
+	mkdir -p db
 	./wait-for-healthy.sh 42world-backend-db
 	yarn start:dev api
 
@@ -25,9 +26,14 @@ dev-batch:
 	yarn start:dev batch
 
 alpha:
-	sudo docker stack deploy --compose-file docker-stack-alpha.yml alpha-stack
+	cp ./config/.env.alpha ./config/.env
+	mkdir -p db
+	docker build -t 42world-backend-api .
+	docker stack deploy --compose-file docker-stack-alpha.yml alpha-stack
 
 prod:
+	cp ./config/.env.prod ./config/.env
+	mkdir -p db
 	docker stack deploy --compose-file docker-stack-prod.yml prod-stack
 
 db-dev:
