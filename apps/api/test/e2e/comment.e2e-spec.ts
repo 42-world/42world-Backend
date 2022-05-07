@@ -13,7 +13,7 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
@@ -47,7 +47,7 @@ describe('Comments', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
@@ -86,7 +86,7 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(cadetUser);
-    JWT = dummy.jwt(cadetUser.id, cadetUser.role, authService);
+    JWT = dummy.jwt(cadetUser, authService);
 
     anotherCadetUser = dummy.user(
       'anothergithubUid',
@@ -95,11 +95,7 @@ describe('Comments', () => {
       UserRole.CADET,
     );
     await userRepository.save(anotherCadetUser);
-    anotherJWT = dummy.jwt(
-      anotherCadetUser.id,
-      anotherCadetUser.role,
-      authService,
-    );
+    anotherJWT = dummy.jwt(anotherCadetUser, authService);
 
     adminUser = dummy.user(
       'admingithubUid',
@@ -108,7 +104,7 @@ describe('Comments', () => {
       UserRole.ADMIN,
     );
     await userRepository.save(adminUser);
-    adminJWT = dummy.jwt(adminUser.id, adminUser.role, authService);
+    adminJWT = dummy.jwt(adminUser, authService);
 
     noviceUser = dummy.user(
       'novicegithubUid',
@@ -117,7 +113,7 @@ describe('Comments', () => {
       UserRole.NOVICE,
     );
     await userRepository.save(noviceUser);
-    noviceJWT = dummy.jwt(noviceUser.id, noviceUser.role, authService);
+    noviceJWT = dummy.jwt(noviceUser, authService);
 
     category = dummy.category(categoryName);
     await categoryRepository.save(category);

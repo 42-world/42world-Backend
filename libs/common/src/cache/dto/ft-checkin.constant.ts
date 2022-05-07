@@ -1,0 +1,2 @@
+export const FT_CHECKIN_KEY = 'FT_CHECKIN_API';
+export const MAX_CHECKIN_KEY = 'MAX_CHECKIN_API';

@@ -15,23 +15,23 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3308,
-      username: 'ft_world',
-      password: 'ft_world',
-      database: 'ft_world',
-      entities: [path.join(__dirname, '../../../../libs/**/*.entity{.ts,.js}')],
-      namingStrategy: new SnakeNamingStrategy(),
-      synchronize: true,
-      logging: false,
-    }),
     ConfigModule.forRoot({
       envFilePath: 'config/.env',
       isGlobal: true,
       cache: true,
       load: [configEmail],
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10),
+      username: process.env.DB_USER_NAME,
+      password: process.env.DB_USER_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [path.join(__dirname, '../../../../libs/**/*.entity{.ts,.js}')],
+      namingStrategy: new SnakeNamingStrategy(),
+      synchronize: true,
+      logging: false,
     }),
     AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
@@ -54,4 +54,4 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     },
   ],
 })
-export class TestBaseModule {}
+export class E2eTestBaseModule {}

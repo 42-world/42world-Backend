@@ -18,7 +18,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
@@ -34,7 +34,7 @@ describe('Notification', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         CategoryModule,
         ArticleModule,
@@ -97,7 +97,7 @@ describe('Notification', () => {
         'notification content',
       );
       await notificationRepository.save(dummyNotification);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] GET - 알람 가져오기', async () => {
@@ -154,7 +154,7 @@ describe('Notification', () => {
       );
       await notificationRepository.save(dummyNotification1);
       await notificationRepository.save(dummyNotification2);
-      JWT = dummy.jwt(dummyUser.id, dummyUser.role, authService);
+      JWT = dummy.jwt(dummyUser, authService);
     });
 
     test('[성공] PATCH - 알림 다 읽기', async () => {

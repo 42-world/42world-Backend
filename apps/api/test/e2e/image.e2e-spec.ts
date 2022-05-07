@@ -7,7 +7,7 @@ import { UserModule } from '@api/user/user.module';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestBaseModule } from '@test/e2e/test.base.module';
+import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
@@ -21,7 +21,7 @@ describe('Image', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestBaseModule, UserModule, AuthModule, ImageModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ImageModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -49,7 +49,7 @@ describe('Image', () => {
       );
       await userRepository.save(newUser);
 
-      JWT = dummy.jwt(newUser.id, newUser.role, authService);
+      JWT = dummy.jwt(newUser, authService);
     });
 
     afterEach(async () => {

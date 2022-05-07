@@ -42,7 +42,10 @@ export class CommentService {
       ...createCommentDto,
       writerId: writer.id,
     });
-    this.notificationService.createNewComment(article, comment);
+
+    if (writer.id !== article.writerId) {
+      this.notificationService.createNewComment(article, comment);
+    }
     this.articleService.increaseCommentCount(article.id);
     return comment;
   }
@@ -113,16 +116,22 @@ export class CommentService {
     this.articleService.decreaseCommentCount(comment.articleId);
   }
 
-  increaseLikeCount(comment: Comment): Promise<Comment> {
+  async increaseLikeCount(comment: Comment): Promise<Comment> {
+    await this.commentRepository.update(comment.id, {
+      likeCount: () => 'like_count + 1',
+    });
     comment.likeCount += 1;
-    return this.commentRepository.save(comment);
+    return comment;
   }
 
-  decreaseLikeCount(comment: Comment): Promise<Comment> {
+  async decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount <= 0) {
       throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
     }
+    await this.commentRepository.update(comment.id, {
+      likeCount: () => 'like_count - 1',
+    });
     comment.likeCount -= 1;
-    return this.commentRepository.save(comment);
+    return comment;
   }
 }
