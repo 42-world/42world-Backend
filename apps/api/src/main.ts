@@ -6,15 +6,21 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as Sentry from '@sentry/node';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
+import { SentryInterceptor } from './sentry.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
 
+  Sentry.init({
+    dsn: configService.get('SENTRY_KEY'),
+  });
+  app.useGlobalInterceptors(new SentryInterceptor());
   morgan.token('body', (req) => JSON.stringify(req.body));
   app.use(
     morgan(
