@@ -6,6 +6,7 @@ import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -20,7 +21,7 @@ import {
 } from 'typeorm';
 
 @Entity('article')
-export class Article {
+export class Article extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

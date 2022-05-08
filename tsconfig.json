@@ -11,11 +11,21 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@api/*": ["./apps/api/src/*"],
-      "@test/*": ["./apps/api/test/*"],
-      "@app/common/*": ["./libs/common/src/*"],
-      "@app/utils/*": ["./libs/utils/src/*"],
-      "@app/entity/*": ["libs/entity/src/*"]
+      "@api/*": [
+        "./apps/api/src/*"
+      ],
+      "@test/*": [
+        "./apps/api/test/*"
+      ],
+      "@app/common/*": [
+        "./libs/common/src/*"
+      ],
+      "@app/utils/*": [
+        "./libs/utils/src/*"
+      ],
+      "@app/entity/*": [
+        "libs/entity/src/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -14,7 +14,9 @@ import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
@@ -23,7 +25,7 @@ import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { TestBaseModule } from './test.base.module';
+import { E2eTestBaseModule } from './e2e-test.base.module';
 
 describe('User', () => {
   let userRepository: UserRepository;
@@ -38,7 +40,7 @@ describe('User', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TestBaseModule,
+        E2eTestBaseModule,
         UserModule,
         AuthModule,
         ArticleModule,
@@ -81,10 +83,7 @@ describe('User', () => {
       );
       await userRepository.save(user);
 
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] GET - 내 정보 가져오기', async () => {
@@ -107,10 +106,7 @@ describe('User', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] GET - 특정 유저 정보 가져오기', async () => {
@@ -157,10 +153,7 @@ describe('User', () => {
       );
       await userRepository.save(user);
       await userRepository.save(user2);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
     });
 
     test('[성공] PUT - 유저 프로필 변경', async () => {
@@ -279,8 +272,8 @@ describe('User', () => {
 
   describe('/users/me/articles', () => {
     let user: User;
-    let category;
-    let article;
+    let category: Category;
+    let article: Article;
 
     beforeEach(async () => {
       user = dummy.user(
@@ -290,10 +283,7 @@ describe('User', () => {
         UserRole.CADET,
       );
       await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      JWT = dummy.jwt(user, authService);
 
       category = dummy.category('자유게시판');
       await categoryRepository.save(category);
@@ -322,10 +312,10 @@ describe('User', () => {
   });
 
   describe('/users/me/comments', () => {
-    let user;
-    let category;
-    let article;
-    let comment;
+    let user: User;
+    let category: Category;
+    let article: Article;
+    let comment: Comment;
 
     beforeEach(async () => {
       user = dummy.user(
@@ -367,11 +357,11 @@ describe('User', () => {
   });
 
   describe('/users/me/like-articles', () => {
-    let user;
-    let category;
-    let article;
-    let comment;
-    let reactionArticle;
+    let user: User;
+    let category: Category;
+    let article: Article;
+    let comment: Comment;
+    let reactionArticle: ReactionArticle;
 
     beforeEach(async () => {
       user = dummy.user(

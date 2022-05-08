@@ -38,12 +38,10 @@ export class UserService {
     user: User,
     updateUserProfileDto: UpdateUserProfileRequestDto,
   ): Promise<User> {
-    const newUser: User = {
+    return this.userRepository.save({
       ...user,
       ...updateUserProfileDto,
-    };
-
-    return this.userRepository.save(newUser);
+    });
   }
 
   async updateToCadet(

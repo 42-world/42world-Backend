@@ -1,13 +1,9 @@
 FROM node:16-alpine3.14
 RUN apk add --no-cache 
 
-RUN mkdir ft-world
+RUN mkdir /home/ft-world
 
-WORKDIR ft-world
-
-COPY ./src ./src
-COPY ./test ./test
-COPY ./views ./views
+WORKDIR /home/ft-world
 
 COPY nest-cli.json .
 COPY tsconfig.build.json .
@@ -16,8 +12,10 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN yarn install
+
+COPY libs libs
+COPY apps apps
+
 RUN yarn build
 
-COPY ./views ./dist/views
-
-ENTRYPOINT ["node", "dist/main.js"]
+ENTRYPOINT ["node", "dist/apps/api/src/main.js"]
