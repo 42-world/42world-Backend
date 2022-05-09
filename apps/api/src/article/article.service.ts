@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
+import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { ArticleRepository } from './repositories/article.repository';
 
@@ -67,6 +68,19 @@ export class ArticleService {
       category,
       totalCount,
     };
+  }
+
+  async search(
+    user: User,
+    options: SearchArticleRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const { articles, totalCount } = await this.articleRepository.search(
+      options,
+    );
+    return { articles, totalCount };
   }
 
   findAllByWriterId(
