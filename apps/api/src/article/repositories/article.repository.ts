@@ -4,6 +4,7 @@ import { Article } from '@app/entity/article/article.entity';
 import { getPaginationSkip } from '@app/utils/utils';
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
+import { SearchArticleRequestDto } from '../dto/request/search-article-request.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -16,6 +17,26 @@ export class ArticleRepository extends Repository<Article> {
       .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
+  async search(options: SearchArticleRequestDto): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .andWhere('CHARINDEX(:q, title) > 0 OR CHARINDEX(:q, content) > 0', {
+        q: options.q,
+      })
+      .skip(getPaginationSkip(options))
+      .take(options.take)
       .orderBy('article.createdAt', options.order);
 
     const totalCount = await query.getCount();
