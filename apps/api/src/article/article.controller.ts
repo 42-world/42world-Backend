@@ -33,7 +33,9 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
+import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
+import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
 import { FindAllArticleResponseDto } from './dto/response/find-all-article-response.dto';
 import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
@@ -76,6 +78,26 @@ export class ArticleController {
       category,
       writer: user,
       user,
+    });
+  }
+
+  @Get('search')
+  @AlsoNovice()
+  @ApiOperation({ summary: '게시글 검색' })
+  @ApiPaginatedResponse(FindAllArticleResponseDto)
+  async search(
+    @GetUser() user: User,
+    @Query() options: SearchArticleRequestDto,
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.search(
+      user,
+      options,
+    );
+
+    return PaginationResponseDto.of({
+      data: ArticleResponseDto.ofArray({ articles, user }),
+      options,
+      totalCount,
     });
   }
 
