@@ -83,6 +83,19 @@ export class ArticleService {
     return { articles, totalCount };
   }
 
+  async searchByCategory(
+    user: User,
+    options: SearchArticleRequestDto,
+    categoryId: number,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const { articles, totalCount } =
+      await this.articleRepository.searchByCategory(categoryId, options);
+    return { articles, totalCount };
+  }
+
   async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
