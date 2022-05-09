@@ -45,6 +45,29 @@ export class ArticleRepository extends Repository<Article> {
     return { articles, totalCount };
   }
 
+  async searchByCategory(
+    categoryId: number,
+    options: SearchArticleRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .where('category_id = :id', { id: categoryId })
+      .andWhere('CHARINDEX(:q, title) > 0 OR CHARINDEX(:q, content) > 0', {
+        q: options.q,
+      })
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
   async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
