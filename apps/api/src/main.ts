@@ -10,7 +10,7 @@ import * as Sentry from '@sentry/node';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
-import { SentryInterceptor } from './sentry.interceptor';
+import { SentryInterceptor } from '../../../libs/common/src/interceptor/sentry.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
