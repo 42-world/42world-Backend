@@ -1,12 +1,9 @@
 import { CategoryService } from '@api/category/category.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { ReactionService } from '@api/reaction/reaction.service';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -22,8 +19,6 @@ export class ArticleService {
   constructor(
     private readonly articleRepository: ArticleRepository,
     private readonly categoryService: CategoryService,
-    @Inject(forwardRef(() => ReactionService))
-    private readonly reactionService: ReactionService,
   ) {}
 
   async create(
