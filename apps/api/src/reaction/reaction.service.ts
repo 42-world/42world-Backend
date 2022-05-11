@@ -121,34 +121,38 @@ export class ReactionService {
     return { comment, isLike };
   }
 
-  isMyReactionArticle(
+  async isMyReactionArticle(
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
   ): Promise<boolean> {
-    return this.reactionArticleRepository.isExist(userId, articleId, type);
+    return await this.reactionArticleRepository.isExist(
+      userId,
+      articleId,
+      type,
+    );
   }
 
-  findAllMyReactionComment(
+  async findAllMyReactionComment(
     userId: number,
     articleId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
   ): Promise<ReactionComment[]> {
-    return this.reactionCommentRepository.find({
+    return await this.reactionCommentRepository.find({
       userId,
       articleId,
       type,
     });
   }
 
-  findAllArticleByUserId(
+  async findAllArticleByUserId(
     userId: number,
     options: PaginationRequestDto,
   ): Promise<{
     likeArticles: ReactionArticle[];
     totalCount: number;
   }> {
-    return this.reactionArticleRepository.findAllArticleByUserId(
+    return await this.reactionArticleRepository.findAllArticleByUserId(
       userId,
       options,
     );

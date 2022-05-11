@@ -14,20 +14,20 @@ import { CategoryRepository } from './repositories/category.repository';
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
-    return this.categoryRepository.save(createCategoryDto);
+  async create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
+    return await this.categoryRepository.save(createCategoryDto);
   }
 
-  findAll(): Promise<Category[]> {
-    return this.categoryRepository.find();
+  async findAll(): Promise<Category[]> {
+    return await this.categoryRepository.find();
   }
 
-  findOneOrFail(id: number): Promise<Category | never> {
-    return this.categoryRepository.findOneOrFail(id);
+  async findOneOrFail(id: number): Promise<Category | never> {
+    return await this.categoryRepository.findOneOrFail(id);
   }
 
-  existOrFail(id: number): Promise<void | never> {
-    return this.categoryRepository.existOrFail(id);
+  async existOrFail(id: number): Promise<void | never> {
+    return await this.categoryRepository.existOrFail(id);
   }
 
   async updateName(id: number, name: string): Promise<Category | never> {
