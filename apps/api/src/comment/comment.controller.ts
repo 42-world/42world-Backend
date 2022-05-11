@@ -60,12 +60,16 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  updateContent(
+  async updateContent(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() writer: User,
     @Body() updateCommentDto: UpdateCommentRequestDto,
   ): Promise<void | never> {
-    return this.commentService.updateContent(id, writer.id, updateCommentDto);
+    return await this.commentService.updateContent(
+      id,
+      writer.id,
+      updateCommentDto,
+    );
   }
 
   @Delete(':id')
@@ -73,10 +77,10 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
-    return this.commentService.remove(id, writerId);
+    return await this.commentService.remove(id, writerId);
   }
 }
