@@ -1,8 +1,73 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "",
+  "sourceRoot": "apps/api",
   "compilerOptions": {
-    "assets": [{ "include": "views/**/*.ejs" }],
-    "watchAssets": true
+    "webpack": false,
+    "tsConfigPath": "./tsconfig.json"
+  },
+  "monorepo": true,
+  "root": "apps/api",
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "src/main",
+      "sourceRoot": "apps/api",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "views/**/*.ejs",
+            "outDir": "dist/apps/api"
+          }
+        ],
+        "watchAssets": true
+      }
+    },
+    "batch": {
+      "type": "application",
+      "root": "apps/batch",
+      "entryFile": "main",
+      "sourceRoot": "apps/batch/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/batch/tsconfig.app.json"
+      }
+    },
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "entryFile": "index",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "utils": {
+      "type": "library",
+      "root": "libs/utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/utils/tsconfig.lib.json"
+      }
+    },
+    "entity": {
+      "type": "library",
+      "root": "libs/entity",
+      "entryFile": "index",
+      "sourceRoot": "libs/entity/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/entity/tsconfig.lib.json"
+      }
+    },
+    "admin": {
+      "type": "application",
+      "root": "apps/admin",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin/tsconfig.app.json"
+      }
+    }
   }
 }
