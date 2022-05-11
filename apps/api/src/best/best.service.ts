@@ -3,12 +3,14 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { Article } from '@app/entity/article/article.entity';
 import { Best } from '@app/entity/best/best.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CreateBestRequestDto } from './dto/request/create-best-request.dto';
 
 @Injectable()
 export class BestService {
   constructor(
+    @InjectRepository(Best)
     private readonly bestRepository: Repository<Best>,
     private readonly articleService: ArticleService,
   ) {}
