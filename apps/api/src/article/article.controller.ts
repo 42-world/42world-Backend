@@ -164,12 +164,16 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void | never> {
-    return this.articleService.update(id, writerId, updateArticleRequestDto);
+    return await this.articleService.update(
+      id,
+      writerId,
+      updateArticleRequestDto,
+    );
   }
 
   @Delete(':id')
@@ -177,10 +181,10 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
-    return this.articleService.remove(id, writerId);
+    return await this.articleService.remove(id, writerId);
   }
 }

@@ -14,18 +14,21 @@ export class NotificationService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
-  createNewComment(article: Article, comment: Comment): Promise<Notification> {
+  async createNewComment(
+    article: Article,
+    comment: Comment,
+  ): Promise<Notification> {
     const notification = new CreateNotificationDto({
       type: NotificationType.NEW_COMMENT,
       content: `게시글 ${article.title} 에 새로운 댓글이 달렸습니다.\n${comment.content}`,
       articleId: article.id,
       userId: article.writerId,
     });
-    return this.notificationRepository.save(notification);
+    return await this.notificationRepository.save(notification);
   }
 
-  findByUserId(userId: number): Promise<Notification[]> {
-    return this.notificationRepository.find({ where: { userId } });
+  async findByUserId(userId: number): Promise<Notification[]> {
+    return await this.notificationRepository.find({ where: { userId } });
   }
 
   async updateIsReadByUserId(userId: number): Promise<void> {

@@ -72,18 +72,21 @@ export class CommentService {
     return { comments, category, totalCount };
   }
 
-  findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
-    return this.commentRepository.findOneOrFail(id, options);
+  async findOneByIdOrFail(
+    id: number,
+    options?: FindOneOptions,
+  ): Promise<Comment> {
+    return await this.commentRepository.findOneOrFail(id, options);
   }
 
-  findAllByWriterId(
+  async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
   ): Promise<{
     comments: Comment[];
     totalCount: number;
   }> {
-    return this.commentRepository.findAllByWriterId(writerId, options);
+    return await this.commentRepository.findAllByWriterId(writerId, options);
   }
 
   async updateContent(
