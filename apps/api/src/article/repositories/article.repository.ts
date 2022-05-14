@@ -60,7 +60,7 @@ export class ArticleRepository extends Repository<Article> {
       query.limit(options.take);
     }
 
-    return query.getMany();
+    return await query.getMany();
   }
 
   async existOrFail(id: number): Promise<void> {
