@@ -69,26 +69,26 @@ export class ArticleService {
     };
   }
 
-  findAllByWriterId(
+  async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
   ): Promise<{
     articles: Article[];
     totalCount: number;
   }> {
-    return this.articleRepository.findAllByWriterId(writerId, options);
+    return await this.articleRepository.findAllByWriterId(writerId, options);
   }
 
-  findAllBest(options: PaginationRequestDto): Promise<Article[]> {
-    return this.articleRepository.findAllBest(options);
+  async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
+    return await this.articleRepository.findAllBest(options);
   }
 
-  existOrFail(id: number): Promise<void> {
-    return this.articleRepository.existOrFail(id);
+  async existOrFail(id: number): Promise<void> {
+    return await this.articleRepository.existOrFail(id);
   }
 
-  findOneByIdOrFail(id: number): Promise<Article | never> {
-    return this.articleRepository.findOneOrFail(id);
+  async findOneByIdOrFail(id: number): Promise<Article | never> {
+    return await this.articleRepository.findOneOrFail(id);
   }
 
   async findOneOrFail(
