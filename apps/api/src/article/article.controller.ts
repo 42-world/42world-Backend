@@ -169,11 +169,7 @@ export class ArticleController {
     @GetUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void | never> {
-    return await this.articleService.update(
-      id,
-      writerId,
-      updateArticleRequestDto,
-    );
+    return this.articleService.update(id, writerId, updateArticleRequestDto);
   }
 
   @Delete(':id')
@@ -185,6 +181,6 @@ export class ArticleController {
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
-    return await this.articleService.remove(id, writerId);
+    return this.articleService.remove(id, writerId);
   }
 }

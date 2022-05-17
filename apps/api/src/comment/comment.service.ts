@@ -76,7 +76,7 @@ export class CommentService {
     id: number,
     options?: FindOneOptions,
   ): Promise<Comment> {
-    return await this.commentRepository.findOneOrFail(id, options);
+    return this.commentRepository.findOneOrFail(id, options);
   }
 
   async findAllByWriterId(
@@ -86,7 +86,7 @@ export class CommentService {
     comments: Comment[];
     totalCount: number;
   }> {
-    return await this.commentRepository.findAllByWriterId(writerId, options);
+    return this.commentRepository.findAllByWriterId(writerId, options);
   }
 
   async updateContent(

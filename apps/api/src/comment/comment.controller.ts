@@ -65,11 +65,7 @@ export class CommentController {
     @GetUser() writer: User,
     @Body() updateCommentDto: UpdateCommentRequestDto,
   ): Promise<void | never> {
-    return await this.commentService.updateContent(
-      id,
-      writer.id,
-      updateCommentDto,
-    );
+    return this.commentService.updateContent(id, writer.id, updateCommentDto);
   }
 
   @Delete(':id')
@@ -81,6 +77,6 @@ export class CommentController {
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
-    return await this.commentService.remove(id, writerId);
+    return this.commentService.remove(id, writerId);
   }
 }

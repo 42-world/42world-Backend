@@ -30,6 +30,6 @@ export class NotificationController {
   @ApiOperation({ summary: '알람 다 읽기' })
   @ApiOkResponse({ description: '알림 다 읽음' })
   async update(@GetUser('id') id: number): Promise<void> {
-    return await this.notificationService.updateIsReadByUserId(id);
+    return this.notificationService.updateIsReadByUserId(id);
   }
 }

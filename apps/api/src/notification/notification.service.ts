@@ -24,11 +24,11 @@ export class NotificationService {
       articleId: article.id,
       userId: article.writerId,
     });
-    return await this.notificationRepository.save(notification);
+    return this.notificationRepository.save(notification);
   }
 
   async findByUserId(userId: number): Promise<Notification[]> {
-    return await this.notificationRepository.find({ where: { userId } });
+    return this.notificationRepository.find({ where: { userId } });
   }
 
   async updateIsReadByUserId(userId: number): Promise<void> {

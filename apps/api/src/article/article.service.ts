@@ -76,19 +76,19 @@ export class ArticleService {
     articles: Article[];
     totalCount: number;
   }> {
-    return await this.articleRepository.findAllByWriterId(writerId, options);
+    return this.articleRepository.findAllByWriterId(writerId, options);
   }
 
   async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
-    return await this.articleRepository.findAllBest(options);
+    return this.articleRepository.findAllBest(options);
   }
 
   async existOrFail(id: number): Promise<void> {
-    return await this.articleRepository.existOrFail(id);
+    return this.articleRepository.existOrFail(id);
   }
 
   async findOneByIdOrFail(id: number): Promise<Article | never> {
-    return await this.articleRepository.findOneOrFail(id);
+    return this.articleRepository.findOneOrFail(id);
   }
 
   async findOneOrFail(

@@ -20,6 +20,6 @@ export class ImageService {
       ACL: 'public-read',
     };
 
-    return await this.s3.getSignedUrlPromise('putObject', s3Params);
+    return this.s3.getSignedUrlPromise('putObject', s3Params);
   }
 }
