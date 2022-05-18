@@ -25,7 +25,7 @@ export const ormconfig = (): IOrmconfig => ({
     entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
     namingStrategy: new SnakeNamingStrategy(),
 
-    timezone: '+09:00', // KST
+    timezone: 'Z', // UTC
 
     synchronize: false,
     migrationsRun: true,
