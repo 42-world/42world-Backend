@@ -26,7 +26,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
 import * as path from 'path';
-import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -77,7 +76,6 @@ import { SearchModule } from './search/search.module';
     ReactionModule,
     FtCheckinModule,
     ImageModule,
-    SearchModule,
   ],
   controllers: [AppController],
   providers: [

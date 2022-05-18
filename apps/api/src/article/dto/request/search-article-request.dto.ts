@@ -1,7 +1,6 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator/types/decorator/common/IsNotEmpty';
-import { IsString } from 'class-validator/types/decorator/typechecker/IsString';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class SearchArticleRequestDto extends PaginationRequestDto {
   @IsString()

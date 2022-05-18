@@ -32,8 +32,11 @@ export class ArticleRepository extends Repository<Article> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
-      .andWhere('CHARINDEX(:q, title) > 0 OR CHARINDEX(:q, content) > 0', {
-        q: options.q,
+      .where('article.title like :q', {
+        q: `%${options.q}%`,
+      })
+      .orWhere('article.content like :q', {
+        q: `%${options.q}%`,
       })
       .skip(getPaginationSkip(options))
       .take(options.take)
