@@ -59,10 +59,13 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.writer', 'writer')
       .skip(getPaginationSkip(options))
       .take(options.take)
-      .where('category_id = :id', { id: categoryId })
-      .andWhere('CHARINDEX(:q, title) > 0 OR CHARINDEX(:q, content) > 0', {
-        q: options.q,
+      .where('article.title like :q', {
+        q: `%${options.q}%`,
       })
+      .orWhere('article.content like :q', {
+        q: `%${options.q}%`,
+      })
+      .andWhere('category_id = :id', { id: categoryId })
       .orderBy('article.createdAt', options.order);
 
     const totalCount = await query.getCount();
