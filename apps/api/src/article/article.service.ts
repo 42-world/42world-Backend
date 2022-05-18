@@ -69,7 +69,7 @@ export class ArticleService {
     };
   }
 
-  findAllByWriterId(
+  async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
   ): Promise<{
@@ -79,15 +79,15 @@ export class ArticleService {
     return this.articleRepository.findAllByWriterId(writerId, options);
   }
 
-  findAllBest(options: PaginationRequestDto): Promise<Article[]> {
+  async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
     return this.articleRepository.findAllBest(options);
   }
 
-  existOrFail(id: number): Promise<void> {
+  async existOrFail(id: number): Promise<void> {
     return this.articleRepository.existOrFail(id);
   }
 
-  findOneByIdOrFail(id: number): Promise<Article | never> {
+  async findOneByIdOrFail(id: number): Promise<Article | never> {
     return this.articleRepository.findOneOrFail(id);
   }
 

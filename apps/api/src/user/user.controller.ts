@@ -87,7 +87,7 @@ export class UserController {
   @ApiOperation({ summary: '유저 삭제' })
   @ApiOkResponse({ description: '유저 삭제 성공' })
   async remove(@GetUser('id') id: number): Promise<void> {
-    return await this.userService.remove(id);
+    return this.userService.remove(id);
   }
 
   @Get('me/like-articles')

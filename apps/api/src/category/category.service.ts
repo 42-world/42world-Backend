@@ -15,26 +15,26 @@ export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
-    return await this.categoryRepository.save(createCategoryDto);
+    return this.categoryRepository.save(createCategoryDto);
   }
 
   async findAll(): Promise<Category[]> {
-    return await this.categoryRepository.find();
+    return this.categoryRepository.find();
   }
 
   async findOneOrFail(id: number): Promise<Category | never> {
-    return await this.categoryRepository.findOneOrFail(id);
+    return this.categoryRepository.findOneOrFail(id);
   }
 
   async existOrFail(id: number): Promise<void | never> {
-    return await this.categoryRepository.existOrFail(id);
+    return this.categoryRepository.existOrFail(id);
   }
 
   async updateName(id: number, name: string): Promise<Category | never> {
     const category = await this.categoryRepository.findOneOrFail(id);
 
     category.name = name;
-    return await this.categoryRepository.save(category);
+    return this.categoryRepository.save(category);
   }
 
   async remove(id: number): Promise<void | never> {
