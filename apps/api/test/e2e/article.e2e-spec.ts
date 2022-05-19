@@ -817,7 +817,7 @@ describe('Article', () => {
     });
 
     // TODO - 자유 게시글은 cadet 권한인데 noviceJWT으로 날릴 경우 검색이 되면 안 된다
-    test.skip('[성공] GET - 검색되는 게시글이 권한이 없는 경우', async () => {
+    test('[성공] GET - 검색되는 게시글이 권한이 없는 경우', async () => {
       await articleRepository.save(
         dummy.article(
           categories.free.id,
