@@ -1,7 +1,7 @@
 import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { compareRole } from '@app/utils/utils';
+import { compareRole, includeRole } from '@app/utils/utils';
 import {
   Injectable,
   NotAcceptableException,
@@ -61,5 +61,10 @@ export class CategoryService {
       throw new NotAcceptableException(
         `당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`,
       );
+  }
+
+  available(user: User): Promise<Category[]> {
+    const availableRole = includeRole(user.role as UserRole);
+    return this.categoryRepository.available(availableRole);
   }
 }
