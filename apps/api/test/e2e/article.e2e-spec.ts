@@ -733,8 +733,8 @@ describe('Article', () => {
     const SearchArticleRequestDto = {
       q: searchWord,
     };
-    let cadetJWT;
-    let noviceJWT;
+    let cadetJWT: string;
+    let noviceJWT: string;
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
