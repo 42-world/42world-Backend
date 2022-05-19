@@ -1,6 +1,7 @@
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
 import { getPaginationSkip } from '@app/utils/utils';
 import { NotFoundException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
@@ -25,7 +26,10 @@ export class ArticleRepository extends Repository<Article> {
     return { articles, totalCount };
   }
 
-  async search(options: SearchArticleRequestDto): Promise<{
+  async search(
+    options: SearchArticleRequestDto,
+    availableCategories: Category[],
+  ): Promise<{
     articles: Article[];
     totalCount: number;
   }> {
@@ -37,6 +41,9 @@ export class ArticleRepository extends Repository<Article> {
       })
       .orWhere('article.content like :q', {
         q: `%${options.q}%`,
+      })
+      .andWhere('category_id IN (:...ids)', {
+        ids: availableCategories.map((c) => c.id),
       })
       .skip(getPaginationSkip(options))
       .take(options.take)
