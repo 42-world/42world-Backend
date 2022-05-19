@@ -72,8 +72,10 @@ export class ArticleService {
     articles: Article[];
     totalCount: number;
   }> {
+    const availableCategories = await this.categoryService.available(user);
     const { articles, totalCount } = await this.articleRepository.search(
       options,
+      availableCategories,
     );
     return { articles, totalCount };
   }
@@ -86,6 +88,12 @@ export class ArticleService {
     articles: Article[];
     totalCount: number;
   }> {
+    const availableCategories = await this.categoryService.available(user);
+    if (!availableCategories.some((category) => category.id === categoryId)) {
+      throw new NotAcceptableException(
+        `Category ${categoryId} is not available`,
+      );
+    }
     const { articles, totalCount } =
       await this.articleRepository.searchByCategory(categoryId, options);
     return { articles, totalCount };
