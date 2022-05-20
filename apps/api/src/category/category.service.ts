@@ -14,19 +14,19 @@ import { CategoryRepository } from './repositories/category.repository';
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
+  async create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
     return this.categoryRepository.save(createCategoryDto);
   }
 
-  findAll(): Promise<Category[]> {
+  async findAll(): Promise<Category[]> {
     return this.categoryRepository.find();
   }
 
-  findOneOrFail(id: number): Promise<Category | never> {
+  async findOneOrFail(id: number): Promise<Category | never> {
     return this.categoryRepository.findOneOrFail(id);
   }
 
-  existOrFail(id: number): Promise<void | never> {
+  async existOrFail(id: number): Promise<void | never> {
     return this.categoryRepository.existOrFail(id);
   }
 
@@ -34,7 +34,7 @@ export class CategoryService {
     const category = await this.categoryRepository.findOneOrFail(id);
 
     category.name = name;
-    return await this.categoryRepository.save(category);
+    return this.categoryRepository.save(category);
   }
 
   async remove(id: number): Promise<void | never> {

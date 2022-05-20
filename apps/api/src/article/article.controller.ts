@@ -208,7 +208,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
@@ -221,7 +221,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
