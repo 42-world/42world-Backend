@@ -1,5 +1,5 @@
 export const jwtConstants = {
-  secret: 'secretKey',
+  secret: process.env.JWT_SECRET,
 };
 
 export const FORBIDDEN_USER_ROLE = '접근 권한 없음';
