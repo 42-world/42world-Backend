@@ -36,6 +36,12 @@ prod:
 	mkdir -p db
 	docker stack deploy --compose-file docker-stack-prod.yml prod-stack
 
+prod-build:
+	docker build -t 42world/backend-api:latest .
+
+prod-push:
+	docker push 42world/backend-api:latest
+
 db-dev:
 	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d db
 
