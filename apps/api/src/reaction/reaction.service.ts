@@ -121,7 +121,7 @@ export class ReactionService {
     return { comment, isLike };
   }
 
-  isMyReactionArticle(
+  async isMyReactionArticle(
     userId: number,
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
@@ -129,7 +129,7 @@ export class ReactionService {
     return this.reactionArticleRepository.isExist(userId, articleId, type);
   }
 
-  findAllMyReactionComment(
+  async findAllMyReactionComment(
     userId: number,
     articleId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
@@ -141,7 +141,7 @@ export class ReactionService {
     });
   }
 
-  findAllArticleByUserId(
+  async findAllArticleByUserId(
     userId: number,
     options: PaginationRequestDto,
   ): Promise<{

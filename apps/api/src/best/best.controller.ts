@@ -51,7 +51,9 @@ export class BestController {
   @Get()
   @ApiOperation({ summary: '인기글 가져오기' })
   @ApiOkResponse({ description: '인기글 목록', type: [Article] })
-  findAll(@Query() findAllBestDto: PaginationRequestDto): Promise<Article[]> {
+  async findAll(
+    @Query() findAllBestDto: PaginationRequestDto,
+  ): Promise<Article[]> {
     return this.bestService.findAll(findAllBestDto);
   }
 
@@ -61,7 +63,7 @@ export class BestController {
   @ApiOkResponse({ description: '인기글 내리기 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiNotFoundResponse({ description: '존재하지 않는 인기글입니다.' })
-  remove(@Param('id') id: number): Promise<void | never> {
+  async remove(@Param('id') id: number): Promise<void | never> {
     return this.bestService.remove(id);
   }
 }

@@ -11,7 +11,13 @@ export class AppController {
   @ApiOperation({ summary: 'Hello world!' })
   @ApiOkResponse({ description: 'Hello world!' })
   getHello(): string {
-    logger.info('Hello World!');
+    logger.info('Hello World!!');
     return 'Hello World!';
+  }
+
+  @Get('/error')
+  @Public()
+  getError(): void {
+    throw new Error('Hi Sentry!');
   }
 }

@@ -60,7 +60,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  updateContent(
+  async updateContent(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() writer: User,
     @Body() updateCommentDto: UpdateCommentRequestDto,
@@ -73,7 +73,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {
