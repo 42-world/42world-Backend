@@ -63,8 +63,8 @@ export class CategoryService {
       );
   }
 
-  available(user: User): Promise<Category[]> {
+  getAvailable(user: User): Promise<Category[]> {
     const availableRole = includeRole(user.role as UserRole);
-    return this.categoryRepository.available(availableRole);
+    return this.categoryRepository.getAvailable(availableRole);
   }
 }

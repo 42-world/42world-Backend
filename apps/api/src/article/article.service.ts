@@ -72,7 +72,7 @@ export class ArticleService {
     articles: Article[];
     totalCount: number;
   }> {
-    const availableCategories = await this.categoryService.available(user);
+    const availableCategories = await this.categoryService.getAvailable(user);
     const { articles, totalCount } = await this.articleRepository.search(
       options,
       availableCategories,
@@ -88,7 +88,7 @@ export class ArticleService {
     articles: Article[];
     totalCount: number;
   }> {
-    const availableCategories = await this.categoryService.available(user);
+    const availableCategories = await this.categoryService.getAvailable(user);
     if (!availableCategories.some((category) => category.id === categoryId)) {
       throw new NotAcceptableException(
         `Category ${categoryId} is not available`,

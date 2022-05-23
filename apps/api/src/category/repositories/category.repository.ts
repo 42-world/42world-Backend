@@ -14,7 +14,7 @@ export class CategoryRepository extends Repository<Category> {
     }
   }
 
-  available(role: UserRole[]): Promise<Category[]> {
+  getAvailable(role: UserRole[]): Promise<Category[]> {
     const query = this.createQueryBuilder('category').where(
       'category.readableArticle IN (:...userRole)',
       { userRole: role },
