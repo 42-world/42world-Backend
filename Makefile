@@ -6,6 +6,9 @@ COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 init:
 	docker swarm init
 
+leave:
+	docker swarm leave --force
+
 test:
 	cp ./infra/config/.env.test ./infra/config/.env
 	./run_test_db.sh
@@ -86,6 +89,12 @@ clean:
 	cd infra && ${COMPOSE} down
 
 clean-all: clean
+	rm -rf db dist
+
+swarm-clean:
+	docker service rm $(shell docker service ls -q)
+
+swarm-clean-all: swarm-clean
 	rm -rf db dist
 
 .PHONY: db
