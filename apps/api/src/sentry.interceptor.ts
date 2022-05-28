@@ -5,7 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import * as Sentry from '@sentry/minimal';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class SentryInterceptor implements NestInterceptor {
     return next.handle().pipe(
       catchError((error) => {
         Sentry.captureException(error);
-        return null;
+        return throwError(() => error);
       }),
     );
   }
