@@ -11,7 +11,7 @@ leave:
 
 test:
 	cp ./infra/config/.env.test ./infra/config/.env
-	./run_test_db.sh
+	./infra/run_test_db.sh
 	./infra/wait-for-healthy.sh ft_world-mysql-test
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
