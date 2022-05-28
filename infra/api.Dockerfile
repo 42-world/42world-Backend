@@ -16,6 +16,6 @@ RUN yarn install
 COPY libs libs
 COPY apps apps
 
-RUN yarn build
+RUN yarn build api
 
 ENTRYPOINT ["node", "dist/apps/api/src/main.js"]
