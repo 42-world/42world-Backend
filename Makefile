@@ -10,7 +10,7 @@ leave:
 	docker swarm leave --force
 
 test:
-	cp ./infra/config/.env.test ./infra/config/.env
+	-cp ./infra/config/.env.test ./infra/config/.env
 	./infra/run_test_db.sh
 	./infra/wait-for-healthy.sh ft_world-mysql-test
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
