@@ -4,37 +4,40 @@ COMPOSE_ENV = ${COMPOSE} --env-file config/.env
 .PHONY: test
 
 init:
-	sudo docker swarm init
+	docker swarm init
+
+leave:
+	docker swarm leave --force
 
 test:
-	cp ./config/.env.test ./config/.env
-	./run_test_db.sh
-	./wait-for-healthy.sh ft_world-mysql-test
+	-cp ./infra/config/.env.test ./infra/config/.env
+	./infra/run_test_db.sh
+	./infra/wait-for-healthy.sh ft_world-mysql-test
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 dev:
-	cp ./config/.env.dev ./config/.env
+	cp ./infra/config/.env.dev ./infra/config/.env
 	make db redis
 	mkdir -p db
-	./wait-for-healthy.sh 42world-backend-db
+	./infra/wait-for-healthy.sh 42world-backend-db
 	yarn start:dev api
 
 dev-batch:
-	cp ./config/.env.dev ./config/.env
+	cp ./infra/config/.env.dev ./infra/config/.env
 	make db redis
-	./wait-for-healthy.sh 42world-backend-db
+	./infra/wait-for-healthy.sh 42world-backend-db
 	yarn start:dev batch
 
 alpha:
-	cp ./config/.env.alpha ./config/.env
+	cp ./infra/config/.env.alpha ./infra/config/.env
 	mkdir -p db
-	docker build -t 42world-backend-api .
-	docker stack deploy --compose-file docker-stack-alpha.yml alpha-stack
+	docker build -t 42world-backend-api -f ./infra/api.Dockerfile .
+	docker stack deploy --compose-file ./infra/docker-stack-alpha.yml alpha-stack
 
 prod:
-	cp ./config/.env.prod ./config/.env
+	cp ./infra/config/.env.prod ./infra/config/.env
 	mkdir -p db
-	docker stack deploy --compose-file docker-stack-prod.yml prod-stack
+	docker stack deploy --compose-file ./infra/docker-stack-prod.yml prod-stack
 
 prod-build:
 	docker build -t 42world/backend-api:latest .
@@ -43,10 +46,10 @@ prod-push:
 	docker push 42world/backend-api:latest
 
 db-dev:
-	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d db
+	cd infra && export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d db
 
 db-alpha:
-	sudo docker service update alpha-stack_db
+	docker service update alpha-stack_db
 
 db: db-dev
 
@@ -57,22 +60,22 @@ api:
 	api-dev
 
 api-dev:
-	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build --no-deps -d api
+	cd infra && export NODE_ENV=dev && $(call COMPOSE_ENV) up --build --no-deps -d api
 
 api-alpha:
-	sudo docker service update alpha-stack_api
+	docker service update alpha-stack_api
 
 api-prod:
-	sudo docker service update prod-stack_api
+	docker service update prod-stack_api
 
 api-build:
-	sudo docker build -t ft-world-api .
-	sudo docker tag ft-world-api:latest public.ecr.aws/x9y9d0k9/ft-world-api:latest
-	sudo docker push public.ecr.aws/x9y9d0k9/ft-world-api:latest
+	docker build -t ft-world-api -f ./infra/api.Dockerfile .
+	docker tag ft-world-api:latest public.ecr.aws/x9y9d0k9/ft-world-api:latest
+	docker push public.ecr.aws/x9y9d0k9/ft-world-api:latest
 
 db-init:
-	sudo yarn typeorm:run
-	sudo yarn seed
+	yarn typeorm:run
+	yarn seed
 
 redis: redis-dev
 
@@ -80,12 +83,18 @@ redis-down:
 	${COMPOSE} down redis
 
 redis-dev:
-	export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
+	cd infra && export NODE_ENV=dev && $(call COMPOSE_ENV) up --build -d redis
 
 clean:
-	${COMPOSE} down
+	cd infra && ${COMPOSE} down
 
 clean-all: clean
-	sudo rm -rf db dist
+	rm -rf db dist
+
+swarm-clean:
+	docker service rm $(shell docker service ls -q)
+
+swarm-clean-all: swarm-clean
+	rm -rf db dist
 
 .PHONY: db

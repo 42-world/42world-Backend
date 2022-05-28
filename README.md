@@ -28,7 +28,8 @@ https://www.42world.kr/
 │   └── scheduler
 │       ├── src
 │       └── test
-├── config
+│── infra
+│   └── config
 ├── libs
 │   ├── common
 │   ├── entity

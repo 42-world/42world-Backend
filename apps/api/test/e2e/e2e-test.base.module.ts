@@ -16,7 +16,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: 'config/.env',
+      envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
       load: [configEmail],
