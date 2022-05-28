@@ -61,6 +61,23 @@ export function compareRole(rule: UserRole, mine: UserRole): boolean {
   return toRoleId(rule) <= toRoleId(mine);
 }
 
+export function includeRole(mine: UserRole): UserRole[] {
+  const toRoleId = (r: UserRole) => {
+    switch (r) {
+      case UserRole.ADMIN:
+        return 3;
+      case UserRole.CADET:
+        return 2;
+      case UserRole.NOVICE:
+        return 1;
+    }
+  };
+  const includeRole: UserRole[] = Object.values(UserRole).filter(
+    (r) => toRoleId(r) <= toRoleId(mine),
+  );
+  return includeRole;
+}
+
 export const getPaginationSkip = (paginationDto: PaginationRequestDto) => {
   return (paginationDto.page - 1) * paginationDto.take;
 };
