@@ -723,4 +723,258 @@ describe('Article', () => {
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
   });
+
+  describe('/articles/search', () => {
+    const searchWord = '42';
+    const titleWithSearchWord = 'aaa42aaa';
+    const titleWithoutSearchWord = 'aaaaaa';
+    const contentWithSearchWord = 'bbb42bbb';
+    const contentWithoutSearchWord = 'bbbbbb';
+    const SearchArticleRequestDto = {
+      q: searchWord,
+    };
+    let cadetJWT: string;
+    let noviceJWT: string;
+
+    beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      cadetJWT = dummy.jwt(users.cadet[0], authService);
+      noviceJWT = dummy.jwt(users.novice[0], authService);
+    });
+
+    test('[성공] GET - 게시글이 없는 경우', async () => {
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
+    });
+
+    test('[성공] GET - 일치하는 글이 없는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithoutSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
+    });
+
+    test('[성공] GET - 제목이 일치하는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithSearchWord,
+          contentWithoutSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(1);
+      expect(responseArticles[0].title).toBe(titleWithSearchWord);
+    });
+
+    test('[성공] GET - 내용이 일치하는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(1);
+      expect(responseArticles[0].content).toBe(contentWithSearchWord);
+    });
+
+    test('[성공] GET - 검색되는 게시글이 권한이 없는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithSearchWord,
+          contentWithSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
+    });
+
+    test('[성공] GET - 게시글이 여러개 인 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithSearchWord,
+        ),
+      );
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithoutSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(1);
+      expect(responseArticles[0].content).toBe(contentWithSearchWord);
+    });
+  });
+
+  // 카테고리 별 검색
+  describe('/articles/search/$categoryId', () => {
+    const searchWord = '42';
+    const titleWithSearchWord = 'aaa42aaa';
+    const titleWithoutSearchWord = 'aaaaaa';
+    const contentWithSearchWord = 'bbb42bbb';
+    const contentWithoutSearchWord = 'bbbbbb';
+    const SearchArticleRequestDto = {
+      q: searchWord,
+    };
+    let cadetJWT: string;
+    let noviceJWT: string;
+
+    beforeEach(async () => {
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      cadetJWT = dummy.jwt(users.cadet[0], authService);
+      noviceJWT = dummy.jwt(users.novice[0], authService);
+    });
+
+    test('[성공] GET - 게시글이 없는 경우', async () => {
+      const response = await request(httpServer)
+        .get(`/articles/search/${categories.free.id}`)
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
+    });
+
+    test('[성공] GET - 일치하는 글이 없는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithoutSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get(`/articles/search/${categories.free.id}`)
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
+    });
+
+    test('[성공] GET - 제목이 일치하는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithSearchWord,
+          contentWithoutSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get(`/articles/search/${categories.free.id}`)
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(1);
+      expect(responseArticles[0].title).toBe(titleWithSearchWord);
+    });
+
+    test('[성공] GET - 내용이 일치하는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithoutSearchWord,
+          contentWithSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get(`/articles/search/${categories.free.id}`)
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(1);
+      expect(responseArticles[0].content).toBe(contentWithSearchWord);
+    });
+
+    test('[실패] GET - 권한 없는 카테고리를 검색하는 경우', async () => {
+      await articleRepository.save(
+        dummy.article(
+          categories.free.id,
+          users.cadet[0].id,
+          titleWithSearchWord,
+          contentWithSearchWord,
+        ),
+      );
+
+      const response = await request(httpServer)
+        .get(`/articles/search/${categories.free.id}`)
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+    });
+  });
 });

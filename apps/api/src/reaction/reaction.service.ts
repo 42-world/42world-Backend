@@ -126,11 +126,7 @@ export class ReactionService {
     articleId: number,
     type: ReactionArticleType = ReactionArticleType.LIKE,
   ): Promise<boolean> {
-    return await this.reactionArticleRepository.isExist(
-      userId,
-      articleId,
-      type,
-    );
+    return this.reactionArticleRepository.isExist(userId, articleId, type);
   }
 
   async findAllMyReactionComment(
@@ -138,7 +134,7 @@ export class ReactionService {
     articleId: number,
     type: ReactionCommentType = ReactionCommentType.LIKE,
   ): Promise<ReactionComment[]> {
-    return await this.reactionCommentRepository.find({
+    return this.reactionCommentRepository.find({
       userId,
       articleId,
       type,
@@ -152,7 +148,7 @@ export class ReactionService {
     likeArticles: ReactionArticle[];
     totalCount: number;
   }> {
-    return await this.reactionArticleRepository.findAllArticleByUserId(
+    return this.reactionArticleRepository.findAllArticleByUserId(
       userId,
       options,
     );

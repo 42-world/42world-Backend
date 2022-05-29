@@ -54,7 +54,7 @@ export class BestController {
   async findAll(
     @Query() findAllBestDto: PaginationRequestDto,
   ): Promise<Article[]> {
-    return await this.bestService.findAll(findAllBestDto);
+    return this.bestService.findAll(findAllBestDto);
   }
 
   @Delete(':id')
@@ -64,6 +64,6 @@ export class BestController {
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiNotFoundResponse({ description: '존재하지 않는 인기글입니다.' })
   async remove(@Param('id') id: number): Promise<void | never> {
-    return await this.bestService.remove(id);
+    return this.bestService.remove(id);
   }
 }

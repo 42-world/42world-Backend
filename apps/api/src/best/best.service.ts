@@ -26,7 +26,7 @@ export class BestService {
   }
 
   async findAll(findAllBestDto: PaginationRequestDto): Promise<Article[]> {
-    return await this.articleService.findAllBest(findAllBestDto);
+    return this.articleService.findAllBest(findAllBestDto);
   }
 
   async remove(id: number): Promise<void | never> {

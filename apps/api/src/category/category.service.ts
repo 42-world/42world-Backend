@@ -1,7 +1,7 @@
 import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { compareRole } from '@app/utils/utils';
+import { compareRole, includeRole } from '@app/utils/utils';
 import {
   Injectable,
   NotAcceptableException,
@@ -15,26 +15,26 @@ export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
-    return await this.categoryRepository.save(createCategoryDto);
+    return this.categoryRepository.save(createCategoryDto);
   }
 
   async findAll(): Promise<Category[]> {
-    return await this.categoryRepository.find();
+    return this.categoryRepository.find();
   }
 
   async findOneOrFail(id: number): Promise<Category | never> {
-    return await this.categoryRepository.findOneOrFail(id);
+    return this.categoryRepository.findOneOrFail(id);
   }
 
   async existOrFail(id: number): Promise<void | never> {
-    return await this.categoryRepository.existOrFail(id);
+    return this.categoryRepository.existOrFail(id);
   }
 
   async updateName(id: number, name: string): Promise<Category | never> {
     const category = await this.categoryRepository.findOneOrFail(id);
 
     category.name = name;
-    return await this.categoryRepository.save(category);
+    return this.categoryRepository.save(category);
   }
 
   async remove(id: number): Promise<void | never> {
@@ -61,5 +61,10 @@ export class CategoryService {
       throw new NotAcceptableException(
         `당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`,
       );
+  }
+
+  getAvailable(user: User): Promise<Category[]> {
+    const availableRole = includeRole(user.role as UserRole);
+    return this.categoryRepository.getAvailable(availableRole);
   }
 }

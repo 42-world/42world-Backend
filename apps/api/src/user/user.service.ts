@@ -31,7 +31,7 @@ export class UserService {
   }
 
   async findOneByIdOrFail(id: number): Promise<User | never> {
-    return await this.userRepository.findOneOrFail(id);
+    return this.userRepository.findOneOrFail(id);
   }
 
   async updateProfile(

@@ -1,18 +1,16 @@
 import { CategoryService } from '@api/category/category.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { ReactionService } from '@api/reaction/reaction.service';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
+import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { ArticleRepository } from './repositories/article.repository';
 
@@ -21,8 +19,6 @@ export class ArticleService {
   constructor(
     private readonly articleRepository: ArticleRepository,
     private readonly categoryService: CategoryService,
-    @Inject(forwardRef(() => ReactionService))
-    private readonly reactionService: ReactionService,
   ) {}
 
   async create(
@@ -69,7 +65,41 @@ export class ArticleService {
     };
   }
 
-  findAllByWriterId(
+  async search(
+    user: User,
+    options: SearchArticleRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const availableCategories = await this.categoryService.getAvailable(user);
+    const { articles, totalCount } = await this.articleRepository.search(
+      options,
+      availableCategories,
+    );
+    return { articles, totalCount };
+  }
+
+  async searchByCategory(
+    user: User,
+    options: SearchArticleRequestDto,
+    categoryId: number,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const availableCategories = await this.categoryService.getAvailable(user);
+    if (!availableCategories.some((category) => category.id === categoryId)) {
+      throw new NotAcceptableException(
+        `Category ${categoryId} is not available`,
+      );
+    }
+    const { articles, totalCount } =
+      await this.articleRepository.searchByCategory(categoryId, options);
+    return { articles, totalCount };
+  }
+
+  async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
   ): Promise<{
@@ -79,15 +109,15 @@ export class ArticleService {
     return this.articleRepository.findAllByWriterId(writerId, options);
   }
 
-  findAllBest(options: PaginationRequestDto): Promise<Article[]> {
+  async findAllBest(options: PaginationRequestDto): Promise<Article[]> {
     return this.articleRepository.findAllBest(options);
   }
 
-  existOrFail(id: number): Promise<void> {
+  async existOrFail(id: number): Promise<void> {
     return this.articleRepository.existOrFail(id);
   }
 
-  findOneByIdOrFail(id: number): Promise<Article | never> {
+  async findOneByIdOrFail(id: number): Promise<Article | never> {
     return this.articleRepository.findOneOrFail(id);
   }
 

@@ -44,9 +44,9 @@ export class CommentService {
     });
 
     if (writer.id !== article.writerId) {
-      this.notificationService.createNewComment(article, comment);
+      await this.notificationService.createNewComment(article, comment);
     }
-    this.articleService.increaseCommentCount(article.id);
+    await this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
@@ -76,7 +76,7 @@ export class CommentService {
     id: number,
     options?: FindOneOptions,
   ): Promise<Comment> {
-    return await this.commentRepository.findOneOrFail(id, options);
+    return this.commentRepository.findOneOrFail(id, options);
   }
 
   async findAllByWriterId(
@@ -86,7 +86,7 @@ export class CommentService {
     comments: Comment[];
     totalCount: number;
   }> {
-    return await this.commentRepository.findAllByWriterId(writerId, options);
+    return this.commentRepository.findAllByWriterId(writerId, options);
   }
 
   async updateContent(
@@ -116,7 +116,7 @@ export class CommentService {
     }
 
     const comment = await this.findOneByIdOrFail(id, { withDeleted: true });
-    this.articleService.decreaseCommentCount(comment.articleId);
+    await this.articleService.decreaseCommentCount(comment.articleId);
   }
 
   async increaseLikeCount(comment: Comment): Promise<Comment> {

@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   api:
-    image: 42world-backend-api
+    image: 42world/backend-api:latest
     deploy:
       mode: replicated
       replicas: 1
