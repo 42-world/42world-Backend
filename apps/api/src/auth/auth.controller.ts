@@ -62,6 +62,7 @@ export class AuthController {
   }
 
   @Delete('signout')
+  @Public()
   @ApiCookieAuth()
   @ApiOperation({ summary: '로그아웃' })
   @ApiOkResponse({ description: '로그아웃 성공' })
