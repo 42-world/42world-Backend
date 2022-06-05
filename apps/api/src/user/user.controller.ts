@@ -42,6 +42,7 @@ export class UserController {
   ) {}
 
   @Get('me')
+  @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
   findOne(@GetUser() user: User): UserResponseDto {
