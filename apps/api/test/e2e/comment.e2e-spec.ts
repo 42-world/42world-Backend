@@ -158,7 +158,7 @@ describe('Comments', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`)
         .send({ content: commentContent, articleId: targetArticle.id });
 
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
   });
 

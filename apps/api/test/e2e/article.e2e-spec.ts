@@ -146,7 +146,7 @@ describe('Article', () => {
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] POST - 글쓰기 존재하지 않는 카테고리', async () => {
@@ -275,7 +275,7 @@ describe('Article', () => {
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 목록 조희 존재하지 않는 카테고리', async () => {
@@ -397,7 +397,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}/comments`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toBe(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 댓글 목록 존재하지 않는 게시글', async () => {
@@ -508,7 +508,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 상세 조회 존재하지 않는 게시글', async () => {
@@ -974,7 +974,7 @@ describe('Article', () => {
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
 
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
   });
 });
