@@ -4,6 +4,7 @@ import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -208,7 +209,7 @@ export class ArticleService {
 
   async decreaseLikeCount(article: Article): Promise<Article | never> {
     if (article.likeCount <= 0) {
-      throw new ForbiddenException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.articleRepository.update(article.id, {
       likeCount: () => 'like_count - 1',
