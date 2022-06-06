@@ -89,7 +89,7 @@ clean:
 	cd infra && ${COMPOSE} down
 
 clean-all: clean
-	rm -rf db dist
+	rm -rf infra/db dist
 
 swarm-clean:
 	docker service rm $(shell docker service ls -q)
