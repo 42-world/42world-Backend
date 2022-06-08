@@ -49,7 +49,6 @@ export class ArticleService {
     options: FindAllArticleRequestDto,
   ): Promise<{
     articles: Article[];
-    category: Category;
     totalCount: number;
   }> {
     const category = await this.categoryService.findOneOrFail(
@@ -59,11 +58,7 @@ export class ArticleService {
     const { articles, totalCount } = await this.articleRepository.findAll(
       options,
     );
-    return {
-      articles,
-      category,
-      totalCount,
-    };
+    return { articles, totalCount };
   }
 
   async search(
