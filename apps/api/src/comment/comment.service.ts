@@ -7,10 +7,10 @@ import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
@@ -129,7 +129,7 @@ export class CommentService {
 
   async decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount <= 0) {
-      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.commentRepository.update(comment.id, {
       likeCount: () => 'like_count - 1',

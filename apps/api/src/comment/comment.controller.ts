@@ -12,7 +12,7 @@ import {
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
-  ApiNotAcceptableResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -39,7 +39,7 @@ export class CommentController {
     type: CreateCommentRequestDto,
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  @ApiNotAcceptableResponse({ description: '댓글을 쓸수없는 게시글' })
+  @ApiForbiddenResponse({ description: '댓글을 쓸수없는 게시글' })
   async create(
     @GetUser() writer: User,
     @Body() createCommentDto: CreateCommentRequestDto,
