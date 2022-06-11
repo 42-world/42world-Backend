@@ -15,6 +15,7 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
       .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })

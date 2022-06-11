@@ -4,8 +4,9 @@ import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BadRequestException,
+  ForbiddenException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
@@ -48,7 +49,6 @@ export class ArticleService {
     options: FindAllArticleRequestDto,
   ): Promise<{
     articles: Article[];
-    category: Category;
     totalCount: number;
   }> {
     const category = await this.categoryService.findOneOrFail(
@@ -58,11 +58,7 @@ export class ArticleService {
     const { articles, totalCount } = await this.articleRepository.findAll(
       options,
     );
-    return {
-      articles,
-      category,
-      totalCount,
-    };
+    return { articles, totalCount };
   }
 
   async search(
@@ -90,9 +86,7 @@ export class ArticleService {
   }> {
     const availableCategories = await this.categoryService.getAvailable(user);
     if (!availableCategories.some((category) => category.id === categoryId)) {
-      throw new NotAcceptableException(
-        `Category ${categoryId} is not available`,
-      );
+      throw new ForbiddenException(`Category ${categoryId} is not available`);
     }
     const { articles, totalCount } =
       await this.articleRepository.searchByCategory(categoryId, options);
@@ -210,7 +204,7 @@ export class ArticleService {
 
   async decreaseLikeCount(article: Article): Promise<Article | never> {
     if (article.likeCount <= 0) {
-      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.articleRepository.update(article.id, {
       likeCount: () => 'like_count - 1',

@@ -3,8 +3,8 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { compareRole, includeRole } from '@app/utils/utils';
 import {
+  ForbiddenException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
@@ -58,7 +58,7 @@ export class CategoryService {
     user: User,
   ): void | never {
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
-      throw new NotAcceptableException(
+      throw new ForbiddenException(
         `당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`,
       );
   }

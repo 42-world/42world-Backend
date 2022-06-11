@@ -37,7 +37,6 @@ import { SearchArticleRequestDto } from './dto/request/search-article-request.dt
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
-import { FindAllArticleResponseDto } from './dto/response/find-all-article-response.dto';
 import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
 
 @ApiCookieAuth()
@@ -126,16 +125,18 @@ export class ArticleController {
   @Get()
   @AlsoNovice()
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiPaginatedResponse(FindAllArticleResponseDto)
+  @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
     @GetUser() user: User,
     @Query() options: FindAllArticleRequestDto,
-  ): Promise<PaginationResponseDto<FindAllArticleResponseDto>> {
-    const { articles, category, totalCount } =
-      await this.articleService.findAll(user, options);
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.findAll(
+      user,
+      options,
+    );
 
     return PaginationResponseDto.of({
-      data: FindAllArticleResponseDto.of({ articles, category, user }),
+      data: ArticleResponseDto.ofArray({ articles, user }),
       options,
       totalCount,
     });
