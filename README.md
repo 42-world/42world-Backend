@@ -136,7 +136,7 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 
 ## 개발노트
 
-[이곳](https://euimin.notion.site/42WORLD-925997bb2e7245b48fca5afeb298db76)에 개발과정을 상세히 기록해 두었습니다 :)
+[이곳](https://euimin.notion.site/euimin/42WORLD-2fb0a5cb337c400d986626292f4830d4)에 개발과정을 상세히 기록해 두었습니다 :)
 
 질문이 생기면 이메일(42world.official@gmail.com)로 언제든 연락주세요.
 
