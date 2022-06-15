@@ -37,6 +37,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-      - name: GitHub Action for Yarn
-        uses: Borales/actions-yarn@v3.0.0
+      - run: yarn
       - run: make test
