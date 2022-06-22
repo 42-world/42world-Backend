@@ -33,9 +33,10 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
+import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
+import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
-import { FindAllArticleResponseDto } from './dto/response/find-all-article-response.dto';
 import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
 
 @ApiCookieAuth()
@@ -79,19 +80,63 @@ export class ArticleController {
     });
   }
 
+  @Get('search')
+  @AlsoNovice()
+  @ApiOperation({ summary: '게시글 검색' })
+  @ApiPaginatedResponse(ArticleResponseDto)
+  async search(
+    @GetUser() user: User,
+    @Query() options: SearchArticleRequestDto,
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.search(
+      user,
+      options,
+    );
+
+    return PaginationResponseDto.of({
+      data: ArticleResponseDto.ofArray({ articles, user }),
+      options,
+      totalCount,
+    });
+  }
+
+  @Get('search/:categoryId')
+  @AlsoNovice()
+  @ApiOperation({ summary: '특정 카테고리 게시글 검색' })
+  @ApiPaginatedResponse(ArticleResponseDto)
+  async searchByCategory(
+    @GetUser() user: User,
+    @Query() options: SearchArticleRequestDto,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.searchByCategory(
+      user,
+      options,
+      categoryId,
+    );
+
+    return PaginationResponseDto.of({
+      data: ArticleResponseDto.ofArray({ articles, user }),
+      options,
+      totalCount,
+    });
+  }
+
   @Get()
   @AlsoNovice()
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiPaginatedResponse(FindAllArticleResponseDto)
+  @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
     @GetUser() user: User,
     @Query() options: FindAllArticleRequestDto,
-  ): Promise<PaginationResponseDto<FindAllArticleResponseDto>> {
-    const { articles, category, totalCount } =
-      await this.articleService.findAll(user, options);
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.findAll(
+      user,
+      options,
+    );
 
     return PaginationResponseDto.of({
-      data: FindAllArticleResponseDto.of({ articles, category, user }),
+      data: ArticleResponseDto.ofArray({ articles, user }),
       options,
       totalCount,
     });
@@ -164,7 +209,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
@@ -177,7 +222,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {

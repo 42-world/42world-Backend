@@ -10,7 +10,7 @@ services:
       - MYSQL_PASSWORD=ft_world
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_INITDB_ARGS=--encoding=UTF-8
-      - TZ=Asia/Seoul
+      - TZ=UTC
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./db:/var/lib/mysql

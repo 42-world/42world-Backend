@@ -7,7 +7,7 @@ import { AdminJsModule } from './adminJs/admin-js.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: 'config/.env',
+      envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
       load: [ormconfig],

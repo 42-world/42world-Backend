@@ -42,6 +42,7 @@ export class UserController {
   ) {}
 
   @Get('me')
+  @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
   findOne(@GetUser() user: User): UserResponseDto {
@@ -86,7 +87,7 @@ export class UserController {
   @Delete()
   @ApiOperation({ summary: '유저 삭제' })
   @ApiOkResponse({ description: '유저 삭제 성공' })
-  remove(@GetUser('id') id: number): Promise<void> {
+  async remove(@GetUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }
 
