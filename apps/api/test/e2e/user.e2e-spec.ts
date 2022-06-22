@@ -10,21 +10,24 @@ import { CommentRepository } from '@api/comment/repositories/comment.repository'
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
 import { UpdateUserProfileRequestDto } from '@api/user/dto/request/update-user-profile-request.dto';
+import { UserProfileResponseDto } from '@api/user/dto/response/user-profile-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 
 describe('User', () => {
@@ -33,6 +36,7 @@ describe('User', () => {
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
   let reactionArticleRepository: ReactionArticleRepository;
+  let intraAuthRepository: Repository<IntraAuth>;
   let authService: AuthService;
   let httpServer: INestApplication;
   let JWT: string;
@@ -47,6 +51,7 @@ describe('User', () => {
         CategoryModule,
         CommentModule,
         ReactionModule,
+        TypeOrmModule.forFeature([IntraAuth]),
       ],
     }).compile();
 
@@ -58,6 +63,7 @@ describe('User', () => {
     categoryRepository = moduleFixture.get(CategoryRepository);
     commentRepository = moduleFixture.get(CommentRepository);
     reactionArticleRepository = moduleFixture.get(ReactionArticleRepository);
+    intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -74,14 +80,22 @@ describe('User', () => {
   });
 
   describe('/users/me', () => {
+    const intraId = 'chlim';
+    let user;
+
     beforeEach(async () => {
-      const user = dummy.user(
+      user = dummy.user(
         'test github uid',
         'test nickname',
         'github user name',
         UserRole.CADET,
       );
       await userRepository.save(user);
+
+      const intraAuth = new IntraAuth();
+      intraAuth.userId = user.id;
+      intraAuth.intraId = intraId;
+      await intraAuthRepository.save(intraAuth);
 
       JWT = dummy.jwt(user, authService);
     });
@@ -91,7 +105,14 @@ describe('User', () => {
         .get('/users/me')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
+      const userProfileResponse = response.body as UserProfileResponseDto;
+
       expect(response.status).toEqual(HttpStatus.OK);
+      expect(userProfileResponse.id).toEqual(user.id);
+      expect(userProfileResponse.nickname).toEqual(user.nickname);
+      expect(userProfileResponse.role).toEqual(user.role);
+      expect(userProfileResponse.character).toEqual(user.character);
+      expect(userProfileResponse.intraId).toEqual(intraId);
     });
   });
 

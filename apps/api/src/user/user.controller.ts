@@ -7,24 +7,11 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
 import { ReactionService } from '@api/reaction/reaction.service';
+import { UserProfileResponseDto } from '@api/user/dto/response/user-profile-response.dto';
+import { UserProfileMapper } from '@api/user/dto/user-profile.mapper';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Put,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiCookieAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query } from '@nestjs/common';
+import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { UserResponseDto } from './dto/response/user-response.dto';
 import { UserService } from './user.service';
@@ -44,9 +31,10 @@ export class UserController {
   @Get('me')
   @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기' })
-  @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
-  findOne(@GetUser() user: User): UserResponseDto {
-    return UserResponseDto.of({ user });
+  @ApiOkResponse({ description: '내 정보', type: UserProfileResponseDto })
+  async me(@GetUser() user: User) {
+    const intraAuth = await user.intraAuth;
+    return UserProfileMapper.toMapResponse(user, intraAuth);
   }
 
   // TODO: profile API는 me 와 합칠것
@@ -61,9 +49,7 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
   @ApiOkResponse({ description: '유저 정보', type: UserResponseDto })
-  async findOneById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<UserResponseDto | never> {
+  async findOneById(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto | never> {
     const user = await this.userService.findOneByIdOrFail(id);
 
     return UserResponseDto.of({ user });
@@ -76,10 +62,7 @@ export class UserController {
     @GetUser() user: User,
     @Body() updateUserProfileDto: UpdateUserProfileRequestDto,
   ): Promise<UserResponseDto> {
-    const newUser = await this.userService.updateProfile(
-      user,
-      updateUserProfileDto,
-    );
+    const newUser = await this.userService.updateProfile(user, updateUserProfileDto);
 
     return UserResponseDto.of({ user: newUser });
   }
@@ -98,8 +81,7 @@ export class UserController {
     @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { likeArticles, totalCount } =
-      await this.reactionService.findAllArticleByUserId(user.id, options);
+    const { likeArticles, totalCount } = await this.reactionService.findAllArticleByUserId(user.id, options);
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({
         articles: likeArticles.map((e) => e.article),
@@ -117,8 +99,7 @@ export class UserController {
     @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } =
-      await this.articleService.findAllByWriterId(user.id, options);
+    const { articles, totalCount } = await this.articleService.findAllByWriterId(user.id, options);
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, user }),
       options,
@@ -133,8 +114,7 @@ export class UserController {
     @GetUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<MyCommentResponseDto>> {
-    const { comments, totalCount } =
-      await this.commentService.findAllByWriterId(user.id, options);
+    const { comments, totalCount } = await this.commentService.findAllByWriterId(user.id, options);
     return PaginationResponseDto.of({
       data: MyCommentResponseDto.ofArray({ comments, user }),
       options,
