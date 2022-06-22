@@ -36,7 +36,7 @@ export class User extends BaseEntity {
   lastLogin?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.NOVICE })
-  role!: string;
+  role!: UserRole;
 
   @Column({ nullable: false, default: 0 })
   character!: number;
