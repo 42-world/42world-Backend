@@ -32,7 +32,7 @@ export class UserController {
   @AlsoNovice()
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserProfileResponseDto })
-  async me(@GetUser() user: User) {
+  async me(@GetUser() user: User): Promise<UserProfileResponseDto> {
     const intraAuth = await user.intraAuth;
     return UserProfileMapper.toMapResponse(user, intraAuth);
   }
