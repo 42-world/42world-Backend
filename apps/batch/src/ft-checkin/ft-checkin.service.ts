@@ -40,7 +40,7 @@ export class FtCheckinService {
     }
   }
 
-  @Cron('0 */5 8-23 * * *')
+  @Cron('0 */5 * * * *')
   async getNow() {
     await this.getData(
       FT_CHECKIN_KEY,
