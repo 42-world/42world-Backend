@@ -85,5 +85,5 @@ export class User extends BaseEntity {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  intraAuth?: Promise<IntraAuth>;
+  intraAuth?: Promise<IntraAuth | null>;
 }

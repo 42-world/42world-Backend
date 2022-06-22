@@ -5,7 +5,7 @@ import { IsString } from 'class-validator';
 
 export class UserProfileResponseDto extends BaseUserResponseDto {
   @IsString()
-  @ApiProperty({ required: false, example: 'chlim' })
+  @ApiProperty({ required: false, example: 'chlim', nullable: true })
   intraId: string | null;
 
   constructor(id: number, nickname: string, role: UserRole, character: number, intraId: string | null) {
