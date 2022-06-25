@@ -80,7 +80,7 @@ swarm-leave:
 
 .PHONY: swarm-clean
 swarm-clean:
-	docker service rm $(shell docker service ls -q)
+	docker service rm $(shell docker service ls -q) | cat
 
 .PHONY: swarm-clean-all
 swarm-clean-all: swarm-clean
