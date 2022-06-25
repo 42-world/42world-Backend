@@ -1,6 +1,5 @@
 SERVICE_NAME = 42world
-COMPOSE_FILE = -f ./infra/docker-compose.yml
-ENV_FILE = --env-file ./infra/config/.env
+COMPOSE_FLAGS = -f ./infra/docker-compose.yml --env-file ./infra/config/.env
 
 .PHONY: all
 all: dev
@@ -9,8 +8,9 @@ all: dev
 .PHONY: ready
 ready:
 	cp ./infra/config/.env.dev ./infra/config/.env
-	docker-compose $(COMPOSE_FILE) $(ENV_FILE) up -d db
-	docker-compose $(COMPOSE_FILE) $(ENV_FILE) up -d redis
+	mkdir -p ./infra/db
+	docker-compose $(COMPOSE_FLAGS) up -d db
+	docker-compose $(COMPOSE_FLAGS) up -d redis
 	./infra/wait-for-healthy.sh 42world-backend-db
 
 .PHONY: dev
@@ -45,15 +45,23 @@ test:
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 # Alpha & Production =================================================
+.PHONY: deploy
+deploy:
+	mkdir -p ./infra/db
+	cat ./infra/docker-compose.yml | head -n 1 > ./infra/docker-compose.stack.yml
+	docker-compose $(COMPOSE_FLAGS) convert --no-normalize >> ./infra/docker-compose.stack.yml
+	docker stack deploy $(SERVICE_NAME) -c ./infra/docker-compose.stack.yml
+	rm ./infra/docker-compose.stack.yml
+
 .PHONY: alpha
 alpha:
 	cp ./infra/config/.env.alpha ./infra/config/.env
-	docker-compose $(COMPOSE_FILE) $(ENV_FILE) config | docker stack deploy $(SERVICE_NAME) -c -
+	make deploy
 
 .PHONY: prod
 prod:
 	cp ./infra/config/.env.prod ./infra/config/.env
-	docker-compose $(COMPOSE_FILE) $(ENV_FILE) config | docker stack deploy $(SERVICE_NAME) -c -
+	make deploy
 
 # Build =================================================
 build-api:
