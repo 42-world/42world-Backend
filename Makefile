@@ -37,11 +37,17 @@ clean-all: clean
 	rm -rf infra/db dist
 
 # Test =================================================
-.PHONY: test
-test:
+.PHONY: test-ready
+test-ready:
 	-cp ./infra/config/.env.test ./infra/config/.env
 	./infra/run_test_db.sh
 	./infra/wait-for-healthy.sh ft_world-mysql-test
+
+.PHONY: test
+test: test-api
+
+.PHONY: test-api
+test-api: test-ready
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 # Alpha & Production =================================================
