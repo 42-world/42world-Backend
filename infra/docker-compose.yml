@@ -9,9 +9,6 @@ services:
       - './config/.env'
     ports:
       - '${API_EXTERNAL_PORT}:${PORT}'
-    depends_on:
-      - db
-      - redis
     networks:
       - overlay
     deploy:
@@ -26,8 +23,6 @@ services:
       - './config/.env'
     ports:
       - '${ADMIN_PORT}:${ADMIN_PORT}'
-    depends_on:
-      - db
     networks:
       - overlay
     deploy:
@@ -40,8 +35,6 @@ services:
       dockerfile: ./Dockerfile
     env_file:
       - './config/.env'
-    depends_on:
-      - redis
     networks:
       - overlay
     deploy:
