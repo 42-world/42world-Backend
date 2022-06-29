@@ -36,7 +36,7 @@ export class User extends BaseEntity {
   lastLogin?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.NOVICE })
-  role!: string;
+  role!: UserRole;
 
   @Column({ nullable: false, default: 0 })
   character!: number;
@@ -85,5 +85,5 @@ export class User extends BaseEntity {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  intraAuth?: IntraAuth;
+  intraAuth?: Promise<IntraAuth | null>;
 }
