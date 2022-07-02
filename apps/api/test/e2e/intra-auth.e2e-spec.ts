@@ -31,17 +31,14 @@ describe('IntraAuth', () => {
   const cacheService: CacheService = mock(CacheService);
   const mailerService: MailerService = mock(MailerService);
 
-  let JWT;
-  let cadetJWT;
+  let JWT: string;
+  let cadetJWT: string;
+
+  let users: dummy.DummyUsers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        AuthModule,
-        TypeOrmModule.forFeature([IntraAuth]),
-      ],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, TypeOrmModule.forFeature([IntraAuth])],
       providers: [
         IntraAuthService,
         {
@@ -79,21 +76,9 @@ describe('IntraAuth', () => {
     const intraId = 'rockpell';
 
     beforeEach(async () => {
-      newUser = dummy.user(
-        'user githubUid',
-        'user',
-        'user githubUsername',
-        UserRole.NOVICE,
-      );
-      await userRepository.save(newUser);
-
-      const cadetUser = dummy.user(
-        'user2 githubUid',
-        'user2',
-        'user2 githubUsername',
-        UserRole.CADET,
-      );
-      await userRepository.save(cadetUser);
+      users = await dummy.createDummyUsers(userRepository);
+      newUser = users.novice[0];
+      const cadetUser = users.cadet[0];
 
       JWT = dummy.jwt(newUser, authService);
       cadetJWT = dummy.jwt(cadetUser, authService);
@@ -128,9 +113,7 @@ describe('IntraAuth', () => {
     test('[성공] GET - 이메일 인증', async () => {
       const mailCode = 'code';
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(
-        new IntraAuthMailDto(newUser.id, intraId),
-      );
+      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(newUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')
@@ -139,10 +122,7 @@ describe('IntraAuth', () => {
 
       let resultEjs: string;
       try {
-        const resultEjsPath = join(
-          __dirname,
-          '../../views/intra-auth/results.ejs',
-        );
+        const resultEjsPath = join(__dirname, '../../views/intra-auth/results.ejs');
         resultEjs = readFileSync(resultEjsPath, 'utf8');
       } catch (err) {
         console.error(err);
@@ -161,21 +141,12 @@ describe('IntraAuth', () => {
 
     test('[실패] GET - 이미 가입된 카뎃', async () => {
       const mailCode = 'code';
-      const cadetUser = dummy.user(
-        'cadet githubUid',
-        'cadet nickname',
-        'cadet githubUsername',
-        UserRole.CADET,
-      );
+      const cadetUser = dummy.user('cadet githubUid', 'cadet nickname', 'cadet githubUsername', UserRole.CADET);
       await userRepository.save(cadetUser);
 
-      await intraAuthRepository.save(
-        new IntraAuthMailDto(cadetUser.id, intraId),
-      );
+      await intraAuthRepository.save(new IntraAuthMailDto(cadetUser.id, intraId));
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(
-        new IntraAuthMailDto(cadetUser.id, intraId),
-      );
+      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(cadetUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')
@@ -184,10 +155,7 @@ describe('IntraAuth', () => {
 
       let resultEjs: string;
       try {
-        const resultEjsPath = join(
-          __dirname,
-          '../../views/intra-auth/results.ejs',
-        );
+        const resultEjsPath = join(__dirname, '../../views/intra-auth/results.ejs');
         resultEjs = readFileSync(resultEjsPath, 'utf8');
       } catch (err) {
         console.error(err);

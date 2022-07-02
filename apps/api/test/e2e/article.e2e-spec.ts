@@ -12,11 +12,7 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import {
-  ANONY_USER_CHARACTER,
-  ANONY_USER_ID,
-  ANONY_USER_NICKNAME,
-} from '@api/user/user.constant';
+import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -42,18 +38,11 @@ describe('Article', () => {
 
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
-  let articles: dummy.DummmyArticles;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        AuthModule,
-        ArticleModule,
-        CategoryModule,
-        CommentModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CategoryModule, CommentModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -82,11 +71,7 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -210,16 +195,10 @@ describe('Article', () => {
       expect(responseArticles[0].writer.nickname).toBe(users.cadet[0].nickname);
       expect(responseArticles[0].viewCount).toBe(articles.first.viewCount);
       expect(responseArticles[0].likeCount).toBe(articles.first.likeCount);
-      expect(responseArticles[0].commentCount).toBe(
-        articles.first.commentCount,
-      );
-      expect(responseArticles[0].categoryId).toBe(
-        findArticleRequestDto.categoryId,
-      );
+      expect(responseArticles[0].commentCount).toBe(articles.first.commentCount);
+      expect(responseArticles[0].categoryId).toBe(findArticleRequestDto.categoryId);
       expect(responseArticles[1].id).toBe(articles.second.id);
-      expect(responseArticles[1].categoryId).toBe(
-        findArticleRequestDto.categoryId,
-      );
+      expect(responseArticles[1].categoryId).toBe(findArticleRequestDto.categoryId);
     });
 
     test('[실패] GET - unauthorized', async () => {
@@ -309,22 +288,13 @@ describe('Article', () => {
   });
 
   describe('/articles/{id}/comments', () => {
-    let comments: Comment[];
+    let comments: dummy.DummyComments;
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
-      comments = await commentRepository.save([
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment1'),
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment2'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment3'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment4'),
-      ]);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -338,14 +308,14 @@ describe('Article', () => {
 
       const responseComments = response.body.data as Comment[];
       expect(responseComments.length).toBe(2);
-      expect(responseComments[0].id).toBe(comments[1].id);
-      expect(responseComments[0].content).toBe(comments[1].content);
-      expect(responseComments[0].writerId).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.id).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
-      expect(responseComments[0].articleId).toBe(comments[1].articleId);
-      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
-      expect(responseComments[1].id).toBe(comments[0].id);
+      expect(responseComments[0].id).toBe(comments.second.id);
+      expect(responseComments[0].content).toBe(comments.second.content);
+      expect(responseComments[0].writerId).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.id).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.nickname).toBe(users.cadet[1].nickname);
+      expect(responseComments[0].articleId).toBe(comments.second.articleId);
+      expect(responseComments[0].likeCount).toBe(comments.second.likeCount);
+      expect(responseComments[1].id).toBe(comments.first.id);
     });
 
     // TODO: 여기 테스트 기능 구현할것
@@ -373,9 +343,7 @@ describe('Article', () => {
     test('[실패] GET - unauthorized', async () => {
       const articleId = articles.first.id;
 
-      const response = await request(httpServer).get(
-        `/articles/${articleId}/comments`,
-      );
+      const response = await request(httpServer).get(`/articles/${articleId}/comments`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
@@ -430,11 +398,7 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -677,9 +641,7 @@ describe('Article', () => {
     test('[실패] DELETE - unauthorized', async () => {
       const articleId = articles.first.id;
 
-      const response = await request(httpServer).delete(
-        `/articles/${articleId}`,
-      );
+      const response = await request(httpServer).delete(`/articles/${articleId}`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
@@ -756,12 +718,7 @@ describe('Article', () => {
 
     test('[성공] GET - 일치하는 글이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -776,12 +733,7 @@ describe('Article', () => {
 
     test('[성공] GET - 제목이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -797,12 +749,7 @@ describe('Article', () => {
 
     test('[성공] GET - 내용이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
@@ -818,12 +765,7 @@ describe('Article', () => {
 
     test('[성공] GET - 검색되는 게시글이 권한이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
@@ -838,20 +780,10 @@ describe('Article', () => {
 
     test('[성공] GET - 게시글이 여러개 인 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -899,12 +831,7 @@ describe('Article', () => {
 
     test('[성공] GET - 일치하는 글이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -919,12 +846,7 @@ describe('Article', () => {
 
     test('[성공] GET - 제목이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -940,12 +862,7 @@ describe('Article', () => {
 
     test('[성공] GET - 내용이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
@@ -961,12 +878,7 @@ describe('Article', () => {
 
     test('[실패] GET - 권한 없는 카테고리를 검색하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
