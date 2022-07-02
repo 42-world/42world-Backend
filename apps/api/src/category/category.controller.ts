@@ -82,7 +82,7 @@ export class CategoryController {
   @ApiOkResponse({ description: '카테고리 삭제 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiNotFoundResponse({ description: '카테고리 없음' })
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void | never> {
     return this.categoryService.remove(id);
   }
 }

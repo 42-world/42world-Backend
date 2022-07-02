@@ -7,10 +7,10 @@ import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
@@ -44,9 +44,9 @@ export class CommentService {
     });
 
     if (writer.id !== article.writerId) {
-      this.notificationService.createNewComment(article, comment);
+      await this.notificationService.createNewComment(article, comment);
     }
-    this.articleService.increaseCommentCount(article.id);
+    await this.articleService.increaseCommentCount(article.id);
     return comment;
   }
 
@@ -72,11 +72,14 @@ export class CommentService {
     return { comments, category, totalCount };
   }
 
-  findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
+  async findOneByIdOrFail(
+    id: number,
+    options?: FindOneOptions,
+  ): Promise<Comment> {
     return this.commentRepository.findOneOrFail(id, options);
   }
 
-  findAllByWriterId(
+  async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
   ): Promise<{
@@ -113,19 +116,25 @@ export class CommentService {
     }
 
     const comment = await this.findOneByIdOrFail(id, { withDeleted: true });
-    this.articleService.decreaseCommentCount(comment.articleId);
+    await this.articleService.decreaseCommentCount(comment.articleId);
   }
 
-  increaseLikeCount(comment: Comment): Promise<Comment> {
+  async increaseLikeCount(comment: Comment): Promise<Comment> {
+    await this.commentRepository.update(comment.id, {
+      likeCount: () => 'like_count + 1',
+    });
     comment.likeCount += 1;
-    return this.commentRepository.save(comment);
+    return comment;
   }
 
-  decreaseLikeCount(comment: Comment): Promise<Comment> {
+  async decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount <= 0) {
-      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
+    await this.commentRepository.update(comment.id, {
+      likeCount: () => 'like_count - 1',
+    });
     comment.likeCount -= 1;
-    return this.commentRepository.save(comment);
+    return comment;
   }
 }

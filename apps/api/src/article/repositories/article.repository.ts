@@ -1,9 +1,11 @@
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
+import { Category } from '@app/entity/category/category.entity';
 import { getPaginationSkip } from '@app/utils/utils';
 import { NotFoundException } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { Brackets, EntityRepository, Repository } from 'typeorm';
+import { SearchArticleRequestDto } from '../dto/request/search-article-request.dto';
 
 @EntityRepository(Article)
 export class ArticleRepository extends Repository<Article> {
@@ -13,9 +15,70 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
       .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
+  async search(
+    options: SearchArticleRequestDto,
+    availableCategories: Category[],
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .where('category_id IN (:...ids)', {
+        ids: availableCategories.map((c) => c.id),
+      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
+            'article.content like :q',
+            { q: `%${options.q}%` },
+          );
+        }),
+      )
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .orderBy('article.createdAt', options.order);
+
+    const totalCount = await query.getCount();
+    const articles = await query.getMany();
+
+    return { articles, totalCount };
+  }
+
+  async searchByCategory(
+    categoryId: number,
+    options: SearchArticleRequestDto,
+  ): Promise<{
+    articles: Article[];
+    totalCount: number;
+  }> {
+    const query = this.createQueryBuilder('article')
+      .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
+      .skip(getPaginationSkip(options))
+      .take(options.take)
+      .where('category_id = :id', { id: categoryId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
+            'article.content like :q',
+            { q: `%${options.q}%` },
+          );
+        }),
+      )
       .orderBy('article.createdAt', options.order);
 
     const totalCount = await query.getCount();
@@ -70,35 +133,5 @@ export class ArticleRepository extends Repository<Article> {
     if (isExist === '0') {
       throw new NotFoundException(`Can't find Article with id ${id}`);
     }
-  }
-
-  async increaseViewCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET view_count = view_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async increaseCommentCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET comment_count = comment_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async decreaseCommentCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET comment_count = comment_count - 1 WHERE id=${id}`,
-    );
-  }
-
-  async increaseLikeCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET like_count = like_count + 1 WHERE id=${id}`,
-    );
-  }
-
-  async decreaseLikeCount(id: number): Promise<void> {
-    await this.query(
-      `UPDATE article SET like_count = like_count - 1 WHERE id=${id}`,
-    );
   }
 }

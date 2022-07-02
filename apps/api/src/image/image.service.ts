@@ -8,7 +8,7 @@ import { S3Param } from './interfaces/s3-param.interface';
 export class ImageService {
   constructor(@InjectAwsService(S3) private readonly s3: S3) {}
 
-  createUploadURL(): Promise<string> {
+  async createUploadURL(): Promise<string> {
     const randomId = Math.random() * 10000000;
     const key = `${randomId}.png`;
 

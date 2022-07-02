@@ -12,7 +12,7 @@ import {
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
-  ApiNotAcceptableResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -39,7 +39,7 @@ export class CommentController {
     type: CreateCommentRequestDto,
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  @ApiNotAcceptableResponse({ description: '댓글을 쓸수없는 게시글' })
+  @ApiForbiddenResponse({ description: '댓글을 쓸수없는 게시글' })
   async create(
     @GetUser() writer: User,
     @Body() createCommentDto: CreateCommentRequestDto,
@@ -60,7 +60,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 수정' })
   @ApiOkResponse({ description: '댓글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  updateContent(
+  async updateContent(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() writer: User,
     @Body() updateCommentDto: UpdateCommentRequestDto,
@@ -73,7 +73,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  remove(
+  async remove(
     @Param('id', ParseIntPipe) id: number,
     @GetUser('id') writerId: number,
   ): Promise<void | never> {

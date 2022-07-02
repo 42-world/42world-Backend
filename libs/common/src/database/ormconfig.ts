@@ -17,15 +17,15 @@ export interface IOrmconfig {
 export const ormconfig = (): IOrmconfig => ({
   ormconfig: {
     type: 'mysql',
-    host: process.env.DB_HOST ?? 'localhost',
-    port: parseInt(process.env.DB_PORT ?? '2345', 10),
-    username: process.env.DB_USER_NAME ?? 'ft_world',
-    password: process.env.DB_USER_PASSWORD ?? 'ft_world',
-    database: process.env.DB_NAME ?? 'ft_world',
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT, 10),
+    username: process.env.DB_USER_NAME,
+    password: process.env.DB_USER_PASSWORD,
+    database: process.env.DB_NAME,
     entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
     namingStrategy: new SnakeNamingStrategy(),
 
-    timezone: '+09:00', // KST
+    timezone: 'Z', // UTC
 
     synchronize: false,
     migrationsRun: true,

@@ -29,7 +29,7 @@ export class NotificationController {
   @Patch('/readall')
   @ApiOperation({ summary: '알람 다 읽기' })
   @ApiOkResponse({ description: '알림 다 읽음' })
-  update(@GetUser('id') id: number): Promise<void> {
+  async update(@GetUser('id') id: number): Promise<void> {
     return this.notificationService.updateIsReadByUserId(id);
   }
 }

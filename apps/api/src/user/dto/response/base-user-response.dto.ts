@@ -2,7 +2,7 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Max, Min } from 'class-validator';
 
-export class BaseUserDto {
+export class BaseUserResponseDto {
   @ApiProperty()
   id!: number;
 
@@ -23,12 +23,10 @@ export class BaseUserDto {
   })
   character!: number;
 
-  @ApiProperty()
-  createdAt!: Date;
-
-  @ApiProperty()
-  updatedAt!: Date;
-
-  @ApiProperty()
-  deletedAt?: Date;
+  constructor(id: number, nickname: string, role: UserRole, character: number) {
+    this.id = id;
+    this.nickname = nickname;
+    this.role = role;
+    this.character = character;
+  }
 }

@@ -1,10 +1,10 @@
 import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { compareRole } from '@app/utils/utils';
+import { compareRole, includeRole } from '@app/utils/utils';
 import {
+  ForbiddenException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
@@ -14,19 +14,19 @@ import { CategoryRepository } from './repositories/category.repository';
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
+  async create(createCategoryDto: CreateCategoryRequestDto): Promise<Category> {
     return this.categoryRepository.save(createCategoryDto);
   }
 
-  findAll(): Promise<Category[]> {
+  async findAll(): Promise<Category[]> {
     return this.categoryRepository.find();
   }
 
-  findOneOrFail(id: number): Promise<Category | never> {
+  async findOneOrFail(id: number): Promise<Category | never> {
     return this.categoryRepository.findOneOrFail(id);
   }
 
-  existOrFail(id: number): Promise<void | never> {
+  async existOrFail(id: number): Promise<void | never> {
     return this.categoryRepository.existOrFail(id);
   }
 
@@ -34,7 +34,7 @@ export class CategoryService {
     const category = await this.categoryRepository.findOneOrFail(id);
 
     category.name = name;
-    return await this.categoryRepository.save(category);
+    return this.categoryRepository.save(category);
   }
 
   async remove(id: number): Promise<void | never> {
@@ -58,8 +58,13 @@ export class CategoryService {
     user: User,
   ): void | never {
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
-      throw new NotAcceptableException(
+      throw new ForbiddenException(
         `당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`,
       );
+  }
+
+  getAvailable(user: User): Promise<Category[]> {
+    const availableRole = includeRole(user.role as UserRole);
+    return this.categoryRepository.getAvailable(availableRole);
   }
 }

@@ -1,0 +1,91 @@
+version: '3.4'
+services:
+  api:
+    image: 42world/backend-api:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - './config/.env'
+    ports:
+      - '${API_EXTERNAL_PORT}:${PORT}'
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+  admin:
+    image: 42world/backend-admin:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - './config/.env'
+    ports:
+      - '${ADMIN_PORT}:${ADMIN_PORT}'
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+  batch:
+    image: 42world/backend-batch:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - './config/.env'
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+  #-----------------------------------------------------------------------------------
+  redis:
+    image: redis:6.2.5
+    command: redis-server --port 6379
+    ports:
+      - '${REDIS_PORT}:6379'
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: ${REDIS_REPLICAS}
+      update_config:
+        order: start-first
+  #-----------------------------------------------------------------------------------
+  db:
+    image: mysql:5.7
+    container_name: 42world-backend-db
+    ports:
+      - '${DB_PORT}:3306'
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER_NAME}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_INITDB_ARGS=--encoding=UTF-8
+      - TZ=UTC
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: 'mysqladmin ping -h localhost -u ${DB_USER_NAME} --password=${DB_USER_PASSWORD}'
+      interval: 5s
+      timeout: 1s
+      retries: 20
+      start_period: 0s
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: ${DB_REPLICAS}
+
+networks:
+  overlay:

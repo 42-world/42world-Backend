@@ -1,19 +1,8 @@
 import { CacheService } from '@app/common/cache/cache.service';
+import { FtCheckinDto } from '@app/common/cache/dto/ft-checkin.dto';
 import { logger } from '@app/utils/logger';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import axios from 'axios';
-
-const GAEPO = 'gaepo';
-const SEOCHO = 'seocho';
-
-export class GetFtCheckinDto {
-  @ApiProperty({ example: 42 })
-  gaepo: number;
-
-  @ApiProperty({ example: 0 })
-  seocho: number;
-}
+import { errorHook } from '@app/utils/utils';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class FtCheckinService {
@@ -23,21 +12,15 @@ export class FtCheckinService {
     const ftCheckinData = await this.cacheService.get<FtCheckinDto>(cacheKey);
 
     if (!ftCheckinData) {
-      try {
-        const { data } = await axios.get(endpoint);
-        const realData = {
-          seocho: data[SEOCHO] || 0,
-          gaepo: data[GAEPO] || 0,
-        };
-
-        await this.cacheService.set(cacheKey, realData, {
-          ttl: cacheTTL,
-        });
-        return realData;
-      } catch (e) {
-        logger.error(e);
-        throw new NotFoundException('데이터를 받아올 수 없습니다.');
-      }
+      logger.error(`Can't get data from cache with key: ${cacheKey}`);
+      errorHook(
+        'GetCheckInDataFromRedisError',
+        `Can't get data from cache with key: ${cacheKey}`,
+      );
+      return {
+        gaepo: 0,
+        seocho: 0,
+      };
     }
     return ftCheckinData;
   }

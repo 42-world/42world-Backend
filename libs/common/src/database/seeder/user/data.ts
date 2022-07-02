@@ -13,16 +13,23 @@ export class SeederDataUser extends PartialType(User) {
 export const users: SeederDataUser[] = [
   {
     id: 1,
-    githubUid: 'test1234',
-    nickname: 'first_user',
-    githubUsername: 'github_first_user',
-    role: UserRole.CADET,
+    githubUid: 'noviceUserGithubUid',
+    nickname: 'noviceUserNickName',
+    githubUsername: 'noviceGithubUserName',
+    role: UserRole.NOVICE,
   },
   {
     id: 2,
-    githubUid: 'test2345',
-    nickname: 'second_user',
-    githubUsername: 'github_second_user',
-    role: UserRole.NOVICE,
+    githubUid: 'cadetGithubUid',
+    nickname: 'cadetNickname',
+    githubUsername: 'cadetGithubUsername',
+    role: UserRole.CADET,
+  },
+  {
+    id: 3,
+    githubUid: 'adminGithubUid',
+    nickname: 'adminNickname',
+    githubUsername: 'adminGithubUsername',
+    role: UserRole.ADMIN,
   },
 ];

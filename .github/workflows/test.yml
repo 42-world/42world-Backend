@@ -36,8 +36,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: GitHub Action for Yarn
-        uses: Borales/actions-yarn@v2.3.0
-      - run: ./run_test_db.sh
-      - run: yarn test:e2e
+          cache: 'yarn'
+      - run: yarn
+      - run: make test
+      - run: yarn build api
+      - run: yarn build batch
+      - run: yarn build admin
