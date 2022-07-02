@@ -1,10 +1,6 @@
 import { UserService } from '@api/user/user.service';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -20,10 +16,7 @@ const getAccessToken = (request: any): string => {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private userService: UserService,
-    private configService: ConfigService,
-  ) {
+  constructor(private userService: UserService, private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([getAccessToken]),
       ignoreExpiration: false,

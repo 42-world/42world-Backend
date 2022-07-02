@@ -67,10 +67,7 @@ export class ArticleController {
     @GetUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<CreateArticleResponseDto | never> {
-    const { article, category } = await this.articleService.create(
-      user,
-      createArticleDto,
-    );
+    const { article, category } = await this.articleService.create(user, createArticleDto);
 
     return CreateArticleResponseDto.of({
       article,
@@ -88,10 +85,7 @@ export class ArticleController {
     @GetUser() user: User,
     @Query() options: SearchArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.search(
-      user,
-      options,
-    );
+    const { articles, totalCount } = await this.articleService.search(user, options);
 
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, user }),
@@ -109,11 +103,7 @@ export class ArticleController {
     @Query() options: SearchArticleRequestDto,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.searchByCategory(
-      user,
-      options,
-      categoryId,
-    );
+    const { articles, totalCount } = await this.articleService.searchByCategory(user, options, categoryId);
 
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, user }),
@@ -130,10 +120,7 @@ export class ArticleController {
     @GetUser() user: User,
     @Query() options: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.findAll(
-      user,
-      options,
-    );
+    const { articles, totalCount } = await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, user }),
@@ -154,17 +141,12 @@ export class ArticleController {
     @GetUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<FindOneArticleResponseDto | never> {
-    const { article, category, writer } =
-      await this.articleService.findOneOrFail(articleId, user);
+    const { article, category, writer } = await this.articleService.findOneOrFail(articleId, user);
     let isLike = false;
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      isLike = await this.reactionService.isMyReactionArticle(
-        user.id,
-        article.id,
-      );
+      isLike = await this.reactionService.isMyReactionArticle(user.id, article.id);
 
-    if (article.writerId !== user.id)
-      this.articleService.increaseViewCount(article.id);
+    if (article.writerId !== user.id) this.articleService.increaseViewCount(article.id);
     return FindOneArticleResponseDto.of({
       article,
       category,
@@ -183,14 +165,10 @@ export class ArticleController {
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
-    const { comments, category, totalCount } =
-      await this.commentService.findAllByArticleId(user, articleId, options);
+    const { comments, category, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
     let reactionComments = [];
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      reactionComments = await this.reactionService.findAllMyReactionComment(
-        user.id,
-        articleId,
-      );
+      reactionComments = await this.reactionService.findAllMyReactionComment(user.id, articleId);
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
@@ -222,10 +200,7 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  async remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
-  ): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number, @GetUser('id') writerId: number): Promise<void | never> {
     return this.articleService.remove(id, writerId);
   }
 }

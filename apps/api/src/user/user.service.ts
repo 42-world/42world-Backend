@@ -34,20 +34,14 @@ export class UserService {
     return this.userRepository.findOneOrFail(id);
   }
 
-  async updateProfile(
-    user: User,
-    updateUserProfileDto: UpdateUserProfileRequestDto,
-  ): Promise<User> {
+  async updateProfile(user: User, updateUserProfileDto: UpdateUserProfileRequestDto): Promise<User> {
     return this.userRepository.save({
       ...user,
       ...updateUserProfileDto,
     });
   }
 
-  async updateToCadet(
-    user: User,
-    updateToCadetDto: UpdateToCadetDto,
-  ): Promise<User> {
+  async updateToCadet(user: User, updateToCadetDto: UpdateToCadetDto): Promise<User> {
     return this.userRepository.save({ ...user, ...updateToCadetDto });
   }
 

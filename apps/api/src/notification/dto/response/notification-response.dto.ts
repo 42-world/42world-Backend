@@ -38,9 +38,7 @@ export class NotificationResponseDto extends PickType(BaseNotificationDto, [
     });
   }
 
-  static ofArray(config: {
-    notifications: Notification[];
-  }): NotificationResponseDto[] {
+  static ofArray(config: { notifications: Notification[] }): NotificationResponseDto[] {
     return config.notifications.map((notification) => {
       return NotificationResponseDto.of({
         notification,

@@ -14,10 +14,7 @@ export class NotificationService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
-  async createNewComment(
-    article: Article,
-    comment: Comment,
-  ): Promise<Notification> {
+  async createNewComment(article: Article, comment: Comment): Promise<Notification> {
     const notification = new CreateNotificationDto({
       type: NotificationType.NEW_COMMENT,
       content: `게시글 ${article.title} 에 새로운 댓글이 달렸습니다.\n${comment.content}`,

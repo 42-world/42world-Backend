@@ -52,22 +52,13 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     this.updatedAt = config.updatedAt;
   }
 
-  static of(config: {
-    article: Article;
-    category: Category;
-    writer: User;
-    user: User;
-  }): ArticleResponseDto {
+  static of(config: { article: Article; category: Category; writer: User; user: User }): ArticleResponseDto {
     const category = CategoryResponseDto.of({
       category: config.category,
       user: config.user,
     });
-    const writer = category.isAnonymous
-      ? AnonyUserResponseDto.of()
-      : UserResponseDto.of({ user: config.writer });
-    const writerId = category.isAnonymous
-      ? ANONY_USER_ID
-      : config.article.writerId;
+    const writer = category.isAnonymous ? AnonyUserResponseDto.of() : UserResponseDto.of({ user: config.writer });
+    const writerId = category.isAnonymous ? ANONY_USER_ID : config.article.writerId;
 
     return new ArticleResponseDto({
       ...config.article,
@@ -78,10 +69,7 @@ export class ArticleResponseDto extends PickType(BaseArticleDto, [
     });
   }
 
-  static ofArray(config: {
-    articles: Article[];
-    user: User;
-  }): ArticleResponseDto[] {
+  static ofArray(config: { articles: Article[]; user: User }): ArticleResponseDto[] {
     return config.articles.map((article) =>
       ArticleResponseDto.of({
         article,

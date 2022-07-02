@@ -38,10 +38,7 @@ export class AdminJsModule {
           },
           auth: {
             authenticate: async (email, password) => {
-              if (
-                email === configService.get('ADMIN_EMAIL') &&
-                password === configService.get('ADMIN_PASSWORD')
-              ) {
+              if (email === configService.get('ADMIN_EMAIL') && password === configService.get('ADMIN_PASSWORD')) {
                 return { email };
               }
               return null;

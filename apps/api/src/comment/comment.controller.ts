@@ -1,14 +1,6 @@
 import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Body,
-  Controller,
-  Delete,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -73,10 +65,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  async remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
-  ): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number, @GetUser('id') writerId: number): Promise<void | never> {
     return this.commentService.remove(id, writerId);
   }
 }
