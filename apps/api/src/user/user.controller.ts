@@ -10,16 +10,7 @@ import { ReactionService } from '@api/reaction/reaction.service';
 import { UserProfileResponseDto } from '@api/user/dto/response/user-profile-response.dto';
 import { UserProfileMapper } from '@api/user/dto/user-profile.mapper';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,

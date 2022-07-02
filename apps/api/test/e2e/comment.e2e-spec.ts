@@ -45,14 +45,7 @@ describe('Comments', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        AuthModule,
-        ArticleModule,
-        CommentModule,
-        CategoryModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CommentModule, CategoryModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -93,11 +86,7 @@ describe('Comments', () => {
 
     categories = await dummy.createDummyCategories(categoryRepository);
 
-    articles = await dummy.createDummyArticles(
-      articleRepository,
-      users,
-      categories,
-    );
+    articles = await dummy.createDummyArticles(articleRepository, users, categories);
     targetArticle = articles.first;
   });
 
@@ -140,11 +129,7 @@ describe('Comments', () => {
     let comment: Comment;
 
     beforeEach(async () => {
-      comments = await dummy.createDummyComments(
-        commentRepository,
-        users,
-        articles,
-      );
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
       comment = comments.first;
     });
 

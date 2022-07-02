@@ -37,14 +37,7 @@ describe('Notification', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        CategoryModule,
-        ArticleModule,
-        AuthModule,
-        NotificationModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, CategoryModule, ArticleModule, AuthModule, NotificationModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -53,9 +46,7 @@ describe('Notification', () => {
     userRepository = moduleFixture.get(UserRepository);
     categoryRepository = moduleFixture.get(CategoryRepository);
     articleRepository = moduleFixture.get(ArticleRepository);
-    notificationRepository = moduleFixture.get(
-      getRepositoryToken(Notification),
-    );
+    notificationRepository = moduleFixture.get(getRepositoryToken(Notification));
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -80,11 +71,7 @@ describe('Notification', () => {
       users = await dummy.createDummyUsers(userRepository);
       dummyUser = users.cadet[0];
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       dummyArticle = articles.first;
       dummyNotification = dummy.notification(
         NotificationType.NEW_COMMENT,
@@ -122,11 +109,7 @@ describe('Notification', () => {
       users = await dummy.createDummyUsers(userRepository);
       dummyUser = users.cadet[0];
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       dummyArticle = articles.first;
       dummyNotification1 = dummy.notification(
         NotificationType.NEW_COMMENT,

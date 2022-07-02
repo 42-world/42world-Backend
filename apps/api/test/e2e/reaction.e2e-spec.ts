@@ -84,9 +84,7 @@ describe('Reaction', () => {
     });
 
     test('[성공] POST - 좋아요가 있는 경우', async () => {
-      await request(httpServer)
-        .post('/reactions/articles/1')
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+      await request(httpServer).post('/reactions/articles/1').set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
       const response2 = await request(httpServer)
         .post('/reactions/articles/1')
@@ -130,11 +128,7 @@ describe('Reaction', () => {
       const user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       await dummy.createDummyComments(commentRepository, users, articles);
     });
 
@@ -163,9 +157,7 @@ describe('Reaction', () => {
     });
 
     test('[실패] POST - unauthorize', async () => {
-      const response = await request(httpServer).post(
-        '/reactions/articles/1/comments/1',
-      );
+      const response = await request(httpServer).post('/reactions/articles/1/comments/1');
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });

@@ -1,9 +1,5 @@
 import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
-import {
-  AWS_ACCESS_KEY,
-  AWS_REGION,
-  AWS_SECRET_KEY,
-} from '@api/image/image.constant';
+import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import configEmail from '@api/intra-auth/intra-auth.config';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

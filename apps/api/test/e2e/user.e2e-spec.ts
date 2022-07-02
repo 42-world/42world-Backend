@@ -88,7 +88,7 @@ describe('User', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       user = users.cadet[0];
-      
+
       const intraAuth = new IntraAuth();
       intraAuth.userId = user.id;
       intraAuth.intraId = intraId;
@@ -280,11 +280,7 @@ describe('User', () => {
       JWT = dummy.jwt(user, authService);
 
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       article = articles.first;
     });
 
@@ -318,16 +314,8 @@ describe('User', () => {
       JWT = dummy.jwt(user, authService);
 
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
-      comments = await dummy.createDummyComments(
-        commentRepository,
-        users,
-        articles,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
       comment = comments.first;
     });
 
@@ -360,11 +348,7 @@ describe('User', () => {
       JWT = dummy.jwt(user, authService);
 
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       article = articles.first;
       await dummy.createDummyComments(commentRepository, users, articles);
       reactionArticle = dummy.reactionArticle(article.id, user.id);
