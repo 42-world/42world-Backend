@@ -50,12 +50,7 @@ export class CreateArticleResponseDto extends PickType(BaseArticleDto, [
     this.updatedAt = config.updatedAt;
   }
 
-  static of(config: {
-    article: Article;
-    category: Category;
-    writer: User;
-    user: User;
-  }): CreateArticleResponseDto {
+  static of(config: { article: Article; category: Category; writer: User; user: User }): CreateArticleResponseDto {
     return new CreateArticleResponseDto({
       ...config.article,
       ...config,

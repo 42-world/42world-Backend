@@ -12,12 +12,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
       callbackURL: process.env.GITHUB_CALLBACK_URL, // frontend url
     });
   }
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    done: VerifyCallback,
-  ): Promise<any> {
+  async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
     const githubProfile: GithubProfile = {
       id: profile.id,
       username: profile.username,

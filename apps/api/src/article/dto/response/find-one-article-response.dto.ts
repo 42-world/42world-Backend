@@ -73,12 +73,8 @@ export class FindOneArticleResponseDto extends PickType(BaseArticleDto, [
       category: config.category,
       user: config.user,
     });
-    const writer = category.isAnonymous
-      ? AnonyUserResponseDto.of()
-      : UserResponseDto.of({ user: config.writer });
-    const writerId = category.isAnonymous
-      ? ANONY_USER_ID
-      : config.article.writerId;
+    const writer = category.isAnonymous ? AnonyUserResponseDto.of() : UserResponseDto.of({ user: config.writer });
+    const writerId = category.isAnonymous ? ANONY_USER_ID : config.article.writerId;
 
     return new FindOneArticleResponseDto({
       ...config.article,

@@ -42,10 +42,9 @@ export class ArticleRepository extends Repository<Article> {
       })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
-            'article.content like :q',
-            { q: `%${options.q}%` },
-          );
+          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere('article.content like :q', {
+            q: `%${options.q}%`,
+          });
         }),
       )
       .skip(getPaginationSkip(options))
@@ -73,10 +72,9 @@ export class ArticleRepository extends Repository<Article> {
       .where('category_id = :id', { id: categoryId })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
-            'article.content like :q',
-            { q: `%${options.q}%` },
-          );
+          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere('article.content like :q', {
+            q: `%${options.q}%`,
+          });
         }),
       )
       .orderBy('article.createdAt', options.order);

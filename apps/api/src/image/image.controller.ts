@@ -1,13 +1,7 @@
 import { UploadImageUrlResponseDto } from '@api/image/dto/upload-image-url-response.dto';
 import { ImageService } from '@api/image/image.service';
 import { Controller, HttpCode, Post } from '@nestjs/common';
-import {
-  ApiCookieAuth,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiCookieAuth, ApiCreatedResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })

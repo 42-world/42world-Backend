@@ -5,10 +5,7 @@ import { BaseArticleDto } from '../base-article.dto';
 
 const _PickedBaseArticle = PickType(BaseArticleDto, ['categoryId']);
 
-export class FindAllArticleRequestDto extends IntersectionType(
-  _PickedBaseArticle,
-  PaginationRequestDto,
-) {
+export class FindAllArticleRequestDto extends IntersectionType(_PickedBaseArticle, PaginationRequestDto) {
   @Type(() => Number)
   readonly categoryId: number;
 }

@@ -7,16 +7,8 @@ import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 
-class InnerArticleDto extends PickType(BaseArticleDto, [
-  'id',
-  'title',
-  'category',
-]) {
-  constructor(config: {
-    id: number;
-    title: string;
-    category: CategoryResponseDto;
-  }) {
+class InnerArticleDto extends PickType(BaseArticleDto, ['id', 'title', 'category']) {
+  constructor(config: { id: number; title: string; category: CategoryResponseDto }) {
     super();
 
     this.id = config.id;
@@ -24,11 +16,7 @@ class InnerArticleDto extends PickType(BaseArticleDto, [
     this.category = config.category;
   }
 
-  static of(config: {
-    article: Article;
-    category: Category;
-    user: User;
-  }): InnerArticleDto {
+  static of(config: { article: Article; category: Category; user: User }): InnerArticleDto {
     return new InnerArticleDto({
       ...config.article,
       category: CategoryResponseDto.of({
@@ -39,22 +27,11 @@ class InnerArticleDto extends PickType(BaseArticleDto, [
   }
 }
 
-export class MyCommentResponseDto extends PickType(BaseCommentDto, [
-  'id',
-  'content',
-  'createdAt',
-  'updatedAt',
-]) {
+export class MyCommentResponseDto extends PickType(BaseCommentDto, ['id', 'content', 'createdAt', 'updatedAt']) {
   @ApiProperty({ type: () => InnerArticleDto })
   article: InnerArticleDto;
 
-  constructor(config: {
-    id: number;
-    content: string;
-    article: InnerArticleDto;
-    createdAt: Date;
-    updatedAt: Date;
-  }) {
+  constructor(config: { id: number; content: string; article: InnerArticleDto; createdAt: Date; updatedAt: Date }) {
     super();
 
     this.id = config.id;
@@ -64,11 +41,7 @@ export class MyCommentResponseDto extends PickType(BaseCommentDto, [
     this.updatedAt = config.updatedAt;
   }
 
-  static of(config: {
-    comment: Comment;
-    article: Article;
-    user: User;
-  }): MyCommentResponseDto {
+  static of(config: { comment: Comment; article: Article; user: User }): MyCommentResponseDto {
     return new MyCommentResponseDto({
       ...config.comment,
       article: InnerArticleDto.of({
@@ -79,10 +52,7 @@ export class MyCommentResponseDto extends PickType(BaseCommentDto, [
     });
   }
 
-  static ofArray(config: {
-    comments: Comment[];
-    user: User;
-  }): MyCommentResponseDto[] {
+  static ofArray(config: { comments: Comment[]; user: User }): MyCommentResponseDto[] {
     return config.comments.map((comment: Comment) => {
       return MyCommentResponseDto.of({
         comment,

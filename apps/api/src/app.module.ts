@@ -6,11 +6,7 @@ import { BestModule } from '@api/best/best.module';
 import { CategoryModule } from '@api/category/category.module';
 import { CommentModule } from '@api/comment/comment.module';
 import { FtCheckinModule } from '@api/ft-checkin/ft-checkin.module';
-import {
-  AWS_ACCESS_KEY,
-  AWS_REGION,
-  AWS_SECRET_KEY,
-} from '@api/image/image.constant';
+import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import { ImageModule } from '@api/image/image.module';
 import configEmail from '@api/intra-auth/intra-auth.config';
 import { IntraAuthModule } from '@api/intra-auth/intra-auth.module';

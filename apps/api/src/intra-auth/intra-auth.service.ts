@@ -11,11 +11,7 @@ import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { MailerService } from '@nestjs-modules/mailer';
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getCode, getEmail } from './intra-auth.utils';
@@ -31,12 +27,7 @@ export class IntraAuthService {
     private readonly intraAuthRepository: Repository<IntraAuth>,
   ) {}
 
-  async _send(
-    tos: string[],
-    subject: string,
-    templateName: string,
-    context: any = {},
-  ): Promise<boolean | never> {
+  async _send(tos: string[], subject: string, templateName: string, context: any = {}): Promise<boolean | never> {
     try {
       await this.mailerService.sendMail({
         to: tos.join(', '),
@@ -80,9 +71,7 @@ export class IntraAuthService {
 
     await this.checkExistCadet(intraAuthMailDto.intraId);
 
-    const user = await this.userService.findOneByIdOrFail(
-      intraAuthMailDto.userId,
-    );
+    const user = await this.userService.findOneByIdOrFail(intraAuthMailDto.userId);
 
     await this.userService.updateToCadet(user, {
       role: UserRole.CADET,

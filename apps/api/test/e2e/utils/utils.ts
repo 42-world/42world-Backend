@@ -12,9 +12,7 @@ export const clearDB = async () => {
   }
 };
 
-export const createTestApp = (
-  moduleFixture: TestingModule,
-): INestApplication => {
+export const createTestApp = (moduleFixture: TestingModule): INestApplication => {
   const app = moduleFixture.createNestApplication();
 
   app.use(cookieParser());

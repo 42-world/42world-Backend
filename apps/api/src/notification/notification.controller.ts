@@ -1,12 +1,6 @@
 import { GetUser } from '@api/auth/auth.decorator';
 import { Controller, Get, Patch } from '@nestjs/common';
-import {
-  ApiCookieAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dto/response/notification-response.dto';
 import { NotificationService } from './notification.service';
 

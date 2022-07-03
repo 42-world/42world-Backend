@@ -1,16 +1,8 @@
 import { Public } from '@api/auth/auth.decorator';
-import {
-  FT_CHECKIN_KEY,
-  MAX_CHECKIN_KEY,
-} from '@app/common/cache/dto/ft-checkin.constant';
+import { FT_CHECKIN_KEY, MAX_CHECKIN_KEY } from '@app/common/cache/dto/ft-checkin.constant';
 import { FtCheckinDto } from '@app/common/cache/dto/ft-checkin.dto';
 import { Controller, Get, NotFoundException } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiProperty,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { FtCheckinService } from './ft-checkin.service';
 
 class FtCheckData {
@@ -36,9 +28,7 @@ export class FtCheckinController {
     try {
       const checkinData = await this.ftCheckinService.fetchData(FT_CHECKIN_KEY);
 
-      const checkinInfo = await this.ftCheckinService.fetchData(
-        MAX_CHECKIN_KEY,
-      );
+      const checkinInfo = await this.ftCheckinService.fetchData(MAX_CHECKIN_KEY);
 
       const data = {
         now: checkinData,

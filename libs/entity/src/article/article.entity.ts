@@ -83,24 +83,16 @@ export class Article extends BaseEntity {
   })
   notification?: Notification[];
 
-  @OneToMany(
-    () => ReactionArticle,
-    (reactionArticle) => reactionArticle.article,
-    {
-      createForeignKeyConstraints: false,
-      nullable: true,
-    },
-  )
+  @OneToMany(() => ReactionArticle, (reactionArticle) => reactionArticle.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
   reactionArticle?: ReactionArticle[];
 
-  @OneToMany(
-    () => ReactionComment,
-    (reactionComment) => reactionComment.article,
-    {
-      createForeignKeyConstraints: false,
-      nullable: true,
-    },
-  )
+  @OneToMany(() => ReactionComment, (reactionComment) => reactionComment.article, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
   reactionComment?: ReactionComment[];
 
   @OneToOne(() => Best, (best) => best.article, {
