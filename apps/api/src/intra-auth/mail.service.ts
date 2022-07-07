@@ -1,3 +1,3 @@
-export default abstract class MailService {
-  abstract send(templateName: string, nickname: string, code: string, endpoint: string, githubId: string);
+export default interface MailService {
+  send(name: string, code: string, githubId: string);
 }
