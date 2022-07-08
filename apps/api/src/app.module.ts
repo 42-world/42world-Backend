@@ -8,7 +8,6 @@ import { CommentModule } from '@api/comment/comment.module';
 import { FtCheckinModule } from '@api/ft-checkin/ft-checkin.module';
 import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import { ImageModule } from '@api/image/image.module';
-import configEmail from '@api/intra-auth/intra-auth.config';
 import { IntraAuthModule } from '@api/intra-auth/intra-auth.module';
 import { NotificationModule } from '@api/notification/notification.module';
 import { ReactionModule } from '@api/reaction/reaction.module';
@@ -29,7 +28,7 @@ import * as path from 'path';
       envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
-      load: [ormconfig, configEmail],
+      load: [ormconfig],
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],

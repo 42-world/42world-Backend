@@ -25,5 +25,6 @@ import StibeeService from './stibee.service';
       useClass: StibeeService,
     },
   ],
+  exports: [IntraAuthService],
 })
 export class IntraAuthModule {}

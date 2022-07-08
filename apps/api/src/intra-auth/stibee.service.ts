@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { EMAIL } from './intra-auth.constant';
@@ -27,6 +27,7 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
       );
     } catch (err: any) {
       this.printError(err);
+      throw new InternalServerErrorException('이메일 전송 실패');
     }
   }
 
@@ -48,6 +49,7 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
       );
     } catch (err) {
       this.printError(err);
+      throw new InternalServerErrorException('스티비 구독 실패');
     }
   }
 
@@ -60,6 +62,7 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
       });
     } catch (err) {
       this.printError(err);
+      throw new InternalServerErrorException('스티비 구독 해지 실패');
     }
   }
 
