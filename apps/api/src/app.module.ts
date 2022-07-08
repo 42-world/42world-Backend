@@ -14,13 +14,10 @@ import { ReactionModule } from '@api/reaction/reaction.module';
 import { UserModule } from '@api/user/user.module';
 import { DatabaseModule } from '@app/common/database/database.module';
 import { ormconfig } from '@app/common/database/ormconfig';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
-import * as path from 'path';
 
 @Module({
   imports: [
@@ -30,22 +27,7 @@ import * as path from 'path';
       cache: true,
       load: [ormconfig],
     }),
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        return {
-          ...config.get('email'),
-          template: {
-            dir: path.join(__dirname, '../views/intra-auth/'),
-            adapter: new EjsAdapter(),
-            options: {
-              strict: true,
-            },
-          },
-        };
-      },
-    }),
+
     DatabaseModule.register(),
     AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
