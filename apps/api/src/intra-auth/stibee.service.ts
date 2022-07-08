@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { EMAIL } from './intra-auth.constant';
 import MailService from './mail.service';
 import UnsubscribeStibeeService from './unsubscribe-stibee.service';
 @Injectable()
@@ -17,7 +18,7 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
       await axios.post(
         url,
         {
-          subscriber: `${name}@student.42seoul.kr`,
+          subscriber: `${name}@${EMAIL}`,
           name,
           code,
           githubId,
