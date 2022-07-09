@@ -63,6 +63,7 @@ export class UserController {
   }
 
   @Put()
+  @AlsoNovice()
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: UserResponseDto })
   @ApiBadRequestResponse({ description: '없는 캐릭터 번호' })
@@ -83,6 +84,7 @@ export class UserController {
   }
 
   @Get('me/like-articles')
+  @AlsoNovice()
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllReactionArticle(
@@ -101,6 +103,7 @@ export class UserController {
   }
 
   @Get('me/articles')
+  @AlsoNovice()
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllMyArticle(
@@ -116,6 +119,7 @@ export class UserController {
   }
 
   @Get('me/comments')
+  @AlsoNovice()
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(MyCommentResponseDto)
   async findAllMyComment(
