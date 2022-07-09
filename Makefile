@@ -30,7 +30,7 @@ dev-batch: ready
 
 .PHONY: clean
 clean:
-	docker-compose $(COMPOSE_FILE) down
+	docker-compose $(COMPOSE_FLAGS) down
 
 .PHONY: clean-all
 clean-all: clean
