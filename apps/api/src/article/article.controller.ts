@@ -94,24 +94,6 @@ export class ArticleController {
     });
   }
 
-  @Get('search/:categoryId')
-  @AlsoNovice()
-  @ApiOperation({ summary: '특정 카테고리 게시글 검색' })
-  @ApiPaginatedResponse(ArticleResponseDto)
-  async searchByCategory(
-    @GetUser() user: User,
-    @Query() options: SearchArticleRequestDto,
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.searchByCategory(user, options, categoryId);
-
-    return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, user }),
-      options,
-      totalCount,
-    });
-  }
-
   @Get()
   @AlsoNovice()
   @ApiOperation({ summary: '게시글 목록' })

@@ -801,12 +801,14 @@ describe('Article', () => {
   // 카테고리 별 검색
   describe('/articles/search/$categoryId', () => {
     const searchWord = '42';
+    const freeCategoryId = 1;
     const titleWithSearchWord = 'aaa42aaa';
     const titleWithoutSearchWord = 'aaaaaa';
     const contentWithSearchWord = 'bbb42bbb';
     const contentWithoutSearchWord = 'bbbbbb';
     const SearchArticleRequestDto = {
       q: searchWord,
+      categoryId: freeCategoryId,
     };
     let cadetJWT: string;
     let noviceJWT: string;
@@ -820,7 +822,7 @@ describe('Article', () => {
 
     test('[성공] GET - 게시글이 없는 경우', async () => {
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -835,7 +837,7 @@ describe('Article', () => {
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -850,7 +852,7 @@ describe('Article', () => {
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -866,7 +868,7 @@ describe('Article', () => {
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -882,7 +884,7 @@ describe('Article', () => {
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
 
