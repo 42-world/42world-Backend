@@ -13,7 +13,6 @@ import { FtCheckinModule } from './ft-checkin/ft-checkin.module';
       envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
-      load: [ormconfig, configEmail],
     }),
     FtCheckinModule,
   ],
