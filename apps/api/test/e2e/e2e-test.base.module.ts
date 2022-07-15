@@ -1,10 +1,5 @@
 import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
-import {
-  AWS_ACCESS_KEY,
-  AWS_REGION,
-  AWS_SECRET_KEY,
-} from '@api/image/image.constant';
-import configEmail from '@api/intra-auth/intra-auth.config';
+import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -19,7 +14,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
-      load: [configEmail],
+      load: [],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

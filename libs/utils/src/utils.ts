@@ -31,10 +31,7 @@ export const getCookieOption = (): CookieOptions => {
   return {};
 };
 
-export const errorHook = async (
-  exceptionName: string,
-  exceptionMessage: string,
-) => {
+export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
   const phase = process.env.NODE_ENV;
   const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
 
@@ -72,9 +69,7 @@ export function includeRole(mine: UserRole): UserRole[] {
         return 1;
     }
   };
-  const includeRole: UserRole[] = Object.values(UserRole).filter(
-    (r) => toRoleId(r) <= toRoleId(mine),
-  );
+  const includeRole: UserRole[] = Object.values(UserRole).filter((r) => toRoleId(r) <= toRoleId(mine));
   return includeRole;
 }
 

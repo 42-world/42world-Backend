@@ -8,10 +8,8 @@ import { NotificationModule } from '@api/notification/notification.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { NotificationType } from '@app/entity/notification/interfaces/notifiaction.interface';
 import { Notification } from '@app/entity/notification/notification.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -24,23 +22,22 @@ import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let httpServer: INestApplication;
+
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let articleRepository: ArticleRepository;
   let notificationRepository: Repository<Notification>;
+
   let authService: AuthService;
   let JWT: string;
 
+  let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        CategoryModule,
-        ArticleModule,
-        AuthModule,
-        NotificationModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, CategoryModule, ArticleModule, AuthModule, NotificationModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -49,9 +46,7 @@ describe('Notification', () => {
     userRepository = moduleFixture.get(UserRepository);
     categoryRepository = moduleFixture.get(CategoryRepository);
     articleRepository = moduleFixture.get(ArticleRepository);
-    notificationRepository = moduleFixture.get(
-      getRepositoryToken(Notification),
-    );
+    notificationRepository = moduleFixture.get(getRepositoryToken(Notification));
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -69,27 +64,15 @@ describe('Notification', () => {
 
   describe('/notifications', () => {
     let dummyUser: User;
-    let dummyCategory: Category;
     let dummyArticle: Article;
     let dummyNotification: Notification;
 
     beforeEach(async () => {
-      dummyUser = dummy.user(
-        'test github uid',
-        'first nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(dummyUser);
-      dummyCategory = dummy.category('test category');
-      await categoryRepository.save(dummyCategory);
-      dummyArticle = dummy.article(
-        dummyCategory.id,
-        dummyUser.id,
-        'title',
-        'content',
-      );
-      await articleRepository.save(dummyArticle);
+      users = await dummy.createDummyUsers(userRepository);
+      dummyUser = users.cadet[0];
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      dummyArticle = articles.first;
       dummyNotification = dummy.notification(
         NotificationType.NEW_COMMENT,
         dummyUser.id,
@@ -118,28 +101,16 @@ describe('Notification', () => {
 
   describe('/notifications/readall', () => {
     let dummyUser: User;
-    let dummyCategory: Category;
     let dummyArticle: Article;
     let dummyNotification1: Notification;
     let dummyNotification2: Notification;
 
     beforeEach(async () => {
-      dummyUser = dummy.user(
-        'test github uid',
-        'first nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(dummyUser);
-      dummyCategory = dummy.category('test category');
-      await categoryRepository.save(dummyCategory);
-      dummyArticle = dummy.article(
-        dummyCategory.id,
-        dummyUser.id,
-        'title',
-        'content',
-      );
-      await articleRepository.save(dummyArticle);
+      users = await dummy.createDummyUsers(userRepository);
+      dummyUser = users.cadet[0];
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      dummyArticle = articles.first;
       dummyNotification1 = dummy.notification(
         NotificationType.NEW_COMMENT,
         dummyUser.id,

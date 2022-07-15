@@ -2,6 +2,7 @@ import { ArticleRepository } from '@api/article/repositories/article.repository'
 import { AuthService } from '@api/auth/auth.service';
 import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
+import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
@@ -35,11 +36,7 @@ export const user = (
   return user;
 };
 
-export const category = (
-  name: string,
-  commonRole: UserRole = UserRole.CADET,
-  anonymity = false,
-) => {
+export const category = (name: string, commonRole: UserRole = UserRole.CADET, anonymity = false) => {
   const category = new Category();
   category.name = name;
   category.readableArticle = commonRole;
@@ -72,11 +69,7 @@ export const article = (
 };
 
 //TODO: createDummyComments 추가
-export const comment = (
-  userId: number,
-  articleId: number,
-  content: string,
-): Comment => {
+export const comment = (userId: number, articleId: number, content: string): Comment => {
   const comment = new Comment();
   comment.content = content;
   comment.writerId = userId;
@@ -84,10 +77,7 @@ export const comment = (
   return comment;
 };
 
-export const reactionArticle = (
-  articleId: number,
-  userId: number,
-): ReactionArticle => {
+export const reactionArticle = (articleId: number, userId: number): ReactionArticle => {
   const reactionArticle = new ReactionArticle();
   reactionArticle.articleId = articleId;
   reactionArticle.userId = userId;
@@ -114,9 +104,7 @@ export type DummyUsers = {
   novice: User[];
 };
 
-export const createDummyUsers = async (
-  userRepository: UserRepository,
-): Promise<DummyUsers> => {
+export const createDummyUsers = async (userRepository: UserRepository): Promise<DummyUsers> => {
   const dummyUsers: DummyUsers = {
     cadet: await userRepository.save([
       user('uid1', 'name1', 'githubName1', UserRole.CADET),
@@ -131,7 +119,6 @@ export const createDummyUsers = async (
       user('uid6', 'name6', 'githubName6', UserRole.NOVICE),
     ]),
   };
-
   return dummyUsers;
 };
 
@@ -142,28 +129,17 @@ export type DummyCategories = {
   anony: Category;
 };
 
-export const createDummyCategories = async (
-  categoryRepository: CategoryRepository,
-): Promise<DummyCategories> => {
+export const createDummyCategories = async (categoryRepository: CategoryRepository): Promise<DummyCategories> => {
   const dummyCategories: DummyCategories = {
-    free: await categoryRepository.save(
-      category('free category', UserRole.CADET),
-    ),
-    notice: await categoryRepository.save(
-      category('notice category', UserRole.ADMIN),
-    ),
-    forall: await categoryRepository.save(
-      category('forall category', UserRole.NOVICE),
-    ),
-    anony: await categoryRepository.save(
-      category('anony category', UserRole.CADET, true),
-    ),
+    free: await categoryRepository.save(category('free category', UserRole.CADET)),
+    notice: await categoryRepository.save(category('notice category', UserRole.ADMIN)),
+    forall: await categoryRepository.save(category('forall category', UserRole.NOVICE)),
+    anony: await categoryRepository.save(category('anony category', UserRole.CADET, true)),
   };
-
   return dummyCategories;
 };
 
-export type DummmyArticles = {
+export type DummyArticles = {
   first: Article;
   second: Article;
   best: Article;
@@ -175,20 +151,13 @@ export const createDummyArticles = async (
   articleRepository: ArticleRepository,
   dummyUsers: DummyUsers,
   dummyCategories: DummyCategories,
-): Promise<DummmyArticles> => {
+): Promise<DummyArticles> => {
   const HOUR = 60 * 60 * 1000;
   const DAY = 24 * HOUR;
   const WEEK = 7 * DAY;
-  const dummmyArticles: DummmyArticles = {
+  const dummyArticles: DummyArticles = {
     first: await articleRepository.save(
-      article(
-        dummyCategories.free.id,
-        dummyUsers.cadet[0].id,
-        'normal title',
-        'normal content',
-        0,
-        new Date(),
-      ),
+      article(dummyCategories.free.id, dummyUsers.cadet[0].id, 'normal title', 'normal content', 0, new Date()),
     ),
     second: await articleRepository.save(
       article(
@@ -207,7 +176,7 @@ export const createDummyArticles = async (
         'anony title',
         'anony content',
         0,
-        new Date(),
+        new Date(new Date().getTime() - 2 * HOUR),
       ),
     ),
     best: await articleRepository.save(
@@ -217,7 +186,7 @@ export const createDummyArticles = async (
         'best title',
         'best content',
         10,
-        new Date(new Date().getTime() - 2 * HOUR),
+        new Date(new Date().getTime() - 3 * HOUR),
       ),
     ),
     old_best: await articleRepository.save(
@@ -231,5 +200,30 @@ export const createDummyArticles = async (
       ),
     ),
   };
-  return dummmyArticles;
+  return dummyArticles;
+};
+
+export type DummyComments = {
+  first: Comment;
+  second: Comment;
+  anotherFirst: Comment;
+  anotherSecond: Comment;
+};
+
+export const createDummyComments = async (
+  commentRepository: CommentRepository,
+  dummyUsers: DummyUsers,
+  dummyArticles: DummyArticles,
+): Promise<DummyComments> => {
+  const dummyComments: DummyComments = {
+    first: await commentRepository.save(comment(dummyUsers.cadet[0].id, dummyArticles.first.id, 'first comment')),
+    second: await commentRepository.save(comment(dummyUsers.cadet[1].id, dummyArticles.first.id, 'second comment')),
+    anotherFirst: await commentRepository.save(
+      comment(dummyUsers.cadet[0].id, dummyArticles.second.id, 'another first comment'),
+    ),
+    anotherSecond: await commentRepository.save(
+      comment(dummyUsers.cadet[1].id, dummyArticles.second.id, 'another second comment'),
+    ),
+  };
+  return dummyComments;
 };

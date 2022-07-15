@@ -5,11 +5,7 @@ import { compareRole } from '@app/utils/utils';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { BaseCategoryDto } from '../base-category.dto';
 
-export class CategoryResponseDto extends PickType(BaseCategoryDto, [
-  'id',
-  'name',
-  'isAnonymous',
-]) {
+export class CategoryResponseDto extends PickType(BaseCategoryDto, ['id', 'name', 'isAnonymous']) {
   @ApiProperty({ example: true })
   isArticleWritable!: boolean;
 

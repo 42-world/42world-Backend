@@ -39,3 +39,6 @@ jobs:
           cache: 'yarn'
       - run: yarn
       - run: make test
+      - run: yarn build api
+      - run: yarn build batch
+      - run: yarn build admin

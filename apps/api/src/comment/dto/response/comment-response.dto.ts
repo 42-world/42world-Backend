@@ -56,15 +56,11 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
     isSelf: boolean;
     isAnonymous: boolean;
   }): CommentResponseDto {
-    const writer = config.isAnonymous
-      ? AnonyUserResponseDto.of()
-      : UserResponseDto.of({ user: config.writer });
+    const writer = config.isAnonymous ? AnonyUserResponseDto.of() : UserResponseDto.of({ user: config.writer });
     // TODO: ANONY_USER_ID 를 쓸게 아니라 게시글 마다 고유한 유저 아이디를 새로 발급해야한다. 새로운 해쉬 함수가 필요함
     // 그래야 페이지네이션 해도 익명 1, 익명 2, 작성자가 유지됨
     // 백엔드에는 게시글 고유 아이디만 주고, 프론트에서 조립하는게 맞음
-    const writerId = config.isAnonymous
-      ? ANONY_USER_ID
-      : config.comment.writerId;
+    const writerId = config.isAnonymous ? ANONY_USER_ID : config.comment.writerId;
     return new CommentResponseDto({
       ...config.comment,
       ...config,
@@ -81,9 +77,7 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
   }): CommentResponseDto[] {
     config.reactionComments = config.reactionComments || [];
     return config.comments.map((comment: Comment) => {
-      const isLike = !!config.reactionComments.find(
-        (reactionComment) => reactionComment.commentId === comment.id,
-      );
+      const isLike = !!config.reactionComments.find((reactionComment) => reactionComment.commentId === comment.id);
 
       return CommentResponseDto.of({
         comment,

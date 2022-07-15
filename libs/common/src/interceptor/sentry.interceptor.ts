@@ -1,9 +1,4 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import * as Sentry from '@sentry/minimal';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';

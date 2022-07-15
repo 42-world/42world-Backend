@@ -1,8 +1,5 @@
 import { CacheService } from '@app/common/cache/cache.service';
-import {
-  FT_CHECKIN_KEY,
-  MAX_CHECKIN_KEY,
-} from '@app/common/cache/dto/ft-checkin.constant';
+import { FT_CHECKIN_KEY, MAX_CHECKIN_KEY } from '@app/common/cache/dto/ft-checkin.constant';
 import { logger } from '@app/utils/logger';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -20,11 +17,7 @@ import {
 export class FtCheckinService {
   constructor(private readonly cacheService: CacheService) {}
 
-  private async getData(
-    cacheKey: string,
-    endpoint: string,
-    cacheTTL: number,
-  ): Promise<void | never> {
+  private async getData(cacheKey: string, endpoint: string, cacheTTL: number): Promise<void | never> {
     try {
       const { data } = await axios.get(endpoint);
       const realData = {
@@ -42,21 +35,13 @@ export class FtCheckinService {
 
   @Cron('0 */5 * * * *')
   async getNow() {
-    await this.getData(
-      FT_CHECKIN_KEY,
-      FT_CHECKIN_END_POINT,
-      FT_CHECKIN_CACHE_TTL,
-    );
+    await this.getData(FT_CHECKIN_KEY, FT_CHECKIN_END_POINT, FT_CHECKIN_CACHE_TTL);
     logger.info('FtCheckinService.getNow()');
   }
 
   @Cron('0 0 0 * * *')
   async getMax() {
-    await this.getData(
-      MAX_CHECKIN_KEY,
-      MAX_CHECKIN_END_POINT,
-      MAX_CHECKIN_CACHE_TTL,
-    );
+    await this.getData(MAX_CHECKIN_KEY, MAX_CHECKIN_END_POINT, MAX_CHECKIN_CACHE_TTL);
     logger.info('FtCheckinService.getMax()');
   }
 }

@@ -13,10 +13,7 @@ export class FtCheckinService {
 
     if (!ftCheckinData) {
       logger.error(`Can't get data from cache with key: ${cacheKey}`);
-      errorHook(
-        'GetCheckInDataFromRedisError',
-        `Can't get data from cache with key: ${cacheKey}`,
-      );
+      errorHook('GetCheckInDataFromRedisError', `Can't get data from cache with key: ${cacheKey}`);
       return {
         gaepo: 0,
         seocho: 0,

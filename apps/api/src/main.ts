@@ -22,16 +22,11 @@ async function bootstrap() {
   });
   app.useGlobalInterceptors(new SentryInterceptor());
   morgan.token('body', (req) => JSON.stringify(req.body));
-  app.use(
-    morgan(
-      ':method :url :status :response-time ms - :res[content-length] :body',
-      { stream: stream },
-    ),
-  );
+  app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body', { stream: stream }));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
-    .setDescription('42World API')
+    .setDescription(`42World API - ${configService.get('NODE_ENV')} environment`)
     .setVersion('0.1')
     .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
     .build();

@@ -1,15 +1,6 @@
 import { Admin, AlsoNovice, GetUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -55,9 +46,7 @@ export class CategoryController {
   async findAll(@GetUser() user: User): Promise<CategoryResponseDto[]> {
     const categories = await this.categoryService.findAll();
 
-    return categories.map((category) =>
-      CategoryResponseDto.of({ category, user }),
-    );
+    return categories.map((category) => CategoryResponseDto.of({ category, user }));
   }
 
   @Put(':id/name')

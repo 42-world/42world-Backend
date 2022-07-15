@@ -6,9 +6,6 @@ import { CategoryResponseDto } from '@api/category/dto/response/category-respons
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { Category } from '@app/entity/category/category.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
-import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
@@ -23,12 +20,8 @@ describe('Category', () => {
   let authService: AuthService;
   let jwt: { admin: string; cadet: string; novice: string };
   let server: INestApplication;
-  let users: { admin: User; cadet: User; novice: User };
-  let categories: {
-    자유게시판: Category;
-    익명게시판: Category;
-    유머게시판: Category;
-  };
+  let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
   let paramId: number;
 
   beforeAll(async () => {
@@ -44,20 +37,6 @@ describe('Category', () => {
     authService = moduleFixture.get(AuthService);
 
     server = app.getHttpServer();
-
-    //TODO: createDummyUsers로 대체
-    users = {
-      admin: dummy.user('admin', 'admin', 'admin', UserRole.ADMIN),
-      cadet: dummy.user('cadet', 'cadet', 'cadet', UserRole.CADET),
-      novice: dummy.user('novice', 'novice', 'novice', UserRole.NOVICE),
-    };
-
-    //TODO: createDummyCategories로 대체
-    categories = {
-      자유게시판: dummy.category('자유게시판'),
-      익명게시판: dummy.category('익명게시판'),
-      유머게시판: dummy.category('유머게시판'),
-    };
   });
 
   afterAll(async () => {
@@ -66,14 +45,18 @@ describe('Category', () => {
     await server.close();
   });
 
+  beforeEach(async () => {
+    await clearDB();
+  });
+
   describe('/categories', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
-      await categoryRepository.save(Object.values(categories));
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
@@ -81,7 +64,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] POST - ADMIN이 카테고리 생성', async () => {
@@ -94,16 +76,16 @@ describe('Category', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.admin}`);
       expect(response.status).toEqual(HttpStatus.CREATED);
 
-      const catetory = response.body as CategoryResponseDto;
+      const responseCategory = response.body as CategoryResponseDto;
 
-      expect(catetory.id).toBeDefined();
-      expect(catetory.name).toBe('new_category');
-      expect(catetory.isArticleWritable).toBe(true);
-      expect(catetory.isArticleReadable).toBe(true);
-      expect(catetory.isCommentWritable).toBe(true);
-      expect(catetory.isCommentReadable).toBe(true);
-      expect(catetory.isReactionable).toBe(true);
-      expect(catetory.isAnonymous).toBe(false);
+      expect(responseCategory.id).toBeDefined();
+      expect(responseCategory.name).toBe('new_category');
+      expect(responseCategory.isArticleWritable).toBe(true);
+      expect(responseCategory.isArticleReadable).toBe(true);
+      expect(responseCategory.isCommentWritable).toBe(true);
+      expect(responseCategory.isCommentReadable).toBe(true);
+      expect(responseCategory.isReactionable).toBe(true);
+      expect(responseCategory.isAnonymous).toBe(false);
     });
 
     test('[실패] POST - CADET이 카테고리 생성', async () => {
@@ -140,12 +122,13 @@ describe('Category', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.admin}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const categories = response.body as CategoryResponseDto[];
+      const responseCategories = response.body as CategoryResponseDto[];
 
-      expect(categories).toBeInstanceOf(Array);
-      expect(categories[0].name).toBe('자유게시판');
-      expect(categories[1].name).toBe('익명게시판');
-      expect(categories[2].name).toBe('유머게시판');
+      expect(responseCategories).toBeInstanceOf(Array);
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[성공] GET - CADET이 카테고리 종류 가져오기', async () => {
@@ -154,12 +137,13 @@ describe('Category', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.cadet}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const categories = response.body as CategoryResponseDto[];
+      const responseCategories = response.body as CategoryResponseDto[];
 
-      expect(categories).toBeInstanceOf(Array);
-      expect(categories[0].name).toBe('자유게시판');
-      expect(categories[1].name).toBe('익명게시판');
-      expect(categories[2].name).toBe('유머게시판');
+      expect(responseCategories).toBeInstanceOf(Array);
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[성공] GET - NOVICE가 카테고리 종류 가져오기', async () => {
@@ -168,12 +152,13 @@ describe('Category', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.novice}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const categories = response.body as CategoryResponseDto[];
+      const responseCategories = response.body as CategoryResponseDto[];
 
-      expect(categories).toBeInstanceOf(Array);
-      expect(categories[0].name).toBe('자유게시판');
-      expect(categories[1].name).toBe('익명게시판');
-      expect(categories[2].name).toBe('유머게시판');
+      expect(responseCategories).toBeInstanceOf(Array);
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
     test('[실패] GET - unauthorized', async () => {
@@ -185,13 +170,13 @@ describe('Category', () => {
 
   describe('/categories/{id}/name', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
-      await categoryRepository.save(Object.values(categories));
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
       paramId = 2;
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
@@ -199,7 +184,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] PUT - ADMIN이 카테고리 이름 수정', async () => {
@@ -212,10 +196,10 @@ describe('Category', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${jwt.admin}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const category = response.body as CategoryResponseDto;
+      const responseCategory = response.body as CategoryResponseDto;
 
-      expect(category.id).toBe(2);
-      expect(category.name).toBe('update_category');
+      expect(responseCategory.id).toBe(paramId);
+      expect(responseCategory.name).toBe('update_category');
     });
 
     test('[실패] PUT - CADET이 카테고리 이름 수정', async () => {
@@ -241,13 +225,13 @@ describe('Category', () => {
 
   describe('/categories/{id}', () => {
     beforeEach(async () => {
-      await userRepository.save(Object.values(users));
-      await categoryRepository.save(Object.values(categories));
+      users = await dummy.createDummyUsers(userRepository);
+      categories = await dummy.createDummyCategories(categoryRepository);
       paramId = 1;
       jwt = {
-        admin: dummy.jwt(users.admin, authService),
-        cadet: dummy.jwt(users.cadet, authService),
-        novice: dummy.jwt(users.novice, authService),
+        admin: dummy.jwt(users.admin[0], authService),
+        cadet: dummy.jwt(users.cadet[0], authService),
+        novice: dummy.jwt(users.novice[0], authService),
       };
     });
 
@@ -255,7 +239,6 @@ describe('Category', () => {
       delete jwt.admin;
       delete jwt.cadet;
       delete jwt.novice;
-      await clearDB();
     });
 
     test('[성공] DELETE - ADMIN이 카테고리 삭제', async () => {

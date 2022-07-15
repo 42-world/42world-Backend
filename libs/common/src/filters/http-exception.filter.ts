@@ -29,8 +29,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception = new InternalServerErrorException('Unknown Error');
     }
 
-    return response
-      .status((exception as HttpException).getStatus())
-      .json((exception as HttpException).getResponse());
+    return response.status((exception as HttpException).getStatus()).json((exception as HttpException).getResponse());
   }
 }
