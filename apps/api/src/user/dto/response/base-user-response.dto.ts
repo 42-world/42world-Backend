@@ -11,6 +11,10 @@ export class BaseUserResponseDto {
   nickname!: string;
 
   @IsString()
+  @ApiProperty()
+  githubUsername!: string;
+
+  @IsString()
   @ApiProperty({ example: UserRole.NOVICE })
   role!: UserRole;
 
@@ -23,9 +27,10 @@ export class BaseUserResponseDto {
   })
   character!: number;
 
-  constructor(id: number, nickname: string, role: UserRole, character: number) {
+  constructor(id: number, nickname: string, githubUsername: string, role: UserRole, character: number) {
     this.id = id;
     this.nickname = nickname;
+    this.githubUsername = githubUsername;
     this.role = role;
     this.character = character;
   }
