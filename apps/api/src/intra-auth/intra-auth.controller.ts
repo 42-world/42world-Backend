@@ -1,4 +1,4 @@
-import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
+import { AuthUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { logger } from '@app/utils/logger';
 import { Body, Controller, Get, HttpCode, Post, Query, Render } from '@nestjs/common';
@@ -28,7 +28,7 @@ export class IntraAuthController {
   @ApiForbiddenResponse({
     description: '접근 권한 없음 | 이미 인증된 사용자 | 이미 가입된 카뎃',
   })
-  async sendMail(@GetUser() user: User, @Body() { intraId }: SigninIntraAuthRequestDto) {
+  async sendMail(@AuthUser() user: User, @Body() { intraId }: SigninIntraAuthRequestDto) {
     await this.intraAuthService.signin(intraId, user);
   }
 

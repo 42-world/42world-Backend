@@ -3,7 +3,7 @@ import { getCookieOption } from '@app/utils/utils';
 import { Controller, Delete, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { GetGithubProfile, Public } from './auth.decorator';
+import { GithubProfileRes, Public } from './auth.decorator';
 import { AuthService } from './auth.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { GithubProfile } from './interfaces/github-profile.interface';
@@ -41,7 +41,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: '로그인 성공' })
   async githubCallback(
-    @GetGithubProfile() githubProfile: GithubProfile,
+    @GithubProfileRes() githubProfile: GithubProfile,
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     const user = await this.userService.githubLogin(githubProfile);

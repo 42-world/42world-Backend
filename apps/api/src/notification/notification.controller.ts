@@ -1,4 +1,4 @@
-import { GetUser } from '@api/auth/auth.decorator';
+import { AuthUser } from '@api/auth/auth.decorator';
 import { Controller, Get, Patch } from '@nestjs/common';
 import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dto/response/notification-response.dto';
@@ -14,7 +14,7 @@ export class NotificationController {
   @Get()
   @ApiOperation({ summary: '알람 가져오기 ' })
   @ApiOkResponse({ description: '알람들', type: [NotificationResponseDto] })
-  async findAll(@GetUser('id') id: number): Promise<NotificationResponseDto[]> {
+  async findAll(@AuthUser('id') id: number): Promise<NotificationResponseDto[]> {
     const notifications = await this.notificationService.findByUserId(id);
 
     return NotificationResponseDto.ofArray({ notifications });
@@ -23,7 +23,7 @@ export class NotificationController {
   @Patch('/readall')
   @ApiOperation({ summary: '알람 다 읽기' })
   @ApiOkResponse({ description: '알림 다 읽음' })
-  async update(@GetUser('id') id: number): Promise<void> {
+  async update(@AuthUser('id') id: number): Promise<void> {
     return this.notificationService.updateIsReadByUserId(id);
   }
 }

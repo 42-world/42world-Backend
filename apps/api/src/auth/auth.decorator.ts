@@ -4,13 +4,13 @@ import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/com
 import { IS_PUBLIC_KEY, ROLE_KEY } from './auth.constant';
 import { GithubProfile } from './interfaces/github-profile.interface';
 
-export const GetUser = createParamDecorator((data: 'id' | null, ctx: ExecutionContext): User => {
+export const AuthUser = createParamDecorator((data: 'id' | null, ctx: ExecutionContext): User => {
   const req = ctx.switchToHttp().getRequest();
   if (data) return req.user[data];
   return req.user;
 });
 
-export const GetGithubProfile = createParamDecorator((data, ctx: ExecutionContext): GithubProfile => {
+export const GithubProfileRes = createParamDecorator((data, ctx: ExecutionContext): GithubProfile => {
   const req = ctx.switchToHttp().getRequest();
   return req.user;
 });

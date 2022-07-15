@@ -1,4 +1,4 @@
-import { Admin, AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { Admin, AlsoNovice, AuthUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
@@ -28,7 +28,7 @@ export class CategoryController {
   @ApiCreatedResponse({ description: '카테고리', type: CategoryResponseDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   async create(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Body() createCategoryDto: CreateCategoryRequestDto,
   ): Promise<CategoryResponseDto> {
     const category = await this.categoryService.create(createCategoryDto);
@@ -43,7 +43,7 @@ export class CategoryController {
     description: '카테고리 종류',
     type: [CategoryResponseDto],
   })
-  async findAll(@GetUser() user: User): Promise<CategoryResponseDto[]> {
+  async findAll(@AuthUser() user: User): Promise<CategoryResponseDto[]> {
     const categories = await this.categoryService.findAll();
 
     return categories.map((category) => CategoryResponseDto.of({ category, user }));
@@ -56,7 +56,7 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
   @ApiNotFoundResponse({ description: '카테고리 없음' })
   async updateName(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
   ): Promise<CreateCategoryRequestDto> {

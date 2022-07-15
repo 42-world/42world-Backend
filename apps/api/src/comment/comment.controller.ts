@@ -1,4 +1,4 @@
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { AlsoNovice, AuthUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
@@ -33,7 +33,7 @@ export class CommentController {
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   @ApiForbiddenResponse({ description: '댓글을 쓸수없는 게시글' })
   async create(
-    @GetUser() writer: User,
+    @AuthUser() writer: User,
     @Body() createCommentDto: CreateCommentRequestDto,
   ): Promise<CommentResponseDto | never> {
     const comment = await this.commentService.create(writer, createCommentDto);
@@ -54,7 +54,7 @@ export class CommentController {
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
   async updateContent(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser() writer: User,
+    @AuthUser() writer: User,
     @Body() updateCommentDto: UpdateCommentRequestDto,
   ): Promise<void | never> {
     return this.commentService.updateContent(id, writer.id, updateCommentDto);
@@ -65,7 +65,7 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  async remove(@Param('id', ParseIntPipe) id: number, @GetUser('id') writerId: number): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void | never> {
     return this.commentService.remove(id, writerId);
   }
 }
