@@ -7,10 +7,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 
 const getAccessToken = (request: any): string => {
-  if (process.env.NODE_ENV !== 'prod' && request.headers.authorization) {
-    return request.headers.authorization;
-  }
-
   return request.cookies[process.env.ACCESS_TOKEN_KEY];
 };
 
