@@ -31,7 +31,10 @@ async function bootstrap() {
     .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: '42world',
+    customCss: '.swagger-ui .topbar { display: none }',
+  });
 
   const originList = process.env.ORIGIN_LIST || '';
   app.enableCors({
