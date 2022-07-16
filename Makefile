@@ -30,7 +30,7 @@ dev-batch: ready
 
 .PHONY: clean
 clean:
-	docker-compose $(COMPOSE_FILE) down
+	docker-compose $(COMPOSE_FLAGS) down
 
 .PHONY: clean-all
 clean-all: clean
@@ -55,7 +55,7 @@ test-api: test-ready
 deploy:
 	mkdir -p ./infra/db
 	cat ./infra/docker-compose.yml | head -n 1 > ./infra/docker-compose.stack.yml
-	docker-compose $(COMPOSE_FLAGS) convert --no-normalize >> ./infra/docker-compose.stack.yml
+	docker-compose $(COMPOSE_FLAGS) convert --no-normalize | grep -v platform >> ./infra/docker-compose.stack.yml
 	docker stack deploy $(SERVICE_NAME) -c ./infra/docker-compose.stack.yml
 	rm ./infra/docker-compose.stack.yml
 
