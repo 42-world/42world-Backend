@@ -506,7 +506,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -518,7 +517,6 @@ describe('Article', () => {
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(updateArticleRequestDto.title);
       expect(result.content).toBe(updateArticleRequestDto.content);
-      expect(result.categoryId).toBe(updateArticleRequestDto.categoryId);
       expect(result.writerId).toBe(users.cadet[0].id);
     });
 
@@ -535,7 +533,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -566,22 +563,6 @@ describe('Article', () => {
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
-    test('[실패] PUT - 게시글 수정 존재하지 않는 카테고리', async () => {
-      const articleId = articles.first.id;
-      const updateArticleRequestDto: UpdateArticleRequestDto = {
-        title: 'title2',
-        content: 'content2',
-        categoryId: 99,
-      };
-
-      const response = await request(httpServer)
-        .put(`/articles/${articleId}`)
-        .send(updateArticleRequestDto)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-
-      expect(response.status).toBe(HttpStatus.NOT_FOUND);
-    });
-
     testDto<{ articleId: number }>([
       ['articleId', undefined],
       ['articleId', 'abc'],
@@ -592,7 +573,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -615,7 +595,6 @@ describe('Article', () => {
       const updateArticleRequestDto = buildDto({
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       });
 
       const response = await request(httpServer)
