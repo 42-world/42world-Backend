@@ -1,5 +1,6 @@
 import { AppModule } from '@api/app.module';
 import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
+import { SentryInterceptor } from '@app/common/interceptor/sentry.interceptor';
 import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,7 +11,6 @@ import * as Sentry from '@sentry/node';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
-import { SentryInterceptor } from './sentry.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
