@@ -59,6 +59,6 @@ export class AuthController {
   @ApiOkResponse({ description: '로그아웃 성공' })
   @ApiUnauthorizedResponse({ description: '인증 실패' })
   signout(@Res({ passthrough: true }) response: Response): void {
-    response.clearCookie(process.env.ACCESS_TOKEN_KEY);
+    response.clearCookie(process.env.ACCESS_TOKEN_KEY, getCookieOption());
   }
 }

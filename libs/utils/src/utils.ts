@@ -25,8 +25,10 @@ export const isExpired = (exp: Date): boolean => {
 };
 
 export const getCookieOption = (): CookieOptions => {
-  if (process.env.NODE_ENV === 'alpha' || process.env.NODE_ENV === 'prod') {
-    return { secure: true, sameSite: 'none' };
+  if (process.env.NODE_ENV === 'prod') {
+    return { httpOnly: true, secure: true, sameSite: 'lax' };
+  } else if (process.env.NODE_ENV === 'alpha') {
+    return { httpOnly: true, secure: true, sameSite: 'none' };
   }
   return {};
 };
