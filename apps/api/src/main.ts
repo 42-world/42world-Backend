@@ -42,6 +42,8 @@ async function bootstrap() {
     origin: [...originList.split(',').map((item) => item.trim()), originRegex],
     credentials: true,
   });
+  console.log(`CORS origin: ${[...originList.split(',').map((item) => item.trim()), originRegex]}`);
+
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
