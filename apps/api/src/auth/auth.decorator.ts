@@ -10,7 +10,7 @@ export const AuthUser = createParamDecorator((data: 'id' | null, ctx: ExecutionC
   return req.user;
 });
 
-export const GithubProfileRes = createParamDecorator((data, ctx: ExecutionContext): GithubProfile => {
+export const ReqGithubProfile = createParamDecorator((data, ctx: ExecutionContext): GithubProfile => {
   const req = ctx.switchToHttp().getRequest();
   return req.user;
 });
