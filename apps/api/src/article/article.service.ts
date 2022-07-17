@@ -115,7 +115,6 @@ export class ArticleService {
   }
 
   async update(id: number, writerId: number, updateArticleRequestDto: UpdateArticleRequestDto): Promise<void | never> {
-    if (updateArticleRequestDto.categoryId) await this.categoryService.existOrFail(updateArticleRequestDto.categoryId);
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,

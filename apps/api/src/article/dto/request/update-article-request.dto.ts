@@ -10,8 +10,4 @@ export class UpdateArticleRequestDto extends PickType(PartialType(BaseArticleDto
   @IsOptional()
   @ApiPropertyOptional({ example: '수정된 내용 입니다.' })
   readonly content?: string;
-
-  @IsOptional()
-  @ApiPropertyOptional({ example: 2 })
-  readonly categoryId?: number;
 }
