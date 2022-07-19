@@ -37,8 +37,9 @@ async function bootstrap() {
   });
 
   const originList = process.env.ORIGIN_LIST || '';
+  const originRegex = process.env.ORIGIN_REGEX ? new RegExp(process.env.ORIGIN_REGEX) : '';
   app.enableCors({
-    origin: originList.split(',').map((item) => item.trim()),
+    origin: [...originList.split(',').map((item) => item.trim()), originRegex],
     credentials: true,
   });
   app.useGlobalFilters(new HttpExceptionFilter());
