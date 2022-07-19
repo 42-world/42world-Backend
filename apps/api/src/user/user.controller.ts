@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
-import { AlsoNovice, AuthUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
@@ -36,7 +36,7 @@ export class UserController {
   ) {}
 
   @Get('me')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserProfileResponseDto })
   async me(@AuthUser() user: User): Promise<UserProfileResponseDto> {
@@ -46,7 +46,7 @@ export class UserController {
 
   // TODO: profile API는 me 와 합칠것
   @Get('profile')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
   @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
   findOneProfile(@AuthUser() user: User): UserResponseDto {
@@ -54,6 +54,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Auth()
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
   @ApiOkResponse({ description: '유저 정보', type: UserResponseDto })
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto | never> {
@@ -63,7 +64,7 @@ export class UserController {
   }
 
   @Put()
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: UserResponseDto })
   @ApiBadRequestResponse({ description: '없는 캐릭터 번호' })
@@ -77,6 +78,7 @@ export class UserController {
   }
 
   @Delete()
+  @Auth()
   @ApiOperation({ summary: '유저 삭제' })
   @ApiOkResponse({ description: '유저 삭제 성공' })
   async remove(@AuthUser('id') id: number): Promise<void> {
@@ -84,7 +86,7 @@ export class UserController {
   }
 
   @Get('me/like-articles')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllReactionArticle(
@@ -103,7 +105,7 @@ export class UserController {
   }
 
   @Get('me/articles')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllMyArticle(
@@ -119,7 +121,7 @@ export class UserController {
   }
 
   @Get('me/comments')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(MyCommentResponseDto)
   async findAllMyComment(

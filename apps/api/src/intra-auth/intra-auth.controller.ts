@@ -1,4 +1,4 @@
-import { AuthUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { logger } from '@app/utils/logger';
 import { Body, Controller, Get, HttpCode, Post, Query, Render } from '@nestjs/common';
@@ -20,7 +20,7 @@ export class IntraAuthController {
 
   @Post()
   @HttpCode(200)
-  @OnlyNovice()
+  @Auth()
   @ApiCookieAuth()
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
@@ -34,7 +34,6 @@ export class IntraAuthController {
 
   @Get()
   @Render('intra-auth/results.ejs')
-  @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
   @ApiOkResponse({ description: 'results.ejs 파일 렌더링' })
   async getAuthCode(@Query('code') code: string) {

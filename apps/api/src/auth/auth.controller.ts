@@ -3,7 +3,7 @@ import { getCookieOption } from '@app/utils/utils';
 import { Controller, Delete, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { Public, ReqGithubProfile } from './auth.decorator';
+import { Auth, ReqGithubProfile } from './auth.decorator';
 import { AuthService } from './auth.service';
 import { GithubAuthGuard } from './github-auth.guard';
 import { GithubProfile } from './interfaces/github-profile.interface';
@@ -15,7 +15,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService, private readonly userService: UserService) {}
 
   @Get('github')
-  @Public()
   @UseGuards(GithubAuthGuard)
   @ApiOperation({
     summary: '깃허브 로그인',
@@ -30,7 +29,6 @@ export class AuthController {
   }
 
   @Get('github/callback')
-  @Public()
   @UseGuards(GithubAuthGuard)
   @ApiOperation({
     summary: '깃허브 로그인 콜백',
@@ -53,7 +51,7 @@ export class AuthController {
   }
 
   @Delete('signout')
-  @Public()
+  @Auth()
   @ApiCookieAuth()
   @ApiOperation({ summary: '로그아웃' })
   @ApiOkResponse({ description: '로그아웃 성공' })

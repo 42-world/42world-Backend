@@ -1,4 +1,4 @@
-import { AlsoNovice, AuthUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
@@ -56,7 +56,7 @@ export class ArticleController {
   ) {}
 
   @Post()
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiCreatedResponse({
     description: '업로드된 게시글',
@@ -78,7 +78,6 @@ export class ArticleController {
   }
 
   @Get('search')
-  @AlsoNovice()
   @ApiOperation({ summary: '게시글 검색' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async search(
@@ -95,7 +94,6 @@ export class ArticleController {
   }
 
   @Get()
-  @AlsoNovice()
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
@@ -112,7 +110,6 @@ export class ArticleController {
   }
 
   @Get(':id')
-  @AlsoNovice()
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
@@ -139,7 +136,6 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
-  @AlsoNovice()
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
@@ -165,7 +161,7 @@ export class ArticleController {
   }
 
   @Put(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
@@ -178,7 +174,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })

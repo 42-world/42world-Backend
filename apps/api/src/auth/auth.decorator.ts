@@ -1,7 +1,6 @@
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
-import { IS_PUBLIC_KEY, ROLE_KEY } from './auth.constant';
+import { REQUIRE_ROLES } from './auth.constant';
 import { GithubProfile } from './interfaces/github-profile.interface';
 
 export const AuthUser = createParamDecorator((data: 'id' | null, ctx: ExecutionContext): User => {
@@ -15,12 +14,4 @@ export const ReqGithubProfile = createParamDecorator((data, ctx: ExecutionContex
   return req.user;
 });
 
-export const Admin = () => SetMetadata(ROLE_KEY, [UserRole.ADMIN]);
-
-export const Cadet = () => SetMetadata(ROLE_KEY, [UserRole.CADET, UserRole.ADMIN]);
-
-export const AlsoNovice = () => SetMetadata(ROLE_KEY, [UserRole.NOVICE, UserRole.CADET, UserRole.ADMIN]);
-
-export const OnlyNovice = () => SetMetadata(ROLE_KEY, [UserRole.NOVICE, UserRole.ADMIN]);
-
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+export const Auth = (...roles: string[]) => SetMetadata(REQUIRE_ROLES, roles);

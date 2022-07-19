@@ -1,4 +1,5 @@
-import { Admin, AlsoNovice, AuthUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
@@ -23,7 +24,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @Admin()
+  @Auth(UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 생성하기 (관리자)' })
   @ApiCreatedResponse({ description: '카테고리', type: CategoryResponseDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
@@ -37,7 +38,6 @@ export class CategoryController {
   }
 
   @Get()
-  @AlsoNovice()
   @ApiOperation({ summary: '카테고리 종류 가져오기' })
   @ApiOkResponse({
     description: '카테고리 종류',
@@ -50,7 +50,7 @@ export class CategoryController {
   }
 
   @Put(':id/name')
-  @Admin()
+  @Auth(UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 이름 수정하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리', type: CreateCategoryRequestDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
@@ -66,7 +66,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  @Admin()
+  @Auth(UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 삭제하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리 삭제 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
