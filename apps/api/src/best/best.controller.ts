@@ -25,7 +25,7 @@ export class BestController {
   constructor(private readonly bestService: BestService) {}
 
   @Post()
-  @Auth(UserRole.ADMIN)
+  @Auth('allow', UserRole.ADMIN)
   @ApiOperation({ summary: '인기글 추가하기 (관리자)' })
   @ApiOkResponse({ description: '인기글에 추가 성공', type: Best })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
@@ -46,7 +46,7 @@ export class BestController {
   }
 
   @Delete(':id')
-  @Auth(UserRole.ADMIN)
+  @Auth('allow', UserRole.ADMIN)
   @ApiOperation({ summary: '인기글에서 내리기 (관리자)' })
   @ApiOkResponse({ description: '인기글 내리기 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })

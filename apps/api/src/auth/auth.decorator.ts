@@ -1,3 +1,4 @@
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 import { REQUIRE_ROLES } from './auth.constant';
@@ -14,4 +15,9 @@ export const ReqGithubProfile = createParamDecorator((data, ctx: ExecutionContex
   return req.user;
 });
 
-export const Auth = (...roles: string[]) => SetMetadata(REQUIRE_ROLES, roles);
+type AuthType = 'allow' | 'deny';
+
+export const Auth = (allow: AuthType = 'deny', ...param: Exclude<UserRole, UserRole.GUEST>[]) =>
+  SetMetadata(REQUIRE_ROLES, [allow, ...param]);
+
+export type AuthDecoratorParam = [AuthType, ...Exclude<UserRole, UserRole.GUEST>[]];

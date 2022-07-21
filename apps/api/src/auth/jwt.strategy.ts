@@ -1,7 +1,6 @@
 import { UserService } from '@api/user/user.service';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -26,10 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return await this.userService.findOneByIdOrFail(payload.userId);
     } catch (e) {
       if (e instanceof NotFoundException) {
-        // TODO: User 생성자로 바꿀것
-        const user = new User();
-        user.role = UserRole.GUEST;
-        return user;
+        throw new UnauthorizedException();
       }
       throw e;
     }
