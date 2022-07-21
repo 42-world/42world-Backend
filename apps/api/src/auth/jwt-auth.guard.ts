@@ -1,10 +1,11 @@
 import { FORBIDDEN_USER_ROLE, REQUIRE_ROLES } from '@api/auth/auth.constant';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthDecoratorParam } from './auth.decorator';
+import { getAccessToken } from './jwt.strategy';
 
 /**
  * Custom AuthGuard to check public handler and user roles
@@ -24,27 +25,29 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const requireAuth = this.reflector.get<AuthDecoratorParam>(REQUIRE_ROLES, context.getHandler());
 
     if (!requireAuth) {
-      const request = context.switchToHttp().getRequest();
+      return true;
+    }
+
+    const request = context.switchToHttp().getRequest();
+    if (!getAccessToken(request)) {
       request.user = new User();
       request.user.role = UserRole.GUEST;
+      try {
+        this.handleRequest(null, request.user, null, context);
+      } catch (error) {
+        throw new UnauthorizedException();
+      }
       return true;
     }
 
     return super.canActivate(context);
   }
 
-  /**
-   * Check if **Logined** user is allowed to access handler
-   */
   handleRequest<TUser>(err: any, user: any, info: any, context: any, status?: any): TUser {
     const u = super.handleRequest(err, user, info, context, status) as User;
     const requireAuth = this.reflector.get<AuthDecoratorParam>(REQUIRE_ROLES, context.getHandler());
 
-    if (u.role === UserRole.GUEST) {
-      throw new ForbiddenException(FORBIDDEN_USER_ROLE);
-    }
-
-    if (requireAuth[0] === 'allow' && !requireAuth.includes(u.role)) {
+    if (requireAuth[0] === 'only' && !requireAuth.includes(u.role)) {
       throw new ForbiddenException(FORBIDDEN_USER_ROLE);
     }
 

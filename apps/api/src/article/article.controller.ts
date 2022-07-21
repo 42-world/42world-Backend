@@ -78,6 +78,7 @@ export class ArticleController {
   }
 
   @Get('search')
+  @Auth('public')
   @ApiOperation({ summary: '게시글 검색' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async search(
@@ -94,6 +95,7 @@ export class ArticleController {
   }
 
   @Get()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
@@ -110,6 +112,7 @@ export class ArticleController {
   }
 
   @Get(':id')
+  @Auth('public')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
@@ -136,6 +139,7 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
+  @Auth('public')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(

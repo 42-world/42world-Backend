@@ -24,7 +24,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @Auth('allow', UserRole.ADMIN)
+  @Auth('only', UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 생성하기 (관리자)' })
   @ApiCreatedResponse({ description: '카테고리', type: CategoryResponseDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
@@ -38,6 +38,7 @@ export class CategoryController {
   }
 
   @Get()
+  @Auth('public')
   @ApiOperation({ summary: '카테고리 종류 가져오기' })
   @ApiOkResponse({
     description: '카테고리 종류',
@@ -50,7 +51,7 @@ export class CategoryController {
   }
 
   @Put(':id/name')
-  @Auth('allow', UserRole.ADMIN)
+  @Auth('only', UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 이름 수정하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리', type: CreateCategoryRequestDto })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })
@@ -66,7 +67,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  @Auth('allow', UserRole.ADMIN)
+  @Auth('only', UserRole.ADMIN)
   @ApiOperation({ summary: '카테고리 삭제하기 (관리자)' })
   @ApiOkResponse({ description: '카테고리 삭제 성공' })
   @ApiForbiddenResponse({ description: '접근 권한 없음' })

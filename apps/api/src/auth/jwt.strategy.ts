@@ -6,7 +6,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 
-const getAccessToken = (request: any): string => {
+export const getAccessToken = (request: any): string => {
   return request.cookies[process.env.ACCESS_TOKEN_KEY];
 };
 
