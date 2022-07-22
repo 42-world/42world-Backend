@@ -4,6 +4,13 @@ import { User } from '@app/entity/user/user.entity';
 
 export class UserProfileMapper {
   static toMapResponse(user: User, intraAuth?: IntraAuth | null): UserProfileResponseDto {
-    return new UserProfileResponseDto(user.id, user.nickname, user.role, user.character, intraAuth?.intraId);
+    return new UserProfileResponseDto(
+      user.id,
+      user.nickname,
+      user.githubUsername,
+      user.role,
+      user.character,
+      intraAuth?.intraId,
+    );
   }
 }
