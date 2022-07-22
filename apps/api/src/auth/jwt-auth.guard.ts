@@ -48,7 +48,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const u = super.handleRequest(err, user, info, context, status) as User;
     const requireAuth = this.reflector.get<AuthDecoratorParam>(REQUIRE_ROLES, context.getHandler());
 
-    if (requireAuth[0] === 'only' && !requireAuth.includes(u.role)) {
+    if (requireAuth[0] === 'allow' && !requireAuth.includes(u.role)) {
       throw new ForbiddenException(FORBIDDEN_USER_ROLE);
     }
 

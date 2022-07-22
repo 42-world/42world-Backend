@@ -18,7 +18,7 @@ export const ReqGithubProfile = createParamDecorator((data, ctx: ExecutionContex
   return req.user;
 });
 
-type AuthType = 'only' | 'deny';
+type AuthType = 'allow' | 'deny';
 
 export type AuthDecoratorParam = [AuthType, ...UserRole[]];
 
