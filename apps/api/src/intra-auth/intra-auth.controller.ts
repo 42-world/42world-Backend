@@ -1,4 +1,4 @@
-import { GetUser, OnlyNovice, Public } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { logger } from '@app/utils/logger';
 import { Body, Controller, Get, HttpCode, Post, Query, Render } from '@nestjs/common';
@@ -20,7 +20,7 @@ export class IntraAuthController {
 
   @Post()
   @HttpCode(200)
-  @OnlyNovice()
+  @Auth()
   @ApiCookieAuth()
   @ApiOperation({ summary: '42인증 메일 전송' })
   @ApiOkResponse({ description: '메일 전송 성공' })
@@ -28,13 +28,12 @@ export class IntraAuthController {
   @ApiForbiddenResponse({
     description: '접근 권한 없음 | 이미 인증된 사용자 | 이미 가입된 카뎃',
   })
-  async sendMail(@GetUser() user: User, @Body() { intraId }: SigninIntraAuthRequestDto) {
+  async sendMail(@AuthUser() user: User, @Body() { intraId }: SigninIntraAuthRequestDto) {
     await this.intraAuthService.signin(intraId, user);
   }
 
   @Get()
   @Render('intra-auth/results.ejs')
-  @Public() // TODO: check this
   @ApiOperation({ summary: '42인증 메일 코드 확인' })
   @ApiOkResponse({ description: 'results.ejs 파일 렌더링' })
   async getAuthCode(@Query('code') code: string) {

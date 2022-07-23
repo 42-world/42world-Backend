@@ -1,4 +1,3 @@
-import { Public } from '@api/auth/auth.decorator';
 import { logger } from '@app/utils/logger';
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -7,7 +6,6 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller()
 export class AppController {
   @Get()
-  @Public()
   @ApiOperation({ summary: 'Hello world!' })
   @ApiOkResponse({ description: 'Hello world!' })
   getHello(): string {
@@ -16,7 +14,6 @@ export class AppController {
   }
 
   @Get('/error')
-  @Public()
   getError(): void {
     throw new Error('Hi Sentry!');
   }

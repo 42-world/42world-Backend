@@ -201,10 +201,14 @@ describe('Article', () => {
       expect(responseArticles[1].categoryId).toBe(findArticleRequestDto.categoryId);
     });
 
-    test('[실패] GET - unauthorized', async () => {
-      const response = await request(httpServer).get('/articles');
+    test('[성공] GET - GUEST 게시글 목록 조회', async () => {
+      const findArticleRequestDto = {
+        categoryId: categories.free.id,
+      };
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      const response = await request(httpServer).get('/articles').query(findArticleRequestDto);
+
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 익명 게시글 목록 조회', async () => {
@@ -340,12 +344,12 @@ describe('Article', () => {
       expect(responseComments[1].id).toBe(comments[0].id);
     });
 
-    test('[실패] GET - unauthorized', async () => {
+    test('[성공] GET - GUEST 댓글 목록 조회', async () => {
       const articleId = articles.first.id;
 
       const response = await request(httpServer).get(`/articles/${articleId}/comments`);
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 게시글 댓글 목록 조회 권한 높은사람', async () => {
@@ -425,12 +429,12 @@ describe('Article', () => {
       expect(result.writer.nickname).toBe(users.cadet[0].nickname);
     });
 
-    test('[실패] GET - unauthorized', async () => {
+    test('[성공] GET - GUEST 게시글 상세 조회', async () => {
       const articleId = articles.first.id;
 
       const response = await request(httpServer).get(`/articles/${articleId}`);
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 익명 게시글 상세 조회', async () => {
