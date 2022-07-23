@@ -384,6 +384,20 @@ describe('User', () => {
       expect(articles[0].id).toEqual(reactionArticle.id);
     });
 
+    test('[성공] - GET - 내가 좋아요 누른 게시글 가져오기, 삭제한 게시글이 있는 경우', async () => {
+      await articleRepository.softDelete(articles.first);
+
+      const response = await request(httpServer)
+        .get('/users/me/like-articles')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseArticle = response.body.data as Article[];
+
+      expect(responseArticle.length).toEqual(0);
+    });
+
     test.skip('[성공] GET - 내가 좋아요 누른 게시글 목록 확인 - 익명', async () => {
       expect(1).toBeTruthy();
     });
