@@ -44,15 +44,6 @@ export class UserController {
     return UserProfileMapper.toMapResponse(user, intraAuth);
   }
 
-  // TODO: profile API는 me 와 합칠것
-  @Get('profile')
-  @Auth()
-  @ApiOperation({ summary: '내 정보 가져오기 (42인증 안된 사람도 가능)' })
-  @ApiOkResponse({ description: '내 정보', type: UserResponseDto })
-  findOneProfile(@AuthUser() user: User): UserResponseDto {
-    return UserResponseDto.of({ user });
-  }
-
   @Get(':id')
   @Auth()
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
