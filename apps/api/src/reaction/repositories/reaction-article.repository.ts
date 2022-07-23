@@ -19,7 +19,7 @@ export class ReactionArticleRepository extends Repository<ReactionArticle> {
     totalCount: number;
   }> {
     const query = this.createQueryBuilder('reactionArticle')
-      .leftJoinAndSelect('reactionArticle.article', 'article')
+      .innerJoinAndSelect('reactionArticle.article', 'article')
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .andWhere('reactionArticle.userId = :id', { id: userId })
