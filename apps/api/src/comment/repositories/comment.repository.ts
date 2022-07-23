@@ -34,9 +34,9 @@ export class CommentRepository extends Repository<Comment> {
     totalCount: number;
   }> {
     const query = this.createQueryBuilder('comment')
-      .leftJoinAndSelect('comment.article', 'article')
+      .innerJoinAndSelect('comment.article', 'article')
       .leftJoinAndSelect('article.category', 'category')
-      .andWhere('comment.writerId = :id', { id: writerId })
+      .where('comment.writerId = :id', { id: writerId })
       .skip(getPaginationSkip(options))
       .take(options.take)
       .orderBy('comment.createdAt', options.order);
