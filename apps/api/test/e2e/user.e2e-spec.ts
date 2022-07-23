@@ -332,6 +332,22 @@ describe('User', () => {
       expect(comments[1].content).toEqual(comment.content);
     });
 
+    test('[성공] - GET - 내가 작성한 댓글 가져오기, 삭제한 게시글이 있는 경우', async () => {
+      await articleRepository.softDelete(articles.first);
+
+      const response = await request(httpServer)
+        .get('/users/me/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+
+      expect(responseComments.length).toEqual(1);
+      expect(responseComments[0].id).toEqual(comments.anotherFirst.id);
+      expect(responseComments[0].content).toEqual(comments.anotherFirst.content);
+    });
+
     test.skip('[성공] GET - 내가 작성한 댓글 가져오기 - 익명', async () => {
       expect(1).toBeTruthy();
     });
