@@ -15,10 +15,9 @@ export class CategoryRepository extends Repository<Category> {
   }
 
   getAvailable(role: UserRole[]): Promise<Category[]> {
-    const query = this.createQueryBuilder('category').where(
-      'category.readableArticle IN (:...userRole)',
-      { userRole: role },
-    );
+    const query = this.createQueryBuilder('category').where('category.readableArticle IN (:...userRole)', {
+      userRole: role,
+    });
     return query.getMany();
   }
 }

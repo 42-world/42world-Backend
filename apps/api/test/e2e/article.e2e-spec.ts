@@ -12,11 +12,7 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import {
-  ANONY_USER_CHARACTER,
-  ANONY_USER_ID,
-  ANONY_USER_NICKNAME,
-} from '@api/user/user.constant';
+import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -42,18 +38,11 @@ describe('Article', () => {
 
   let users: dummy.DummyUsers;
   let categories: dummy.DummyCategories;
-  let articles: dummy.DummmyArticles;
+  let articles: dummy.DummyArticles;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        AuthModule,
-        ArticleModule,
-        CategoryModule,
-        CommentModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CategoryModule, CommentModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -82,11 +71,7 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -146,7 +131,7 @@ describe('Article', () => {
         .post('/articles')
         .send(createArticlRequesteDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] POST - 글쓰기 존재하지 않는 카테고리', async () => {
@@ -210,22 +195,20 @@ describe('Article', () => {
       expect(responseArticles[0].writer.nickname).toBe(users.cadet[0].nickname);
       expect(responseArticles[0].viewCount).toBe(articles.first.viewCount);
       expect(responseArticles[0].likeCount).toBe(articles.first.likeCount);
-      expect(responseArticles[0].commentCount).toBe(
-        articles.first.commentCount,
-      );
-      expect(responseArticles[0].categoryId).toBe(
-        findArticleRequestDto.categoryId,
-      );
+      expect(responseArticles[0].commentCount).toBe(articles.first.commentCount);
+      expect(responseArticles[0].categoryId).toBe(findArticleRequestDto.categoryId);
       expect(responseArticles[1].id).toBe(articles.second.id);
-      expect(responseArticles[1].categoryId).toBe(
-        findArticleRequestDto.categoryId,
-      );
+      expect(responseArticles[1].categoryId).toBe(findArticleRequestDto.categoryId);
     });
 
-    test('[실패] GET - unauthorized', async () => {
-      const response = await request(httpServer).get('/articles');
+    test('[성공] GET - GUEST 게시글 목록 조회', async () => {
+      const findArticleRequestDto = {
+        categoryId: categories.free.id,
+      };
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      const response = await request(httpServer).get('/articles').query(findArticleRequestDto);
+
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 익명 게시글 목록 조회', async () => {
@@ -275,7 +258,7 @@ describe('Article', () => {
         .get('/articles')
         .query(findArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 목록 조희 존재하지 않는 카테고리', async () => {
@@ -309,22 +292,13 @@ describe('Article', () => {
   });
 
   describe('/articles/{id}/comments', () => {
-    let comments: Comment[];
+    let comments: dummy.DummyComments;
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
-      comments = await commentRepository.save([
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment1'),
-        dummy.comment(users.cadet[0].id, articles.first.id, 'comment2'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment3'),
-        dummy.comment(users.cadet[0].id, articles.second.id, 'comment4'),
-      ]);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -338,14 +312,14 @@ describe('Article', () => {
 
       const responseComments = response.body.data as Comment[];
       expect(responseComments.length).toBe(2);
-      expect(responseComments[0].id).toBe(comments[1].id);
-      expect(responseComments[0].content).toBe(comments[1].content);
-      expect(responseComments[0].writerId).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.id).toBe(comments[1].writerId);
-      expect(responseComments[0].writer.nickname).toBe(users.cadet[0].nickname);
-      expect(responseComments[0].articleId).toBe(comments[1].articleId);
-      expect(responseComments[0].likeCount).toBe(comments[1].likeCount);
-      expect(responseComments[1].id).toBe(comments[0].id);
+      expect(responseComments[0].id).toBe(comments.second.id);
+      expect(responseComments[0].content).toBe(comments.second.content);
+      expect(responseComments[0].writerId).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.id).toBe(comments.second.writerId);
+      expect(responseComments[0].writer.nickname).toBe(users.cadet[1].nickname);
+      expect(responseComments[0].articleId).toBe(comments.second.articleId);
+      expect(responseComments[0].likeCount).toBe(comments.second.likeCount);
+      expect(responseComments[1].id).toBe(comments.first.id);
     });
 
     // TODO: 여기 테스트 기능 구현할것
@@ -370,14 +344,12 @@ describe('Article', () => {
       expect(responseComments[1].id).toBe(comments[0].id);
     });
 
-    test('[실패] GET - unauthorized', async () => {
+    test('[성공] GET - GUEST 댓글 목록 조회', async () => {
       const articleId = articles.first.id;
 
-      const response = await request(httpServer).get(
-        `/articles/${articleId}/comments`,
-      );
+      const response = await request(httpServer).get(`/articles/${articleId}/comments`);
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 게시글 댓글 목록 조회 권한 높은사람', async () => {
@@ -397,7 +369,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}/comments`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toBe(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 댓글 목록 존재하지 않는 게시글', async () => {
@@ -430,11 +402,7 @@ describe('Article', () => {
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
       categories = await dummy.createDummyCategories(categoryRepository);
-      articles = await dummy.createDummyArticles(
-        articleRepository,
-        users,
-        categories,
-      );
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
       JWT = dummy.jwt(users.cadet[0], authService);
     });
 
@@ -461,12 +429,12 @@ describe('Article', () => {
       expect(result.writer.nickname).toBe(users.cadet[0].nickname);
     });
 
-    test('[실패] GET - unauthorized', async () => {
+    test('[성공] GET - GUEST 게시글 상세 조회', async () => {
       const articleId = articles.first.id;
 
       const response = await request(httpServer).get(`/articles/${articleId}`);
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[성공] GET - 익명 게시글 상세 조회', async () => {
@@ -508,7 +476,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .get(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
     test('[실패] GET - 게시글 상세 조회 존재하지 않는 게시글', async () => {
@@ -542,7 +510,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -554,7 +521,6 @@ describe('Article', () => {
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(updateArticleRequestDto.title);
       expect(result.content).toBe(updateArticleRequestDto.content);
-      expect(result.categoryId).toBe(updateArticleRequestDto.categoryId);
       expect(result.writerId).toBe(users.cadet[0].id);
     });
 
@@ -571,7 +537,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -602,22 +567,6 @@ describe('Article', () => {
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
-    test('[실패] PUT - 게시글 수정 존재하지 않는 카테고리', async () => {
-      const articleId = articles.first.id;
-      const updateArticleRequestDto: UpdateArticleRequestDto = {
-        title: 'title2',
-        content: 'content2',
-        categoryId: 99,
-      };
-
-      const response = await request(httpServer)
-        .put(`/articles/${articleId}`)
-        .send(updateArticleRequestDto)
-        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-
-      expect(response.status).toBe(HttpStatus.NOT_FOUND);
-    });
-
     testDto<{ articleId: number }>([
       ['articleId', undefined],
       ['articleId', 'abc'],
@@ -628,7 +577,6 @@ describe('Article', () => {
       const updateArticleRequestDto: UpdateArticleRequestDto = {
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       };
 
       const response = await request(httpServer)
@@ -651,7 +599,6 @@ describe('Article', () => {
       const updateArticleRequestDto = buildDto({
         title: 'title2',
         content: 'content2',
-        categoryId: categories.free.id,
       });
 
       const response = await request(httpServer)
@@ -677,9 +624,7 @@ describe('Article', () => {
     test('[실패] DELETE - unauthorized', async () => {
       const articleId = articles.first.id;
 
-      const response = await request(httpServer).delete(
-        `/articles/${articleId}`,
-      );
+      const response = await request(httpServer).delete(`/articles/${articleId}`);
 
       expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
@@ -756,12 +701,7 @@ describe('Article', () => {
 
     test('[성공] GET - 일치하는 글이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -776,12 +716,7 @@ describe('Article', () => {
 
     test('[성공] GET - 제목이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -797,12 +732,7 @@ describe('Article', () => {
 
     test('[성공] GET - 내용이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
@@ -818,12 +748,7 @@ describe('Article', () => {
 
     test('[성공] GET - 검색되는 게시글이 권한이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
@@ -838,20 +763,10 @@ describe('Article', () => {
 
     test('[성공] GET - 게시글이 여러개 인 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
@@ -869,12 +784,14 @@ describe('Article', () => {
   // 카테고리 별 검색
   describe('/articles/search/$categoryId', () => {
     const searchWord = '42';
+    const freeCategoryId = 1;
     const titleWithSearchWord = 'aaa42aaa';
     const titleWithoutSearchWord = 'aaaaaa';
     const contentWithSearchWord = 'bbb42bbb';
     const contentWithoutSearchWord = 'bbbbbb';
     const SearchArticleRequestDto = {
       q: searchWord,
+      categoryId: freeCategoryId,
     };
     let cadetJWT: string;
     let noviceJWT: string;
@@ -888,7 +805,7 @@ describe('Article', () => {
 
     test('[성공] GET - 게시글이 없는 경우', async () => {
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -899,16 +816,11 @@ describe('Article', () => {
 
     test('[성공] GET - 일치하는 글이 없는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -919,16 +831,11 @@ describe('Article', () => {
 
     test('[성공] GET - 제목이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithoutSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithoutSearchWord),
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -940,16 +847,11 @@ describe('Article', () => {
 
     test('[성공] GET - 내용이 일치하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithoutSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithoutSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
 
@@ -961,20 +863,15 @@ describe('Article', () => {
 
     test('[실패] GET - 권한 없는 카테고리를 검색하는 경우', async () => {
       await articleRepository.save(
-        dummy.article(
-          categories.free.id,
-          users.cadet[0].id,
-          titleWithSearchWord,
-          contentWithSearchWord,
-        ),
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithSearchWord, contentWithSearchWord),
       );
 
       const response = await request(httpServer)
-        .get(`/articles/search/${categories.free.id}`)
+        .get(`/articles/search`)
         .query(SearchArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`);
 
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
   });
 });

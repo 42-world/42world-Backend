@@ -6,13 +6,7 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
@@ -27,16 +21,9 @@ export class CommentService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  async create(
-    writer: User,
-    createCommentDto: CreateCommentRequestDto,
-  ): Promise<Comment | never> {
-    const article = await this.articleService.findOneByIdOrFail(
-      createCommentDto.articleId,
-    );
-    const category = await this.categoryService.findOneOrFail(
-      article.categoryId,
-    );
+  async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment | never> {
+    const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
+    const category = await this.categoryService.findOneOrFail(article.categoryId);
     this.categoryService.checkAvailable('writableComment', category, writer);
     const comment = await this.commentRepository.save({
       ...createCommentDto,
@@ -63,19 +50,13 @@ export class CommentService {
     | never
   > {
     const article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(
-      article.categoryId,
-    );
+    const category = await this.categoryService.findOneOrFail(article.categoryId);
     this.categoryService.checkAvailable('readableComment', category, user);
-    const { comments, totalCount } =
-      await this.commentRepository.findAllByArticleId(articleId, options);
+    const { comments, totalCount } = await this.commentRepository.findAllByArticleId(articleId, options);
     return { comments, category, totalCount };
   }
 
-  async findOneByIdOrFail(
-    id: number,
-    options?: FindOneOptions,
-  ): Promise<Comment> {
+  async findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
     return this.commentRepository.findOneOrFail(id, options);
   }
 
@@ -89,11 +70,7 @@ export class CommentService {
     return this.commentRepository.findAllByWriterId(writerId, options);
   }
 
-  async updateContent(
-    id: number,
-    writerId: number,
-    updateCommentDto: UpdateCommentRequestDto,
-  ): Promise<void | never> {
+  async updateContent(id: number, writerId: number, updateCommentDto: UpdateCommentRequestDto): Promise<void | never> {
     const comment = await this.commentRepository.findOneOrFail({
       id,
       writerId,
@@ -129,7 +106,7 @@ export class CommentService {
 
   async decreaseLikeCount(comment: Comment): Promise<Comment> {
     if (comment.likeCount <= 0) {
-      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.commentRepository.update(comment.id, {
       likeCount: () => 'like_count - 1',

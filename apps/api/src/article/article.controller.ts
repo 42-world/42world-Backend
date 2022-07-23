@@ -1,4 +1,4 @@
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
@@ -37,7 +37,6 @@ import { SearchArticleRequestDto } from './dto/request/search-article-request.dt
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
 import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
-import { FindAllArticleResponseDto } from './dto/response/find-all-article-response.dto';
 import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
 
 @ApiCookieAuth()
@@ -57,7 +56,7 @@ export class ArticleController {
   ) {}
 
   @Post()
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiCreatedResponse({
     description: '업로드된 게시글',
@@ -65,13 +64,10 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<CreateArticleResponseDto | never> {
-    const { article, category } = await this.articleService.create(
-      user,
-      createArticleDto,
-    );
+    const { article, category } = await this.articleService.create(user, createArticleDto);
 
     return CreateArticleResponseDto.of({
       article,
@@ -82,39 +78,14 @@ export class ArticleController {
   }
 
   @Get('search')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 검색' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async search(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: SearchArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.search(
-      user,
-      options,
-    );
-
-    return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, user }),
-      options,
-      totalCount,
-    });
-  }
-
-  @Get('search/:categoryId')
-  @AlsoNovice()
-  @ApiOperation({ summary: '특정 카테고리 게시글 검색' })
-  @ApiPaginatedResponse(ArticleResponseDto)
-  async searchByCategory(
-    @GetUser() user: User,
-    @Query() options: SearchArticleRequestDto,
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.searchByCategory(
-      user,
-      options,
-      categoryId,
-    );
+    const { articles, totalCount } = await this.articleService.search(user, options);
 
     return PaginationResponseDto.of({
       data: ArticleResponseDto.ofArray({ articles, user }),
@@ -124,25 +95,24 @@ export class ArticleController {
   }
 
   @Get()
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 목록' })
-  @ApiPaginatedResponse(FindAllArticleResponseDto)
+  @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: FindAllArticleRequestDto,
-  ): Promise<PaginationResponseDto<FindAllArticleResponseDto>> {
-    const { articles, category, totalCount } =
-      await this.articleService.findAll(user, options);
+  ): Promise<PaginationResponseDto<ArticleResponseDto>> {
+    const { articles, totalCount } = await this.articleService.findAll(user, options);
 
     return PaginationResponseDto.of({
-      data: FindAllArticleResponseDto.of({ articles, category, user }),
+      data: ArticleResponseDto.ofArray({ articles, user }),
       options,
       totalCount,
     });
   }
 
   @Get(':id')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
@@ -150,20 +120,15 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<FindOneArticleResponseDto | never> {
-    const { article, category, writer } =
-      await this.articleService.findOneOrFail(articleId, user);
+    const { article, category, writer } = await this.articleService.findOneOrFail(articleId, user);
     let isLike = false;
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      isLike = await this.reactionService.isMyReactionArticle(
-        user.id,
-        article.id,
-      );
+      isLike = await this.reactionService.isMyReactionArticle(user.id, article.id);
 
-    if (article.writerId !== user.id)
-      this.articleService.increaseViewCount(article.id);
+    if (article.writerId !== user.id) this.articleService.increaseViewCount(article.id);
     return FindOneArticleResponseDto.of({
       article,
       category,
@@ -174,22 +139,18 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
-    const { comments, category, totalCount } =
-      await this.commentService.findAllByArticleId(user, articleId, options);
+    const { comments, category, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
     let reactionComments = [];
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      reactionComments = await this.reactionService.findAllMyReactionComment(
-        user.id,
-        articleId,
-      );
+      reactionComments = await this.reactionService.findAllMyReactionComment(user.id, articleId);
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
@@ -204,27 +165,24 @@ export class ArticleController {
   }
 
   @Put(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
+    @AuthUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void | never> {
     return this.articleService.update(id, writerId, updateArticleRequestDto);
   }
 
   @Delete(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  async remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
-  ): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void | never> {
     return this.articleService.remove(id, writerId);
   }
 }

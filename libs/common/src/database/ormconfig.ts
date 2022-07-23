@@ -4,11 +4,13 @@ import { init1643517276502 } from './migrations/1643517276502-init';
 import { addNotificationArticleid1644422087542 } from './migrations/1644422087542-add_notification_articleid';
 import { addCategoryRoles1644473307391 } from './migrations/1644473307391-add_category_roles';
 import { intraAuth1645622620898 } from './migrations/1645622620898-intra-auth';
+import { addGuest1658252663130 } from './migrations/1658252663130-add-guest';
 
 init1643517276502;
 addNotificationArticleid1644422087542;
 addCategoryRoles1644473307391;
 intraAuth1645622620898;
+addGuest1658252663130;
 
 export interface IOrmconfig {
   ormconfig: ConnectionOptions;

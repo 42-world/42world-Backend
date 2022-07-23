@@ -2,11 +2,7 @@ import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { compareRole, includeRole } from '@app/utils/utils';
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
 import { CategoryRepository } from './repositories/category.repository';
 
@@ -48,19 +44,13 @@ export class CategoryService {
   checkAvailable(
     key: keyof Pick<
       Category,
-      | 'writableArticle'
-      | 'readableArticle'
-      | 'writableComment'
-      | 'readableComment'
-      | 'reactionable'
+      'writableArticle' | 'readableArticle' | 'writableComment' | 'readableComment' | 'reactionable'
     >,
     category: Category,
     user: User,
   ): void | never {
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
-      throw new NotAcceptableException(
-        `당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`,
-      );
+      throw new ForbiddenException(`당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`);
   }
 
   getAvailable(user: User): Promise<Category[]> {

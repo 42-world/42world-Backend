@@ -3,11 +3,7 @@ import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
 import { User } from '@app/entity/user/user.entity';
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
 import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
@@ -31,9 +27,7 @@ export class ArticleService {
       }
     | never
   > {
-    const category = await this.categoryService.findOneOrFail(
-      createArticleDto.categoryId,
-    );
+    const category = await this.categoryService.findOneOrFail(createArticleDto.categoryId);
     this.categoryService.checkAvailable('writableArticle', category, writer);
     const article = await this.articleRepository.save({
       ...createArticleDto,
@@ -48,21 +42,12 @@ export class ArticleService {
     options: FindAllArticleRequestDto,
   ): Promise<{
     articles: Article[];
-    category: Category;
     totalCount: number;
   }> {
-    const category = await this.categoryService.findOneOrFail(
-      options.categoryId,
-    );
+    const category = await this.categoryService.findOneOrFail(options.categoryId);
     this.categoryService.checkAvailable('readableArticle', category, user);
-    const { articles, totalCount } = await this.articleRepository.findAll(
-      options,
-    );
-    return {
-      articles,
-      category,
-      totalCount,
-    };
+    const { articles, totalCount } = await this.articleRepository.findAll(options);
+    return { articles, totalCount };
   }
 
   async search(
@@ -73,29 +58,14 @@ export class ArticleService {
     totalCount: number;
   }> {
     const availableCategories = await this.categoryService.getAvailable(user);
-    const { articles, totalCount } = await this.articleRepository.search(
-      options,
-      availableCategories,
-    );
-    return { articles, totalCount };
-  }
-
-  async searchByCategory(
-    user: User,
-    options: SearchArticleRequestDto,
-    categoryId: number,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    const availableCategories = await this.categoryService.getAvailable(user);
-    if (!availableCategories.some((category) => category.id === categoryId)) {
-      throw new NotAcceptableException(
-        `Category ${categoryId} is not available`,
-      );
+    let categoryIds = availableCategories.map((category) => category.id);
+    if (options.categoryId) {
+      if (!categoryIds.some((categoryId) => categoryId === options.categoryId)) {
+        throw new ForbiddenException(`Category ${options.categoryId} is not available`);
+      }
+      categoryIds = [options.categoryId];
     }
-    const { articles, totalCount } =
-      await this.articleRepository.searchByCategory(categoryId, options);
+    const { articles, totalCount } = await this.articleRepository.search(options, categoryIds);
     return { articles, totalCount };
   }
 
@@ -135,11 +105,7 @@ export class ArticleService {
     const article = await this.articleRepository.findOneOrFail(id, {
       relations: ['writer', 'category'],
     });
-    this.categoryService.checkAvailable(
-      'readableArticle',
-      article.category,
-      user,
-    );
+    this.categoryService.checkAvailable('readableArticle', article.category, user);
 
     return {
       article,
@@ -148,15 +114,7 @@ export class ArticleService {
     };
   }
 
-  async update(
-    id: number,
-    writerId: number,
-    updateArticleRequestDto: UpdateArticleRequestDto,
-  ): Promise<void | never> {
-    if (updateArticleRequestDto.categoryId)
-      await this.categoryService.existOrFail(
-        updateArticleRequestDto.categoryId,
-      );
+  async update(id: number, writerId: number, updateArticleRequestDto: UpdateArticleRequestDto): Promise<void | never> {
     const article = await this.articleRepository.findOneOrFail({
       id,
       writerId,
@@ -176,9 +134,7 @@ export class ArticleService {
     });
 
     if (result.affected === 0) {
-      throw new NotFoundException(
-        `Can't find Article with id ${id} with writer ${writerId}`,
-      );
+      throw new NotFoundException(`Can't find Article with id ${id} with writer ${writerId}`);
     }
   }
 
@@ -210,7 +166,7 @@ export class ArticleService {
 
   async decreaseLikeCount(article: Article): Promise<Article | never> {
     if (article.likeCount <= 0) {
-      throw new NotAcceptableException('좋아요는 0이하가 될 수 없습니다.');
+      throw new BadRequestException('좋아요는 0이하가 될 수 없습니다.');
     }
     await this.articleRepository.update(article.id, {
       likeCount: () => 'like_count - 1',

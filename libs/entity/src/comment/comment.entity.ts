@@ -58,13 +58,9 @@ export class Comment extends BaseEntity {
   @Index('ix_deleted_at')
   deletedAt?: Date;
 
-  @OneToMany(
-    () => ReactionComment,
-    (reactionComment) => reactionComment.comment,
-    {
-      createForeignKeyConstraints: false,
-      nullable: true,
-    },
-  )
+  @OneToMany(() => ReactionComment, (reactionComment) => reactionComment.comment, {
+    createForeignKeyConstraints: false,
+    nullable: true,
+  })
   reactionComment?: ReactionComment[];
 }

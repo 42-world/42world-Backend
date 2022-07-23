@@ -1,7 +1,6 @@
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { getPaginationSkip } from '@app/utils/utils';
 import { NotFoundException } from '@nestjs/common';
 import { Brackets, EntityRepository, Repository } from 'typeorm';
@@ -15,6 +14,7 @@ export class ArticleRepository extends Repository<Article> {
   }> {
     const query = this.createQueryBuilder('article')
       .leftJoinAndSelect('article.writer', 'writer')
+      .leftJoinAndSelect('article.category', 'category')
       .skip(getPaginationSkip(options))
       .take(options.take)
       .where('category_id = :id', { id: options.categoryId })
@@ -28,7 +28,7 @@ export class ArticleRepository extends Repository<Article> {
 
   async search(
     options: SearchArticleRequestDto,
-    availableCategories: Category[],
+    categoryIds: number[],
   ): Promise<{
     articles: Article[];
     totalCount: number;
@@ -37,47 +37,17 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.writer', 'writer')
       .leftJoinAndSelect('article.category', 'category')
       .where('category_id IN (:...ids)', {
-        ids: availableCategories.map((c) => c.id),
+        ids: categoryIds,
       })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
-            'article.content like :q',
-            { q: `%${options.q}%` },
-          );
+          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere('article.content like :q', {
+            q: `%${options.q}%`,
+          });
         }),
       )
       .skip(getPaginationSkip(options))
       .take(options.take)
-      .orderBy('article.createdAt', options.order);
-
-    const totalCount = await query.getCount();
-    const articles = await query.getMany();
-
-    return { articles, totalCount };
-  }
-
-  async searchByCategory(
-    categoryId: number,
-    options: SearchArticleRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    const query = this.createQueryBuilder('article')
-      .leftJoinAndSelect('article.writer', 'writer')
-      .leftJoinAndSelect('article.category', 'category')
-      .skip(getPaginationSkip(options))
-      .take(options.take)
-      .where('category_id = :id', { id: categoryId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
-            'article.content like :q',
-            { q: `%${options.q}%` },
-          );
-        }),
-      )
       .orderBy('article.createdAt', options.order);
 
     const totalCount = await query.getCount();

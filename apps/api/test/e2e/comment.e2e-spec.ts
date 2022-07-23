@@ -8,8 +8,7 @@ import { CommentModule } from '@api/comment/comment.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -33,11 +32,11 @@ describe('Comments', () => {
   let adminJWT: string;
   let noviceJWT: string;
 
-  const categoryName = '자유게시판';
-  const articleTitle = '제목';
-  const articleContent = '본문';
   const commentContent = '댓글 내용';
-  let category: Category;
+  let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
+  let comments: dummy.DummyComments;
   let cadetUser: User;
   let anotherCadetUser: User;
   let adminUser: User;
@@ -46,14 +45,7 @@ describe('Comments', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        E2eTestBaseModule,
-        UserModule,
-        AuthModule,
-        ArticleModule,
-        CommentModule,
-        CategoryModule,
-      ],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CommentModule, CategoryModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -79,52 +71,23 @@ describe('Comments', () => {
   });
 
   beforeEach(async () => {
-    cadetUser = dummy.user(
-      'githubUid',
-      'nickname',
-      'githubUsername',
-      UserRole.CADET,
-    );
-    await userRepository.save(cadetUser);
+    users = await dummy.createDummyUsers(userRepository);
+    cadetUser = users.cadet[0];
     JWT = dummy.jwt(cadetUser, authService);
 
-    anotherCadetUser = dummy.user(
-      'anothergithubUid',
-      'nickname',
-      'anotherGHusername',
-      UserRole.CADET,
-    );
-    await userRepository.save(anotherCadetUser);
+    anotherCadetUser = users.cadet[1];
     anotherJWT = dummy.jwt(anotherCadetUser, authService);
 
-    adminUser = dummy.user(
-      'admingithubUid',
-      'nickname',
-      'adminGHUsername',
-      UserRole.ADMIN,
-    );
-    await userRepository.save(adminUser);
+    adminUser = users.admin[0];
     adminJWT = dummy.jwt(adminUser, authService);
 
-    noviceUser = dummy.user(
-      'novicegithubUid',
-      'nickname',
-      'noviceGHUsername',
-      UserRole.NOVICE,
-    );
-    await userRepository.save(noviceUser);
+    noviceUser = users.novice[0];
     noviceJWT = dummy.jwt(noviceUser, authService);
 
-    category = dummy.category(categoryName);
-    await categoryRepository.save(category);
+    categories = await dummy.createDummyCategories(categoryRepository);
 
-    targetArticle = dummy.article(
-      category.id,
-      cadetUser.id,
-      articleTitle,
-      articleContent,
-    );
-    await articleRepository.save(targetArticle);
+    articles = await dummy.createDummyArticles(articleRepository, users, categories);
+    targetArticle = articles.first;
   });
 
   describe('/comments', () => {
@@ -158,16 +121,16 @@ describe('Comments', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${noviceJWT}`)
         .send({ content: commentContent, articleId: targetArticle.id });
 
-      expect(response.status).toEqual(HttpStatus.NOT_ACCEPTABLE);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
   });
 
   describe('/comments/:id', () => {
-    let comment;
+    let comment: Comment;
 
     beforeEach(async () => {
-      comment = dummy.comment(cadetUser.id, targetArticle.id, commentContent);
-      await commentRepository.save(comment);
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
+      comment = comments.first;
     });
 
     test('[성공] PUT - 댓글 수정', async () => {

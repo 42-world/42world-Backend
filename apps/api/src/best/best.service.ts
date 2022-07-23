@@ -15,9 +15,7 @@ export class BestService {
     private readonly articleService: ArticleService,
   ) {}
 
-  async createOrNot(
-    createBestDto: CreateBestRequestDto,
-  ): Promise<Best | never> {
+  async createOrNot(createBestDto: CreateBestRequestDto): Promise<Best | never> {
     try {
       return await this.bestRepository.save(createBestDto);
     } catch (error) {

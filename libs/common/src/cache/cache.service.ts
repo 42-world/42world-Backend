@@ -10,10 +10,7 @@ export class CacheService {
     private readonly cacheManager: Cache,
   ) {}
 
-  async setIntraAuthMailData(
-    code: string,
-    value: IntraAuthMailDto,
-  ): Promise<void> {
+  async setIntraAuthMailData(code: string, value: IntraAuthMailDto): Promise<void> {
     await this.cacheManager.set<IntraAuthMailDto>(code, value, {
       ttl: TIME2LIVE,
     });

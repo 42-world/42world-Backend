@@ -14,10 +14,7 @@ export class ReactionResponseDto {
     this.isLike = config.isLike;
   }
 
-  static of<T extends Article | Comment>(config: {
-    entity: T;
-    isLike: boolean;
-  }) {
+  static of<T extends Article | Comment>(config: { entity: T; isLike: boolean }) {
     return new ReactionResponseDto({
       likeCount: config.entity.likeCount,
       isLike: config.isLike,

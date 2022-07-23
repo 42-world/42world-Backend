@@ -25,21 +25,20 @@ export const isExpired = (exp: Date): boolean => {
 };
 
 export const getCookieOption = (): CookieOptions => {
-  if (process.env.NODE_ENV === 'alpha' || process.env.NODE_ENV === 'prod') {
-    return { secure: true, sameSite: 'none' };
+  if (process.env.NODE_ENV === 'prod') {
+    return { httpOnly: true, secure: true, sameSite: 'lax' };
+  } else if (process.env.NODE_ENV === 'alpha') {
+    return { httpOnly: true, secure: true, sameSite: 'none' };
   }
   return {};
 };
 
-export const errorHook = async (
-  exceptionName: string,
-  exceptionMessage: string,
-) => {
+export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
   const phase = process.env.NODE_ENV;
   const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
 
   try {
-    if (phase === 'prod') {
+    if (phase === 'prod' || phase === 'alpha') {
       await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
     }
   } catch (e) {
@@ -56,6 +55,8 @@ export function compareRole(rule: UserRole, mine: UserRole): boolean {
         return 2;
       case UserRole.NOVICE:
         return 1;
+      case UserRole.GUEST:
+        return 0;
     }
   };
   return toRoleId(rule) <= toRoleId(mine);
@@ -70,11 +71,11 @@ export function includeRole(mine: UserRole): UserRole[] {
         return 2;
       case UserRole.NOVICE:
         return 1;
+      case UserRole.GUEST:
+        return 0;
     }
   };
-  const includeRole: UserRole[] = Object.values(UserRole).filter(
-    (r) => toRoleId(r) <= toRoleId(mine),
-  );
+  const includeRole: UserRole[] = Object.values(UserRole).filter((r) => toRoleId(r) <= toRoleId(mine));
   return includeRole;
 }
 

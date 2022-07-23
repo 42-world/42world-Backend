@@ -2,7 +2,6 @@ import { ArticleModule } from '@api/article/article.module';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
-import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentModule } from '@api/comment/comment.module';
@@ -10,32 +9,40 @@ import { CommentRepository } from '@api/comment/repositories/comment.repository'
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
 import { UpdateUserProfileRequestDto } from '@api/user/dto/request/update-user-profile-request.dto';
+import { UserProfileResponseDto } from '@api/user/dto/response/user-profile-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
+import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 
 describe('User', () => {
+  let httpServer: INestApplication;
+
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
   let commentRepository: CommentRepository;
   let reactionArticleRepository: ReactionArticleRepository;
+  let intraAuthRepository: Repository<IntraAuth>;
   let authService: AuthService;
-  let httpServer: INestApplication;
   let JWT: string;
+
+  let users: dummy.DummyUsers;
+  let categories: dummy.DummyCategories;
+  let articles: dummy.DummyArticles;
+  let comments: dummy.DummyComments;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -47,6 +54,7 @@ describe('User', () => {
         CategoryModule,
         CommentModule,
         ReactionModule,
+        TypeOrmModule.forFeature([IntraAuth]),
       ],
     }).compile();
 
@@ -58,6 +66,7 @@ describe('User', () => {
     categoryRepository = moduleFixture.get(CategoryRepository);
     commentRepository = moduleFixture.get(CommentRepository);
     reactionArticleRepository = moduleFixture.get(ReactionArticleRepository);
+    intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
     httpServer = app.getHttpServer();
@@ -74,38 +83,41 @@ describe('User', () => {
   });
 
   describe('/users/me', () => {
+    const intraId = 'chlim';
+    let user: User;
     beforeEach(async () => {
-      const user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
 
+      const intraAuth = new IntraAuth();
+      intraAuth.userId = user.id;
+      intraAuth.intraId = intraId;
+      await intraAuthRepository.save(intraAuth);
       JWT = dummy.jwt(user, authService);
     });
 
+    //TODO: user 정보 확인 추가
     test('[성공] GET - 내 정보 가져오기', async () => {
       const response = await request(httpServer)
         .get('/users/me')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
+      const userProfileResponse = response.body as UserProfileResponseDto;
+
       expect(response.status).toEqual(HttpStatus.OK);
+      expect(userProfileResponse.id).toEqual(user.id);
+      expect(userProfileResponse.nickname).toEqual(user.nickname);
+      expect(userProfileResponse.role).toEqual(user.role);
+      expect(userProfileResponse.character).toEqual(user.character);
+      expect(userProfileResponse.intraId).toEqual(intraId);
     });
   });
 
   describe('/users/{id}', () => {
     let user: User;
-
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
     });
 
@@ -139,20 +151,9 @@ describe('User', () => {
     const updatedCharacter = 2;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      user2 = dummy.user(
-        'test github uid2',
-        'test nickname2',
-        'github user name2',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      await userRepository.save(user2);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      user2 = users.cadet[1];
       JWT = dummy.jwt(user, authService);
     });
 
@@ -247,7 +248,6 @@ describe('User', () => {
         .send(updateData)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
 
-      // TODO - 스웨거에 반영하기
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
 
       const updatedUser = await userRepository.findOne(user.id);
@@ -272,23 +272,16 @@ describe('User', () => {
 
   describe('/users/me/articles', () => {
     let user: User;
-    let category: Category;
     let article: Article;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
       JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      article = articles.first;
     });
 
     test('[성공] GET - 내가 작성한 글 가져오기', async () => {
@@ -313,29 +306,17 @@ describe('User', () => {
 
   describe('/users/me/comments', () => {
     let user: User;
-    let category: Category;
-    let article: Article;
     let comment: Comment;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'content');
-      await commentRepository.save(comment);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      comments = await dummy.createDummyComments(commentRepository, users, articles);
+      comment = comments.first;
     });
 
     test('[성공] GET - 내가 작성한 댓글 가져오기', async () => {
@@ -347,8 +328,24 @@ describe('User', () => {
 
       const comments = response.body.data as Comment[];
 
-      expect(comments.length).toEqual(1);
-      expect(comments[0].content).toEqual(comment.content);
+      expect(comments.length).toEqual(2);
+      expect(comments[1].content).toEqual(comment.content);
+    });
+
+    test('[성공] - GET - 내가 작성한 댓글 가져오기, 삭제한 게시글이 있는 경우', async () => {
+      await articleRepository.softDelete(articles.first);
+
+      const response = await request(httpServer)
+        .get('/users/me/comments')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseComments = response.body.data as Comment[];
+
+      expect(responseComments.length).toEqual(1);
+      expect(responseComments[0].id).toEqual(comments.anotherFirst.id);
+      expect(responseComments[0].content).toEqual(comments.anotherFirst.content);
     });
 
     test.skip('[성공] GET - 내가 작성한 댓글 가져오기 - 익명', async () => {
@@ -358,30 +355,18 @@ describe('User', () => {
 
   describe('/users/me/like-articles', () => {
     let user: User;
-    let category: Category;
     let article: Article;
-    let comment: Comment;
     let reactionArticle: ReactionArticle;
 
     beforeEach(async () => {
-      user = dummy.user(
-        'test github uid',
-        'test nickname',
-        'github user name',
-        UserRole.CADET,
-      );
-      await userRepository.save(user);
-      JWT = authService.getJWT({
-        userId: user.id,
-        userRole: user.role,
-      } as JWTPayload);
+      users = await dummy.createDummyUsers(userRepository);
+      user = users.cadet[0];
+      JWT = dummy.jwt(user, authService);
 
-      category = dummy.category('자유게시판');
-      await categoryRepository.save(category);
-      article = dummy.article(category.id, user.id, 'title', 'content');
-      await articleRepository.save(article);
-      comment = dummy.comment(user.id, user.id, 'content');
-      await commentRepository.save(comment);
+      categories = await dummy.createDummyCategories(categoryRepository);
+      articles = await dummy.createDummyArticles(articleRepository, users, categories);
+      article = articles.first;
+      await dummy.createDummyComments(commentRepository, users, articles);
       reactionArticle = dummy.reactionArticle(article.id, user.id);
       await reactionArticleRepository.save(reactionArticle);
     });
@@ -397,6 +382,20 @@ describe('User', () => {
 
       expect(articles.length).toEqual(1);
       expect(articles[0].id).toEqual(reactionArticle.id);
+    });
+
+    test('[성공] - GET - 내가 좋아요 누른 게시글 가져오기, 삭제한 게시글이 있는 경우', async () => {
+      await articleRepository.softDelete(articles.first);
+
+      const response = await request(httpServer)
+        .get('/users/me/like-articles')
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+
+      const responseArticle = response.body.data as Article[];
+
+      expect(responseArticle.length).toEqual(0);
     });
 
     test.skip('[성공] GET - 내가 좋아요 누른 게시글 목록 확인 - 익명', async () => {

@@ -16,14 +16,7 @@ export class PaginationResponseDto<T> {
     this.meta = meta;
   }
 
-  static of<T>(config: {
-    data: T[];
-    options: PaginationRequestDto;
-    totalCount: number;
-  }): PaginationResponseDto<T> {
-    return new PaginationResponseDto(
-      config.data,
-      new PageMetaDto(config.options, config.totalCount),
-    );
+  static of<T>(config: { data: T[]; options: PaginationRequestDto; totalCount: number }): PaginationResponseDto<T> {
+    return new PaginationResponseDto(config.data, new PageMetaDto(config.options, config.totalCount));
   }
 }

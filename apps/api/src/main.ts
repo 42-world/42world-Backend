@@ -1,5 +1,6 @@
 import { AppModule } from '@api/app.module';
 import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
+import { SentryInterceptor } from '@app/common/interceptor/sentry.interceptor';
 import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,7 +11,6 @@ import * as Sentry from '@sentry/node';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { join } from 'path';
-import { SentryInterceptor } from './sentry.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -22,25 +22,24 @@ async function bootstrap() {
   });
   app.useGlobalInterceptors(new SentryInterceptor());
   morgan.token('body', (req) => JSON.stringify(req.body));
-  app.use(
-    morgan(
-      ':method :url :status :response-time ms - :res[content-length] :body',
-      { stream: stream },
-    ),
-  );
+  app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body', { stream: stream }));
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
-    .setDescription('42World API')
+    .setDescription(`42World API - ${configService.get('NODE_ENV')} environment`)
     .setVersion('0.1')
     .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: '42world',
+    customCss: '.swagger-ui .topbar { display: none }',
+  });
 
   const originList = process.env.ORIGIN_LIST || '';
+  const originRegex = process.env.ORIGIN_REGEX ? new RegExp(process.env.ORIGIN_REGEX) : '';
   app.enableCors({
-    origin: originList.split(',').map((item) => item.trim()),
+    origin: [...originList.split(',').map((item) => item.trim()), originRegex],
     credentials: true,
   });
   app.useGlobalFilters(new HttpExceptionFilter());

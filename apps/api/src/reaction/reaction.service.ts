@@ -4,14 +4,8 @@ import { CommentService } from '@api/comment/comment.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
-import {
-  ReactionArticle,
-  ReactionArticleType,
-} from '@app/entity/reaction/reaction-article.entity';
-import {
-  ReactionComment,
-  ReactionCommentType,
-} from '@app/entity/reaction/reaction-comment.entity';
+import { ReactionArticle, ReactionArticleType } from '@app/entity/reaction/reaction-article.entity';
+import { ReactionComment, ReactionCommentType } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,16 +42,10 @@ export class ReactionService {
   > {
     const userId: number = user.id;
     let article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(
-      article.categoryId,
-    );
+    const category = await this.categoryService.findOneOrFail(article.categoryId);
     this.categoryService.checkAvailable('reactionable', category, user);
 
-    const isReaction = await this.reactionArticleRepository.isExist(
-      userId,
-      articleId,
-      type,
-    );
+    const isReaction = await this.reactionArticleRepository.isExist(userId, articleId, type);
     let isLike: boolean;
 
     if (isReaction) {
@@ -87,9 +75,7 @@ export class ReactionService {
     const userId: number = user.id;
     let comment = await this.commentService.findOneByIdOrFail(commentId);
     const article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(
-      article.categoryId,
-    );
+    const category = await this.categoryService.findOneOrFail(article.categoryId);
     this.categoryService.checkAvailable('reactionable', category, user);
 
     const isReaction = await this.reactionCommentRepository.findOne({
@@ -148,9 +134,6 @@ export class ReactionService {
     likeArticles: ReactionArticle[];
     totalCount: number;
   }> {
-    return this.reactionArticleRepository.findAllArticleByUserId(
-      userId,
-      options,
-    );
+    return this.reactionArticleRepository.findAllArticleByUserId(userId, options);
   }
 }
