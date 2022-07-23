@@ -1,4 +1,4 @@
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
@@ -56,7 +56,7 @@ export class ArticleController {
   ) {}
 
   @Post()
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 업로드' })
   @ApiCreatedResponse({
     description: '업로드된 게시글',
@@ -64,7 +64,7 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Body() createArticleDto: CreateArticleRequestDto,
   ): Promise<CreateArticleResponseDto | never> {
     const { article, category } = await this.articleService.create(user, createArticleDto);
@@ -78,11 +78,11 @@ export class ArticleController {
   }
 
   @Get('search')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 검색' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async search(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: SearchArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.search(user, options);
@@ -95,11 +95,11 @@ export class ArticleController {
   }
 
   @Get()
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 목록' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.findAll(user, options);
@@ -112,7 +112,7 @@ export class ArticleController {
   }
 
   @Get(':id')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
   @ApiOkResponse({
     description: '게시글 상세',
@@ -120,7 +120,7 @@ export class ArticleController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<FindOneArticleResponseDto | never> {
     const { article, category, writer } = await this.articleService.findOneOrFail(articleId, user);
@@ -139,11 +139,11 @@ export class ArticleController {
   }
 
   @Get(':id/comments')
-  @AlsoNovice()
+  @Auth('public')
   @ApiOperation({ summary: '게시글 댓글 가져오기' })
   @ApiPaginatedResponse(CommentResponseDto)
   async getComments(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
@@ -165,24 +165,24 @@ export class ArticleController {
   }
 
   @Put(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 수정하기' })
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser('id') writerId: number,
+    @AuthUser('id') writerId: number,
     @Body() updateArticleRequestDto: UpdateArticleRequestDto,
   ): Promise<void | never> {
     return this.articleService.update(id, writerId, updateArticleRequestDto);
   }
 
   @Delete(':id')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  async remove(@Param('id', ParseIntPipe) id: number, @GetUser('id') writerId: number): Promise<void | never> {
+  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void | never> {
     return this.articleService.remove(id, writerId);
   }
 }

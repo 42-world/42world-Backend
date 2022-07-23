@@ -161,10 +161,17 @@ describe('Category', () => {
       expect(responseCategories[3].name).toBe(categories.anony.name);
     });
 
-    test('[실패] GET - unauthorized', async () => {
+    test('[성공] GET - GUEST가 카테고리 종류 가져오기', async () => {
       const response = await request(server).get('/categories');
+      expect(response.status).toEqual(HttpStatus.OK);
 
-      expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
+      const responseCategories = response.body as CategoryResponseDto[];
+
+      expect(responseCategories).toBeInstanceOf(Array);
+      expect(responseCategories[0].name).toBe(categories.free.name);
+      expect(responseCategories[1].name).toBe(categories.notice.name);
+      expect(responseCategories[2].name).toBe(categories.forall.name);
+      expect(responseCategories[3].name).toBe(categories.anony.name);
     });
   });
 

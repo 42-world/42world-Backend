@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
@@ -36,15 +36,16 @@ export class UserController {
   ) {}
 
   @Get('me')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내 정보 가져오기' })
   @ApiOkResponse({ description: '내 정보', type: UserProfileResponseDto })
-  async me(@GetUser() user: User): Promise<UserProfileResponseDto> {
+  async me(@AuthUser() user: User): Promise<UserProfileResponseDto> {
     const intraAuth = await user.intraAuth;
     return UserProfileMapper.toMapResponse(user, intraAuth);
   }
 
   @Get(':id')
+  @Auth()
   @ApiOperation({ summary: '특정 유저 정보 가져오기' })
   @ApiOkResponse({ description: '유저 정보', type: UserResponseDto })
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto | never> {
@@ -54,12 +55,12 @@ export class UserController {
   }
 
   @Put()
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '유저 프로필 변경' })
   @ApiOkResponse({ description: '변경된 정보', type: UserResponseDto })
   @ApiBadRequestResponse({ description: '없는 캐릭터 번호' })
   async update(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Body() updateUserProfileDto: UpdateUserProfileRequestDto,
   ): Promise<UserResponseDto> {
     const newUser = await this.userService.updateProfile(user, updateUserProfileDto);
@@ -68,18 +69,19 @@ export class UserController {
   }
 
   @Delete()
+  @Auth()
   @ApiOperation({ summary: '유저 삭제' })
   @ApiOkResponse({ description: '유저 삭제 성공' })
-  async remove(@GetUser('id') id: number): Promise<void> {
+  async remove(@AuthUser('id') id: number): Promise<void> {
     return this.userService.remove(id);
   }
 
   @Get('me/like-articles')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '유저가 좋아요 누른 게시글 목록 확인' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllReactionArticle(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { likeArticles, totalCount } = await this.reactionService.findAllArticleByUserId(user.id, options);
@@ -94,11 +96,11 @@ export class UserController {
   }
 
   @Get('me/articles')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내가 작성한 글' })
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAllMyArticle(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.findAllByWriterId(user.id, options);
@@ -110,11 +112,11 @@ export class UserController {
   }
 
   @Get('me/comments')
-  @AlsoNovice()
+  @Auth()
   @ApiOperation({ summary: '내가 작성한 댓글' })
   @ApiPaginatedResponse(MyCommentResponseDto)
   async findAllMyComment(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<MyCommentResponseDto>> {
     const { comments, totalCount } = await this.commentService.findAllByWriterId(user.id, options);

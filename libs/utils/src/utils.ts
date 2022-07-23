@@ -55,6 +55,8 @@ export function compareRole(rule: UserRole, mine: UserRole): boolean {
         return 2;
       case UserRole.NOVICE:
         return 1;
+      case UserRole.GUEST:
+        return 0;
     }
   };
   return toRoleId(rule) <= toRoleId(mine);
@@ -69,6 +71,8 @@ export function includeRole(mine: UserRole): UserRole[] {
         return 2;
       case UserRole.NOVICE:
         return 1;
+      case UserRole.GUEST:
+        return 0;
     }
   };
   const includeRole: UserRole[] = Object.values(UserRole).filter((r) => toRoleId(r) <= toRoleId(mine));

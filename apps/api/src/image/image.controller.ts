@@ -1,3 +1,4 @@
+import { Auth } from '@api/auth/auth.decorator';
 import { UploadImageUrlResponseDto } from '@api/image/dto/upload-image-url-response.dto';
 import { ImageService } from '@api/image/image.service';
 import { Controller, HttpCode, Post } from '@nestjs/common';
@@ -11,6 +12,7 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @Post()
+  @Auth()
   @HttpCode(200)
   @ApiOperation({ summary: '이미지 업로드 URL 생성' })
   @ApiCreatedResponse({

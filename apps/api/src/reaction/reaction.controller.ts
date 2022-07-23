@@ -1,4 +1,4 @@
-import { AlsoNovice, GetUser } from '@api/auth/auth.decorator';
+import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
@@ -22,7 +22,7 @@ export class ReactionController {
   constructor(private readonly reactionService: ReactionService) {}
 
   @Post('articles/:id')
-  @AlsoNovice()
+  @Auth()
   @HttpCode(200)
   @ApiOperation({ summary: '게시글 좋아요 버튼' })
   @ApiCreatedResponse({
@@ -31,7 +31,7 @@ export class ReactionController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async reactionArticleCreateOrDelete(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ReactionResponseDto | never> {
     const { article, isLike } = await this.reactionService.articleCreateOrDelete(user, articleId);
@@ -40,7 +40,7 @@ export class ReactionController {
   }
 
   @Post('articles/:articleId/comments/:commentId')
-  @AlsoNovice()
+  @Auth()
   @HttpCode(200)
   @ApiOperation({ summary: '댓글 좋아요 버튼' })
   @ApiCreatedResponse({
@@ -49,7 +49,7 @@ export class ReactionController {
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 댓글' })
   async reactionCommentCreateOrDelete(
-    @GetUser() user: User,
+    @AuthUser() user: User,
     @Param('articleId', ParseIntPipe) articleId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
   ): Promise<ReactionResponseDto | never> {

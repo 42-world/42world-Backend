@@ -1,4 +1,3 @@
-import { Public } from '@api/auth/auth.decorator';
 import { FT_CHECKIN_KEY, MAX_CHECKIN_KEY } from '@app/common/cache/dto/ft-checkin.constant';
 import { FtCheckinDto } from '@app/common/cache/dto/ft-checkin.dto';
 import { Controller, Get, NotFoundException } from '@nestjs/common';
@@ -18,7 +17,6 @@ export class FtCheckinController {
   constructor(private readonly ftCheckinService: FtCheckinService) {}
 
   @Get()
-  @Public()
   @ApiOperation({ summary: '42checkin api' })
   @ApiOkResponse({
     description: '42체크인 user using api 결과',

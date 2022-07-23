@@ -6,11 +6,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 
-const getAccessToken = (request: any): string => {
-  if (process.env.NODE_ENV !== 'prod' && request.headers.authorization) {
-    return request.headers.authorization;
-  }
-
+export const getAccessToken = (request: any): string => {
   return request.cookies[process.env.ACCESS_TOKEN_KEY];
 };
 
@@ -31,6 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (e instanceof NotFoundException) {
         throw new UnauthorizedException();
       }
+      throw e;
     }
   }
 }
