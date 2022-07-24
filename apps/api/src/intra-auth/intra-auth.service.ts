@@ -1,8 +1,11 @@
 import {
   CADET_ALREADY_EXIST_ERROR_MESSAGE,
+  EMAIL,
   NOT_EXIST_TOKEN_ERROR_MESSAGE,
   SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
 } from '@api/intra-auth/intra-auth.constant';
+import { MailService, MailServiceToken } from '@api/mail/mail.service';
+import { UnsubscribeStibeeService, UnsubscribeStibeeServiceToken } from '@api/mail/unsubscribe-stibee.service';
 import { UserService } from '@api/user/user.service';
 import { CacheService } from '@app/common/cache/cache.service';
 import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
@@ -13,15 +16,18 @@ import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getCode } from './intra-auth.utils';
-import MailService from './mail.service';
-import UnsubscribeStibeeService from './unsubscribe-stibee.service';
 
 @Injectable()
 export class IntraAuthService {
   constructor(
-    @Inject('MailService') private readonly mailService: MailService,
-    @Inject('UnsubscribeStibeeService') private readonly unsubscribeStibeeService: UnsubscribeStibeeService,
+    @Inject(MailServiceToken)
+    private readonly mailService: MailService,
+
+    @Inject(UnsubscribeStibeeServiceToken)
+    private readonly unsubscribeStibeeService: UnsubscribeStibeeService,
+
     private readonly userService: UserService,
+
     private readonly cacheService: CacheService,
 
     @InjectRepository(IntraAuth)
@@ -40,7 +46,7 @@ export class IntraAuthService {
 
     await this.cacheService.setIntraAuthMailData(code, intraAuthMailDto);
 
-    await this.mailService.send(intraId, code, user.nickname);
+    await this.mailService.send(intraId, `${intraId}@${EMAIL}`, code, user.nickname);
   }
 
   async getAuth(code: string): Promise<void | never> {
