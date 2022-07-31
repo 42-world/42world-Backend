@@ -48,6 +48,7 @@ test: test-api
 
 .PHONY: test-api
 test-api: test-ready
+	yarn test
 	yarn test:e2e ./apps/api/test/e2e/*.e2e-spec.ts
 
 # Alpha & Production =================================================
