@@ -46,7 +46,7 @@ export class IntraAuthService {
 
     await this.cacheService.setIntraAuthMailData(code, intraAuthMailDto);
 
-    await this.mailService.send(intraId, `${intraId}@${EMAIL}`, code, user.nickname);
+    await this.mailService.send(`${intraId}@${EMAIL}`, intraId, code, user.nickname);
   }
 
   async getAuth(code: string): Promise<void | never> {

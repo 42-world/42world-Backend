@@ -11,10 +11,14 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
 
   private accessToken = this.configService.get<string>('STIBEE_API_KEY');
 
-  async send(name: string, email: string, code: string, githubId: string) {
+  async send(email: string, name: string, code: string, githubId: string) {
     await this.subscribe(name);
-    const url = this.configService.get('STIBEE_MAIL_SEND_URL');
+    const url = this.configService.get<string>('STIBEE_MAIL_SEND_URL');
 
+    await this.mailSend(url, email, name, code, githubId);
+  }
+
+  private async mailSend(url: string, email: string, name: string, code: string, githubId: string) {
     try {
       await axios.post(
         url,
