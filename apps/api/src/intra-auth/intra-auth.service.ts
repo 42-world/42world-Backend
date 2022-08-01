@@ -4,7 +4,7 @@ import {
   NOT_EXIST_TOKEN_ERROR_MESSAGE,
   SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
 } from '@api/intra-auth/intra-auth.constant';
-import { MailService, MailServiceToken } from '@api/mail/mail.service';
+import { MailService, MAIL_SERVICE_TOKEN } from '@api/mail/mail.service';
 import { UnsubscribeStibeeService, UnsubscribeStibeeServiceToken } from '@api/mail/unsubscribe-stibee.service';
 import { UserService } from '@api/user/user.service';
 import { CacheService } from '@app/common/cache/cache.service';
@@ -20,7 +20,7 @@ import { getCode } from './intra-auth.utils';
 @Injectable()
 export class IntraAuthService {
   constructor(
-    @Inject(MailServiceToken)
+    @Inject(MAIL_SERVICE_TOKEN)
     private readonly mailService: MailService,
 
     @Inject(UnsubscribeStibeeServiceToken)

@@ -2,7 +2,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { IntraAuthController } from '@api/intra-auth/intra-auth.controller';
 import { IntraAuthService } from '@api/intra-auth/intra-auth.service';
-import { MailServiceToken } from '@api/mail/mail.service';
+import { MAIL_SERVICE_TOKEN } from '@api/mail/mail.service';
 import StibeeService from '@api/mail/stibee.service';
 import { UnsubscribeStibeeServiceToken } from '@api/mail/unsubscribe-stibee.service';
 import { UserRepository } from '@api/user/repositories/user.repository';
@@ -44,7 +44,7 @@ describe('IntraAuth', () => {
       providers: [
         IntraAuthService,
         {
-          provide: MailServiceToken,
+          provide: MAIL_SERVICE_TOKEN,
           useValue: instance(stibeeService),
         },
         {
