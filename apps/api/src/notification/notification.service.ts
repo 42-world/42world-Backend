@@ -25,7 +25,7 @@ export class NotificationService {
   }
 
   async findByUserId(userId: number): Promise<Notification[]> {
-    return this.notificationRepository.find({ where: { userId } });
+    return this.notificationRepository.find({ where: { userId }, order: { createdAt: 'DESC' } });
   }
 
   async updateIsReadByUserId(userId: number): Promise<void> {

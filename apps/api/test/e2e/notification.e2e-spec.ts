@@ -65,7 +65,7 @@ describe('Notification', () => {
   describe('/notifications', () => {
     let dummyUser: User;
     let dummyArticle: Article;
-    let dummyNotification: Notification;
+    let dummyNotification: Notification[];
 
     beforeEach(async () => {
       users = await dummy.createDummyUsers(userRepository);
@@ -73,12 +73,10 @@ describe('Notification', () => {
       categories = await dummy.createDummyCategories(categoryRepository);
       articles = await dummy.createDummyArticles(articleRepository, users, categories);
       dummyArticle = articles.first;
-      dummyNotification = dummy.notification(
-        NotificationType.NEW_COMMENT,
-        dummyUser.id,
-        dummyArticle.id,
-        'notification content',
-      );
+      dummyNotification = [
+        dummy.notification(NotificationType.NEW_COMMENT, dummyUser.id, dummyArticle.id, 'notification content'),
+        dummy.notification(NotificationType.NEW_COMMENT, dummyUser.id, dummyArticle.id, 'notification content 2'),
+      ];
       await notificationRepository.save(dummyNotification);
       JWT = dummy.jwt(dummyUser, authService);
     });
@@ -88,9 +86,12 @@ describe('Notification', () => {
         .get('/notifications')
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
-      expect(res.body[0].articleId).toEqual(dummyArticle.id);
-      expect(res.body[0].type).toEqual(dummyNotification.type);
-      expect(res.body[0].content).toEqual(dummyNotification.content);
+      expect(res.body[0].articleId).toEqual(dummyNotification[1].articleId);
+      expect(res.body[0].type).toEqual(dummyNotification[1].type);
+      expect(res.body[0].content).toEqual(dummyNotification[1].content);
+      expect(res.body[1].articleId).toEqual(dummyNotification[0].articleId);
+      expect(res.body[1].type).toEqual(dummyNotification[0].type);
+      expect(res.body[1].content).toEqual(dummyNotification[0].content);
     });
 
     test('[실패] GET - 로그인하지 않고 호출', async () => {
