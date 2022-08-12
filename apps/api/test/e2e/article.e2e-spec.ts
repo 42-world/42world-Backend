@@ -675,7 +675,7 @@ describe('Article', () => {
     const titleWithoutSearchWord = 'aaaaaa';
     const contentWithSearchWord = 'bbb42bbb';
     const contentWithoutSearchWord =
-      'bbbbbb<img data-nodeid="31" alt="" src="https://42world-image.s3.ap-northeast-2.amazonaws.com/1111111111.png">';
+      'bbbbbb![image.png](https://42world-image.s3.ap-northeast-2.amazonaws.com/111111111.png)';
     const SearchArticleRequestDto = {
       q: searchWord,
     };
