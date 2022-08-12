@@ -68,7 +68,7 @@ export class ArticleService {
     const { articles, totalCount } = await this.articleRepository.search(options, categoryIds);
     for (let i = 0; i < articles.length; i++) {
       if (
-        articles[i].content.replace(/<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g, '').indexOf(options.q) === -1 &&
+        articles[i].content.replace(/![image](\S+)/g, '').indexOf(options.q) === -1 &&
         articles[i].title.indexOf(options.q) === -1
       ) {
         articles.splice(i, 1);
