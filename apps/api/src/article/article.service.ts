@@ -66,16 +66,12 @@ export class ArticleService {
       categoryIds = [options.categoryId];
     }
     const { articles, totalCount } = await this.articleRepository.search(options, categoryIds);
-    for (let i = 0; i < articles.length; i++) {
-      if (
-        articles[i].content.replace(/![image](\S+)/g, '').indexOf(options.q) === -1 &&
-        articles[i].title.indexOf(options.q) === -1
-      ) {
-        articles.splice(i, 1);
-        i--;
-      }
-    }
-    return { articles, totalCount };
+    const filteredArticles = articles.filter(
+      (article) =>
+        article.content.replace(/![\S*](\S+)/g, '').indexOf(options.q) !== -1 ||
+        article.title.indexOf(options.q) !== -1,
+    );
+    return { articles: filteredArticles, totalCount };
   }
 
   async findAllByWriterId(
