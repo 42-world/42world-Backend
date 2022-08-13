@@ -19,7 +19,7 @@ export class BaseUserDto {
   @Max(10)
   @ApiProperty({
     minimum: 0,
-    maximum: 10,
+    maximum: 11,
   })
   character!: number;
 
