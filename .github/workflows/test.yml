@@ -3,6 +3,7 @@ name: Test CI
 on:
   pull_request:
     branches: ['**']
+    types: [labeled, unlabeled, opened, synchronize, reopened]
 
 jobs:
   test:
