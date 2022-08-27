@@ -3,9 +3,11 @@ name: Test CI
 on:
   pull_request:
     branches: ['**']
+    types: [labeled, unlabeled, opened, synchronize, reopened]
 
 jobs:
   test:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip:ci') }}
     runs-on: ubuntu-latest
 
     env:
@@ -24,11 +26,6 @@ jobs:
       AWS_S3_UPLOAD_BUCKET: ${{secrets.AWS_S3_UPLOAD_BUCKET}}
       ACCESS_TOKEN_KEY: ${{secrets.ACCESS_TOKEN_KEY}}
       FRONT_URL: ${{secrets.FRONT_URL}}
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v2
