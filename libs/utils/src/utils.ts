@@ -25,7 +25,8 @@ export const isExpired = (exp: Date): boolean => {
 };
 
 export const getCookieOption = (): CookieOptions => {
-  const maxAge = 24 * 60 * 60 * 1000 * 7; // 24h * 7, 7days
+  const oneHour = 60 * 60 * 1000;
+  const maxAge = 24 * oneHour * 7; // 24h * 7, 7days
 
   if (process.env.NODE_ENV === 'prod') {
     return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
