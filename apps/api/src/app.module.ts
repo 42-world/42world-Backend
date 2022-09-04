@@ -1,7 +1,7 @@
 import { AppController } from '@api/app.controller';
 import { ArticleModule } from '@api/article/article.module';
 import { AuthModule } from '@api/auth/auth.module';
-import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '@api/auth/jwt-auth/jwt-auth.guard';
 import { BestModule } from '@api/best/best.module';
 import { CategoryModule } from '@api/category/category.module';
 import { CommentModule } from '@api/comment/comment.module';
