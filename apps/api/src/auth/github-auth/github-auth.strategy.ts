@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-github2';
-import { GithubProfile } from './interfaces/github-profile.interface';
+import { GithubProfile } from '../types';
 
 @Injectable()
-export class GithubStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+export class GithubAuthStrategy extends PassportStrategy(Strategy) {
+  constructor(readonly configService: ConfigService) {
     super({
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL, // frontend url
+      clientID: configService.get('GITHUB_CLIENT_ID'),
+      clientSecret: configService.get('GITHUB_CLIENT_SECRET'),
+      callbackURL: configService.get('GITHUB_CALLBACK_URL'), // frontend url
     });
   }
+
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
     const githubProfile: GithubProfile = {
       id: profile.id,
