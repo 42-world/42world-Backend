@@ -13,32 +13,6 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  // async githubLogin(githubProfile: GithubProfile): Promise<User> {
-  //   const user = await this.userRepository.findOne({
-  //     githubUid: githubProfile.id,
-  //   });
-
-  //   if (user) {
-  //     user.lastLogin = getNextMonth();
-  //     return this.userRepository.save(user);
-  //   }
-
-  //   const newUser = new User();
-  //   newUser.nickname = githubProfile.username;
-  //   newUser.githubUsername = githubProfile.username;
-  //   newUser.githubUid = githubProfile.id;
-  //   newUser.lastLogin = getNextMonth();
-
-  //   // const newUser = {
-  //   //   nickname: githubProfile.username,
-  //   //   githubUsername: githubProfile.username,
-  //   //   githubUid: githubProfile.id,
-  //   //   lastLogin: getNextMonth(),
-  //   // };
-
-  //   return newUser.save();
-  // }
-
   async findOne(options: FindOneOptions<User>): Promise<User | undefined> {
     return this.userRepository.findOne(options);
   }
