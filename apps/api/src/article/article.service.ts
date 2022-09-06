@@ -66,12 +66,7 @@ export class ArticleService {
       categoryIds = [options.categoryId];
     }
     const { articles, totalCount } = await this.articleRepository.search(options, categoryIds);
-    const filteredArticles = articles.filter(
-      (article) =>
-        article.content.replace(/![\S*](\S+)/g, '').indexOf(options.q) !== -1 ||
-        article.title.indexOf(options.q) !== -1,
-    );
-    return { articles: filteredArticles, totalCount };
+    return { articles, totalCount };
   }
 
   async findAllByWriterId(
