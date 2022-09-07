@@ -53,7 +53,7 @@ export class ArticleRepository extends Repository<Article> {
       .take(options.take)
       .orderBy('article.createdAt', options.order);
 
-    const totalCount = 0; //await query.getCount();
+    const totalCount = await query.getCount();
     const articles = await query.getMany();
     return { articles, totalCount };
   }
