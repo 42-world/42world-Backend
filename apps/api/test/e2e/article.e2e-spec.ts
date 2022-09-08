@@ -1,28 +1,52 @@
 import { ArticleModule } from '@api/article/article.module';
 import { CreateArticleRequestDto } from '@api/article/dto/request/create-article-request.dto';
+
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
+
 import { UpdateArticleRequestDto } from '@api/article/dto/request/update-article-request.dto';
+
 import { CreateArticleResponseDto } from '@api/article/dto/response/create-article-response.dto';
+
 import { FindOneArticleResponseDto } from '@api/article/dto/response/find-one-article-response.dto';
+
 import { ArticleRepository } from '@api/article/repositories/article.repository';
+
 import { AuthModule } from '@api/auth/auth.module';
+
 import { AuthService } from '@api/auth/auth.service';
+
 import { CategoryModule } from '@api/category/category.module';
+
 import { CategoryRepository } from '@api/category/repositories/category.repository';
+
 import { CommentModule } from '@api/comment/comment.module';
+
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
+
 import { UserRepository } from '@api/user/repositories/user.repository';
+
 import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
+
 import { UserModule } from '@api/user/user.module';
+
 import { Article } from '@app/entity/article/article.entity';
+
 import { Comment } from '@app/entity/comment/comment.entity';
+
 import { HttpStatus, INestApplication } from '@nestjs/common';
+
 import { Test, TestingModule } from '@nestjs/testing';
+
 import * as request from 'supertest';
+
 import { getConnection } from 'typeorm';
+
 import { E2eTestBaseModule } from './e2e-test.base.module';
+
 import * as dummy from './utils/dummy';
+
 import { clearDB, createTestApp } from './utils/utils';
+
 import { testDto } from './utils/validate-test';
 
 describe('Article', () => {
@@ -673,9 +697,10 @@ describe('Article', () => {
     const searchWord = '42';
     const titleWithSearchWord = 'aaa42aaa';
     const titleWithoutSearchWord = 'aaaaaa';
+    const titleWithImage = 'cccccc';
     const contentWithSearchWord = 'bbb42bbb';
-    const contentWithoutSearchWord =
-      'bbbbbb![image.png](https://42world-image.s3.ap-northeast-2.amazonaws.com/111111111.png)';
+    const contentWithoutSearchWord = 'bbbbbb';
+    const contentWithImage = '![image.png](https://42world-image.s3.ap-northeast-2.amazonaws.com/111111111.png)';
     const SearchArticleRequestDto = {
       q: searchWord,
     };
@@ -779,6 +804,21 @@ describe('Article', () => {
       const responseArticles = response.body.data as Article[];
       expect(responseArticles.length).toBe(1);
       expect(responseArticles[0].content).toBe(contentWithSearchWord);
+    });
+
+    test('[성공] GET - 이미지 포함', async () => {
+      await articleRepository.save(
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithImage, contentWithImage),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
     });
   });
 
