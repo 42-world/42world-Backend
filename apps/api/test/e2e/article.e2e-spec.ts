@@ -1,52 +1,28 @@
 import { ArticleModule } from '@api/article/article.module';
 import { CreateArticleRequestDto } from '@api/article/dto/request/create-article-request.dto';
-
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
-
 import { UpdateArticleRequestDto } from '@api/article/dto/request/update-article-request.dto';
-
 import { CreateArticleResponseDto } from '@api/article/dto/response/create-article-response.dto';
-
 import { FindOneArticleResponseDto } from '@api/article/dto/response/find-one-article-response.dto';
-
 import { ArticleRepository } from '@api/article/repositories/article.repository';
-
 import { AuthModule } from '@api/auth/auth.module';
-
 import { AuthService } from '@api/auth/auth.service';
-
 import { CategoryModule } from '@api/category/category.module';
-
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-
 import { CommentModule } from '@api/comment/comment.module';
-
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
-
 import { UserRepository } from '@api/user/repositories/user.repository';
-
 import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
-
 import { UserModule } from '@api/user/user.module';
-
 import { Article } from '@app/entity/article/article.entity';
-
 import { Comment } from '@app/entity/comment/comment.entity';
-
 import { HttpStatus, INestApplication } from '@nestjs/common';
-
 import { Test, TestingModule } from '@nestjs/testing';
-
 import * as request from 'supertest';
-
 import { getConnection } from 'typeorm';
-
 import { E2eTestBaseModule } from './e2e-test.base.module';
-
 import * as dummy from './utils/dummy';
-
 import { clearDB, createTestApp } from './utils/utils';
-
 import { testDto } from './utils/validate-test';
 
 describe('Article', () => {
