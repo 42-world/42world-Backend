@@ -10,7 +10,7 @@ describe('GithubAuthStrategy', () => {
   const githubAuthStrategy = new GithubAuthStrategy(mockConfigService);
 
   describe('validate', () => {
-    it('GithubProfile이 반환된다', async () => {
+    test('GithubProfile이 반환된다', async () => {
       const accessToken = '';
       const refreshToken = '';
       const profile = {

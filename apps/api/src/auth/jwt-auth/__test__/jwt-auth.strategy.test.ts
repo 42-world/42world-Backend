@@ -24,7 +24,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('validate', () => {
-    it('유저가 존재하면 유저를 반환한다', async () => {
+    test('유저가 존재하면 유저를 반환한다', async () => {
       const user = new User();
       mockUserService.findOneByIdOrFail.mockResolvedValue(user);
 
@@ -34,7 +34,7 @@ describe('JwtAuthStrategy', () => {
       expect(mockUserService.findOneByIdOrFail).toBeCalledTimes(1);
     });
 
-    it('유저가 없으면 UnauthorizedException 에러를 던진다', async () => {
+    test('유저가 없으면 UnauthorizedException 에러를 던진다', async () => {
       mockUserService.findOneByIdOrFail.mockRejectedValue(new NotFoundException());
 
       const act = async () => await jwtAuthStrategy.validate(payload);
@@ -43,7 +43,7 @@ describe('JwtAuthStrategy', () => {
       expect(mockUserService.findOneByIdOrFail).toBeCalledTimes(1);
     });
 
-    it('에러가 나면 에러를 던진다', async () => {
+    test('에러가 나면 에러를 던진다', async () => {
       mockUserService.findOneByIdOrFail.mockRejectedValue(new Error());
 
       const act = async () => await jwtAuthStrategy.validate(payload);
@@ -54,7 +54,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('getAccessToken', () => {
-    it('쿠키에서 ACCESS_TOKEN_KEY를 반환한다', () => {
+    test('쿠키에서 ACCESS_TOKEN_KEY를 반환한다', () => {
       const request = {
         cookies: {
           ACCESS_TOKEN_KEY: 'test',

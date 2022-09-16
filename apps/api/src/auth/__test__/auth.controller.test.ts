@@ -21,7 +21,7 @@ describe('AuthController', () => {
   });
 
   describe('githubLogin', () => {
-    it('정상 호출', async () => {
+    test('정상 호출', async () => {
       const actual = () => authController.githubLogin();
 
       expect(actual).not.toThrow();
@@ -29,7 +29,7 @@ describe('AuthController', () => {
   });
 
   describe('githubCallback', () => {
-    it('로그인하면 쿠키를 세팅한다', async () => {
+    test('로그인하면 쿠키를 세팅한다', async () => {
       const githubProfile: GithubProfile = { id: '1', username: 'test' };
       const mockResponse = mock<Response>({
         cookie: mockFn().mockReturnThis(),
@@ -43,7 +43,7 @@ describe('AuthController', () => {
   });
 
   describe('signout', () => {
-    it('로그아웃하면 쿠키를 비운다', async () => {
+    test('로그아웃하면 쿠키를 비운다', async () => {
       const mockResponse = mock<Response>({
         clearCookie: mockFn().mockReturnThis(),
       });

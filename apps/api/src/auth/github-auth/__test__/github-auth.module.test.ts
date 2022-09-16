@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { GithubAuthModule } from '../github-auth.module';
 
 describe('GithubAuthModule', () => {
-  it('모듈이 잘 컴파일된다.', async () => {
+  test('모듈이 잘 컴파일된다.', async () => {
     const module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({

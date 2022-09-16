@@ -7,6 +7,9 @@ import { mock, mockFn } from 'jest-mock-extended';
 import { AuthService } from '../auth.service';
 import { GithubProfile } from '../types';
 
+// 클래스 모킹
+// 함수 모킹
+
 describe('AuthService', () => {
   const mockUserSerivce = mock<UserService>();
   const mockJwtService = mock<JwtService>({
@@ -22,7 +25,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('이미 가입한 유저는 로그인 시간을 업데이트 한다', async () => {
+    test('이미 가입한 유저는 로그인 시간을 업데이트 한다', async () => {
       const user = new User();
       const oldLastLogin = new Date();
       user.lastLogin = oldLastLogin;
@@ -37,7 +40,7 @@ describe('AuthService', () => {
       expect(result.lastLogin).not.toBe(oldLastLogin);
     });
 
-    it('처음 로그인하는 유저는 유저를 생성한다', async () => {
+    test('처음 로그인하는 유저는 유저를 생성한다', async () => {
       const githubProfile: GithubProfile = { id: '1', username: 'test' };
       mockUserSerivce.findOne.mockResolvedValue(undefined);
       mockUserSerivce.create.mockImplementation(async (user: User) => user);
@@ -53,7 +56,7 @@ describe('AuthService', () => {
   });
 
   describe('getJwt', () => {
-    it('jwt를 만든다', async () => {
+    test('jwt를 만든다', async () => {
       const user = new User();
       user.id = 1;
       user.role = UserRole.ADMIN;
@@ -67,7 +70,7 @@ describe('AuthService', () => {
   });
 
   describe('getCookieOption', () => {
-    it('prod 일떄 쿠키 옵션', async () => {
+    test('prod 일떄 쿠키 옵션', async () => {
       mockConfigService.get.mockReturnValue('prod');
 
       const result = authService.getCookieOption();
@@ -75,7 +78,7 @@ describe('AuthService', () => {
       expect(result).toStrictEqual({ httpOnly: true, secure: true, sameSite: 'lax' });
     });
 
-    it('alpha 일떄 쿠키 옵션', async () => {
+    test('alpha 일떄 쿠키 옵션', async () => {
       mockConfigService.get.mockReturnValue('alpha');
 
       const result = authService.getCookieOption();
@@ -83,12 +86,56 @@ describe('AuthService', () => {
       expect(result).toStrictEqual({ httpOnly: true, secure: true, sameSite: 'none' });
     });
 
-    it('dev/test 일때 쿠키 옵션', async () => {
+    test('dev/test 일때 쿠키 옵션', async () => {
       mockConfigService.get.mockReturnValue('dev');
 
       const result = authService.getCookieOption();
 
       expect(result).toStrictEqual({});
+    });
+  });
+});
+
+class TestClass {
+  testMethod(a: string) {
+    console.log('testMethodCalled', a);
+    return 'test';
+  }
+}
+
+class UserClass {
+  constructor(private readonly testClass: TestClass) {}
+
+  testMethod() {
+    return this.testClass.testMethod('test');
+  }
+}
+
+// UserClass의 testMethod를 호출하면 TestClass의 testMethod가 호출되는지 확인 + return 이 test 인지??
+
+describe('UserClass', () => {
+  const mockTestClass = mock<TestClass>({
+    testMethod: mockFn().mockReturnValue('test'),
+  });
+  const userClass = new UserClass(mockTestClass);
+
+  describe('testMethod', () => {
+    beforeEach(() => {
+      mockTestClass.testMethod.mockClear();
+    });
+
+    test('정상', () => {
+      const result = userClass.testMethod();
+
+      expect(result).toBe('test');
+      expect(mockTestClass.testMethod).toBeCalledTimes(1);
+    });
+
+    test('정상2', () => {
+      const result = userClass.testMethod();
+
+      expect(result).toBe('test');
+      expect(mockTestClass.testMethod).toBeCalledTimes(1);
     });
   });
 });

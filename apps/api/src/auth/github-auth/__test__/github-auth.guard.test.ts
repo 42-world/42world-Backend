@@ -17,7 +17,7 @@ describe('GithubAuthGuard', () => {
   });
 
   describe('handleRequest', () => {
-    it('정상적인 요청은 그대로 반환한다.', async () => {
+    test('정상적인 요청은 그대로 반환한다.', async () => {
       const githubProfile = { id: 1 };
       mockSuperHandleRequest.mockReturnValue(githubProfile);
 
@@ -27,7 +27,7 @@ describe('GithubAuthGuard', () => {
       expect(mockSuperHandleRequest).toBeCalledTimes(1);
     });
 
-    it('정상적인 요청이 아니면 BadRequestException 에러를 던진다.', async () => {
+    test('정상적인 요청이 아니면 BadRequestException 에러를 던진다.', async () => {
       mockSuperHandleRequest.mockImplementation(() => {
         throw new Error('error');
       });

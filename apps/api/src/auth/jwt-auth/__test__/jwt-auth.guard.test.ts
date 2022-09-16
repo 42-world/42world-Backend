@@ -28,7 +28,7 @@ describe('JwtAuthGuard', () => {
   });
 
   describe('canActivate', () => {
-    it('REQUIRE_ROLES 가 없으면 무조건 true 이다. ', async () => {
+    test('REQUIRE_ROLES 가 없으면 무조건 true 이다. ', async () => {
       mockRelfector.get.mockReturnValue(undefined);
 
       const result = jwtAuthGuard.canActivate(context);
@@ -37,7 +37,7 @@ describe('JwtAuthGuard', () => {
       expect(mockSuperCanActivate).toBeCalledTimes(0);
     });
 
-    it('REQUIRE_ROLES 가 있으면 super를 호출한다.', async () => {
+    test('REQUIRE_ROLES 가 있으면 super를 호출한다.', async () => {
       mockRelfector.get.mockReturnValue(['allow'] as AuthDecoratorParam);
       mockSuperCanActivate.mockReturnValue(true);
 
@@ -49,7 +49,7 @@ describe('JwtAuthGuard', () => {
   });
 
   describe('handleRequest', () => {
-    it('allow 하는 권한이 아예 없으면 아무 권한도 통과하지 못한다.', async () => {
+    test('allow 하는 권한이 아예 없으면 아무 권한도 통과하지 못한다.', async () => {
       mockRelfector.get.mockReturnValue(['allow'] as AuthDecoratorParam);
 
       const user = new User();
@@ -63,7 +63,7 @@ describe('JwtAuthGuard', () => {
       expect(act).toThrowErrorMatchingInlineSnapshot(`"접근 권한 없음"`);
     });
 
-    it('allow 하는 권한에 포함되어있으면 통과한다.', async () => {
+    test('allow 하는 권한에 포함되어있으면 통과한다.', async () => {
       mockRelfector.get.mockReturnValue(['allow', UserRole.ADMIN] as AuthDecoratorParam);
 
       const user = new User();
@@ -76,7 +76,7 @@ describe('JwtAuthGuard', () => {
       expect(mockSuperHandleRequest).toBeCalledTimes(1);
     });
 
-    it('allow 하는 권한에 포함되어있지 않으면 통과하지 못한다.', async () => {
+    test('allow 하는 권한에 포함되어있지 않으면 통과하지 못한다.', async () => {
       mockRelfector.get.mockReturnValue(['allow', UserRole.ADMIN] as AuthDecoratorParam);
 
       const user = new User();
@@ -90,7 +90,7 @@ describe('JwtAuthGuard', () => {
       expect(act).toThrowErrorMatchingInlineSnapshot(`"접근 권한 없음"`);
     });
 
-    it('deny 하는 권한이 아예 없으면 모든 권한이 통과한다.', async () => {
+    test('deny 하는 권한이 아예 없으면 모든 권한이 통과한다.', async () => {
       mockRelfector.get.mockReturnValue(['deny'] as AuthDecoratorParam);
 
       const user = new User();
@@ -103,7 +103,7 @@ describe('JwtAuthGuard', () => {
       expect(mockSuperHandleRequest).toBeCalledTimes(1);
     });
 
-    it('deny 하는 권한에 포함되어있으면 통과하지 않는다.', async () => {
+    test('deny 하는 권한에 포함되어있으면 통과하지 않는다.', async () => {
       mockRelfector.get.mockReturnValue(['deny', UserRole.ADMIN] as AuthDecoratorParam);
 
       const user = new User();
@@ -117,7 +117,7 @@ describe('JwtAuthGuard', () => {
       expect(act).toThrowErrorMatchingInlineSnapshot(`"접근 권한 없음"`);
     });
 
-    it('deny 하는 권한에 포함되어있지 않으면 통과한다.', async () => {
+    test('deny 하는 권한에 포함되어있지 않으면 통과한다.', async () => {
       mockRelfector.get.mockReturnValue(['deny', UserRole.GUEST] as AuthDecoratorParam);
 
       const user = new User();
@@ -130,7 +130,7 @@ describe('JwtAuthGuard', () => {
       expect(mockSuperHandleRequest).toBeCalledTimes(1);
     });
 
-    it('jwt 토큰이 유효하지 않을때, GUEST 권한이 허락되면 GUEST로 처리한다.', async () => {
+    test('jwt 토큰이 유효하지 않을때, GUEST 권한이 허락되면 GUEST로 처리한다.', async () => {
       mockRelfector.get.mockReturnValue(['allow', UserRole.GUEST] as AuthDecoratorParam);
 
       // jwt 토큰이 유효하지 않을때 에러를 던짐.
@@ -145,7 +145,7 @@ describe('JwtAuthGuard', () => {
       expect(mockSuperHandleRequest).toBeCalledTimes(1);
     });
 
-    it('jwt 토큰이 유효하지 않을때, GUEST 권한도 허락되지 않으면 통과하지 못한다.', async () => {
+    test('jwt 토큰이 유효하지 않을때, GUEST 권한도 허락되지 않으면 통과하지 못한다.', async () => {
       mockRelfector.get.mockReturnValue(['deny', UserRole.GUEST] as AuthDecoratorParam);
 
       // jwt 토큰이 유효하지 않을때 에러를 던짐.
