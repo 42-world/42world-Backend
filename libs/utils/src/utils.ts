@@ -1,7 +1,6 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import axios from 'axios';
-import { CookieOptions } from 'express';
 import { logger } from './logger';
 
 export const MINUTE = 60;
@@ -14,27 +13,11 @@ export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
 }
 
-export const getNextMonth = () => {
-  const now = new Date();
-  return new Date(now.setMonth(now.getMonth() + 1));
-};
-
 export const isExpired = (exp: Date): boolean => {
   const now = new Date();
   return now >= exp;
 };
 
-export const getCookieOption = (): CookieOptions => {
-  const oneHour = 60 * 60 * 1000;
-  const maxAge = 24 * oneHour * 7; // 24h * 7, 7days
-
-  if (process.env.NODE_ENV === 'prod') {
-    return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
-  } else if (process.env.NODE_ENV === 'alpha') {
-    return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
-  }
-  return { httpOnly: true, maxAge };
-};
 
 export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
   const phase = process.env.NODE_ENV;
