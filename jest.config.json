@@ -3,7 +3,7 @@
   "rootDir": ".",
   "testMatch": ["**/?(*.)+(spec|test).+(ts)"],
   "transform": { "^.+\\.ts$": "ts-jest" },
-  "collectCoverageFrom": ["**/*.ts", "!**/__test__/**/*.ts"],
+  "collectCoverageFrom": ["**/*.ts", "!**/__test__/**/*.ts", "!**/index.ts"],
   "coverageDirectory": "./coverage",
   "testEnvironment": "node",
   "moduleNameMapper": {
