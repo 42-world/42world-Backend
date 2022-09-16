@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async login(githubProfile: GithubProfile): Promise<User> {
-    const user = await this.userService.findOne({ where: { githubId: githubProfile.id } });
+    const user = await this.userService.findOneByGithubUId(githubProfile.id);
 
     if (user) {
       user.lastLogin = new Date();
