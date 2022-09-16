@@ -7,9 +7,6 @@ import { mock, mockFn } from 'jest-mock-extended';
 import { AuthService } from '../auth.service';
 import { GithubProfile } from '../types';
 
-// 클래스 모킹
-// 함수 모킹
-
 describe('AuthService', () => {
   const mockUserSerivce = mock<UserService>();
   const mockJwtService = mock<JwtService>({
@@ -75,7 +72,14 @@ describe('AuthService', () => {
 
       const result = authService.getCookieOption();
 
-      expect(result).toStrictEqual({ httpOnly: true, secure: true, sameSite: 'lax' });
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "httpOnly": true,
+          "maxAge": 604800000,
+          "sameSite": "lax",
+          "secure": true,
+        }
+      `);
     });
 
     test('alpha 일떄 쿠키 옵션', async () => {
@@ -83,7 +87,14 @@ describe('AuthService', () => {
 
       const result = authService.getCookieOption();
 
-      expect(result).toStrictEqual({ httpOnly: true, secure: true, sameSite: 'none' });
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "httpOnly": true,
+          "maxAge": 604800000,
+          "sameSite": "none",
+          "secure": true,
+        }
+      `);
     });
 
     test('dev/test 일때 쿠키 옵션', async () => {
@@ -91,51 +102,12 @@ describe('AuthService', () => {
 
       const result = authService.getCookieOption();
 
-      expect(result).toStrictEqual({});
-    });
-  });
-});
-
-class TestClass {
-  testMethod(a: string) {
-    console.log('testMethodCalled', a);
-    return 'test';
-  }
-}
-
-class UserClass {
-  constructor(private readonly testClass: TestClass) {}
-
-  testMethod() {
-    return this.testClass.testMethod('test');
-  }
-}
-
-// UserClass의 testMethod를 호출하면 TestClass의 testMethod가 호출되는지 확인 + return 이 test 인지??
-
-describe('UserClass', () => {
-  const mockTestClass = mock<TestClass>({
-    testMethod: mockFn().mockReturnValue('test'),
-  });
-  const userClass = new UserClass(mockTestClass);
-
-  describe('testMethod', () => {
-    beforeEach(() => {
-      mockTestClass.testMethod.mockClear();
-    });
-
-    test('정상', () => {
-      const result = userClass.testMethod();
-
-      expect(result).toBe('test');
-      expect(mockTestClass.testMethod).toBeCalledTimes(1);
-    });
-
-    test('정상2', () => {
-      const result = userClass.testMethod();
-
-      expect(result).toBe('test');
-      expect(mockTestClass.testMethod).toBeCalledTimes(1);
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "httpOnly": true,
+          "maxAge": 604800000,
+        }
+      `);
     });
   });
 });
