@@ -39,12 +39,16 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  getCookieOption(): CookieOptions {
+  getCookieOption = (): CookieOptions => {
+    const oneHour = 60 * 60 * 1000;
+    const maxAge = 7 * 24 * oneHour; // 7days
+
     if (this.configService.get('NODE_ENV') === 'prod') {
-      return { httpOnly: true, secure: true, sameSite: 'lax' };
+      return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
     } else if (this.configService.get('NODE_ENV') === 'alpha') {
-      return { httpOnly: true, secure: true, sameSite: 'none' };
+      return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
     }
-    return {};
-  }
+
+    return { httpOnly: true, maxAge };
+  };
 }
