@@ -25,12 +25,15 @@ export const isExpired = (exp: Date): boolean => {
 };
 
 export const getCookieOption = (): CookieOptions => {
+  const oneHour = 60 * 60 * 1000;
+  const maxAge = 24 * oneHour * 7; // 24h * 7, 7days
+
   if (process.env.NODE_ENV === 'prod') {
-    return { httpOnly: true, secure: true, sameSite: 'lax' };
+    return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
   } else if (process.env.NODE_ENV === 'alpha') {
-    return { httpOnly: true, secure: true, sameSite: 'none' };
+    return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
   }
-  return {};
+  return { httpOnly: true, maxAge };
 };
 
 export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
