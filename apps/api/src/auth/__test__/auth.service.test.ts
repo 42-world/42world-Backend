@@ -16,7 +16,7 @@ describe('AuthService', () => {
   const authService = new AuthService(mockUserSerivce, mockJwtService, mockConfigService);
 
   beforeEach(() => {
-    mockUserSerivce.findOne.mockClear();
+    mockUserSerivce.findOneByGithubUId.mockClear();
     mockConfigService.get.mockClear();
     jest.clearAllTimers();
   });
@@ -29,7 +29,7 @@ describe('AuthService', () => {
       user.save = mockFn().mockReturnThis();
 
       const githubProfile: GithubProfile = { id: '1', username: 'test' };
-      mockUserSerivce.findOne.mockResolvedValue(user);
+      mockUserSerivce.findOneByGithubUId.mockResolvedValue(user);
 
       const result: User = await authService.login(githubProfile);
 
@@ -39,7 +39,7 @@ describe('AuthService', () => {
 
     test('처음 로그인하는 유저는 유저를 생성한다', async () => {
       const githubProfile: GithubProfile = { id: '1', username: 'test' };
-      mockUserSerivce.findOne.mockResolvedValue(undefined);
+      mockUserSerivce.findOneByGithubUId.mockResolvedValue(undefined);
       mockUserSerivce.create.mockImplementation(async (user: User) => user);
 
       const result: User = await authService.login(githubProfile);
