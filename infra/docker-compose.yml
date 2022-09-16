@@ -61,9 +61,8 @@ services:
         order: start-first
   #-----------------------------------------------------------------------------------
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     container_name: 42world-backend-db
-    platform: linux/x86_64
     ports:
       - '${DB_PORT}:3306'
     environment:

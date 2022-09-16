@@ -18,6 +18,7 @@ export const isExpired = (exp: Date): boolean => {
   return now >= exp;
 };
 
+
 export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
   const phase = process.env.NODE_ENV;
   const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
