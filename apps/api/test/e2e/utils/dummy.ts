@@ -1,6 +1,5 @@
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthService } from '@api/auth/auth.service';
-import { JWTPayload } from '@api/auth/interfaces/jwt-payload.interface';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
@@ -14,10 +13,7 @@ import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 
 export const jwt = (user: User, authService: AuthService): string => {
-  return authService.getJWT({
-    userId: user.id,
-    userRole: user.role,
-  } as JWTPayload);
+  return authService.getJwt(user);
 };
 
 export const user = (

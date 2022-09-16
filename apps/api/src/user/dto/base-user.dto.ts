@@ -16,10 +16,10 @@ export class BaseUserDto {
 
   @IsInt()
   @Min(0)
-  @Max(10)
+  @Max(11)
   @ApiProperty({
     minimum: 0,
-    maximum: 10,
+    maximum: 11,
   })
   character!: number;
 

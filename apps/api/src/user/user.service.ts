@@ -1,6 +1,4 @@
-import { GithubProfile } from '@api/auth/interfaces/github-profile.interface';
 import { User } from '@app/entity/user/user.entity';
-import { getNextMonth } from '@app/utils/utils';
 import { Injectable } from '@nestjs/common';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';
@@ -10,24 +8,12 @@ import { UserRepository } from './repositories/user.repository';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async githubLogin(githubProfile: GithubProfile): Promise<User> {
-    const user = await this.userRepository.findOne({
-      githubUid: githubProfile.id,
-    });
+  async create(user: User): Promise<User> {
+    return this.userRepository.save(user);
+  }
 
-    if (user) {
-      user.lastLogin = getNextMonth();
-      return this.userRepository.save(user);
-    }
-
-    const newUser = {
-      nickname: githubProfile.username,
-      githubUsername: githubProfile.username,
-      githubUid: githubProfile.id,
-      lastLogin: getNextMonth(),
-    };
-
-    return this.userRepository.save(newUser);
+  async findOneByGithubUId(githubUid: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { githubUid } });
   }
 
   async findOneByIdOrFail(id: number): Promise<User | never> {

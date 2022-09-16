@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from '@api/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '@api/auth/jwt-auth/jwt-auth.guard';
 import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

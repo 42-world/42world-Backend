@@ -4,17 +4,17 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { JWTPayload } from '../types';
 
-export const getAccessToken = (request: any): string => {
-  return request.cookies[process.env.ACCESS_TOKEN_KEY];
+export const getAccessToken = (key: string, request: any): string => {
+  return request.cookies[key];
 };
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAuthStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService, private configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([getAccessToken]),
+      jwtFromRequest: ExtractJwt.fromExtractors([getAccessToken.bind(null, configService.get('ACCESS_TOKEN_KEY'))]),
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_SECRET'),
     });

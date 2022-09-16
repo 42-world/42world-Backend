@@ -3,9 +3,18 @@ name: Test CI
 on:
   pull_request:
     branches: ['**']
+    types: [labeled, unlabeled, opened, synchronize, reopened]
+
+# Cancel previous workflows if they are the same workflow on same ref (branch/tags)
+# with the same event (push/pull_request) even they are in progress.
+# This setting will help reduce the number of duplicated workflows.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip:ci') }}
     runs-on: ubuntu-latest
 
     env:
@@ -25,17 +34,12 @@ jobs:
       ACCESS_TOKEN_KEY: ${{secrets.ACCESS_TOKEN_KEY}}
       FRONT_URL: ${{secrets.FRONT_URL}}
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
           cache: 'yarn'
       - run: yarn
       - run: make test

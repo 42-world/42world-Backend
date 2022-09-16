@@ -1,0 +1,16 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testMatch": ["**/?(*.)+(spec|test).+(ts)"],
+  "transform": { "^.+\\.ts$": "ts-jest" },
+  "collectCoverageFrom": ["**/*.ts", "!**/__test__/**/*.ts", "!**/index.ts"],
+  "coverageDirectory": "./coverage",
+  "testEnvironment": "node",
+  "moduleNameMapper": {
+    "^@api(|/.*)$": "<rootDir>/apps/api/src/$1",
+    "^@test/(.*)$": "<rootDir>/apps/api/test/$1",
+    "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+    "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1",
+    "^@app/entity(|/.*)$": "<rootDir>/libs/entity/src/$1"
+  }
+}

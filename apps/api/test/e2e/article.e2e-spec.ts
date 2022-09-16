@@ -673,8 +673,10 @@ describe('Article', () => {
     const searchWord = '42';
     const titleWithSearchWord = 'aaa42aaa';
     const titleWithoutSearchWord = 'aaaaaa';
+    const titleWithImage = 'cccccc';
     const contentWithSearchWord = 'bbb42bbb';
     const contentWithoutSearchWord = 'bbbbbb';
+    const contentWithImage = '![image.png](https://42world-image.s3.ap-northeast-2.amazonaws.com/111111111.png)';
     const SearchArticleRequestDto = {
       q: searchWord,
     };
@@ -778,6 +780,21 @@ describe('Article', () => {
       const responseArticles = response.body.data as Article[];
       expect(responseArticles.length).toBe(1);
       expect(responseArticles[0].content).toBe(contentWithSearchWord);
+    });
+
+    test('[성공] GET - 이미지 포함', async () => {
+      await articleRepository.save(
+        dummy.article(categories.free.id, users.cadet[0].id, titleWithImage, contentWithImage),
+      );
+
+      const response = await request(httpServer)
+        .get('/articles/search')
+        .query(SearchArticleRequestDto)
+        .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${cadetJWT}`);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      const responseArticles = response.body.data as Article[];
+      expect(responseArticles.length).toBe(0);
     });
   });
 
