@@ -1,9 +1,7 @@
-import { ArticleModule } from '@api/article/article.module';
+import { ArticleApiModule } from '@api/article/article-api.module';
 import { CreateArticleRequestDto } from '@api/article/dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { UpdateArticleRequestDto } from '@api/article/dto/request/update-article-request.dto';
-import { CreateArticleResponseDto } from '@api/article/dto/response/create-article-response.dto';
-import { FindOneArticleResponseDto } from '@api/article/dto/response/find-one-article-response.dto';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
@@ -20,6 +18,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
+import { ArticleResponseDto } from '../../src/article/dto/response/article-response.dto';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
@@ -42,7 +41,7 @@ describe('Article', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CategoryModule, CommentModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleApiModule, CategoryModule, CommentModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -88,7 +87,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.CREATED);
 
-      const result = response.body as CreateArticleResponseDto;
+      const result = response.body as ArticleResponseDto;
       expect(result.title).toBe(createArticlRequesteDto.title);
       expect(result.content).toBe(createArticlRequesteDto.content);
       expect(result.categoryId).toBe(createArticlRequesteDto.categoryId);
@@ -414,7 +413,8 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = response.body as FindOneArticleResponseDto;
+      const result = response.body as ArticleResponseDto;
+
       expect(result.title).toBe(articles.first.title);
       expect(result.content).toBe(articles.first.content);
       expect(result.categoryId).toBe(articles.first.categoryId);
