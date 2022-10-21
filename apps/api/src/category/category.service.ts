@@ -6,6 +6,13 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
 import { CategoryRepository } from './repositories/category.repository';
 
+type CategoryPermission =
+  | 'writableArticle'
+  | 'readableArticle'
+  | 'writableComment'
+  | 'readableComment'
+  | 'reactionable';
+
 @Injectable()
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
@@ -41,14 +48,33 @@ export class CategoryService {
     }
   }
 
-  checkAvailable(
-    key: keyof Pick<
-      Category,
-      'writableArticle' | 'readableArticle' | 'writableComment' | 'readableComment' | 'reactionable'
-    >,
-    category: Category,
-    user: User,
-  ): void | never {
+  /**
+   *
+   * 유저가 카테고리 권한이 있는지 확인합니다.
+   *
+   * @param user 유저
+   * @param categoryId 카테고리 아이디
+   * @param key 카테고리 권한
+   *
+   * @throws {ForbiddenException} 권한이 없을 경우
+   */
+  async checkAvailable(user: User, categoryId: number, key: CategoryPermission): Promise<void>;
+  /**
+   *
+   * 유저가 카테고리 권한이 있는지 확인합니다.
+   *
+   * @param user 유저
+   * @param category 카테고리
+   * @param key 카테고리 권한
+   *
+   * @throws {ForbiddenException} 권한이 없을 경우
+   */
+  checkAvailable(user: User, category: Category, key: CategoryPermission): void;
+  async checkAvailable(user: User, category: Category | number, key: CategoryPermission): Promise<void> {
+    if (typeof category === 'number') {
+      category = await this.findOneOrFail(category);
+    }
+
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
       throw new ForbiddenException(`당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`);
   }
