@@ -5,7 +5,7 @@ export function testDto<T>(testDtos: Array<[keyof T, any, string?]>) {
       [key]: value,
     });
 
-    return [`${key} 값이 ${detail ?? value}`, buildDto];
+    return [`${String(key)} 값이 ${detail ?? value}`, buildDto];
   });
 
   return test.each(tests);
