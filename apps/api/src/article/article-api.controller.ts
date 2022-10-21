@@ -1,3 +1,5 @@
+import { ArticleDtoMapper } from '@api/article/dto/article.mapper';
+import { SearchArticleRequestDto } from '@api/article/dto/request/search-article-request.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { CommentService } from '@api/comment/comment.service';
 import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
@@ -8,19 +10,7 @@ import { ReactionService } from '@api/reaction/reaction.service';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { compareRole } from '@app/utils/utils';
-import {
-  Body,
-  Controller,
-  Delete,
-  forwardRef,
-  Get,
-  Inject,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -30,51 +20,35 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ArticleService } from './article.service';
+import { ArticleApiService } from './article-api.service';
 import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
-import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
 import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
 import { ArticleResponseDto } from './dto/response/article-response.dto';
-import { CreateArticleResponseDto } from './dto/response/create-article-response.dto';
-import { FindOneArticleResponseDto } from './dto/response/find-one-article-response.dto';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Article')
 @Controller('articles')
-export class ArticleController {
+export class ArticleApiController {
   constructor(
-    @Inject(forwardRef(() => ArticleService))
-    private readonly articleService: ArticleService,
-
-    @Inject(forwardRef(() => CommentService))
+    private readonly articleApiService: ArticleApiService,
     private readonly commentService: CommentService,
-
-    @Inject(forwardRef(() => ReactionService))
     private readonly reactionService: ReactionService,
   ) {}
 
   @Post()
   @Auth()
   @ApiOperation({ summary: '게시글 업로드' })
-  @ApiCreatedResponse({
-    description: '업로드된 게시글',
-    type: CreateArticleResponseDto,
-  })
+  @ApiCreatedResponse({ description: '업로드된 게시글', type: ArticleResponseDto })
   @ApiNotFoundResponse({ description: '존재하지 않는 카테고리' })
   async create(
     @AuthUser() user: User,
-    @Body() createArticleDto: CreateArticleRequestDto,
-  ): Promise<CreateArticleResponseDto | never> {
-    const { article, category } = await this.articleService.create(user, createArticleDto);
+    @Body() { title, content, categoryId }: CreateArticleRequestDto,
+  ): Promise<ArticleResponseDto> {
+    const article = await this.articleApiService.create(user, title, content, categoryId);
 
-    return CreateArticleResponseDto.of({
-      article,
-      category,
-      writer: user,
-      user,
-    });
+    return ArticleDtoMapper.toResponseDto({ article, user });
   }
 
   @Get('search')
@@ -83,12 +57,12 @@ export class ArticleController {
   @ApiPaginatedResponse(ArticleResponseDto)
   async search(
     @AuthUser() user: User,
-    @Query() options: SearchArticleRequestDto,
+    @Query() { q, categoryId, ...options }: SearchArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.search(user, options);
+    const { articles, totalCount } = await this.articleApiService.search(user, q, categoryId, options);
 
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, user }),
+      data: ArticleDtoMapper.toResponseDtoList({ articles, user }),
       options,
       totalCount,
     });
@@ -100,12 +74,12 @@ export class ArticleController {
   @ApiPaginatedResponse(ArticleResponseDto)
   async findAll(
     @AuthUser() user: User,
-    @Query() options: FindAllArticleRequestDto,
+    @Query() { categoryId, ...options }: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleService.findAll(user, options);
+    const { articles, totalCount } = await this.articleApiService.findAllByCategoryId(user, categoryId, options);
 
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, user }),
+      data: ArticleDtoMapper.toResponseDtoList({ articles, user }),
       options,
       totalCount,
     });
@@ -114,28 +88,16 @@ export class ArticleController {
   @Get(':id')
   @Auth('public')
   @ApiOperation({ summary: '게시글 상세 가져오기' })
-  @ApiOkResponse({
-    description: '게시글 상세',
-    type: FindOneArticleResponseDto,
-  })
+  @ApiOkResponse({ description: '게시글 상세', type: ArticleResponseDto })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async findOne(
-    @AuthUser() user: User,
+    @AuthUser() user: User, //
     @Param('id', ParseIntPipe) articleId: number,
-  ): Promise<FindOneArticleResponseDto | never> {
-    const { article, category, writer } = await this.articleService.findOneOrFail(articleId, user);
-    let isLike = false;
-    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      isLike = await this.reactionService.isMyReactionArticle(user.id, article.id);
+  ): Promise<ArticleResponseDto> {
+    const article = await this.articleApiService.findOneById(user, articleId);
+    const isLike = await this.reactionService.isMyReactionArticle(user.id, article.id);
 
-    if (article.writerId !== user.id) this.articleService.increaseViewCount(article.id);
-    return FindOneArticleResponseDto.of({
-      article,
-      category,
-      writer,
-      isLike,
-      user,
-    });
+    return ArticleDtoMapper.toResponseDto({ article, user, isLike });
   }
 
   @Get(':id/comments')
@@ -146,7 +108,7 @@ export class ArticleController {
     @AuthUser() user: User,
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<CommentResponseDto> | never> {
+  ): Promise<PaginationResponseDto<CommentResponseDto>> {
     const { comments, category, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
     let reactionComments = [];
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
@@ -170,11 +132,11 @@ export class ArticleController {
   @ApiOkResponse({ description: '게시글 수정 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   async update(
+    @AuthUser() user: User,
     @Param('id', ParseIntPipe) id: number,
-    @AuthUser('id') writerId: number,
-    @Body() updateArticleRequestDto: UpdateArticleRequestDto,
-  ): Promise<void | never> {
-    return this.articleService.update(id, writerId, updateArticleRequestDto);
+    @Body() { title, content, categoryId }: UpdateArticleRequestDto,
+  ): Promise<void> {
+    return this.articleApiService.update(user, id, title, content, categoryId);
   }
 
   @Delete(':id')
@@ -182,7 +144,10 @@ export class ArticleController {
   @ApiOperation({ summary: '게시글 삭제하기' })
   @ApiOkResponse({ description: '게시글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
-  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void | never> {
-    return this.articleService.remove(id, writerId);
+  async remove(
+    @AuthUser() user: User, //
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.articleApiService.remove(user, id);
   }
 }
