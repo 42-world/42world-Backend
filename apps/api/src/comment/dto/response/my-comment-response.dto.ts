@@ -1,4 +1,3 @@
-import { BaseArticleDto } from '@api/article/dto/base-article.dto';
 import { CategoryResponseDto } from '@api/category/dto/response/category-response.dto';
 import { BaseCommentDto } from '@api/comment/dto/base-comment.dto';
 import { Article } from '@app/entity/article/article.entity';
@@ -6,11 +5,22 @@ import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { ApiProperty, PickType } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-class InnerArticleDto extends PickType(BaseArticleDto, ['id', 'title', 'category']) {
+class InnerArticleDto {
+  @ApiProperty()
+  id!: number;
+
+  @IsString()
+  @MaxLength(42)
+  @IsNotEmpty()
+  @ApiProperty({ example: '제목 입니다.' })
+  title!: string;
+
+  @ApiProperty({ type: () => CategoryResponseDto })
+  category?: CategoryResponseDto;
+
   constructor(config: { id: number; title: string; category: CategoryResponseDto }) {
-    super();
-
     this.id = config.id;
     this.title = config.title;
     this.category = config.category;
