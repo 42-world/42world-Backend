@@ -50,7 +50,7 @@ export class CommentService {
   > {
     const article = await this.articleService.findOneByIdOrFail(articleId);
     const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable(user, category, 'readableComment');
+    this.categoryService.checkAvailableSync(user, category, 'readableComment');
     const { comments, totalCount } = await this.commentRepository.findAllByArticleId(articleId, options);
     return { comments, category, totalCount };
   }
