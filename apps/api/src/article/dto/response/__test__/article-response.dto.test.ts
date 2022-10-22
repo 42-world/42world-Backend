@@ -55,6 +55,7 @@ describe('ArticleResponseDto', () => {
         "content": "내용 입니다.",
         "createdAt": 2022-01-01T00:00:00.000Z,
         "id": 1,
+        "isLike": false,
         "isSelf": false,
         "likeCount": 1,
         "title": "제목 입니다.",
