@@ -58,7 +58,12 @@ export class CategoryService {
    *
    * @throws {ForbiddenException} 권한이 없을 경우
    */
-  async checkAvailable(user: User, categoryId: number, key: CategoryPermission): Promise<void>;
+  async checkAvailable(user: User, categoryId: number, key: CategoryPermission): Promise<void> {
+    const category = await this.findOneOrFail(categoryId);
+
+    this.checkAvailableSync(user, category, key);
+  }
+
   /**
    *
    * 유저가 카테고리 권한이 있는지 확인합니다.
@@ -69,12 +74,7 @@ export class CategoryService {
    *
    * @throws {ForbiddenException} 권한이 없을 경우
    */
-  checkAvailable(user: User, category: Category, key: CategoryPermission): void;
-  async checkAvailable(user: User, category: Category | number, key: CategoryPermission): Promise<void> {
-    if (typeof category === 'number') {
-      category = await this.findOneOrFail(category);
-    }
-
+  checkAvailableSync(user: User, category: Category, key: CategoryPermission): void {
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
       throw new ForbiddenException(`당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`);
   }
