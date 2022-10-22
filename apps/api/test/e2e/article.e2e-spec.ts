@@ -10,7 +10,13 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
+import {
+  ANONY_USER_CHARACTER,
+  ANONY_USER_DATE,
+  ANONY_USER_ID,
+  ANONY_USER_NICKNAME,
+  ANONY_USER_ROLE,
+} from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -227,9 +233,9 @@ describe('Article', () => {
       expect(responseArticles[0].content).toBe(articles.anony.content);
       expect(responseArticles[0].writerId).toBe(ANONY_USER_ID);
       expect(responseArticles[0].writer.id).toBe(ANONY_USER_ID);
-      expect(responseArticles[0].writer.role).toBeUndefined();
-      expect(responseArticles[0].writer.createdAt).toBeUndefined();
-      expect(responseArticles[0].writer.updatedAt).toBeUndefined();
+      expect(responseArticles[0].writer.role).toBe(ANONY_USER_ROLE);
+      expect(responseArticles[0].writer.createdAt).toBe(ANONY_USER_DATE.toISOString());
+      expect(responseArticles[0].writer.updatedAt).toBe(ANONY_USER_DATE.toISOString());
       expect(responseArticles[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
       expect(responseArticles[0].writer.character).toBe(ANONY_USER_CHARACTER);
     });
@@ -452,9 +458,9 @@ describe('Article', () => {
       expect(result.writerId).toBe(ANONY_USER_ID);
       expect(result.category.id).toBe(categories.anony.id);
       expect(result.writer.id).toBe(ANONY_USER_ID);
-      expect(result.writer.role).toBeUndefined();
-      expect(result.writer.createdAt).toBeUndefined();
-      expect(result.writer.updatedAt).toBeUndefined();
+      expect(result.writer.role).toBe(ANONY_USER_ROLE);
+      expect(result.writer.createdAt).toBe(ANONY_USER_DATE.toISOString());
+      expect(result.writer.updatedAt).toBe(ANONY_USER_DATE.toISOString());
       expect(result.writer.nickname).toContain(ANONY_USER_NICKNAME);
       expect(result.writer.character).toBe(ANONY_USER_CHARACTER);
     });
@@ -543,7 +549,7 @@ describe('Article', () => {
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(articles.second.title);
@@ -635,7 +641,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeTruthy();
