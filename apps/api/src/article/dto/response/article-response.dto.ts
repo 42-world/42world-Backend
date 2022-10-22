@@ -74,7 +74,7 @@ export class ArticleResponseDto {
     this.createdAt = property.createdAt;
     this.updatedAt = property.updatedAt;
     this.isSelf = property.isSelf;
-    if (property.isLike) {
+    if (property.isLike !== undefined) {
       this.isLike = property.isLike;
     }
   }
