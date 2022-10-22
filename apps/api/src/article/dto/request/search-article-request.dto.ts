@@ -1,7 +1,7 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class SearchArticleRequestDto extends PaginationRequestDto {
   @IsString()
@@ -9,6 +9,8 @@ export class SearchArticleRequestDto extends PaginationRequestDto {
   @ApiProperty({ example: '검색할 단어' })
   readonly q: string;
 
+  @Min(0)
+  @IsInt()
   @Type(() => Number)
   @IsOptional()
   @ApiProperty({ example: 2 })
