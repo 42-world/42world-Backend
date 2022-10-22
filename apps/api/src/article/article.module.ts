@@ -6,6 +6,6 @@ import { ArticleRepository } from './repositories/article.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([ArticleRepository])],
   providers: [ArticleService],
-  exports: [ArticleService],
+  exports: [ArticleService, TypeOrmModule],
 })
 export class ArticleModule {}
