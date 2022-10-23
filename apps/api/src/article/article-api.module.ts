@@ -7,7 +7,12 @@ import { ArticleApiController } from './article-api.controller';
 import { ArticleApiService } from './article-api.service';
 
 @Module({
-  imports: [ArticleModule, CategoryModule, ReactionModule, CommentModule],
+  imports: [
+    ArticleModule, //
+    CategoryModule,
+    ReactionModule,
+    CommentModule,
+  ],
   providers: [ArticleApiService],
   controllers: [ArticleApiController],
 })
