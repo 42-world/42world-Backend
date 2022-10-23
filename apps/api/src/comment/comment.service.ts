@@ -21,19 +21,11 @@ export class CommentService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment | never> {
-    const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
-    await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
-    const comment = await this.commentRepository.save({
+  async create(createCommentDto: CreateCommentRequestDto, writerId: number): Promise<Comment | never> {
+    return this.commentRepository.save({
       ...createCommentDto,
-      writerId: writer.id,
+      writerId,
     });
-
-    if (writer.id !== article.writerId) {
-      await this.notificationService.createNewComment(article, comment);
-    }
-    await this.articleService.increaseCommentCount(article.id);
-    return comment;
   }
 
   async findAllByArticleId(

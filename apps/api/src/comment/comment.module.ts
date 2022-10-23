@@ -4,7 +4,6 @@ import { CommentRepository } from '@api/comment/repositories/comment.repository'
 import { NotificationModule } from '@api/notification/notification.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
 
 @Module({
@@ -14,7 +13,6 @@ import { CommentService } from './comment.service';
     forwardRef(() => ArticleModule),
     TypeOrmModule.forFeature([CommentRepository]),
   ],
-  controllers: [CommentController],
   providers: [CommentService],
   exports: [CommentService],
 })

@@ -20,7 +20,7 @@ import { CommentResponseDto } from './dto/response/comment-response.dto';
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Comment')
 @Controller('comments')
-export class CommentController {
+export class CommentApiController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
