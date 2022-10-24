@@ -1,15 +1,11 @@
 import { ArticleDtoMapper } from '@api/article/dto/article.mapper';
 import { SearchArticleRequestDto } from '@api/article/dto/request/search-article-request.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CommentService } from '@api/comment/comment.service';
 import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
-import { ReactionService } from '@api/reaction/reaction.service';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { compareRole } from '@app/utils/utils';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -31,11 +27,7 @@ import { ArticleResponseDto } from './dto/response/article-response.dto';
 @ApiTags('Article')
 @Controller('articles')
 export class ArticleApiController {
-  constructor(
-    private readonly articleApiService: ArticleApiService,
-    private readonly commentService: CommentService,
-    private readonly reactionService: ReactionService,
-  ) {}
+  constructor(private readonly articleApiService: ArticleApiService) {}
 
   @Post()
   @Auth()
@@ -51,6 +43,7 @@ export class ArticleApiController {
     return ArticleDtoMapper.toResponseDto({ article, user });
   }
 
+  // TODO: categoryId 가 없고, options가 있는경우 실제로 값이 어떻게 넘어가는지 확인할것
   @Get('search')
   @Auth('public')
   @ApiOperation({ summary: '게시글 검색' })
@@ -94,8 +87,7 @@ export class ArticleApiController {
     @AuthUser() user: User, //
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ArticleResponseDto> {
-    const article = await this.articleApiService.findOneById(user, articleId);
-    const isLike = await this.reactionService.isMyReactionArticle(user.id, article.id);
+    const { article, isLike } = await this.articleApiService.findOneById(user, articleId);
 
     return ArticleDtoMapper.toResponseDto({ article, user, isLike });
   }
@@ -109,10 +101,11 @@ export class ArticleApiController {
     @Param('id', ParseIntPipe) articleId: number,
     @Query() options: PaginationRequestDto,
   ): Promise<PaginationResponseDto<CommentResponseDto>> {
-    const { comments, category, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
-    let reactionComments = [];
-    if (compareRole(category.reactionable as UserRole, user.role as UserRole))
-      reactionComments = await this.reactionService.findAllMyReactionComment(user.id, articleId);
+    const { comments, category, totalCount, reactionComments } = await this.articleApiService.getComments(
+      user,
+      articleId,
+      options,
+    );
 
     return PaginationResponseDto.of({
       data: CommentResponseDto.ofArray({
