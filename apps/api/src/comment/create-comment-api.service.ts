@@ -1,18 +1,22 @@
+import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
 import { CommentService } from '@api/comment/comment.service';
 import { CreateCommentRequestDto } from '@api/comment/dto/request/create-comment-request.dto';
+import { NotificationService } from '@api/notification/notification.service';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { Injectable } from '@nestjs/common';
-import {ArticleService} from "@api/article/article.service";
 
 @Injectable()
 export class CreateCommentApiService {
-  constructor(private readonly commentService: CommentService,
-              private readonly categoryService: CategoryService,
-              private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly commentService: CommentService,
+    private readonly categoryService: CategoryService,
+    private readonly articleService: ArticleService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
-  async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment | never> {
+  async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment> {
     const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
     await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
     const comment = await this.commentService.create(createCommentDto, writer.id);

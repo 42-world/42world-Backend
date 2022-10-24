@@ -15,13 +15,17 @@ import { CommentService } from './comment.service';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 import { CommentResponseDto } from './dto/response/comment-response.dto';
+import {CreateCommentApiService} from "@api/comment/create-comment-api.service";
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Comment')
 @Controller('comments')
 export class CommentApiController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+      private readonly commentService: CommentService,
+      private readonly createCommentApiService: CreateCommentApiService
+  ) {}
 
   @Post()
   @Auth()
@@ -35,8 +39,8 @@ export class CommentApiController {
   async create(
     @AuthUser() writer: User,
     @Body() createCommentDto: CreateCommentRequestDto,
-  ): Promise<CommentResponseDto | never> {
-    const comment = await this.commentService.create(writer, createCommentDto);
+  ): Promise<CommentResponseDto> {
+    const comment = await this.createCommentApiService.create(writer, createCommentDto);
 
     return CommentResponseDto.of({
       comment,
