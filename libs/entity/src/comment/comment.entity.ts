@@ -63,4 +63,8 @@ export class Comment extends BaseEntity {
     nullable: true,
   })
   reactionComment?: ReactionComment[];
+
+  public updateContent(content: string) {
+    this.content = content
+  }
 }
