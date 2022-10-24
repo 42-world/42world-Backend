@@ -1,4 +1,7 @@
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
+import { CreateCommentApiService } from '@api/comment/create-comment-api.service';
+import { RemoveCommentApiService } from '@api/comment/remove-comment-api.service';
+import { UpdateCommentApiService } from '@api/comment/update-comment-api.service';
 import { User } from '@app/entity/user/user.entity';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {
@@ -11,12 +14,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CommentService } from './comment.service';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 import { CommentResponseDto } from './dto/response/comment-response.dto';
-import {CreateCommentApiService} from "@api/comment/create-comment-api.service";
-import {UpdateCommentApiService} from "@api/comment/update-comment-api.service";
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
@@ -24,9 +24,9 @@ import {UpdateCommentApiService} from "@api/comment/update-comment-api.service";
 @Controller('comments')
 export class CommentApiController {
   constructor(
-      private readonly commentService: CommentService,
-      private readonly createCommentApiService: CreateCommentApiService,
-      private readonly updateCommentApiService: UpdateCommentApiService
+    private readonly createCommentApiService: CreateCommentApiService,
+    private readonly updateCommentApiService: UpdateCommentApiService,
+    private readonly removeCommentApiService: RemoveCommentApiService,
   ) {}
 
   @Post()
@@ -71,7 +71,7 @@ export class CommentApiController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiOkResponse({ description: '댓글 삭제 완료' })
   @ApiNotFoundResponse({ description: '존재하지 않거나, 내가 쓴게 아님' })
-  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void | never> {
-    return this.commentService.remove(id, writerId);
+  async remove(@Param('id', ParseIntPipe) id: number, @AuthUser('id') writerId: number): Promise<void> {
+    return this.removeCommentApiService.remove(id, writerId);
   }
 }
