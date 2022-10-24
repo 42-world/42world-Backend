@@ -9,7 +9,6 @@ import { User } from '@app/entity/user/user.entity';
 import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
 import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
-import { UpdateCommentRequestDto } from './dto/request/update-comment-request.dto';
 
 @Injectable()
 export class CommentService {
@@ -61,16 +60,15 @@ export class CommentService {
     return this.commentRepository.findAllByWriterId(writerId, options);
   }
 
-  async updateContent(id: number, writerId: number, updateCommentDto: UpdateCommentRequestDto): Promise<void | never> {
-    const comment = await this.commentRepository.findOneOrFail({
+  async findByIdAndWriterIdOrFail(id: number, writerId: number) {
+    return this.commentRepository.findOneOrFail({
       id,
       writerId,
     });
-    const newComment = {
-      ...comment,
-      ...updateCommentDto,
-    };
-    await this.commentRepository.save(newComment);
+  }
+
+  async save(comment: Comment): Promise<Comment> {
+    return this.commentRepository.save(comment);
   }
 
   async remove(id: number, writerId: number): Promise<void> {
