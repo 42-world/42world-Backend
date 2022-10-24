@@ -4,7 +4,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
@@ -52,7 +52,7 @@ describe('User', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentModule,
+        CommentApiModule,
         ReactionModule,
         TypeOrmModule.forFeature([IntraAuth]),
       ],

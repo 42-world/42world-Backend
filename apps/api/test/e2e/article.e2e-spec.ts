@@ -7,7 +7,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import {
@@ -47,7 +47,7 @@ describe('Article', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleApiModule, CategoryModule, CommentModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleApiModule, CategoryModule, CommentApiModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);

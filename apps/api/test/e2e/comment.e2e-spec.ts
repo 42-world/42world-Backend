@@ -18,6 +18,7 @@ import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { CommentRepository } from './../../src/comment/repositories/comment.repository';
 import * as dummy from './utils/dummy';
+import {CommentApiModule} from "@api/comment/comment-api.module";
 
 describe('Comments', () => {
   let httpServer: INestApplication;
@@ -45,7 +46,7 @@ describe('Comments', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CommentModule, CategoryModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CommentApiModule, CategoryModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
