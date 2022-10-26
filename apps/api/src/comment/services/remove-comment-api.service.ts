@@ -1,5 +1,5 @@
 import { ArticleService } from '@api/article/article.service';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

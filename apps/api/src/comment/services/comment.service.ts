@@ -4,7 +4,7 @@ import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
-import { CreateCommentRequestDto } from './dto/request/create-comment-request.dto';
+import { CreateCommentRequestDto } from '../dto/request/create-comment-request.dto';
 
 @Injectable()
 export class CommentService {

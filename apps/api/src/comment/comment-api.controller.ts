@@ -1,7 +1,7 @@
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CreateCommentApiService } from '@api/comment/create-comment-api.service';
-import { RemoveCommentApiService } from '@api/comment/remove-comment-api.service';
-import { UpdateCommentApiService } from '@api/comment/update-comment-api.service';
+import { CreateCommentApiService } from '@api/comment/services/create-comment-api.service';
+import { RemoveCommentApiService } from '@api/comment/services/remove-comment-api.service';
+import { UpdateCommentApiService } from '@api/comment/services/update-comment-api.service';
 import { User } from '@app/entity/user/user.entity';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import {

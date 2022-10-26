@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { ReactionService } from '@api/reaction/reaction.service';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';

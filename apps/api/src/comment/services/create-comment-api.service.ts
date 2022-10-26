@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { CreateCommentRequestDto } from '@api/comment/dto/request/create-comment-request.dto';
 import { NotificationService } from '@api/notification/notification.service';
 import { Comment } from '@app/entity/comment/comment.entity';
