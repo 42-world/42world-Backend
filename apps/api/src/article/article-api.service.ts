@@ -15,7 +15,7 @@ import { PaginationRequestDto } from '../pagination/dto/pagination-request.dto';
 @Injectable()
 export class ArticleApiService {
   constructor(
-    private readonly articleService: ArticleService, //
+    private readonly articleService: ArticleService,
     private readonly reactionService: ReactionService,
     private readonly commentService: CommentService,
     private readonly categoryService: CategoryService,
