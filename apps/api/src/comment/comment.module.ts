@@ -1,18 +1,10 @@
-import { ArticleModule } from '@api/article/article.module';
-import { CategoryModule } from '@api/category/category.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
-import { NotificationModule } from '@api/notification/notification.module';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentService } from './comment.service';
 
 @Module({
-  imports: [
-    CategoryModule,
-    NotificationModule,
-    forwardRef(() => ArticleModule),
-    TypeOrmModule.forFeature([CommentRepository]),
-  ],
+  imports: [TypeOrmModule.forFeature([CommentRepository])],
   providers: [CommentService],
   exports: [CommentService],
 })

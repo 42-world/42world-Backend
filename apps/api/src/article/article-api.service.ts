@@ -68,7 +68,12 @@ export class ArticleApiService {
     category: Category;
     totalCount: number;
   }> {
-    const { comments, category, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
+    const article = await this.articleService.findOneByIdOrFail(articleId);
+    const category = await this.categoryService.findOneOrFail(article.categoryId);
+    this.categoryService.checkAvailableSync(user, category, 'readableComment');
+
+    const { comments, totalCount } = await this.commentService.findAllByArticleId(user, articleId, options);
+
     let reactionComments = [];
     if (compareRole(category.reactionable as UserRole, user.role as UserRole))
       reactionComments = await this.reactionService.findAllMyReactionComment(user.id, articleId);
