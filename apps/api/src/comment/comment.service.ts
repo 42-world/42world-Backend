@@ -25,8 +25,7 @@ export class CommentService {
     comments: Comment[];
     totalCount: number;
   }> {
-    const { comments, totalCount } = await this.commentRepository.findAllByArticleId(articleId, options);
-    return { comments, totalCount };
+    return await this.commentRepository.findAllByArticleId(articleId, options);
   }
 
   async findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
