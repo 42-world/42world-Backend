@@ -1,7 +1,7 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CommentService } from '@api/comment/services/comment.service';
 import { CreateCommentRequestDto } from '@api/comment/dto/request/create-comment-request.dto';
+import { CommentService } from '@api/comment/services/comment.service';
 import { NotificationService } from '@api/notification/notification.service';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
@@ -20,7 +20,11 @@ export class CreateCommentApiService {
     const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
     await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
 
-    const comment = Comment.createComment(createCommentDto.content, createCommentDto.articleId, writer.id);
+    const comment = Comment.createComment({
+      content: createCommentDto.content,
+      articleId: createCommentDto.articleId,
+      writerId: writer.id,
+    });
     await this.commentService.save(comment);
 
     if (writer.id !== article.writerId) {

@@ -2,17 +2,17 @@ import { Article } from '@app/entity/article/article.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+BaseEntity,
+Column,
+CreateDateColumn,
+DeleteDateColumn,
+Entity,
+Index,
+JoinColumn,
+ManyToOne,
+OneToMany,
+PrimaryGeneratedColumn,
+UpdateDateColumn
 } from 'typeorm';
 
 @Entity('comment')
@@ -65,15 +65,15 @@ export class Comment extends BaseEntity {
   reactionComment?: ReactionComment[];
 
   // TODO: 지금은 BaseEntity 때문에 함수이름이 겹쳐서 조금 이상한 이름, 추후 그냥 create로 변경 해야함
-  public static createComment(content: string, articleId: number, writerId: number) {
-    const comment = new Comment()
-    comment.content = content
-    comment.articleId = articleId
-    comment.writerId = writerId
-    return comment
+  public static createComment(props: { content: string, articleId: number, writerId: number }) {
+    const comment = new Comment();
+    comment.content = props.content;
+    comment.articleId = props.articleId;
+    comment.writerId = props.writerId;
+    return comment;
   }
 
   public updateContent(content: string) {
-    this.content = content
+    this.content = content;
   }
 }
