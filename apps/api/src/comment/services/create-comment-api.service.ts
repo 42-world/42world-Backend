@@ -1,6 +1,5 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CreateCommentRequestDto } from '@api/comment/dto/request/create-comment-request.dto';
 import { CommentService } from '@api/comment/services/comment.service';
 import { NotificationService } from '@api/notification/notification.service';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -16,18 +15,18 @@ export class CreateCommentApiService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment> {
-    const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
-    await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
+  async create(props: { writer: User; content: string; articleId: number }): Promise<Comment> {
+    const article = await this.articleService.findOneByIdOrFail(props.articleId);
+    await this.categoryService.checkAvailable(props.writer, article.categoryId, 'writableComment');
 
     const comment = Comment.createComment({
-      content: createCommentDto.content,
-      articleId: createCommentDto.articleId,
-      writerId: writer.id,
+      content: props.content,
+      articleId: props.articleId,
+      writerId: props.writer.id,
     });
     await this.commentService.save(comment);
 
-    if (writer.id !== article.writerId) {
+    if (props.writer.id !== article.writerId) {
       await this.notificationService.createNewComment(article, comment);
     }
     await this.articleService.increaseCommentCount(article.id);

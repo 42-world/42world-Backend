@@ -40,9 +40,13 @@ export class CommentApiController {
   @ApiForbiddenResponse({ description: '댓글을 쓸수없는 게시글' })
   async create(
     @AuthUser() writer: User,
-    @Body() createCommentDto: CreateCommentRequestDto,
+    @Body() request: CreateCommentRequestDto,
   ): Promise<CommentResponseDto> {
-    const comment = await this.createCommentApiService.create(writer, createCommentDto);
+    const comment = await this.createCommentApiService.create({
+      writer,
+      content: request.content,
+      articleId: request.articleId,
+    });
 
     return CommentResponseDto.of({
       comment,
@@ -61,9 +65,9 @@ export class CommentApiController {
   async updateContent(
     @Param('id', ParseIntPipe) id: number,
     @AuthUser() writer: User,
-    @Body() updateCommentDto: UpdateCommentRequestDto,
+    @Body() request: UpdateCommentRequestDto,
   ): Promise<void> {
-    return this.updateCommentApiService.updateContent(id, writer.id, updateCommentDto.content);
+    return this.updateCommentApiService.updateContent(id, writer.id, request.content);
   }
 
   @Delete(':id')
