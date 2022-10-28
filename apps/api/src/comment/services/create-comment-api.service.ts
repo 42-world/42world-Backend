@@ -19,7 +19,9 @@ export class CreateCommentApiService {
   async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment> {
     const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
     await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
-    const comment = await this.commentService.create(createCommentDto, writer.id);
+
+    const comment = Comment.createComment(createCommentDto.content, createCommentDto.articleId, writer.id);
+    await this.commentService.save(comment);
 
     if (writer.id !== article.writerId) {
       await this.notificationService.createNewComment(article, comment);

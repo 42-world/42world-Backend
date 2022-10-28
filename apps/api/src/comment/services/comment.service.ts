@@ -4,18 +4,10 @@ import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
-import { CreateCommentRequestDto } from '../dto/request/create-comment-request.dto';
 
 @Injectable()
 export class CommentService {
   constructor(private readonly commentRepository: CommentRepository) {}
-
-  async create(createCommentDto: CreateCommentRequestDto, writerId: number): Promise<Comment> {
-    return this.commentRepository.save({
-      ...createCommentDto,
-      writerId,
-    });
-  }
 
   async findAllByArticleId(
     user: User,
