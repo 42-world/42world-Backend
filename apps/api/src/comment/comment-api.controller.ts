@@ -34,7 +34,7 @@ export class CommentApiController {
   @ApiOperation({ summary: '댓글 생성' })
   @ApiCreatedResponse({
     description: '생성된 댓글',
-    type: CreateCommentRequestDto,
+    type: CommentResponseDto,
   })
   @ApiNotFoundResponse({ description: '존재하지 않는 게시글' })
   @ApiForbiddenResponse({ description: '댓글을 쓸수없는 게시글' })
