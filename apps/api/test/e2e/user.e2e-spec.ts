@@ -26,6 +26,7 @@ import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
+import {CommentModule} from "@api/comment/comment.module";
 
 describe('User', () => {
   let httpServer: INestApplication;
@@ -52,7 +53,6 @@ describe('User', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentApiModule,
         ReactionModule,
         TypeOrmModule.forFeature([IntraAuth]),
       ],

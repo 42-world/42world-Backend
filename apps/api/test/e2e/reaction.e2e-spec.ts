@@ -37,7 +37,6 @@ describe('Reaction', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentApiModule,
         ReactionModule,
       ],
     }).compile();
