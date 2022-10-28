@@ -1,8 +1,6 @@
 import { ArticleDtoMapper } from '@api/article/dto/article.mapper';
 import { SearchArticleRequestDto } from '@api/article/dto/request/search-article-request.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CommentResponseDto } from '@api/comment/dto/response/comment-response.dto';
-import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
 import { User } from '@app/entity/user/user.entity';
@@ -90,33 +88,6 @@ export class ArticleApiController {
     const { article, isLike } = await this.articleApiService.findOneById(user, articleId);
 
     return ArticleDtoMapper.toResponseDto({ article, user, isLike });
-  }
-
-  @Get(':id/comments')
-  @Auth('public')
-  @ApiOperation({ summary: '게시글 댓글 가져오기' })
-  @ApiPaginatedResponse(CommentResponseDto)
-  async getComments(
-    @AuthUser() user: User,
-    @Param('id', ParseIntPipe) articleId: number,
-    @Query() options: PaginationRequestDto,
-  ): Promise<PaginationResponseDto<CommentResponseDto>> {
-    const { comments, category, totalCount, reactionComments } = await this.articleApiService.getComments(
-      user,
-      articleId,
-      options,
-    );
-
-    return PaginationResponseDto.of({
-      data: CommentResponseDto.ofArray({
-        comments,
-        reactionComments,
-        userId: user.id,
-        isAnonymous: category.anonymity,
-      }),
-      options,
-      totalCount,
-    });
   }
 
   @Put(':id')
