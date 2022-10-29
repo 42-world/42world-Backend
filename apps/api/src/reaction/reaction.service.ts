@@ -42,8 +42,7 @@ export class ReactionService {
   > {
     const userId: number = user.id;
     let article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('reactionable', category, user);
+    await this.categoryService.checkAvailable(user, article.categoryId, 'reactionable');
 
     const isReaction = await this.reactionArticleRepository.isExist(userId, articleId, type);
     let isLike: boolean;
@@ -75,8 +74,7 @@ export class ReactionService {
     const userId: number = user.id;
     let comment = await this.commentService.findOneByIdOrFail(commentId);
     const article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('reactionable', category, user);
+    await this.categoryService.checkAvailable(user, article.categoryId, 'reactionable');
 
     const isReaction = await this.reactionCommentRepository.findOne({
       userId,
