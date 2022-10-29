@@ -1,5 +1,4 @@
 import { AppController } from '@api/app.controller';
-import { ArticleModule } from '@api/article/article.module';
 import { AuthModule } from '@api/auth/auth.module';
 import { JwtAuthGuard } from '@api/auth/jwt-auth/jwt-auth.guard';
 import { BestModule } from '@api/best/best.module';
@@ -18,6 +17,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AwsSdkModule } from 'nest-aws-sdk';
+import { ArticleApiModule } from './article/article-api.module';
 
 @Module({
   imports: [
@@ -44,7 +44,7 @@ import { AwsSdkModule } from 'nest-aws-sdk';
     }),
     CommentModule,
     UserModule,
-    ArticleModule,
+    ArticleApiModule,
     CategoryModule,
     NotificationModule,
     IntraAuthModule,

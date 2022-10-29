@@ -1,11 +1,13 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
-import { IntersectionType, PickType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { BaseArticleDto } from '../base-article.dto';
+import { IsInt, IsNotEmpty, Min } from 'class-validator';
 
-const _PickedBaseArticle = PickType(BaseArticleDto, ['categoryId']);
-
-export class FindAllArticleRequestDto extends IntersectionType(_PickedBaseArticle, PaginationRequestDto) {
+export class FindAllArticleRequestDto extends PaginationRequestDto {
+  @Min(0)
+  @IsInt()
   @Type(() => Number)
-  readonly categoryId: number;
+  @IsNotEmpty()
+  @ApiProperty({ example: 1 })
+  categoryId: number;
 }
