@@ -1,9 +1,7 @@
-import { ArticleModule } from '@api/article/article.module';
+import { ArticleApiModule } from '@api/article/article-api.module';
 import { CreateArticleRequestDto } from '@api/article/dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { UpdateArticleRequestDto } from '@api/article/dto/request/update-article-request.dto';
-import { CreateArticleResponseDto } from '@api/article/dto/response/create-article-response.dto';
-import { FindOneArticleResponseDto } from '@api/article/dto/response/find-one-article-response.dto';
 import { ArticleRepository } from '@api/article/repositories/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
@@ -12,7 +10,13 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
+import {
+  ANONY_USER_CHARACTER,
+  ANONY_USER_DATE,
+  ANONY_USER_ID,
+  ANONY_USER_NICKNAME,
+  ANONY_USER_ROLE,
+} from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -20,6 +24,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
+import { ArticleResponseDto } from '../../src/article/dto/response/article-response.dto';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
@@ -42,7 +47,7 @@ describe('Article', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleModule, CategoryModule, CommentModule],
+      imports: [E2eTestBaseModule, UserModule, AuthModule, ArticleApiModule, CategoryModule, CommentModule],
     }).compile();
 
     const app = createTestApp(moduleFixture);
@@ -88,7 +93,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.CREATED);
 
-      const result = response.body as CreateArticleResponseDto;
+      const result = response.body as ArticleResponseDto;
       expect(result.title).toBe(createArticlRequesteDto.title);
       expect(result.content).toBe(createArticlRequesteDto.content);
       expect(result.categoryId).toBe(createArticlRequesteDto.categoryId);
@@ -228,9 +233,9 @@ describe('Article', () => {
       expect(responseArticles[0].content).toBe(articles.anony.content);
       expect(responseArticles[0].writerId).toBe(ANONY_USER_ID);
       expect(responseArticles[0].writer.id).toBe(ANONY_USER_ID);
-      expect(responseArticles[0].writer.role).toBeUndefined();
-      expect(responseArticles[0].writer.createdAt).toBeUndefined();
-      expect(responseArticles[0].writer.updatedAt).toBeUndefined();
+      expect(responseArticles[0].writer.role).toBe(ANONY_USER_ROLE);
+      expect(responseArticles[0].writer.createdAt).toBe(ANONY_USER_DATE.toISOString());
+      expect(responseArticles[0].writer.updatedAt).toBe(ANONY_USER_DATE.toISOString());
       expect(responseArticles[0].writer.nickname).toBe(ANONY_USER_NICKNAME);
       expect(responseArticles[0].writer.character).toBe(ANONY_USER_CHARACTER);
     });
@@ -414,7 +419,8 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = response.body as FindOneArticleResponseDto;
+      const result = response.body as ArticleResponseDto;
+
       expect(result.title).toBe(articles.first.title);
       expect(result.content).toBe(articles.first.content);
       expect(result.categoryId).toBe(articles.first.categoryId);
@@ -452,9 +458,9 @@ describe('Article', () => {
       expect(result.writerId).toBe(ANONY_USER_ID);
       expect(result.category.id).toBe(categories.anony.id);
       expect(result.writer.id).toBe(ANONY_USER_ID);
-      expect(result.writer.role).toBeUndefined();
-      expect(result.writer.createdAt).toBeUndefined();
-      expect(result.writer.updatedAt).toBeUndefined();
+      expect(result.writer.role).toBe(ANONY_USER_ROLE);
+      expect(result.writer.createdAt).toBe(ANONY_USER_DATE.toISOString());
+      expect(result.writer.updatedAt).toBe(ANONY_USER_DATE.toISOString());
       expect(result.writer.nickname).toContain(ANONY_USER_NICKNAME);
       expect(result.writer.character).toBe(ANONY_USER_CHARACTER);
     });
@@ -543,7 +549,7 @@ describe('Article', () => {
         .put(`/articles/${articleId}`)
         .send(updateArticleRequestDto)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       const result = await articleRepository.findOne(articleId);
       expect(result.title).toBe(articles.second.title);
@@ -635,7 +641,7 @@ describe('Article', () => {
       const response = await request(httpServer)
         .delete(`/articles/${articleId}`)
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
-      expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
       const result = await articleRepository.findOne(articleId);
       expect(result).toBeTruthy();

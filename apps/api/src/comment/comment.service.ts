@@ -23,8 +23,7 @@ export class CommentService {
 
   async create(writer: User, createCommentDto: CreateCommentRequestDto): Promise<Comment | never> {
     const article = await this.articleService.findOneByIdOrFail(createCommentDto.articleId);
-    const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('writableComment', category, writer);
+    await this.categoryService.checkAvailable(writer, article.categoryId, 'writableComment');
     const comment = await this.commentRepository.save({
       ...createCommentDto,
       writerId: writer.id,
@@ -51,7 +50,7 @@ export class CommentService {
   > {
     const article = await this.articleService.findOneByIdOrFail(articleId);
     const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('readableComment', category, user);
+    this.categoryService.checkAvailableSync(user, category, 'readableComment');
     const { comments, totalCount } = await this.commentRepository.findAllByArticleId(articleId, options);
     return { comments, category, totalCount };
   }
