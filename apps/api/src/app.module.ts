@@ -3,7 +3,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { JwtAuthGuard } from '@api/auth/jwt-auth/jwt-auth.guard';
 import { BestModule } from '@api/best/best.module';
 import { CategoryModule } from '@api/category/category.module';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { FtCheckinModule } from '@api/ft-checkin/ft-checkin.module';
 import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '@api/image/image.constant';
 import { ImageModule } from '@api/image/image.module';
@@ -42,7 +42,7 @@ import { ArticleApiModule } from './article/article-api.module';
         },
       },
     }),
-    CommentModule,
+    CommentApiModule,
     UserModule,
     ArticleApiModule,
     CategoryModule,

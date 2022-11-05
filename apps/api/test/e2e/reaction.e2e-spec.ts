@@ -4,7 +4,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
@@ -37,7 +37,6 @@ describe('Reaction', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentModule,
         ReactionModule,
       ],
     }).compile();

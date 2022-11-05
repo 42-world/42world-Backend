@@ -1,7 +1,7 @@
 import { ArticleService } from '@api/article/article.service';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';

@@ -1,22 +1,46 @@
-import { BaseCommentDto } from '@api/comment/dto/base-comment.dto';
 import { AnonyUserResponseDto } from '@api/user/dto/response/anony-user-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { ANONY_USER_ID } from '@api/user/user.constant';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty, IsString, MaxLength, Min } from 'class-validator';
 
-export class CommentResponseDto extends PickType(BaseCommentDto, [
-  'id',
-  'content',
-  'likeCount',
-  'articleId',
-  'writerId',
-  'writer',
-  'createdAt',
-  'updatedAt',
-]) {
+export class CommentResponseDto {
+  @ApiProperty()
+  id!: number;
+
+  @IsString()
+  @MaxLength(420)
+  @IsNotEmpty()
+  @ApiProperty({ example: '댓글 입니다.' })
+  content!: string;
+
+  @ApiProperty()
+  likeCount!: number;
+
+  @IsInt()
+  @Min(0)
+  @IsNotEmpty()
+  @ApiProperty({ example: 1 })
+  articleId!: number;
+
+  @IsInt()
+  @Min(0)
+  @IsNotEmpty()
+  @ApiProperty()
+  writerId!: number;
+
+  @ApiProperty({ type: () => UserResponseDto })
+  writer?: UserResponseDto | AnonyUserResponseDto;
+
+  @ApiProperty()
+  createdAt!: Date;
+
+  @ApiProperty()
+  updatedAt!: Date;
+
   @ApiProperty({ example: false })
   isLike!: boolean;
 
@@ -35,8 +59,6 @@ export class CommentResponseDto extends PickType(BaseCommentDto, [
     isLike: boolean;
     isSelf: boolean;
   }) {
-    super();
-
     this.id = config.id;
     this.content = config.content;
     this.likeCount = config.likeCount;

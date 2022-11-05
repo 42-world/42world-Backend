@@ -4,7 +4,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
@@ -26,6 +26,7 @@ import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
+import {CommentModule} from "@api/comment/comment.module";
 
 describe('User', () => {
   let httpServer: INestApplication;
@@ -52,7 +53,6 @@ describe('User', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentModule,
         ReactionModule,
         TypeOrmModule.forFeature([IntraAuth]),
       ],

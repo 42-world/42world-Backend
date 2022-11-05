@@ -63,4 +63,17 @@ export class Comment extends BaseEntity {
     nullable: true,
   })
   reactionComment?: ReactionComment[];
+
+  // TODO: 지금은 BaseEntity 때문에 함수이름이 겹쳐서 조금 이상한 이름, 추후 그냥 create로 변경 해야함
+  public static createComment(props: { content: string; articleId: number; writerId: number }) {
+    const comment = new Comment();
+    comment.content = props.content;
+    comment.articleId = props.articleId;
+    comment.writerId = props.writerId;
+    return comment;
+  }
+
+  public updateContent(content: string) {
+    this.content = content;
+  }
 }

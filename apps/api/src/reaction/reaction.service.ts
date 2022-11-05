@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
