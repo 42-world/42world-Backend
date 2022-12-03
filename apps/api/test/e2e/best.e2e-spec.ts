@@ -1,5 +1,5 @@
 import { ArticleModule } from '@api/article/article.module';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { BestModule } from '@api/best/best.module';

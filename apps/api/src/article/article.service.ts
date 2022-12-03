@@ -4,7 +4,7 @@ import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { ArticleRepository } from './repositories/article.repository';
+import { ArticleRepository } from './repository/article.repository';
 
 @Injectable()
 export class ArticleService {

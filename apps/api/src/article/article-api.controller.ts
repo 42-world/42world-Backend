@@ -1,5 +1,3 @@
-import { ArticleDtoMapper } from '@api/article/dto/article.mapper';
-import { SearchArticleRequestDto } from '@api/article/dto/request/search-article-request.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
@@ -14,18 +12,34 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ArticleApiService } from './article-api.service';
-import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
-import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
-import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
-import { ArticleResponseDto } from './dto/response/article-response.dto';
+import {
+  ArticleDtoMapper,
+  ArticleResponseDto,
+  CreateArticleRequestDto,
+  FindAllArticleRequestDto,
+  SearchArticleRequestDto,
+  UpdateArticleRequestDto,
+} from './dto';
+import {
+  CreateArticleApiService,
+  FindArticleApiService,
+  RemoveArticleApiService,
+  SearchArticleApiService,
+  UpdateArticleApiService,
+} from './service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('Article')
 @Controller('articles')
 export class ArticleApiController {
-  constructor(private readonly articleApiService: ArticleApiService) {}
+  constructor(
+    private readonly createArticleApiService: CreateArticleApiService,
+    private readonly findArticleApiService: FindArticleApiService,
+    private readonly updateArticleApiService: UpdateArticleApiService,
+    private readonly searchArticleApiService: SearchArticleApiService,
+    private readonly removeArticleApiService: RemoveArticleApiService,
+  ) {}
 
   @Post()
   @Auth()
@@ -36,7 +50,7 @@ export class ArticleApiController {
     @AuthUser() user: User,
     @Body() { title, content, categoryId }: CreateArticleRequestDto,
   ): Promise<ArticleResponseDto> {
-    const article = await this.articleApiService.create(user, title, content, categoryId);
+    const article = await this.createArticleApiService.create(user, title, content, categoryId);
 
     return ArticleDtoMapper.toResponseDto({ article, user });
   }
@@ -50,7 +64,7 @@ export class ArticleApiController {
     @AuthUser() user: User,
     @Query() { q, categoryId, ...options }: SearchArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleApiService.search(user, q, categoryId, options);
+    const { articles, totalCount } = await this.searchArticleApiService.search(user, q, categoryId, options);
 
     return PaginationResponseDto.of({
       data: ArticleDtoMapper.toResponseDtoList({ articles, user }),
@@ -67,7 +81,7 @@ export class ArticleApiController {
     @AuthUser() user: User,
     @Query() { categoryId, ...options }: FindAllArticleRequestDto,
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
-    const { articles, totalCount } = await this.articleApiService.findAllByCategoryId(user, categoryId, options);
+    const { articles, totalCount } = await this.findArticleApiService.findAllByCategoryId(user, categoryId, options);
 
     return PaginationResponseDto.of({
       data: ArticleDtoMapper.toResponseDtoList({ articles, user }),
@@ -85,7 +99,7 @@ export class ArticleApiController {
     @AuthUser() user: User, //
     @Param('id', ParseIntPipe) articleId: number,
   ): Promise<ArticleResponseDto> {
-    const { article, isLike } = await this.articleApiService.findOneById(user, articleId);
+    const { article, isLike } = await this.findArticleApiService.findOneById(user, articleId);
 
     return ArticleDtoMapper.toResponseDto({ article, user, isLike });
   }
@@ -100,7 +114,7 @@ export class ArticleApiController {
     @Param('id', ParseIntPipe) id: number,
     @Body() { title, content, categoryId }: UpdateArticleRequestDto,
   ): Promise<void> {
-    return this.articleApiService.update(user, id, title, content, categoryId);
+    return this.updateArticleApiService.update(user, id, title, content, categoryId);
   }
 
   @Delete(':id')
@@ -112,6 +126,6 @@ export class ArticleApiController {
     @AuthUser() user: User, //
     @Param('id', ParseIntPipe) id: number,
   ): Promise<void> {
-    return this.articleApiService.remove(user, id);
+    return this.removeArticleApiService.remove(user, id);
   }
 }
