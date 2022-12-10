@@ -1,9 +1,9 @@
 import { ArticleApiModule } from '@api/article/article-api.module';
+import { ArticleResponseDto } from '@api/article/dto';
 import { CreateArticleRequestDto } from '@api/article/dto/request/create-article-request.dto';
 import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { UpdateArticleRequestDto } from '@api/article/dto/request/update-article-request.dto';
-import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
