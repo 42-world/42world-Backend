@@ -1,8 +1,8 @@
 import { DatabaseModule } from '@app/common/database/database.module';
-import { ormconfig } from '@app/common/database/ormconfig';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AdminJsModule } from './adminJs/admin-js.module';
+import { ormconfig } from './adminJs/ormconfig';
 
 @Module({
   imports: [
