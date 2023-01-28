@@ -1,7 +1,6 @@
 import { Article } from '@app/entity/article/article.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -14,7 +13,7 @@ import {
 import { NotificationType } from './interfaces/notifiaction.interface';
 
 @Entity('notification')
-export class Notification extends BaseEntity {
+export class Notification {
   @PrimaryGeneratedColumn()
   id!: number;
 
