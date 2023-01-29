@@ -82,21 +82,3 @@ build-admin:
 build-batch:
 	docker build -t 42world/backend-batch:latest -f ./infra/batch.Dockerfile . --platform linux/x86_64
 	docker push 42world/backend-batch:latest
-
-# Swarm =================================================
-
-.PHONY:	swarm-init
-swarm-init:
-	docker swarm init
-
-.PHONY:	swarm-leave
-swarm-leave:
-	docker swarm leave --force
-
-.PHONY: swarm-clean
-swarm-clean:
-	docker service rm $(shell docker service ls -q) | cat
-
-.PHONY: swarm-clean-all
-swarm-clean-all: swarm-clean
-	rm -rf infra/db dist

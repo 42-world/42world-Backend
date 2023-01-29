@@ -1,0 +1,76 @@
+name: deploy
+
+on:
+  push:
+    branches: ['develop']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+
+      - name: extract version
+        run: |
+          VERSION=$(grep -o -E "v[0-9]+\.[0-9]+\.[0-9]+" <<< "${{ github.event.head_commit.message }}")
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker images backend api
+        run: |
+          docker build -t 42world/backend-api:latest -f ./infra/api.Dockerfile . --platform linux/x86_64
+          docker push 42world/backend-api:latest
+          docker tag 42world/backend-api:latest 42world/backend-api:${{ env.VERSION }}
+          docker push 42world/backend-api:${{ env.VERSION }}
+
+      - name: Build and push Docker images backend admin
+        run: |
+          docker build -t 42world/backend-admin:latest -f ./infra/admin.Dockerfile . --platform linux/x86_64
+          docker push 42world/backend-admin:latest
+          docker tag 42world/backend-admin:latest 42world/backend-admin:${{ env.VERSION }}
+          docker push 42world/backend-admin:${{ env.VERSION }}
+
+      - name: Build and push Docker images backend batch
+        run: |
+          docker build -t 42world/backend-batch:latest -f ./infra/batch.Dockerfile . --platform linux/x86_64
+          docker push 42world/backend-batch:latest
+          docker tag 42world/backend-batch:latest 42world/backend-batch:${{ env.VERSION }}
+          docker push 42world/backend-batch:${{ env.VERSION }}
+
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD_HH-mm-ss
+          utcOffset: '+09:00'
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp ./infra/Dockerrun.aws.json deploy/Dockerrun.aws.json
+          cd deploy && zip -r deploy.zip .
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v14
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: '42world alpha'
+          version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
+          region: ${{ env.AWS_REGION }}
+          deployment_package: deploy/deploy.zip
+          wait_for_environment_recovery: 200
