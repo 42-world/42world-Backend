@@ -64,10 +64,9 @@ jobs:
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v14
         with:
-          aws_access_key: ${{ secrets.BE_STUDENT_KEY }}
-          aws_secret_key: ${{ secrets.BE_STUDENT_SECRET }}
-          application_name: ${{ env.APPLICATION_NAME }}
-          environment_name: ${{ env.ENVIRONMENT_NAME }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: '42world alpha'
           version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
           region: ${{ env.AWS_REGION }}
           deployment_package: deploy/deploy.zip
