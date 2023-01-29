@@ -69,7 +69,7 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: '42world alpha'
+          application_name: '42world-alpha'
           version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy/deploy.zip
