@@ -5,7 +5,7 @@
 ![issue](https://img.shields.io/github/issues/42-world/42world-Backend)
 ![issue](https://img.shields.io/github/issues-closed/42-world/42world-Backend)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/42-world/42world-Backend)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b3a77efc4f694b14953bd35e3ee7327f)](https://www.codacy.com/gh/42-world/42world-Backend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=42-world/42world-Backend&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b3a77efc4f694b14953bd35e3ee7327f)](https://www.codacy.com/gh/42-world/42world-Backend/dashboard?utm_source=github.com&utm_medium=referral&utm_content=42-world/42world-Backend&utm_campaign=Badge_Grade)
 
 ## 소개
 
@@ -82,9 +82,11 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 ## 실행하기
 
 아래 명령어를 입력하여 실행해주세요.
-  ```
-  make dev
-  ```
+
+```
+make dev
+```
+
 명령어는 디렉토리 최상단에서 실행해주세요.
 
 ## 테스트 실행하기
@@ -94,9 +96,11 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 다른 테스트 및 유닛테스트는 추후 보강 예정입니다.
 
 아래 명령어를 입력하여 테스트를 실행해주세요.
-  ```
-  make test
-  ```
+
+```
+make test
+```
+
 명령어는 디렉토리 최상단에서 실행해주세요.
 
 # 기여하기
@@ -131,8 +135,8 @@ sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을
 
 ## 기여한 사람들
 
-| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) | [🍏 sikang](https://github.com/Yaminyam) | [👻 seongpar](https://github.com/mimseong) | [🍌 juchoi](https://github.com/raejun92)
-| ---------------------------------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------ | -------------------------------------- | -------------------------------------------- |
+| [🍑 echung](https://github.com/euiminnn) | [🍇 ycha](https://github.com/Skyrich2000) | [🍹 sooyoon](https://github.com/blingblin-g) | [🍒 chlim](https://github.com/rockpell) | [🍏 sikang](https://github.com/Yaminyam) | [👻 seongpar](https://github.com/mimseong) | [🍌 juchoi](https://github.com/raejun92) |
+| ---------------------------------------- | ----------------------------------------- | -------------------------------------------- | --------------------------------------- | ---------------------------------------- | ------------------------------------------ | ---------------------------------------- |
 
 ## 개발노트
 
