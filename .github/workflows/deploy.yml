@@ -1,4 +1,4 @@
-name: CD
+name: deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,19 +30,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: |
+      - name: Build and push Docker images backend api
+        run: |
           docker build -t 42world/backend-api:latest -f ./infra/api.Dockerfile . --platform linux/x86_64
           docker push 42world/backend-api:latest
           docker tag 42world/backend-api:latest 42world/backend-api:${{ env.VERSION }}
           docker push 42world/backend-api:${{ env.VERSION }}
 
-      - run: |
+      - name: Build and push Docker images backend admin
+        run: |
           docker build -t 42world/backend-admin:latest -f ./infra/admin.Dockerfile . --platform linux/x86_64
           docker push 42world/backend-admin:latest
           docker tag 42world/backend-admin:latest 42world/backend-admin:${{ env.VERSION }}
           docker push 42world/backend-admin:${{ env.VERSION }}
 
-      - run: |
+      - name: Build and push Docker images backend batch
+        run: |
           docker build -t 42world/backend-batch:latest -f ./infra/batch.Dockerfile . --platform linux/x86_64
           docker push 42world/backend-batch:latest
           docker tag 42world/backend-batch:latest 42world/backend-batch:${{ env.VERSION }}
