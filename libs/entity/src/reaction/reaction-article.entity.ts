@@ -1,7 +1,6 @@
 import { Article } from '@app/entity/article/article.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -17,7 +16,7 @@ export enum ReactionArticleType {
 }
 
 @Entity('reaction_article')
-export class ReactionArticle extends BaseEntity {
+export class ReactionArticle {
   @PrimaryGeneratedColumn()
   id!: number;
 

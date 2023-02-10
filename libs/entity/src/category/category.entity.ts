@@ -1,7 +1,6 @@
 import { Article } from '@app/entity/article/article.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -13,7 +12,7 @@ import {
 } from 'typeorm';
 
 @Entity('category')
-export class Category extends BaseEntity {
+export class Category {
   @PrimaryGeneratedColumn()
   id!: number;
 

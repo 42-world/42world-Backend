@@ -5,7 +5,6 @@ import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -21,7 +20,7 @@ import {
 import { Category } from '../category/category.entity';
 
 @Entity('article')
-export class Article extends BaseEntity {
+export class Article {
   @PrimaryGeneratedColumn()
   id: number;
 
