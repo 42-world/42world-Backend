@@ -18,7 +18,7 @@ jobs:
 
       - name: extract version
         run: |
-          VERSION=${{ github.event.pull_request.number }}
+          VERSION=$(git rev-parse --short "$GITHUB_SHA")
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
