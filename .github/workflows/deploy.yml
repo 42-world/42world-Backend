@@ -64,13 +64,13 @@ jobs:
           cp ./infra/Dockerrun.aws.json deploy/Dockerrun.aws.json
           cd deploy && zip -r deploy.zip .
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v14
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: '42world_alpha'
+          application_name: 42world_alpha
+          environment_name: 42worldalpha-env-2
           version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
-          region: ${{ secrets.AWS_REGION }}
+          region: ap-northeast-2
           deployment_package: deploy/deploy.zip
-          wait_for_environment_recovery: 200
