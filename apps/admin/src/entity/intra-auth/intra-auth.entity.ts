@@ -1,5 +1,6 @@
-import { Article } from '@app/entity/article/article.entity';
+import { User } from '@admin/entity/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,21 +11,25 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('best')
-export class Best {
+@Entity('intra_auth')
+export class IntraAuth extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: false, unique: true })
-  @Index('ix_article_id')
-  articleId!: number;
+  @Index('ix_intra_id')
+  @Column({ type: 'varchar', length: 20, nullable: false })
+  intraId?: string;
 
-  @OneToOne(() => Article, (article) => article.best, {
+  @Column({ nullable: false, unique: true })
+  @Index('ix_user_id')
+  userId!: number;
+
+  @OneToOne(() => User, (user) => user.intraAuth, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
-  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
-  article?: Article;
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  user?: User;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;

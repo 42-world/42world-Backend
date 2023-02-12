@@ -1,6 +1,8 @@
-import { Article } from '@app/entity/article/article.entity';
-import { User } from '@app/entity/user/user.entity';
+import { Article } from '@admin/entity/article/article.entity';
+import { Comment } from '@admin/entity/comment/comment.entity';
+import { User } from '@admin/entity/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,12 +13,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum ReactionArticleType {
+export enum ReactionCommentType {
   LIKE = 'LIKE',
 }
 
-@Entity('reaction_article')
-export class ReactionArticle {
+@Entity('reaction_comment')
+export class ReactionComment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -26,11 +28,15 @@ export class ReactionArticle {
 
   @Column({
     type: 'enum',
-    enum: ReactionArticleType,
+    enum: ReactionCommentType,
     nullable: false,
-    default: ReactionArticleType.LIKE,
+    default: ReactionCommentType.LIKE,
   })
-  type!: ReactionArticleType;
+  type!: ReactionCommentType;
+
+  @Column({ nullable: false })
+  @Index('ix_comment_id')
+  commentId!: number;
 
   @Column({ nullable: false })
   @Index('ix_article_id')
@@ -42,14 +48,21 @@ export class ReactionArticle {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.reactionArticle, {
+  @ManyToOne(() => User, (user) => user.reactionComment, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: User;
 
-  @ManyToOne(() => Article, (article) => article.reactionArticle, {
+  @ManyToOne(() => Comment, (comment) => comment.reactionComment, {
+    createForeignKeyConstraints: false,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'comment_id', referencedColumnName: 'id' })
+  comment?: Comment;
+
+  @ManyToOne(() => Article, (article) => article.reactionComment, {
     createForeignKeyConstraints: false,
     nullable: false,
   })

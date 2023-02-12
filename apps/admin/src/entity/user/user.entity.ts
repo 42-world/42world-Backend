@@ -1,11 +1,12 @@
-import { Article } from '@app/entity/article/article.entity';
-import { Comment } from '@app/entity/comment/comment.entity';
-import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
-import { Notification } from '@app/entity/notification/notification.entity';
-import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
-import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
-import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { Article } from '@admin/entity/article/article.entity';
+import { Comment } from '@admin/entity/comment/comment.entity';
+import { IntraAuth } from '@admin/entity/intra-auth/intra-auth.entity';
+import { Notification } from '@admin/entity/notification/notification.entity';
+import { ReactionArticle } from '@admin/entity/reaction/reaction-article.entity';
+import { ReactionComment } from '@admin/entity/reaction/reaction-comment.entity';
+import { UserRole } from '@admin/entity/user/interfaces/userrole.interface';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -18,7 +19,7 @@ import {
 } from 'typeorm';
 
 @Entity('user')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

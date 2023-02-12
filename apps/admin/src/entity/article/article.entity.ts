@@ -1,10 +1,11 @@
-import { Best } from '@app/entity/best/best.entity';
-import { Comment } from '@app/entity/comment/comment.entity';
-import { Notification } from '@app/entity/notification/notification.entity';
-import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
-import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
-import { User } from '@app/entity/user/user.entity';
+import { Best } from '@admin/entity/best/best.entity';
+import { Comment } from '@admin/entity/comment/comment.entity';
+import { Notification } from '@admin/entity/notification/notification.entity';
+import { ReactionArticle } from '@admin/entity/reaction/reaction-article.entity';
+import { ReactionComment } from '@admin/entity/reaction/reaction-comment.entity';
+import { User } from '@admin/entity/user/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -20,7 +21,7 @@ import {
 import { Category } from '../category/category.entity';
 
 @Entity('article')
-export class Article {
+export class Article extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

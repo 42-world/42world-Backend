@@ -1,3 +1,4 @@
+import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserService } from '@api/user/user.service';
 import { User } from '@app/entity/user/user.entity';
 import { Injectable } from '@nestjs/common';
@@ -12,6 +13,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async login(githubProfile: GithubProfile): Promise<User> {
@@ -19,7 +21,7 @@ export class AuthService {
 
     if (user) {
       user.lastLogin = new Date();
-      return await user.save();
+      return await this.userRepository.save(user);
     }
 
     const newUser = new User();
