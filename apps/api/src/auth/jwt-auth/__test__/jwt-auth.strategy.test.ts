@@ -1,4 +1,4 @@
-import { UserService } from '@api/user/user.service';
+import { UserService } from '@api/user/services/user.service';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';

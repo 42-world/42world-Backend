@@ -1,8 +1,8 @@
 import { User } from '@app/entity/user/user.entity';
 import { Injectable } from '@nestjs/common';
-import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
-import { UpdateToCadetDto } from './dto/update-user-to-cadet.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UpdateUserProfileRequestDto } from '../dto/request/update-user-profile-request.dto';
+import { UpdateToCadetDto } from '../dto/update-user-to-cadet.dto';
+import { UserRepository } from '../repositories/user.repository';
 
 @Injectable()
 export class UserService {

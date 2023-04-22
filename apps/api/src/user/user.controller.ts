@@ -1,8 +1,8 @@
 import { ArticleService } from '@api/article/article.service';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CommentService } from '@api/comment/services/comment.service';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
+import { CommentService } from '@api/comment/services/comment.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
 import { ApiPaginatedResponse } from '@api/pagination/pagination.decorator';
@@ -22,7 +22,7 @@ import {
 import { ArticleDtoMapper } from '../article/dto/article.mapper';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { UserResponseDto } from './dto/response/user-response.dto';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 
 @ApiCookieAuth()
 @ApiUnauthorizedResponse({ description: '인증 실패' })

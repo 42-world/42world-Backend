@@ -3,7 +3,7 @@ import {
   NOT_EXIST_TOKEN_ERROR_MESSAGE,
   SIGNIN_ALREADY_AUTH_ERROR_MESSAGE,
 } from '@api/intra-auth/intra-auth.constant';
-import { UserService } from '@api/user/user.service';
+import { UserService } from '@api/user/services/user.service';
 import { CacheService } from '@app/common/cache/cache.service';
 import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';

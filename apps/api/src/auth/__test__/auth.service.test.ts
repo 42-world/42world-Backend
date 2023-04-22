@@ -1,5 +1,5 @@
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { UserService } from '@api/user/user.service';
+import { UserService } from '@api/user/services/user.service';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
 import { ConfigService } from '@nestjs/config';
