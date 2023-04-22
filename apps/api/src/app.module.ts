@@ -10,7 +10,7 @@ import { ImageModule } from '@api/image/image.module';
 import { IntraAuthModule } from '@api/intra-auth/intra-auth.module';
 import { NotificationModule } from '@api/notification/notification.module';
 import { ReactionModule } from '@api/reaction/reaction.module';
-import { UserModule } from '@api/user/user.module';
+import { UserApiModule } from '@api/user/user-api.module';
 import { DatabaseModule } from '@app/common/database/database.module';
 import { ormconfig } from '@app/common/database/ormconfig';
 import { Module } from '@nestjs/common';
@@ -43,7 +43,7 @@ import { ArticleApiModule } from './article/article-api.module';
       },
     }),
     CommentApiModule,
-    UserModule,
+    UserApiModule,
     ArticleApiModule,
     CategoryModule,
     NotificationModule,

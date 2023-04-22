@@ -1,4 +1,5 @@
 import { ArticleService } from '@api/article/article.service';
+import { ArticleDtoMapper } from '@api/article/dto';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
@@ -19,7 +20,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ArticleDtoMapper } from '../article/dto/article.mapper';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { UserResponseDto } from './dto/response/user-response.dto';
 import { UserService } from './services/user.service';
@@ -28,7 +28,7 @@ import { UserService } from './services/user.service';
 @ApiUnauthorizedResponse({ description: '인증 실패' })
 @ApiTags('User')
 @Controller('users')
-export class UserController {
+export class UserApiController {
   constructor(
     private readonly userService: UserService,
     private readonly reactionService: ReactionService,

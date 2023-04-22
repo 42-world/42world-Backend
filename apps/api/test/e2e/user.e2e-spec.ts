@@ -11,7 +11,7 @@ import { UpdateUserProfileRequestDto } from '@api/user/dto/request/update-user-p
 import { UserProfileResponseDto } from '@api/user/dto/response/user-profile-response.dto';
 import { UserResponseDto } from '@api/user/dto/response/user-response.dto';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { UserModule } from '@api/user/user.module';
+import { UserApiModule } from '@api/user/user-api.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
@@ -47,7 +47,7 @@ describe('User', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         E2eTestBaseModule,
-        UserModule,
+        UserApiModule,
         AuthModule,
         ArticleModule,
         CategoryModule,
