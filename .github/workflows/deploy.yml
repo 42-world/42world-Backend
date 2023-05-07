@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and push Docker images backend api
         run: |
-          docker build -t 42world/backend-api:${{ env.VERSION }} . --platform linux/x86_64
+          docker build -t 42world/backend-api:${{ env.VERSION }} -f ./infra/api.Dockerfile . --platform linux/x86_64
           docker push 42world/backend-api:${{ env.VERSION }}
           docker tag 42world/backend-api:${{ env.VERSION }} 42world/backend-api:latest
           docker push 42world/backend-api:latest
