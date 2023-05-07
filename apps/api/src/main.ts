@@ -1,6 +1,8 @@
 import { AppModule } from '@api/app.module';
+import { getEnvFromSecretManager } from '@api/getEnvFromSecretManager';
 import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
 import { SentryInterceptor } from '@app/common/interceptor/sentry.interceptor';
+import { PHASE } from '@app/utils/env';
 import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -13,7 +15,14 @@ import * as morgan from 'morgan';
 import { join } from 'path';
 
 async function bootstrap() {
+  const secret = await getEnvFromSecretManager();
+  process.env = {
+    ...process.env,
+    ...secret,
+  };
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
 
@@ -26,9 +35,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
-    .setDescription(`42World API - ${configService.get('NODE_ENV')} environment`)
+    .setDescription(`42World API - ${PHASE} environment`)
     .setVersion('0.1')
-    .addCookieAuth(process.env.ACCESS_TOKEN_KEY)
+    .addCookieAuth(configService.get('ACCESS_TOKEN_KEY'))
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
@@ -36,13 +45,13 @@ async function bootstrap() {
     customCss: '.swagger-ui .topbar { display: none }',
   });
 
-  const originList = process.env.ORIGIN_LIST || '';
-  const originRegex = process.env.ORIGIN_REGEX ? new RegExp(process.env.ORIGIN_REGEX) : '';
+  const originList = configService.get('ORIGIN_LIST') || '';
+  const originRegex = configService.get('ORIGIN_REGEX') ? new RegExp(configService.get('ORIGIN_REGEX')) : '';
   app.enableCors({
     origin: [...originList.split(',').map((item) => item.trim()), originRegex],
     credentials: true,
   });
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(configService));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // decorator(@)가 없는 속성이 들어오면 해당 속성은 제거하고 받아들입니다.
