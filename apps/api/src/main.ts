@@ -2,6 +2,7 @@ import { AppModule } from '@api/app.module';
 import { getEnvFromSecretManager } from '@api/getEnvFromSecretManager';
 import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
 import { SentryInterceptor } from '@app/common/interceptor/sentry.interceptor';
+import { PHASE } from '@app/utils/env';
 import { stream } from '@app/utils/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -34,7 +35,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('42World API')
-    .setDescription(`42World API - ${configService.get('NODE_ENV')} environment`)
+    .setDescription(`42World API - ${PHASE} environment`)
     .setVersion('0.1')
     .addCookieAuth(configService.get('ACCESS_TOKEN_KEY'))
     .build();
