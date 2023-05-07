@@ -51,6 +51,6 @@ export class AuthService {
       return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
     }
 
-    return { httpOnly: true, maxAge };
+    return { httpOnly: true, secure: false, sameSite: 'none', maxAge };
   };
 }
