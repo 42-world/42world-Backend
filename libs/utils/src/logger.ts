@@ -1,3 +1,4 @@
+import { PHASE } from '@app/utils/env';
 import 'process';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
@@ -59,6 +60,6 @@ export const stream = {
   },
 };
 
-if (process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test') {
+if (PHASE !== 'prod' && PHASE !== 'test') {
   logger.add(new transports.Console(options.console));
 }
