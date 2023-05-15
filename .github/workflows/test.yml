@@ -43,7 +43,7 @@ jobs:
           node-version: 16.x
           cache: 'yarn'
       - run: yarn
-      - run: make test
-      - run: yarn build api
-      - run: yarn build batch
-      - run: yarn build admin
+      - run: yarn test-set-infra
+      - run: yarn test
+      - run: yarn test:e2e
+      - run: yarn typechek

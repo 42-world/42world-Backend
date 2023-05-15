@@ -1,65 +1,12 @@
 version: '3.4'
 services:
-  api:
-    image: 42world/backend-api:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    env_file:
-      - './config/.env'
-    ports:
-      - '${API_EXTERNAL_PORT}:${PORT}'
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        order: start-first
-  admin:
-    image: 42world/backend-admin:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    env_file:
-      - './config/.env'
-    ports:
-      - '${ADMIN_PORT}:${ADMIN_PORT}'
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        order: start-first
-  batch:
-    image: 42world/backend-batch:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    env_file:
-      - './config/.env'
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        order: start-first
-  #-----------------------------------------------------------------------------------
   redis:
     image: redis:6.2.5
+    container_name: 42world-backend-redis
     command: redis-server --port 6379
     ports:
       - '${REDIS_PORT}:6379'
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: ${REDIS_REPLICAS}
-      update_config:
-        order: start-first
-  #-----------------------------------------------------------------------------------
+
   db:
     image: mysql:8.0
     container_name: 42world-backend-db
@@ -81,11 +28,3 @@ services:
       start_period: 0s
     volumes:
       - ./db:/var/lib/mysql
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: ${DB_REPLICAS}
-
-networks:
-  overlay:
