@@ -111,7 +111,7 @@ describe('IntraAuth', () => {
     test('[성공] GET - 이메일 인증', async () => {
       const mailCode = 'code';
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(newUser.id, intraId));
+      when(cacheService.get(mailCode)).thenResolve(new IntraAuthMailDto(newUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')
@@ -144,7 +144,7 @@ describe('IntraAuth', () => {
 
       await intraAuthRepository.save(new IntraAuthMailDto(cadetUser.id, intraId));
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(cadetUser.id, intraId));
+      when(cacheService.get(mailCode)).thenResolve(new IntraAuthMailDto(cadetUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')
