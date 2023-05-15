@@ -11,8 +11,6 @@
 
 42서울 재학생과 졸업생이 교류하는 온라인 커뮤니티 제작 프로젝트입니다.
 
-이 저장소에는 **백엔드 소스코드**가 저장되어 있고, 프론트엔드 소스코드는 [이곳](https://github.com/42-world/42world-Frontend)에서 볼 수 있습니다.
-
 ## 커뮤니티 둘러보기
 
 https://www.42world.kr/
@@ -23,28 +21,23 @@ https://www.42world.kr/
 │── apps
 │   ├── api
 │   │   ├── src
-│   │   ├── test
-│   │   └── views
-│   └── scheduler
+│   │   └── test
+│   └── admin
 │       ├── src
 │       └── test
 │── infra
-│   └── config
-├── libs
-│   ├── common
-│   ├── entity
-│   └── utils
-└── logs
+└── libs
+    ├── common
+    └── entity
+
 ```
 
 ## 기술스택
 
-- Frontend: [React.js](https://reactjs.org/)
-- Backend
-  - [Nest.js](https://nestjs.com/)
-  - [TypeORM](https://typeorm.io/#/)
-  - [Redis](https://redis.io/)
-  - [Docker](https://www.docker.com/)
+- [Nest.js](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/#/)
+- [Redis](https://redis.io/)
+- [Docker](https://www.docker.com/)
 
 # 프로젝트
 
@@ -57,51 +50,57 @@ https://www.42world.kr/
 
 ## 설치하기
 
-1. 위에 명시된 버전들을 확인해주세요.
-2. 백엔드 저장소를 클론해주세요.
-   ```
-   git clone https://github.com/42-world/42world-Backend.git
-   ```
-3. yarn으로 패키지를 설치해주세요.
-   ```
-   yarn install
-   ```
+먼저 위에 명시된 버전들을 확인해주세요.
 
-## env 파일 형식
+저장소를 clone 하고 패키지를 설치해주세요.
 
-sample.env.dev 파일을 .env.dev 로 이름을 바꾸고 비어있는 부분을 채워주세요.
+```
+git clone https://github.com/42-world/42world-Backend.git
 
-`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_CALLBACK_URL` 은 github oauth 로그인 관련 설정입니다.
+yarn install
+```
 
-이 링크를 참조하여 생성한 한 후 채워주세요 [github building-oauth-apps](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app)
+## env 설정하기
 
-`EMAIL_*`은 이메일 인증과 관련된 설정입니다.
+먼저 direnv를 설치해주세요
 
-완벽히 같지는 않지만 이 링크를 참조하여 원하는 설정을 채워주세요 [node-mailer](https://nodemailer.com/about/)
+```
+brew install direnv
+```
+
+설치가 완료되었다면 [여기](https://direnv.net/docs/hook.html)를 보고 hook을 설정해주세요
+
+.envrc.sample을 보고 .envrc 환경설정 파일을 구성해주세요
+
+구성에 어려움이 있다면 Issue를 남겨주세요
 
 ## 실행하기
 
-아래 명령어를 입력하여 실행해주세요.
+.envrc 설정을 마쳤다면 아래 명령어로 실행할 수 있습니다.
 
 ```
-make dev
+yarn set-infra # 필요한 인프라를 docker-compose로 실행합니다.
+
+yarn start # api 서버를 실행합니다.
 ```
 
-명령어는 디렉토리 최상단에서 실행해주세요.
-
-## 테스트 실행하기
-
-현재 e2e 테스트의 일부만 제대로 구성되어 있습니다.
-
-다른 테스트 및 유닛테스트는 추후 보강 예정입니다.
-
-아래 명령어를 입력하여 테스트를 실행해주세요.
+실행후에는 아래 명령어를 통해 관련 인프라를 회수할 수 있습니다.
 
 ```
-make test
+yarn clear-infra # 필요한 인프라를 docker-compose로 종료합니다.
 ```
 
-명령어는 디렉토리 최상단에서 실행해주세요.
+## 테스트
+
+아래 명령어로 테스트할 수 있습니다.
+
+```
+yarn test-set-infra # 테스트에 필요한 인프라를 실행합니다.
+
+yarn test # 테스트를 실행합니다.
+
+yarn test:e2e # e2e 테스트를 실행합니다.
+```
 
 # 기여하기
 
