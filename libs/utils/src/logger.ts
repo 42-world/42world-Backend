@@ -1,4 +1,4 @@
-import { PHASE } from '@app/utils/env';
+import { PHASE } from '@app/utils/phase';
 import 'process';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';

@@ -1,6 +1,6 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
-import { PHASE } from '@app/utils/env';
+import { PHASE } from '@app/utils/phase';
 import axios from 'axios';
 import { logger } from './logger';
 
