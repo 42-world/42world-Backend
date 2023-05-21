@@ -2,8 +2,8 @@ import { AppModule } from '@api/app.module';
 import { getEnvFromSecretManager } from '@api/getEnvFromSecretManager';
 import { HttpExceptionFilter } from '@app/common/filters/http-exception.filter';
 import { SentryInterceptor } from '@app/common/interceptor/sentry.interceptor';
-import { PHASE } from '@app/utils/env';
 import { stream } from '@app/utils/logger';
+import { PHASE } from '@app/utils/phase';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -15,10 +15,12 @@ import * as morgan from 'morgan';
 import { join } from 'path';
 
 async function bootstrap() {
+  console.log('PHASE', PHASE);
+
   const secret = await getEnvFromSecretManager();
   process.env = {
-    ...process.env,
     ...secret,
+    ...process.env,
   };
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

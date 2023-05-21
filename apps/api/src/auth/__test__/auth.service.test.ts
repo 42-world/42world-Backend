@@ -79,8 +79,6 @@ describe('AuthService', () => {
         Object {
           "httpOnly": true,
           "maxAge": 604800000,
-          "sameSite": "lax",
-          "secure": true,
         }
       `);
     });
@@ -94,8 +92,6 @@ describe('AuthService', () => {
         Object {
           "httpOnly": true,
           "maxAge": 604800000,
-          "sameSite": "none",
-          "secure": true,
         }
       `);
     });

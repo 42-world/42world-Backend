@@ -1,26 +1,16 @@
-import { PHASE } from '@app/utils/env';
-import {
-  GetSecretValueCommand,
-  SecretsManagerClient,
-  SecretsManagerClientConfig,
-} from '@aws-sdk/client-secrets-manager';
+import { PHASE } from '@app/utils/phase';
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 
-export const getEnvFromSecretManager = async () => {
-  const secret_name = `${PHASE}/rookies/api`;
-
-  const config: SecretsManagerClientConfig = {
-    region: 'ap-northeast-2',
-  };
-
-  if (PHASE === 'dev') {
-    config.credentials = {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
-    };
+export const getEnvFromSecretManager = async (): Promise<Record<string, string>> => {
+  if (PHASE === 'dev' || PHASE === 'test') {
+    return {};
   }
 
-  const client = new SecretsManagerClient(config);
+  const secret_name = `${PHASE}/rookies/api`;
 
+  const client = new SecretsManagerClient({
+    region: 'ap-northeast-2',
+  });
   const response = await client.send(
     new GetSecretValueCommand({
       SecretId: secret_name,

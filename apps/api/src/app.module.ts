@@ -22,24 +22,18 @@ import { ArticleApiModule } from './article/article-api.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: 'infra/config/.env',
       isGlobal: true,
       cache: true,
     }),
     DatabaseModule.register(),
     AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
-        imports: [ConfigModule],
         inject: [ConfigService],
-        useFactory: (configService: ConfigService) => {
-          // await ConfigModule.envVariablesLoaded;
-
-          return {
-            region: configService.get(AWS_REGION),
-            accessKeyId: configService.get(AWS_ACCESS_KEY),
-            secretAccessKey: configService.get(AWS_SECRET_KEY),
-          };
-        },
+        useFactory: (configService: ConfigService) => ({
+          region: configService.get(AWS_REGION),
+          accessKeyId: configService.get(AWS_ACCESS_KEY),
+          secretAccessKey: configService.get(AWS_SECRET_KEY),
+        }),
       },
     }),
     CommentApiModule,
