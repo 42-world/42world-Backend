@@ -34,7 +34,7 @@ export class User {
   @Column({ nullable: true })
   lastLogin?: Date;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.NOVICE })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CADET })
   role!: UserRole;
 
   @Column({ nullable: false, default: 0 })
