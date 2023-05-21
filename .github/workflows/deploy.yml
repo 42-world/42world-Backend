@@ -50,27 +50,3 @@ jobs:
       #     docker push 42world/backend-batch:latest
       #     docker tag 42world/backend-batch:latest 42world/backend-batch:${{ env.VERSION }}
       #     docker push 42world/backend-batch:${{ env.VERSION }}
-
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
-        with:
-          format: YYYYMMDD_HH-mm-ss
-          utcOffset: '+09:00'
-
-      - name: Generate deployment package
-        run: |
-          mkdir -p deploy
-          cp ./infra/Dockerrun.aws.json deploy/Dockerrun.aws.json
-          cd deploy && zip -r deploy.zip .
-
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: rookies-alpha-api
-          environment_name: Rookies-alpha-api-env
-          version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
