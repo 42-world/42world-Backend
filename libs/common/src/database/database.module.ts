@@ -1,3 +1,4 @@
+import { PHASE } from '@app/utils/phase';
 import { DynamicModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,7 +27,7 @@ export class DatabaseModule {
 
               synchronize: false,
               migrationsRun: true,
-              logging: configService.get('PHASE') === 'local',
+              logging: PHASE === 'dev',
 
               migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
               cli: {
