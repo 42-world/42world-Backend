@@ -48,7 +48,7 @@ export class AuthService {
 
     if (PHASE === 'prod') {
       return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
-    } else if (PHASE === 'alpha') {
+    } else if (PHASE === 'alpha' || PHASE === 'staging') {
       return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
     }
 

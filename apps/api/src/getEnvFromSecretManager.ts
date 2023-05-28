@@ -6,17 +6,20 @@ export const getEnvFromSecretManager = async (): Promise<Record<string, string>>
     return {};
   }
 
-  const secret_name = `${PHASE}/rookies/api`;
+  const secretName = `${PHASE}/rookies/api`;
+
+  console.log(`[${new Date().toISOString()}] Fetch secret from ${secretName}...`);
 
   const client = new SecretsManagerClient({
     region: 'ap-northeast-2',
   });
   const response = await client.send(
     new GetSecretValueCommand({
-      SecretId: secret_name,
+      SecretId: secretName,
       VersionStage: 'AWSCURRENT', // VersionStage defaults to AWSCURRENT if unspecified
     }),
   );
+  console.log(`[${new Date().toISOString()}] Fetch secret from ${secretName}... Done!`);
 
   const secrets = JSON.parse(response.SecretString);
 
