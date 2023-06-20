@@ -20,8 +20,8 @@ export class CommentService {
     return await this.commentRepository.findAllByArticleId(articleId, options);
   }
 
-  async findOneByIdOrFail(id: number, options?: FindOneOptions): Promise<Comment> {
-    return this.commentRepository.findOneOrFail(id, options);
+  async findOneByIdOrFail(id: number): Promise<Comment> {
+    return this.commentRepository.findOneOrFail({ where: { id } });
   }
 
   async findAllByWriterId(
@@ -35,7 +35,7 @@ export class CommentService {
   }
 
   async findByIdAndWriterIdOrFail(id: number, writerId: number): Promise<Comment> {
-    return this.commentRepository.findOneOrFail({ id, writerId });
+    return this.commentRepository.findOneOrFail({ where: { id, writerId } });
   }
 
   async save(comment: Comment): Promise<Comment> {

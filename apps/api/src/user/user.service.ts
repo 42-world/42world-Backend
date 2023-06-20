@@ -17,7 +17,7 @@ export class UserService {
   }
 
   async findOneByIdOrFail(id: number): Promise<User | never> {
-    return this.userRepository.findOneOrFail(id);
+    return this.userRepository.findOneOrFail({ where: { id } });
   }
 
   async updateProfile(user: User, updateUserProfileDto: UpdateUserProfileRequestDto): Promise<User> {

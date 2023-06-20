@@ -26,7 +26,7 @@ export class CategoryService {
   }
 
   async findOneOrFail(id: number): Promise<Category | never> {
-    return this.categoryRepository.findOneOrFail(id);
+    return this.categoryRepository.findOneOrFail({ where: { id } });
   }
 
   async existOrFail(id: number): Promise<void | never> {
@@ -34,7 +34,7 @@ export class CategoryService {
   }
 
   async updateName(id: number, name: string): Promise<Category | never> {
-    const category = await this.categoryRepository.findOneOrFail(id);
+    const category = await this.categoryRepository.findOneOrFail({ where: { id } });
 
     category.name = name;
     return this.categoryRepository.save(category);
