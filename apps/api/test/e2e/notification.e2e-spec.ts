@@ -135,7 +135,7 @@ describe('Notification', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
       const readNotifications = await notificationRepository.find({
-        userId: dummyUser.id,
+        where: { userId: dummyUser.id }
       });
       expect(readNotifications.length).toEqual(2);
       expect(readNotifications[0].isRead).toEqual(true);

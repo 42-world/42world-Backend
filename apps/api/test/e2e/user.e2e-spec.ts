@@ -169,7 +169,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id } });
       expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -187,7 +187,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id } });
       expect(updatedUser.nickname).toEqual(user2.nickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -217,7 +217,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(user.character);
     });
@@ -233,7 +233,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -250,7 +250,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(user.character);
     });
@@ -262,9 +262,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const deletedUser = await userRepository.findOne(user.id, {
-        withDeleted: true,
-      });
+      const deletedUser = await userRepository.findOne({ where: { id: user.id }, withDeleted: true });
 
       expect(deletedUser.deletedAt).toBeTruthy();
     });
@@ -333,7 +331,7 @@ describe('User', () => {
     });
 
     test('[성공] - GET - 내가 작성한 댓글 가져오기, 삭제한 게시글이 있는 경우', async () => {
-      await articleRepository.softDelete(articles.first);
+      await articleRepository.softDelete(articles.first.id);
 
       const response = await request(httpServer)
         .get('/users/me/comments')
@@ -385,7 +383,7 @@ describe('User', () => {
     });
 
     test('[성공] - GET - 내가 좋아요 누른 게시글 가져오기, 삭제한 게시글이 있는 경우', async () => {
-      await articleRepository.softDelete(articles.first);
+      await articleRepository.softDelete(articles.first.id);
 
       const response = await request(httpServer)
         .get('/users/me/like-articles')

@@ -412,7 +412,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = await articleRepository.findOne(articleId);
+      const result = await articleRepository.findOne({ where: { id: articleId } });
       expect(result.title).toBe(updateArticleRequestDto.title);
       expect(result.content).toBe(updateArticleRequestDto.content);
       expect(result.writerId).toBe(users.cadet[0].id);
@@ -439,7 +439,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
-      const result = await articleRepository.findOne(articleId);
+      const result = await articleRepository.findOne({ where: { id: articleId } });
       expect(result.title).toBe(articles.second.title);
       expect(result.content).toBe(articles.second.content);
       expect(result.categoryId).toBe(articles.second.categoryId);
@@ -511,7 +511,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const result = await articleRepository.findOne(articleId);
+      const result = await articleRepository.findOne({ where: { id: articleId } });
       expect(result).toBeFalsy();
     });
 
@@ -531,7 +531,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.FORBIDDEN);
 
-      const result = await articleRepository.findOne(articleId);
+      const result = await articleRepository.findOne({ where: { id: articleId } });
       expect(result).toBeTruthy();
     });
 
@@ -543,7 +543,7 @@ describe('Article', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(response.status).toEqual(HttpStatus.NOT_FOUND);
 
-      const result = await articleRepository.findOne(articleId);
+      const result = await articleRepository.findOne({ where: { id: articleId } });
       expect(result).toBeFalsy();
     });
 
