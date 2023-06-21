@@ -10,25 +10,26 @@ import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import {
-  ANONY_USER_CHARACTER,
-  ANONY_USER_DATE,
-  ANONY_USER_ID,
-  ANONY_USER_NICKNAME,
-  ANONY_USER_ROLE,
+ANONY_USER_CHARACTER,
+ANONY_USER_DATE,
+ANONY_USER_ID,
+ANONY_USER_NICKNAME,
+ANONY_USER_ROLE
 } from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB, createTestApp } from './utils/utils';
+import { createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
+import { DataSource } from 'typeorm';
 
 describe('Article', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -54,18 +55,19 @@ describe('Article', () => {
     categoryRepository = moduleFixture.get(CategoryRepository);
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
-  beforeEach(async () => {
-    await clearDB();
-  });
+  // beforeEach(async () => {
+  //   await clearDB();
+  // });
 
   describe('/articles', () => {
     beforeEach(async () => {

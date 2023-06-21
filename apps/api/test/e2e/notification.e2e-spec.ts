@@ -15,13 +15,14 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB, createTestApp } from './utils/utils';
+import { createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
@@ -49,18 +50,19 @@ describe('Notification', () => {
     notificationRepository = moduleFixture.get(getRepositoryToken(Notification));
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
-  beforeEach(async () => {
-    await clearDB();
-  });
+  // beforeEach(async () => {
+  //   await clearDB();
+  // });
 
   describe('/notifications', () => {
     let dummyUser: User;

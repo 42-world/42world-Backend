@@ -24,12 +24,12 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
-import {CommentModule} from "@api/comment/comment.module";
 
 describe('User', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -69,18 +69,19 @@ describe('User', () => {
     intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
-  beforeEach(async () => {
-    await clearDB();
-  });
+  // beforeEach(async () => {
+  //   await clearDB();
+  // });
 
   describe('/users/me', () => {
     const intraId = 'chlim';

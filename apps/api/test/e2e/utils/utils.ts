@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TestingModule } from '@nestjs/testing';
 import * as cookieParser from 'cookie-parser';
-import { getConnection } from 'typeorm';
+import { DataSource, getConnection } from 'typeorm';
 
 export const clearDB = async () => {
   const entities = getConnection().entityMetadatas;

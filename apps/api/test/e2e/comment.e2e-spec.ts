@@ -7,22 +7,23 @@ import { CategoryRepository } from '@api/category/repositories/category.reposito
 import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
-import { ANONY_USER_CHARACTER, ANONY_USER_ID, ANONY_USER_NICKNAME } from '@api/user/user.constant';
+import { ANONY_USER_CHARACTER,ANONY_USER_ID,ANONY_USER_NICKNAME } from '@api/user/user.constant';
 import { UserModule } from '@api/user/user.module';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { User } from '@app/entity/user/user.entity';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
-import { clearDB, createTestApp } from '@test/e2e/utils/utils';
+import { clearDB,createTestApp } from '@test/e2e/utils/utils';
 import { testDto } from '@test/e2e/utils/validate-test';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
+import { DataSource } from 'typeorm';
 
 describe('Comments', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
   let userRepository: UserRepository;
   let authService: AuthService;
   let articleRepository: ArticleRepository;
@@ -59,18 +60,19 @@ describe('Comments', () => {
     commentRepository = moduleFixture.get(CommentRepository);
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
-  afterEach(async () => {
-    await clearDB();
-  });
+  // afterEach(async () => {
+  //   await clearDB();
+  // });
 
   beforeEach(async () => {
     users = await dummy.createDummyUsers(userRepository);
