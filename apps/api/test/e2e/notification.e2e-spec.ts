@@ -18,7 +18,7 @@ import * as request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
-import { createTestApp } from './utils/utils';
+import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let httpServer: INestApplication;
@@ -60,9 +60,9 @@ describe('Notification', () => {
     await httpServer.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/notifications', () => {
     let dummyUser: User;

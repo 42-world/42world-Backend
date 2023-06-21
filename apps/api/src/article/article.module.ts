@@ -4,10 +4,8 @@ import { ArticleService } from './article.service';
 import { ArticleRepository } from './repository/article.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ArticleRepository]), //
-  ],
-  providers: [ArticleService],
+  imports: [],
+  providers: [ArticleService, ArticleRepository],
   exports: [ArticleService],
 })
 export class ArticleModule {}

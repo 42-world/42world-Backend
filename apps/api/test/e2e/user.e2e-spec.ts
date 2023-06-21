@@ -79,9 +79,9 @@ describe('User', () => {
     await httpServer.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/users/me', () => {
     const intraId = 'chlim';

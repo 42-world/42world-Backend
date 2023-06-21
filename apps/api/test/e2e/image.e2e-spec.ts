@@ -48,10 +48,9 @@ describe('Image', () => {
       JWT = dummy.jwt(user, authService);
     });
 
-    // dropDataBase로 날아갈듯?
-    // afterEach(async () => {
-    //   await clearDB();
-    // });
+    afterEach(async () => {
+      await clearDB(dataSource);
+    });
 
     // TODO: S3 연동 수정할것!!
     test.skip('[성공] POST', async () => {

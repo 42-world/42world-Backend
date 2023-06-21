@@ -23,7 +23,7 @@ import { Test,TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
-import { createTestApp } from './utils/utils';
+import { clearDB, createTestApp } from './utils/utils';
 import { testDto } from './utils/validate-test';
 import { DataSource } from 'typeorm';
 
@@ -65,9 +65,9 @@ describe('Article', () => {
     await httpServer.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/articles', () => {
     beforeEach(async () => {

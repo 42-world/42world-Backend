@@ -9,7 +9,7 @@ import { UserModule } from '@api/user/user.module';
 import { HttpStatus,INestApplication } from '@nestjs/common';
 import { Test,TestingModule } from '@nestjs/testing';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
-import { createTestApp } from '@test/e2e/utils/utils';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
 import * as dummy from './utils/dummy';
 import { DataSource } from 'typeorm';
@@ -47,9 +47,9 @@ describe('Category', () => {
     await server.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/categories', () => {
     beforeEach(async () => {

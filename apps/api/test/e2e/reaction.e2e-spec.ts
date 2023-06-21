@@ -55,15 +55,14 @@ describe('Reaction', () => {
   });
 
   afterAll(async () => {
-    console.log(dataSource);
     await dataSource.dropDatabase();
     await dataSource.destroy();
     await httpServer.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/reactions/articles/{id}', () => {
     beforeEach(async () => {

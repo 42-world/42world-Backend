@@ -70,9 +70,9 @@ describe('Comments', () => {
     await httpServer.close();
   });
 
-  // afterEach(async () => {
-  //   await clearDB();
-  // });
+  afterEach(async () => {
+    await clearDB(dataSource);
+  });
 
   beforeEach(async () => {
     users = await dummy.createDummyUsers(userRepository);

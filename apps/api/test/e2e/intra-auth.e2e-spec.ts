@@ -14,7 +14,7 @@ import { HttpStatus,INestApplication } from '@nestjs/common';
 import { Test,TestingModule } from '@nestjs/testing';
 import { getRepositoryToken,TypeOrmModule } from '@nestjs/typeorm';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
-import { createTestApp } from '@test/e2e/utils/utils';
+import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import * as request from 'supertest';
@@ -88,9 +88,9 @@ describe('IntraAuth', () => {
       cadetJWT = dummy.jwt(cadetUser, authService);
     });
 
-    // afterEach(async () => {
-    //   await clearDB();
-    // });
+    afterEach(async () => {
+      await clearDB(dataSource);
+    });
 
     test('[성공] POST - 이메일 전송', async () => {
       const response = await request(httpServer)

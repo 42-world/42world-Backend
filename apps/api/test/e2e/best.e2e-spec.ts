@@ -53,9 +53,9 @@ describe('Best', () => {
     await httpServer.close();
   });
 
-  // beforeEach(async () => {
-  //   await clearDB();
-  // });
+  beforeEach(async () => {
+    await clearDB(dataSource);
+  });
 
   describe('/best', () => {
     beforeEach(async () => {

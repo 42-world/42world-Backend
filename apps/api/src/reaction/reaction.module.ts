@@ -11,12 +11,12 @@ import { ReactionArticleRepository } from './repositories/reaction-article.repos
 @Module({
   imports: [
     CategoryModule,
-    TypeOrmModule.forFeature([ReactionArticleRepository, ReactionComment]),
+    TypeOrmModule.forFeature([ReactionComment]),
     forwardRef(() => ArticleModule),
     forwardRef(() => CommentModule),
   ],
   controllers: [ReactionController],
-  providers: [ReactionService],
-  exports: [ReactionService],
+  providers: [ReactionService, ReactionArticleRepository],
+  exports: [ReactionService, ReactionArticleRepository],
 })
 export class ReactionModule {}
