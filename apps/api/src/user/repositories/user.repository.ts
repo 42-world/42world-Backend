@@ -1,8 +1,12 @@
 import { User } from '@app/entity/user/user.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-@EntityRepository(User)
+@Injectable()
 export class UserRepository extends Repository<User> {
+  constructor(dataSource: DataSource) {
+    super(User, dataSource.createEntityManager());
+  }
   async isExistById(id: number): Promise<boolean> {
     const existQuery = await this.query(`SELECT EXISTS
 		(SELECT * FROM user WHERE id=${id} AND deleted_at IS NULL)`);

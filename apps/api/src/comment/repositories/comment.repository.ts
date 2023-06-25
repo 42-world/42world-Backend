@@ -1,11 +1,14 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { getPaginationSkip } from '@app/utils/utils';
-import { NotFoundException } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-@EntityRepository(Comment)
+@Injectable()
 export class CommentRepository extends Repository<Comment> {
+  constructor(dataSource: DataSource) {
+    super(Comment, dataSource.createEntityManager());
+  }
   async findAllByArticleId(
     articleId: number,
     options: PaginationRequestDto,

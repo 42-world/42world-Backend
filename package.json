@@ -42,7 +42,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^1.1.0",
     "@nestjs/swagger": "^5.1.5",
-    "@nestjs/typeorm": "^8.0.2",
+    "@nestjs/typeorm": "10.0.0",
     "@sentry/node": "^6.19.6",
     "adminjs": "^5.7.3",
     "app-root-path": "^3.0.0",
@@ -71,7 +71,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.2.41",
+    "typeorm": "0.3.16",
     "typeorm-naming-strategies": "^2.0.0",
     "winston": "^3.6.0",
     "winston-daily-rotate-file": "^4.6.1"

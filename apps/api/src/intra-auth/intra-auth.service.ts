@@ -65,7 +65,7 @@ export class IntraAuthService {
 
   private async checkExistCadet(intraId: string): Promise<void | never> {
     const cadet = await this.intraAuthRepository.findOne({
-      intraId: intraId,
+      where: { intraId },
     });
 
     if (cadet) {

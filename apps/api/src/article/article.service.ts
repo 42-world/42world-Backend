@@ -18,7 +18,8 @@ export class ArticleService {
       writerId: writer.id,
     });
 
-    return await this.articleRepository.findOneOrFail(id, {
+    return await this.articleRepository.findOneOrFail({
+      where: { id },
       relations: ['writer', 'category'],
     });
   }
@@ -49,7 +50,8 @@ export class ArticleService {
   }
 
   async findOneById(user: User, id: number): Promise<Article> {
-    const article = await this.articleRepository.findOneOrFail(id, {
+    const article = await this.articleRepository.findOneOrFail({
+      where: { id },
       relations: ['writer', 'category'],
     });
 
@@ -68,7 +70,9 @@ export class ArticleService {
   }
 
   async findOneByIdOrFail(id: number): Promise<Article> {
-    return this.articleRepository.findOneOrFail(id);
+    return this.articleRepository.findOneOrFail({
+      where: { id },
+    });
   }
 
   async update(
@@ -78,7 +82,9 @@ export class ArticleService {
     content: string | undefined,
     categoryId: number | undefined,
   ): Promise<void> {
-    const article = await this.articleRepository.findOneOrFail(id);
+    const article = await this.articleRepository.findOneOrFail({
+      where: { id },
+    });
 
     if (article.writerId !== user.id && user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('권한이 없습니다');
@@ -98,7 +104,9 @@ export class ArticleService {
   }
 
   async remove(user: User, id: number): Promise<void> {
-    const article = await this.articleRepository.findOneOrFail(id);
+    const article = await this.articleRepository.findOneOrFail({
+      where: { id },
+    });
 
     if (article.writerId !== user.id && user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('권한이 없습니다');

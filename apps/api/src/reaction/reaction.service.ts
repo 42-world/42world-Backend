@@ -77,9 +77,7 @@ export class ReactionService {
     await this.categoryService.checkAvailable(user, article.categoryId, 'reactionable');
 
     const isReaction = await this.reactionCommentRepository.findOne({
-      userId,
-      commentId,
-      type,
+      where: { userId, commentId, type },
     });
     let isLike: boolean;
 
@@ -119,9 +117,7 @@ export class ReactionService {
     type: ReactionCommentType = ReactionCommentType.LIKE,
   ): Promise<ReactionComment[]> {
     return this.reactionCommentRepository.find({
-      userId,
-      articleId,
-      type,
+      where: { userId, articleId, type },
     });
   }
 
