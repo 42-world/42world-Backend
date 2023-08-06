@@ -1,10 +1,14 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { getPaginationSkip } from '@app/utils/utils';
-import { Brackets, EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { Brackets, DataSource, Repository } from 'typeorm';
 
-@EntityRepository(Article)
+@Injectable()
 export class ArticleRepository extends Repository<Article> {
+  constructor(dataSource: DataSource) {
+    super(Article, dataSource.createEntityManager());
+  }
   async findAllByCategoryId(
     categoryId: number,
     options: PaginationRequestDto,

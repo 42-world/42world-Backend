@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 
@@ -15,6 +16,8 @@ const FIND_DOUBLE_QUOTE = /\"/g;
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly configService: ConfigService) {}
+
   public catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -25,7 +28,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception = new NotFoundException(message);
     } else if (!(exception instanceof HttpException)) {
       logger.error(`${request.url} ${exception.name} ${exception.message}`);
-      errorHook(exception.name, exception.message);
+      errorHook(exception.name, exception.message, this.configService.get('SLACK_HOOK_URL'));
       exception = new InternalServerErrorException('Unknown Error');
     }
 

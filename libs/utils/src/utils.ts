@@ -1,5 +1,6 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
+import { PHASE } from '@app/utils/phase';
 import axios from 'axios';
 import { logger } from './logger';
 
@@ -18,14 +19,12 @@ export const isExpired = (exp: Date): boolean => {
   return now >= exp;
 };
 
-
-export const errorHook = async (exceptionName: string, exceptionMessage: string) => {
-  const phase = process.env.NODE_ENV;
-  const slackMessage = `[${phase}] ${exceptionName}: ${exceptionMessage}`;
+export const errorHook = async (exceptionName: string, exceptionMessage: string, slackHookUrl: string) => {
+  const slackMessage = `[${PHASE}] ${exceptionName}: ${exceptionMessage}`;
 
   try {
-    if (phase === 'prod' || phase === 'alpha') {
-      await axios.post(process.env.SLACK_HOOK_URL, { text: slackMessage });
+    if (PHASE !== 'dev' && PHASE !== 'test') {
+      await axios.post(slackHookUrl, { text: slackMessage });
     }
   } catch (e) {
     logger.error(e);

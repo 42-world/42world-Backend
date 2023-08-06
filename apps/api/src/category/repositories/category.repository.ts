@@ -1,10 +1,13 @@
 import { Category } from '@app/entity/category/category.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
-import { NotFoundException } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-@EntityRepository(Category)
+@Injectable()
 export class CategoryRepository extends Repository<Category> {
+  constructor(dataSource: DataSource) {
+    super(Category, dataSource.createEntityManager());
+  }
   async existOrFail(id: number): Promise<void> {
     const existQuery = await this.query(`SELECT EXISTS
 		(SELECT * FROM category WHERE id=${id} AND deleted_at IS NULL)`);

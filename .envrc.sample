@@ -1,0 +1,26 @@
+export PORT=
+
+export DB_HOST=
+export DB_PORT=
+export DB_NAME=
+export DB_USER_NAME=
+export DB_USER_PASSWORD=
+
+export REDIS_HOST=
+export REDIS_PORT=
+
+export GITHUB_CLIENT_ID=
+export GITHUB_CLIENT_SECRET=
+export GITHUB_CALLBACK_URL=
+
+export STIBEE_API_KEY=
+export STIBEE_ENDPOINT=
+export STIBEE_SUBSCRIBE_URL=
+export STIBEE_MAIL_SEND_URL=
+export SLACK_HOOK_URL=
+export SENTRY_KEY=
+
+export FRONT_URL=
+export ORIGIN_LIST=
+export JWT_SECRET=
+export ACCESS_TOKEN_KEY=

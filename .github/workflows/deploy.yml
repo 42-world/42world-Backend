@@ -32,45 +32,21 @@ jobs:
 
       - name: Build and push Docker images backend api
         run: |
-          docker build -t 42world/backend-api:latest -f ./infra/api.Dockerfile . --platform linux/x86_64
-          docker push 42world/backend-api:latest
-          docker tag 42world/backend-api:latest 42world/backend-api:${{ env.VERSION }}
+          docker build -t 42world/backend-api:${{ env.VERSION }} -f ./infra/api.Dockerfile . --platform linux/x86_64
           docker push 42world/backend-api:${{ env.VERSION }}
+          docker tag 42world/backend-api:${{ env.VERSION }} 42world/backend-api:latest
+          docker push 42world/backend-api:latest
 
-      - name: Build and push Docker images backend admin
-        run: |
-          docker build -t 42world/backend-admin:latest -f ./infra/admin.Dockerfile . --platform linux/x86_64
-          docker push 42world/backend-admin:latest
-          docker tag 42world/backend-admin:latest 42world/backend-admin:${{ env.VERSION }}
-          docker push 42world/backend-admin:${{ env.VERSION }}
+      # - name: Build and push Docker images backend admin
+      #   run: |
+      #     docker build -t 42world/backend-admin:latest -f ./infra/admin.Dockerfile . --platform linux/x86_64
+      #     docker push 42world/backend-admin:latest
+      #     docker tag 42world/backend-admin:latest 42world/backend-admin:${{ env.VERSION }}
+      #     docker push 42world/backend-admin:${{ env.VERSION }}
 
-      - name: Build and push Docker images backend batch
-        run: |
-          docker build -t 42world/backend-batch:latest -f ./infra/batch.Dockerfile . --platform linux/x86_64
-          docker push 42world/backend-batch:latest
-          docker tag 42world/backend-batch:latest 42world/backend-batch:${{ env.VERSION }}
-          docker push 42world/backend-batch:${{ env.VERSION }}
-
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
-        with:
-          format: YYYYMMDD_HH-mm-ss
-          utcOffset: '+09:00'
-
-      - name: Generate deployment package
-        run: |
-          mkdir -p deploy
-          cp ./infra/Dockerrun.aws.json deploy/Dockerrun.aws.json
-          cd deploy && zip -r deploy.zip .
-
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: 42world_alpha
-          environment_name: 42worldalpha-env-2
-          version_label: egg-docker-${{steps.current-time.outputs.formattedTime}}-${{ env.VERSION }}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
+      # - name: Build and push Docker images backend batch
+      #   run: |
+      #     docker build -t 42world/backend-batch:latest -f ./infra/batch.Dockerfile . --platform linux/x86_64
+      #     docker push 42world/backend-batch:latest
+      #     docker tag 42world/backend-batch:latest 42world/backend-batch:${{ env.VERSION }}
+      #     docker push 42world/backend-batch:${{ env.VERSION }}

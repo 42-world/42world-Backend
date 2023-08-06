@@ -38,13 +38,13 @@ export class IntraAuthService {
     const code = await getCode(intraId);
     const intraAuthMailDto = new IntraAuthMailDto(user.id, intraId);
 
-    await this.cacheService.setIntraAuthMailData(code, intraAuthMailDto);
+    await this.cacheService.set(code, intraAuthMailDto);
 
     await this.mailService.send(intraId, code, user.nickname);
   }
 
   async getAuth(code: string): Promise<void | never> {
-    const intraAuthMailDto = await this.cacheService.getIntraAuthMailData(code);
+    const intraAuthMailDto = await this.cacheService.get<IntraAuthMailDto>(code);
 
     if (!intraAuthMailDto) {
       throw new ForbiddenException(NOT_EXIST_TOKEN_ERROR_MESSAGE);
@@ -65,7 +65,7 @@ export class IntraAuthService {
 
   private async checkExistCadet(intraId: string): Promise<void | never> {
     const cadet = await this.intraAuthRepository.findOne({
-      intraId: intraId,
+      where: { intraId },
     });
 
     if (cadet) {
