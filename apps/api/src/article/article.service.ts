@@ -1,81 +1,67 @@
-import { CategoryService } from '@api/category/category.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { Category } from '@app/entity/category/category.entity';
+import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleRequestDto } from './dto/request/create-article-request.dto';
-import { FindAllArticleRequestDto } from './dto/request/find-all-article-request.dto';
-import { SearchArticleRequestDto } from './dto/request/search-article-request.dto';
-import { UpdateArticleRequestDto } from './dto/request/update-article-request.dto';
-import { ArticleRepository } from './repositories/article.repository';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ArticleRepository } from './repository/article.repository';
 
 @Injectable()
 export class ArticleService {
-  constructor(
-    private readonly articleRepository: ArticleRepository,
-    private readonly categoryService: CategoryService,
-  ) {}
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async create(
-    writer: User,
-    createArticleDto: CreateArticleRequestDto,
-  ): Promise<
-    | {
-        article: Article; //
-        category: Category;
-      }
-    | never
-  > {
-    const category = await this.categoryService.findOneOrFail(createArticleDto.categoryId);
-    this.categoryService.checkAvailable('writableArticle', category, writer);
-    const article = await this.articleRepository.save({
-      ...createArticleDto,
+  async create(writer: User, title: string, content: string, categoryId: number): Promise<Article> {
+    const { id } = await this.articleRepository.save({
+      title,
+      content,
+      categoryId,
       writerId: writer.id,
     });
 
-    return { article, category };
-  }
-
-  async findAll(
-    user: User,
-    options: FindAllArticleRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    const category = await this.categoryService.findOneOrFail(options.categoryId);
-    this.categoryService.checkAvailable('readableArticle', category, user);
-    const { articles, totalCount } = await this.articleRepository.findAll(options);
-    return { articles, totalCount };
+    return await this.articleRepository.findOneOrFail({
+      where: { id },
+      relations: ['writer', 'category'],
+    });
   }
 
   async search(
-    user: User,
-    options: SearchArticleRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
-    const availableCategories = await this.categoryService.getAvailable(user);
-    let categoryIds = availableCategories.map((category) => category.id);
-    if (options.categoryId) {
-      if (!categoryIds.some((categoryId) => categoryId === options.categoryId)) {
-        throw new ForbiddenException(`Category ${options.categoryId} is not available`);
+    q: string,
+    categoryId: number | undefined,
+    options: PaginationRequestDto,
+    availableCategories: Category[],
+  ): Promise<{ articles: Article[]; totalCount: number }> {
+    let availableCategoryIds = availableCategories.map((availableCategory) => availableCategory.id);
+
+    if (categoryId) {
+      if (!availableCategoryIds.some((availableCategoryId) => availableCategoryId === categoryId)) {
+        throw new ForbiddenException(`Category ${categoryId} is not available`);
       }
-      categoryIds = [options.categoryId];
+      availableCategoryIds = [categoryId];
     }
-    const { articles, totalCount } = await this.articleRepository.search(options, categoryIds);
-    return { articles, totalCount };
+
+    return await this.articleRepository.search(q, availableCategoryIds, options);
+  }
+
+  async findAllByCategoryId(
+    categoryId: number,
+    options: PaginationRequestDto,
+  ): Promise<{ articles: Article[]; totalCount: number }> {
+    return await this.articleRepository.findAllByCategoryId(categoryId, options);
+  }
+
+  async findOneById(user: User, id: number): Promise<Article> {
+    const article = await this.articleRepository.findOneOrFail({
+      where: { id },
+      relations: ['writer', 'category'],
+    });
+
+    return article;
   }
 
   async findAllByWriterId(
     writerId: number,
     options: PaginationRequestDto,
-  ): Promise<{
-    articles: Article[];
-    totalCount: number;
-  }> {
+  ): Promise<{ articles: Article[]; totalCount: number }> {
     return this.articleRepository.findAllByWriterId(writerId, options);
   }
 
@@ -83,63 +69,58 @@ export class ArticleService {
     return this.articleRepository.findAllBest(options);
   }
 
-  async existOrFail(id: number): Promise<void> {
-    return this.articleRepository.existOrFail(id);
+  async findOneByIdOrFail(id: number): Promise<Article> {
+    return this.articleRepository.findOneOrFail({
+      where: { id },
+    });
   }
 
-  async findOneByIdOrFail(id: number): Promise<Article | never> {
-    return this.articleRepository.findOneOrFail(id);
-  }
-
-  async findOneOrFail(
-    id: number,
+  async update(
     user: User,
-  ): Promise<
-    | {
-        article: Article;
-        category: Category;
-        writer: User;
-      }
-    | never
-  > {
-    const article = await this.articleRepository.findOneOrFail(id, {
-      relations: ['writer', 'category'],
-    });
-    this.categoryService.checkAvailable('readableArticle', article.category, user);
-
-    return {
-      article,
-      category: article.category,
-      writer: article.writer,
-    };
-  }
-
-  async update(id: number, writerId: number, updateArticleRequestDto: UpdateArticleRequestDto): Promise<void | never> {
+    id: number,
+    title: string | undefined,
+    content: string | undefined,
+    categoryId: number | undefined,
+  ): Promise<void> {
     const article = await this.articleRepository.findOneOrFail({
-      id,
-      writerId,
-    });
-    const newArticle = {
-      ...article,
-      ...updateArticleRequestDto,
-    };
-
-    await this.articleRepository.save(newArticle);
-  }
-
-  async remove(id: number, writerId: number): Promise<void | never> {
-    const result = await this.articleRepository.softDelete({
-      id,
-      writerId,
+      where: { id },
     });
 
-    if (result.affected === 0) {
-      throw new NotFoundException(`Can't find Article with id ${id} with writer ${writerId}`);
+    if (article.writerId !== user.id && user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('권한이 없습니다');
     }
+
+    if (categoryId) {
+      if (user.role !== UserRole.ADMIN) {
+        throw new ForbiddenException('권한이 없습니다');
+      }
+    }
+
+    await this.articleRepository.update(id, {
+      title: title ?? article.title,
+      content: content ?? article.content,
+      categoryId: categoryId ?? article.categoryId,
+    });
   }
 
-  async increaseViewCount(articleId: number): Promise<void> {
-    await this.articleRepository.update(articleId, {
+  async remove(user: User, id: number): Promise<void> {
+    const article = await this.articleRepository.findOneOrFail({
+      where: { id },
+    });
+
+    if (article.writerId !== user.id && user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('권한이 없습니다');
+    }
+
+    await this.articleRepository.softDelete(id);
+  }
+
+  async increaseViewCount(user: User, article: Article): Promise<void> {
+    if (article.writerId === user.id) {
+      return;
+    }
+
+    await this.articleRepository.update(article.id, {
       viewCount: () => 'view_count + 1',
     });
   }

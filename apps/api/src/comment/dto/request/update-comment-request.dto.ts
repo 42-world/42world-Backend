@@ -1,9 +1,9 @@
-import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
-import { BaseCommentDto } from '../base-comment.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, MaxLength } from 'class-validator';
 
-export class UpdateCommentRequestDto extends PickType(PartialType(BaseCommentDto), ['content']) {
+export class UpdateCommentRequestDto {
   @IsOptional()
+  @MaxLength(420)
   @ApiPropertyOptional({ example: '수정된 내용 입니다.' })
   readonly content?: string;
 }

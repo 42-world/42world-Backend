@@ -14,10 +14,9 @@ import { UserService } from './user.service';
     ArticleModule,
     CommentModule,
     ReactionModule,
-    TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  providers: [UserService, UserRepository],
+  exports: [UserService, UserRepository],
 })
 export class UserModule {}

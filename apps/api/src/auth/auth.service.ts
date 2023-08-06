@@ -1,5 +1,7 @@
+import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserService } from '@api/user/user.service';
 import { User } from '@app/entity/user/user.entity';
+import { PHASE } from '@app/utils/phase';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -12,6 +14,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async login(githubProfile: GithubProfile): Promise<User> {
@@ -19,7 +22,7 @@ export class AuthService {
 
     if (user) {
       user.lastLogin = new Date();
-      return await user.save();
+      return await this.userRepository.save(user);
     }
 
     const newUser = new User();
@@ -43,9 +46,9 @@ export class AuthService {
     const oneHour = 60 * 60 * 1000;
     const maxAge = 7 * 24 * oneHour; // 7days
 
-    if (this.configService.get('NODE_ENV') === 'prod') {
+    if (PHASE === 'prod') {
       return { httpOnly: true, secure: true, sameSite: 'lax', maxAge };
-    } else if (this.configService.get('NODE_ENV') === 'alpha') {
+    } else if (PHASE === 'alpha' || PHASE === 'staging') {
       return { httpOnly: true, secure: true, sameSite: 'none', maxAge };
     }
 

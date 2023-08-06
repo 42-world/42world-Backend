@@ -1,4 +1,4 @@
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';

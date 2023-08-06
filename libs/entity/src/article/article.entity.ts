@@ -1,12 +1,10 @@
 import { Best } from '@app/entity/best/best.entity';
-import { Category } from '@app/entity/category/category.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
 import { Notification } from '@app/entity/notification/notification.entity';
 import { ReactionArticle } from '@app/entity/reaction/reaction-article.entity';
 import { ReactionComment } from '@app/entity/reaction/reaction-comment.entity';
 import { User } from '@app/entity/user/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -19,53 +17,54 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Category } from '../category/category.entity';
 
 @Entity('article')
-export class Article extends BaseEntity {
+export class Article {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Index('ix_title')
   @Column({ type: 'varchar', length: 42, nullable: false })
-  title!: string;
+  title: string;
 
   @Column({ type: 'text', nullable: false })
-  content!: string;
+  content: string;
 
   @Column({ default: 0 })
-  viewCount!: number;
+  viewCount: number;
 
   @Column({ nullable: false })
   @Index('ix_category_id')
-  categoryId!: number;
+  categoryId: number;
 
   @ManyToOne(() => Category, (category) => category.article, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category?: Category;
+  category: Category;
 
   @Column({ nullable: false })
   @Index('ix_writer_id')
-  writerId!: number;
+  writerId: number;
 
   @ManyToOne(() => User, (user) => user.article, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
-  writer?: User;
+  writer: User;
 
   @Column({ default: 0 })
-  commentCount!: number;
+  commentCount: number;
 
   @Column({ default: 0 })
-  likeCount!: number;
+  likeCount: number;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt!: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamp' })
   @Index('ix_deleted_at')

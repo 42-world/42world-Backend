@@ -1,5 +1,5 @@
 import { ArticleModule } from '@api/article/article.module';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
@@ -15,13 +15,14 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
 import { clearDB, createTestApp } from './utils/utils';
 
 describe('Notification', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
@@ -49,17 +50,18 @@ describe('Notification', () => {
     notificationRepository = moduleFixture.get(getRepositoryToken(Notification));
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
   beforeEach(async () => {
-    await clearDB();
+    await clearDB(dataSource);
   });
 
   describe('/notifications', () => {
@@ -135,7 +137,7 @@ describe('Notification', () => {
         .set('Cookie', `${process.env.ACCESS_TOKEN_KEY}=${JWT}`);
       expect(res.status).toEqual(HttpStatus.OK);
       const readNotifications = await notificationRepository.find({
-        userId: dummyUser.id,
+        where: { userId: dummyUser.id }
       });
       expect(readNotifications.length).toEqual(2);
       expect(readNotifications[0].isRead).toEqual(true);

@@ -1,5 +1,5 @@
 import { ArticleModule } from '@api/article/article.module';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { BestModule } from '@api/best/best.module';
@@ -7,16 +7,17 @@ import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
-import { clearDB, createTestApp } from './utils/utils';
+import { clearDB,createTestApp } from './utils/utils';
+import { DataSource } from 'typeorm';
 
 describe('Best', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -42,17 +43,18 @@ describe('Best', () => {
     categoryRepository = moduleFixture.get(CategoryRepository);
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
   beforeEach(async () => {
-    await clearDB();
+    await clearDB(dataSource);
   });
 
   describe('/best', () => {

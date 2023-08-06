@@ -10,20 +10,21 @@ import { IntraAuthMailDto } from '@app/common/cache/dto/intra-auth.dto';
 import { IntraAuth } from '@app/entity/intra-auth/intra-auth.entity';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
+import { getRepositoryToken,TypeOrmModule } from '@nestjs/typeorm';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import * as request from 'supertest';
-import { instance, mock, when } from 'ts-mockito';
-import { getConnection, Repository } from 'typeorm';
+import { instance,mock,when } from 'ts-mockito';
+import { DataSource, Repository } from 'typeorm';
 import * as dummy from './utils/dummy';
 
 describe('IntraAuth', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
   let userRepository: UserRepository;
   let intraAuthRepository: Repository<IntraAuth>;
   let authService: AuthService;
@@ -64,12 +65,13 @@ describe('IntraAuth', () => {
     intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
@@ -87,7 +89,7 @@ describe('IntraAuth', () => {
     });
 
     afterEach(async () => {
-      await clearDB();
+      await clearDB(dataSource);
     });
 
     test('[성공] POST - 이메일 전송', async () => {
@@ -111,7 +113,7 @@ describe('IntraAuth', () => {
     test('[성공] GET - 이메일 인증', async () => {
       const mailCode = 'code';
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(newUser.id, intraId));
+      when(cacheService.get(mailCode)).thenResolve(new IntraAuthMailDto(newUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')
@@ -144,7 +146,7 @@ describe('IntraAuth', () => {
 
       await intraAuthRepository.save(new IntraAuthMailDto(cadetUser.id, intraId));
 
-      when(cacheService.getIntraAuthMailData(mailCode)).thenResolve(new IntraAuthMailDto(cadetUser.id, intraId));
+      when(cacheService.get(mailCode)).thenResolve(new IntraAuthMailDto(cadetUser.id, intraId));
 
       const response = await request(httpServer)
         .get('/intra-auth')

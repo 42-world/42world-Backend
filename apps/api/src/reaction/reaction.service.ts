@@ -1,6 +1,6 @@
 import { ArticleService } from '@api/article/article.service';
 import { CategoryService } from '@api/category/category.service';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { Comment } from '@app/entity/comment/comment.entity';
@@ -42,8 +42,7 @@ export class ReactionService {
   > {
     const userId: number = user.id;
     let article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('reactionable', category, user);
+    await this.categoryService.checkAvailable(user, article.categoryId, 'reactionable');
 
     const isReaction = await this.reactionArticleRepository.isExist(userId, articleId, type);
     let isLike: boolean;
@@ -75,13 +74,10 @@ export class ReactionService {
     const userId: number = user.id;
     let comment = await this.commentService.findOneByIdOrFail(commentId);
     const article = await this.articleService.findOneByIdOrFail(articleId);
-    const category = await this.categoryService.findOneOrFail(article.categoryId);
-    this.categoryService.checkAvailable('reactionable', category, user);
+    await this.categoryService.checkAvailable(user, article.categoryId, 'reactionable');
 
     const isReaction = await this.reactionCommentRepository.findOne({
-      userId,
-      commentId,
-      type,
+      where: { userId, commentId, type },
     });
     let isLike: boolean;
 
@@ -121,9 +117,7 @@ export class ReactionService {
     type: ReactionCommentType = ReactionCommentType.LIKE,
   ): Promise<ReactionComment[]> {
     return this.reactionCommentRepository.find({
-      userId,
-      articleId,
-      type,
+      where: { userId, articleId, type },
     });
   }
 

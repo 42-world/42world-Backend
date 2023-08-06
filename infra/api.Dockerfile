@@ -1,21 +1,11 @@
 FROM node:16-alpine3.14
-RUN apk add --no-cache 
 
-RUN mkdir /home/ft-world
+WORKDIR /app
 
-WORKDIR /home/ft-world
+COPY . .
 
-COPY nest-cli.json .
-COPY tsconfig.build.json .
-COPY tsconfig.json .
-COPY package.json .
-COPY yarn.lock .
-
-RUN yarn install
-
-COPY libs libs
-COPY apps apps
-
+RUN yarn install --forzon-lockfile
 RUN yarn build api
+RUN yarn install --production --forzon-lockfile
 
 ENTRYPOINT ["node", "dist/apps/api/src/main.js"]

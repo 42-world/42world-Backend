@@ -6,15 +6,16 @@ import { CategoryResponseDto } from '@api/category/dto/response/category-respons
 import { CategoryRepository } from '@api/category/repositories/category.repository';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
 import { E2eTestBaseModule } from '@test/e2e/e2e-test.base.module';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
 import * as dummy from './utils/dummy';
+import { DataSource } from 'typeorm';
 
 describe('Category', () => {
+  let dataSource: DataSource;
   let userRepository: UserRepository;
   let categoryRepository: CategoryRepository;
   let authService: AuthService;
@@ -36,17 +37,18 @@ describe('Category', () => {
     categoryRepository = moduleFixture.get(CategoryRepository);
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     server = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await server.close();
   });
 
   beforeEach(async () => {
-    await clearDB();
+    await clearDB(dataSource);
   });
 
   describe('/categories', () => {

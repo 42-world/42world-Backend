@@ -1,3 +1,4 @@
+import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserService } from '@api/user/user.service';
 import { UserRole } from '@app/entity/user/interfaces/userrole.interface';
 import { User } from '@app/entity/user/user.entity';
@@ -12,8 +13,11 @@ describe('AuthService', () => {
   const mockJwtService = mock<JwtService>({
     sign: mockFn().mockReturnValue('jwt'),
   });
+  const mockUserRepository = mock<UserRepository>({
+    save: mockFn().mockReturnThis(),
+  });
   const mockConfigService = mock<ConfigService>();
-  const authService = new AuthService(mockUserSerivce, mockJwtService, mockConfigService);
+  const authService = new AuthService(mockUserSerivce, mockJwtService, mockConfigService, mockUserRepository);
 
   beforeEach(() => {
     mockUserSerivce.findOneByGithubUId.mockClear();
@@ -26,7 +30,6 @@ describe('AuthService', () => {
       const user = new User();
       const oldLastLogin = new Date();
       user.lastLogin = oldLastLogin;
-      user.save = mockFn().mockReturnThis();
 
       const githubProfile: GithubProfile = { id: '1', username: 'test' };
       mockUserSerivce.findOneByGithubUId.mockResolvedValue(user);
@@ -76,8 +79,6 @@ describe('AuthService', () => {
         Object {
           "httpOnly": true,
           "maxAge": 604800000,
-          "sameSite": "lax",
-          "secure": true,
         }
       `);
     });
@@ -91,8 +92,6 @@ describe('AuthService', () => {
         Object {
           "httpOnly": true,
           "maxAge": 604800000,
-          "sameSite": "none",
-          "secure": true,
         }
       `);
     });

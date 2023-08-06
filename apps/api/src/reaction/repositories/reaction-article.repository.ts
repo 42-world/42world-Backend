@@ -1,10 +1,14 @@
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { ReactionArticle, ReactionArticleType } from '@app/entity/reaction/reaction-article.entity';
 import { getPaginationSkip } from '@app/utils/utils';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 
-@EntityRepository(ReactionArticle)
+@Injectable()
 export class ReactionArticleRepository extends Repository<ReactionArticle> {
+  constructor(dataSource: DataSource) {
+    super(ReactionArticle, dataSource.createEntityManager());
+  }
   async isExist(userId: number, articleId: number, type: ReactionArticleType): Promise<boolean> {
     const existQuery = await this.query(`SELECT EXISTS
       (SELECT * FROM reaction_article WHERE user_id=${userId} AND article_id=${articleId} AND type='${type}')`);

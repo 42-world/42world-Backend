@@ -1,24 +1,24 @@
 import { ArticleModule } from '@api/article/article.module';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { UserRepository } from '@api/user/repositories/user.repository';
 import { UserModule } from '@api/user/user.module';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus,INestApplication } from '@nestjs/common';
+import { Test,TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { getConnection } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 import * as dummy from './utils/dummy';
-import { clearDB, createTestApp } from './utils/utils';
+import { clearDB,createTestApp } from './utils/utils';
+import { DataSource } from 'typeorm';
 
 describe('Reaction', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
   let categoryRepository: CategoryRepository;
@@ -37,7 +37,6 @@ describe('Reaction', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentModule,
         ReactionModule,
       ],
     }).compile();
@@ -51,17 +50,18 @@ describe('Reaction', () => {
     commentRepository = moduleFixture.get(CommentRepository);
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
   beforeEach(async () => {
-    await clearDB();
+    await clearDB(dataSource);
   });
 
   describe('/reactions/articles/{id}', () => {

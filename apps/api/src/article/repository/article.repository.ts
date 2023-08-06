@@ -1,14 +1,18 @@
-import { FindAllArticleRequestDto } from '@api/article/dto/request/find-all-article-request.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { Article } from '@app/entity/article/article.entity';
 import { getPaginationSkip } from '@app/utils/utils';
-import { NotFoundException } from '@nestjs/common';
-import { Brackets, EntityRepository, Repository } from 'typeorm';
-import { SearchArticleRequestDto } from '../dto/request/search-article-request.dto';
+import { Injectable } from '@nestjs/common';
+import { Brackets, DataSource, Repository } from 'typeorm';
 
-@EntityRepository(Article)
+@Injectable()
 export class ArticleRepository extends Repository<Article> {
-  async findAll(options: FindAllArticleRequestDto): Promise<{
+  constructor(dataSource: DataSource) {
+    super(Article, dataSource.createEntityManager());
+  }
+  async findAllByCategoryId(
+    categoryId: number,
+    options: PaginationRequestDto,
+  ): Promise<{
     articles: Article[];
     totalCount: number;
   }> {
@@ -17,7 +21,7 @@ export class ArticleRepository extends Repository<Article> {
       .leftJoinAndSelect('article.category', 'category')
       .skip(getPaginationSkip(options))
       .take(options.take)
-      .where('category_id = :id', { id: options.categoryId })
+      .where('category_id = :id', { id: categoryId })
       .orderBy('article.createdAt', options.order);
 
     const totalCount = await query.getCount();
@@ -27,8 +31,9 @@ export class ArticleRepository extends Repository<Article> {
   }
 
   async search(
-    options: SearchArticleRequestDto,
+    q: string,
     categoryIds: number[],
+    options: PaginationRequestDto,
   ): Promise<{
     articles: Article[];
     totalCount: number;
@@ -41,10 +46,10 @@ export class ArticleRepository extends Repository<Article> {
       })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('article.title like :q', { q: `%${options.q}%` }).orWhere(
+          qb.where('article.title like :q', { q: `%${q}%` }).orWhere(
             'regexp_replace(`article`.`content`, "!\\[[[:print:]]+\\]\\([[:print:]]+\\)", "") like :q',
             {
-              q: `%${options.q}%`,
+              q: `%${q}%`,
             },
           );
         }),
@@ -95,14 +100,5 @@ export class ArticleRepository extends Repository<Article> {
     }
 
     return query.getMany();
-  }
-
-  async existOrFail(id: number): Promise<void> {
-    const existQuery = await this.query(`SELECT EXISTS
-		(SELECT * FROM article WHERE id=${id} AND deleted_at IS NULL)`);
-    const isExist = Object.values(existQuery[0])[0];
-    if (isExist === '0') {
-      throw new NotFoundException(`Can't find Article with id ${id}`);
-    }
   }
 }

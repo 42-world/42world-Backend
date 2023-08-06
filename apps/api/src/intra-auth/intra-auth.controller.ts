@@ -2,6 +2,7 @@ import { Auth, AuthUser } from '@api/auth/auth.decorator';
 import { User } from '@app/entity/user/user.entity';
 import { logger } from '@app/utils/logger';
 import { Body, Controller, Get, HttpCode, Post, Query, Render } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ApiCookieAuth,
   ApiForbiddenResponse,
@@ -16,7 +17,10 @@ import { IntraAuthService } from './intra-auth.service';
 @ApiTags('Intra Auth')
 @Controller('intra-auth')
 export class IntraAuthController {
-  constructor(private readonly intraAuthService: IntraAuthService) {}
+  constructor(
+    private readonly intraAuthService: IntraAuthService, //
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post()
   @HttpCode(200)
@@ -44,7 +48,7 @@ export class IntraAuthController {
         title: 'Hello World!',
         message: '인증에 성공했습니다! 🥳',
         button: 'Welcome, Cadet!',
-        endpoint: process.env.FRONT_URL,
+        endpoint: this.configService.get('FRONT_URL'),
       };
     } catch (e) {
       logger.error(e);
@@ -52,7 +56,7 @@ export class IntraAuthController {
         title: 'Oops! There is an error ...',
         message: '인증에 실패했습니다 😭',
         button: 'Retry',
-        endpoint: process.env.FRONT_URL,
+        endpoint: this.configService.get('FRONT_URL'),
       };
     }
   }

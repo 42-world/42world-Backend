@@ -1,10 +1,10 @@
 import { ArticleModule } from '@api/article/article.module';
-import { ArticleRepository } from '@api/article/repositories/article.repository';
+import { ArticleRepository } from '@api/article/repository/article.repository';
 import { AuthModule } from '@api/auth/auth.module';
 import { AuthService } from '@api/auth/auth.service';
 import { CategoryModule } from '@api/category/category.module';
 import { CategoryRepository } from '@api/category/repositories/category.repository';
-import { CommentModule } from '@api/comment/comment.module';
+import { CommentApiModule } from '@api/comment/comment-api.module';
 import { CommentRepository } from '@api/comment/repositories/comment.repository';
 import { ReactionModule } from '@api/reaction/reaction.module';
 import { ReactionArticleRepository } from '@api/reaction/repositories/reaction-article.repository';
@@ -24,11 +24,12 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import * as dummy from '@test/e2e/utils/dummy';
 import { clearDB, createTestApp } from '@test/e2e/utils/utils';
 import * as request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { E2eTestBaseModule } from './e2e-test.base.module';
 
 describe('User', () => {
   let httpServer: INestApplication;
+  let dataSource: DataSource;
 
   let userRepository: UserRepository;
   let articleRepository: ArticleRepository;
@@ -52,7 +53,6 @@ describe('User', () => {
         AuthModule,
         ArticleModule,
         CategoryModule,
-        CommentModule,
         ReactionModule,
         TypeOrmModule.forFeature([IntraAuth]),
       ],
@@ -69,17 +69,18 @@ describe('User', () => {
     intraAuthRepository = moduleFixture.get(getRepositoryToken(IntraAuth));
     authService = moduleFixture.get(AuthService);
 
+    dataSource = moduleFixture.get(DataSource);
     httpServer = app.getHttpServer();
   });
 
   afterAll(async () => {
-    await getConnection().dropDatabase();
-    await getConnection().close();
+    await dataSource.dropDatabase();
+    await dataSource.destroy();
     await httpServer.close();
   });
 
   beforeEach(async () => {
-    await clearDB();
+    await clearDB(dataSource);
   });
 
   describe('/users/me', () => {
@@ -169,7 +170,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id } });
       expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -187,7 +188,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id } });
       expect(updatedUser.nickname).toEqual(user2.nickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -217,7 +218,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(updatedNickname);
       expect(updatedUser.character).toEqual(user.character);
     });
@@ -233,7 +234,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(updatedCharacter);
     });
@@ -250,7 +251,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
 
-      const updatedUser = await userRepository.findOne(user.id);
+      const updatedUser = await userRepository.findOne({ where: { id: user.id }});
       expect(updatedUser.nickname).toEqual(user.nickname);
       expect(updatedUser.character).toEqual(user.character);
     });
@@ -262,9 +263,7 @@ describe('User', () => {
 
       expect(response.status).toEqual(HttpStatus.OK);
 
-      const deletedUser = await userRepository.findOne(user.id, {
-        withDeleted: true,
-      });
+      const deletedUser = await userRepository.findOne({ where: { id: user.id }, withDeleted: true });
 
       expect(deletedUser.deletedAt).toBeTruthy();
     });
@@ -333,7 +332,7 @@ describe('User', () => {
     });
 
     test('[성공] - GET - 내가 작성한 댓글 가져오기, 삭제한 게시글이 있는 경우', async () => {
-      await articleRepository.softDelete(articles.first);
+      await articleRepository.softDelete(articles.first.id);
 
       const response = await request(httpServer)
         .get('/users/me/comments')
@@ -385,7 +384,7 @@ describe('User', () => {
     });
 
     test('[성공] - GET - 내가 좋아요 누른 게시글 가져오기, 삭제한 게시글이 있는 경우', async () => {
-      await articleRepository.softDelete(articles.first);
+      await articleRepository.softDelete(articles.first.id);
 
       const response = await request(httpServer)
         .get('/users/me/like-articles')

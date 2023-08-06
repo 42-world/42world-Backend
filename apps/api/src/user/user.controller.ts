@@ -1,7 +1,7 @@
 import { ArticleService } from '@api/article/article.service';
 import { ArticleResponseDto } from '@api/article/dto/response/article-response.dto';
 import { Auth, AuthUser } from '@api/auth/auth.decorator';
-import { CommentService } from '@api/comment/comment.service';
+import { CommentService } from '@api/comment/services/comment.service';
 import { MyCommentResponseDto } from '@api/comment/dto/response/my-comment-response.dto';
 import { PaginationRequestDto } from '@api/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@api/pagination/dto/pagination-response.dto';
@@ -19,6 +19,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ArticleDtoMapper } from '../article/dto/article.mapper';
 import { UpdateUserProfileRequestDto } from './dto/request/update-user-profile-request.dto';
 import { UserResponseDto } from './dto/response/user-response.dto';
 import { UserService } from './user.service';
@@ -86,7 +87,7 @@ export class UserController {
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { likeArticles, totalCount } = await this.reactionService.findAllArticleByUserId(user.id, options);
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({
+      data: ArticleDtoMapper.toResponseDtoList({
         articles: likeArticles.map((e) => e.article),
         user,
       }),
@@ -105,7 +106,7 @@ export class UserController {
   ): Promise<PaginationResponseDto<ArticleResponseDto>> {
     const { articles, totalCount } = await this.articleService.findAllByWriterId(user.id, options);
     return PaginationResponseDto.of({
-      data: ArticleResponseDto.ofArray({ articles, user }),
+      data: ArticleDtoMapper.toResponseDtoList({ articles, user }),
       options,
       totalCount,
     });

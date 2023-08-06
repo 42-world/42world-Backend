@@ -6,6 +6,13 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateCategoryRequestDto } from './dto/request/create-category-request.dto';
 import { CategoryRepository } from './repositories/category.repository';
 
+type CategoryPermission =
+  | 'writableArticle'
+  | 'readableArticle'
+  | 'writableComment'
+  | 'readableComment'
+  | 'reactionable';
+
 @Injectable()
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
@@ -19,7 +26,7 @@ export class CategoryService {
   }
 
   async findOneOrFail(id: number): Promise<Category | never> {
-    return this.categoryRepository.findOneOrFail(id);
+    return this.categoryRepository.findOneOrFail({ where: { id } });
   }
 
   async existOrFail(id: number): Promise<void | never> {
@@ -27,7 +34,7 @@ export class CategoryService {
   }
 
   async updateName(id: number, name: string): Promise<Category | never> {
-    const category = await this.categoryRepository.findOneOrFail(id);
+    const category = await this.categoryRepository.findOneOrFail({ where: { id } });
 
     category.name = name;
     return this.categoryRepository.save(category);
@@ -41,14 +48,33 @@ export class CategoryService {
     }
   }
 
-  checkAvailable(
-    key: keyof Pick<
-      Category,
-      'writableArticle' | 'readableArticle' | 'writableComment' | 'readableComment' | 'reactionable'
-    >,
-    category: Category,
-    user: User,
-  ): void | never {
+  /**
+   *
+   * 유저가 카테고리 권한이 있는지 확인합니다.
+   *
+   * @param user 유저
+   * @param categoryId 카테고리 아이디
+   * @param key 카테고리 권한
+   *
+   * @throws {ForbiddenException} 권한이 없을 경우
+   */
+  async checkAvailable(user: User, categoryId: number, key: CategoryPermission): Promise<void> {
+    const category = await this.findOneOrFail(categoryId);
+
+    this.checkAvailableSync(user, category, key);
+  }
+
+  /**
+   *
+   * 유저가 카테고리 권한이 있는지 확인합니다.
+   *
+   * @param user 유저
+   * @param category 카테고리
+   * @param key 카테고리 권한
+   *
+   * @throws {ForbiddenException} 권한이 없을 경우
+   */
+  checkAvailableSync(user: User, category: Category, key: CategoryPermission): void {
     if (!compareRole(category[key] as UserRole, user.role as UserRole))
       throw new ForbiddenException(`당신은 ${category.name} 카테고리의 ${key} 하지 않습니다.`);
   }
