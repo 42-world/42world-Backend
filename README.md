@@ -43,7 +43,7 @@ https://www.42world.kr/
 
 ## 버전
 
-- node>=16.13.0
+- node>=18.13.0
 - yarn>=1.22.10
 - docker-compose>=1.29.2
 - docker>=20.10.11
