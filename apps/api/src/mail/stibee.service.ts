@@ -1,24 +1,29 @@
+import { logger } from '@app/utils/logger';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { EMAIL } from './intra-auth.constant';
-import MailService from './mail.service';
-import UnsubscribeStibeeService from './unsubscribe-stibee.service';
+import { MailService } from './mail.service';
+import { UnsubscribeStibeeService } from './unsubscribe-stibee.service';
+
 @Injectable()
 export default class StibeeService implements MailService, UnsubscribeStibeeService {
   constructor(private readonly configService: ConfigService) {}
 
   private accessToken = this.configService.get<string>('STIBEE_API_KEY');
 
-  async send(name: string, code: string, githubId: string) {
+  async send(email: string, name: string, code: string, githubId: string) {
     await this.subscribe(name);
-    const url = this.configService.get('STIBEE_MAIL_SEND_URL');
+    const url = this.configService.get<string>('STIBEE_MAIL_SEND_URL');
 
+    await this.mailSend(url, email, name, code, githubId);
+  }
+
+  private async mailSend(url: string, email: string, name: string, code: string, githubId: string) {
     try {
       await axios.post(
         url,
         {
-          subscriber: `${name}@${EMAIL}`,
+          subscriber: email,
           name,
           code,
           githubId,
@@ -67,7 +72,7 @@ export default class StibeeService implements MailService, UnsubscribeStibeeServ
   }
 
   private printError(err: any) {
-    console.error({ status: err.response.status, message: err.response.data });
-    console.trace();
+    logger.error({ status: err.response.status, message: err.response.data });
+    logger.error(err.stack);
   }
 }
