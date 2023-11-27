@@ -11,6 +11,7 @@
     "^@test/(.*)$": "<rootDir>/apps/api/test/$1",
     "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
     "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1",
-    "^@app/entity(|/.*)$": "<rootDir>/libs/entity/src/$1"
+    "^@app/entity(|/.*)$": "<rootDir>/libs/entity/src/$1",
+    "^axios$": "axios/dist/node/axios.cjs"
   }
 }
